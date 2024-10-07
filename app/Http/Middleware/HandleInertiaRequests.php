@@ -48,6 +48,9 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+            'auth' => [
+                'user' => $request->user(),
+            ],
             'notification' => fn() => $request->session()->get('notification', []),
             'intent' => fn() => $request->session()->get('intent', []),
             'production' => config('app.env') === 'production',

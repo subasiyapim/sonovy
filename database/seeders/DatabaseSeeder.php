@@ -24,7 +24,29 @@ class DatabaseSeeder extends Seeder
 
 
             //TENANCY SEEDERS
+
+            \Database\Seeders\PermissionSeeder::class,
+            \Database\Seeders\RoleSeeder::class,
             \Database\Seeders\UserSeeder::class,
+            \Database\Seeders\PermissionRoleSeeder::class,
+            \Database\Seeders\RoleUserSeeder::class,
+
+            \Database\Seeders\ContractSeeder::class,
+            \Database\Seeders\FeatureSeeder::class,
+            \Database\Seeders\GenreSeeder::class,
+            \Database\Seeders\IntegrationSeeder::class,
+            \Database\Seeders\LabelSeeder::class,
+            \Database\Seeders\ArtistBranchSeeder::class,
+            \Database\Seeders\ArtistSeeder::class,
+            \Database\Seeders\MailTemplateSeeder::class,
+            \Database\Seeders\PerformingRightsOrganizationSeeder::class,
+            \Database\Seeders\PlanItemSeeder::class,
+            \Database\Seeders\PlanSeeder::class,
+            \Database\Seeders\PlatformSeeder::class,
+            \Database\Seeders\SendNotificationSeeder::class,
+            \Database\Seeders\SettingSeeder::class,
+
+
         ]);
     }
 }

@@ -203,7 +203,8 @@ class SettingSeeder extends Seeder
                 ],
                 [
                     'name' => $setting['name'],
-                    'description' => $setting['description']
+                    'description' => $setting['description'],
+                    'input_type' => $setting['input_type'],
                 ]
             );
         }

@@ -104,9 +104,10 @@ class PerformingRightsOrganizationSeeder extends Seeder
         ];
 
         foreach ($seeds as $seed) {
-            DB::table('performing_rights_organizations')->insert([
-                'code' => $seed,
-            ]);
+            DB::table('performing_rights_organizations')
+                ->upsert([
+                    'code' => $seed,
+                ], ['code']);
         }
     }
 }

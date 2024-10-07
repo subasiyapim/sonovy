@@ -66,7 +66,14 @@ class MailTemplateSeeder extends Seeder
     {
         foreach (self::$mailTemplates as $mailTemplate) {
 
-            MailTemplate::create($mailTemplate);
+            MailTemplate::firstOrCreate(
+                ['code' => $mailTemplate['code']],
+                [
+                    'name' => $mailTemplate['name'],
+                    'en' => $mailTemplate['en'],
+                    'tr' => $mailTemplate['tr'],
+                ]
+            );
 
         }
     }

@@ -114,7 +114,7 @@ class Artist extends Model implements HasMedia
 
     public function country(): BelongsTo
     {
-        return $this->belongsTo(Country::class, 'country_id');
+        return $this->belongsTo(\App\Models\System\Country::class, 'country_id');
     }
 
     public function user(): BelongsTo
