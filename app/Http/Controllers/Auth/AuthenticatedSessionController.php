@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
 use Stancl\Tenancy\Database\Models\Domain;
@@ -30,18 +31,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $host = $request->headers->get('host');
-        $host_arr = explode('.', $host);
-
-        $domain = Domain::where('domain', $host_arr[0])->firstOrFail();
-
-        $tenant_id = $domain->tenant_id;
-
-        tenancy()->initialize($tenant_id);
-
         $request->authenticate();
 
         $request->session()->regenerate();
+
 
         return redirect()->intended(route('control.dashboard', absolute: false));
     }
