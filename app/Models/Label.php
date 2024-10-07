@@ -69,6 +69,9 @@ class Label extends Model implements HasMedia
     {
         $this->addMediaCollection('labels')
             ->singleFile()
+            ->useFallbackUrl(asset(''))
+            ->useFallbackPath(public_path('/'))
+            ->useDisk('tenant_'.tenant('id'))
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('thumb')
                     ->width(100)

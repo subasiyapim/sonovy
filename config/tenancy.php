@@ -31,7 +31,7 @@ return [
     'bootstrappers' => [
         Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper::class,
         Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper::class,
-        Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class,
+        //Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class,
         Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper::class,
         Stancl\Tenancy\Bootstrappers\RedisTenancyBootstrapper::class, // Note: phpredis is needed
         App\Contracts\TenantInitializeBootstrapper::class,
@@ -102,23 +102,23 @@ return [
         /**
          * Each disk listed in the 'disks' array will be suffixed by the suffix_base, followed by the tenant_id.
          */
-        'suffix_base' => 'tenant',
-        'disks' => [
-            'local',
-            'public',
-            // 's3',
-        ],
+//        'suffix_base' => 'tenant_',
+//        'disks' => [
+//            //'local',
+//            //'public',
+//            // 's3',
+//        ],
 
         /**
          * Use this for local disks.
          *
          * See https://tenancyforlaravel.com/docs/v3/tenancy-bootstrappers/#filesystem-tenancy-boostrapper
          */
-        'root_override' => [
-            // Disks whose roots should be overridden after storage_path() is suffixed.
-            'local' => '%storage_path%/app/',
-            'public' => '%storage_path%/app/public/',
-        ],
+//        'root_override' => [
+//            // Disks whose roots should be overridden after storage_path() is suffixed.
+//            'local' => '%storage_path%/app/',
+//            'public' => '%storage_path%/app/public/',
+//        ],
 
         /**
          * Should storage_path() be suffixed.
@@ -129,7 +129,7 @@ return [
          * edge cases, it can cause issues (like using Passport with Vapor - see #196), so
          * you may want to disable this if you are experiencing these edge case issues.
          */
-        'suffix_storage_path' => true,
+        'suffix_storage_path' => false,
 
         /**
          * By default, asset() calls are made multi-tenant too. You can use global_asset() and mix()

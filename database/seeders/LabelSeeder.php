@@ -34,14 +34,12 @@ class LabelSeeder extends Seeder
         });
 
         config(['filesystems.disks' => $disks]);
-        
-        Tenant::all()->each(function (Tenant $tenant) {
-            Label::factory(15)->create()->each(function (Label $label) use ($tenant) {
-                $label->addMediaFromUrl('https://picsum.photos/400/400')
-                    ->usingFileName(Str::slug($label->name).'.jpg')
-                    ->usingName($label->name)
-                    ->toMediaCollection('labels', 'tenant_'.$tenant->id);
-            });
+
+        Label::factory(15)->create()->each(function (Label $label) use ($tenant) {
+            $label->addMediaFromUrl('https://picsum.photos/400/400')
+                ->usingFileName(Str::slug($label->name).'.jpg')
+                ->usingName($label->name)
+                ->toMediaCollection('labels', 'tenant_'.$tenant->id);
         });
     }
 }

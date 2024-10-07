@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head, usePage} from '@inertiajs/vue3';
+
+const props = defineProps<{
+  artists: {
+    type: Object,
+    default: () => [],
+  };
+}>();
+
 </script>
 
 <template>
@@ -23,6 +31,12 @@ import {Head, usePage} from '@inertiajs/vue3';
           <div class="p-6 text-gray-900 dark:text-gray-100">
             You're logged in! <br>
             {{ usePage().props.auth.user?.name }}
+
+            <ul>
+              <li v-for="artist in artists">
+                <img alt="" :src="artist.image.thumb">
+              </li>
+            </ul>
           </div>
         </div>
       </div>

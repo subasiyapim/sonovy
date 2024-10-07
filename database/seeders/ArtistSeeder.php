@@ -28,31 +28,14 @@ class ArtistSeeder extends Seeder
         DB::table('artist_artist_branch')->truncate();
 
 
-        $disks = config('filesystems.disks');
+        Artist::factory(10)->create([
+            'added_by' => \App\Models\User::inRandomOrder()->first()->id,
+        ])->each(function (Artist $artist) use ($randomArtistBranchIds) {
+            $artist->artistBranches()->attach($randomArtistBranchIds);
 
-        Tenant::chunk(100, function ($tenants) use (&$disks) {
-            foreach ($tenants as $tenant) {
-                $disks['tenant_'.$tenant->id] = [
-                    'driver' => 'local',
-                    'root' => storage_path('app/public/tenant_'.$tenant->id),
-                    'url' => env('APP_URL').'/storage/tenant_'.$tenant->id,
-                    'visibility' => 'public',
-                ];
-            }
-        });
-
-        config(['filesystems.disks' => $disks]);
-
-        Tenant::all()->each(function (Tenant $tenant) use ($randomArtistBranchIds) {
-            Artist::factory(10)->create([
-                'added_by' => 1,
-            ])->each(function (Artist $artist) use ($randomArtistBranchIds, $tenant) {
-                $artist->artistBranches()->attach($randomArtistBranchIds);
-
-                $artist->addMediaFromUrl('https://picsum.photos/400/400')
-                    ->usingFileName(Str::slug($artist->name).'.jpg')
-                    ->toMediaCollection('artists', 'tenant_'.$tenant->id);
-            });
+            $artist->addMediaFromUrl('https://picsum.photos/400/400')
+                ->usingFileName(Str::slug($artist->name).'.jpg')
+                ->toMediaCollection('artists', 'tenant_'.\tenant('id'));
         });
 
     }
