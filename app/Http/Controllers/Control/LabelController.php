@@ -7,13 +7,11 @@ use App\Http\Requests\Label\LabelStoreRequest;
 use App\Http\Requests\Label\LabelUpdateRequest;
 use App\Models\Label;
 use App\Services\CountryServices;
-use App\Services\MediaServices;
 use App\Services\LabelServices;
+use App\Services\MediaServices;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Country;
 
 class LabelController extends Controller
 {
@@ -36,7 +34,7 @@ class LabelController extends Controller
         abort_if(Gate::denies('label_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
 
-        $countries = CountryServices::get();
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'name', 'id', 'emoji');
 
 
         return inertia('Control/Labels/Create', compact('countries'));
@@ -48,7 +46,13 @@ class LabelController extends Controller
      */
     public function store(LabelStoreRequest $request)
     {
-        $label = LabelServices::create($request->validated());
+        $data = $request->validated();
+        $data['added_by'] = auth()->id();
+        $label = Label::create($data);
+
+        if ($request->hasFile('image')) {
+            MediaServices::upload($label, $request->file('image'), 'labels');
+        }
 
         return redirect()->back()->with([
             'notification' => [
@@ -66,17 +70,16 @@ class LabelController extends Controller
     {
         abort_if(Gate::denies('label_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        $label->load('country');
+
         return response()->json($label->load('media'), Response::HTTP_OK);
     }
 
     public function edit(Label $label)
     {
-
-
         abort_if(Gate::denies('label_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $countries = CountryServices::get();
-
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'name', 'id', 'emoji');
 
         return inertia('Control/Labels/Edit', compact('label', 'countries'));
 
@@ -87,8 +90,11 @@ class LabelController extends Controller
      */
     public function update(LabelUpdateRequest $request, Label $label)
     {
+        $label->update($request->validated());
 
-        LabelServices::update($label, $request->validated());
+        if ($request->hasFile('image')) {
+            MediaServices::upload($label, $request->file('image'), 'labels');
+        }
 
         return redirect()->back()->with([
             'notification' => [

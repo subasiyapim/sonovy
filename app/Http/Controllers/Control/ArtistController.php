@@ -55,7 +55,10 @@ class ArtistController extends Controller
         $artist = Artist::create($data);
 
         $artist->artistBranches()->sync($request->input('artist_branches', []));
-        MediaServices::upload($artist, $request->file('image'), 'artists');
+
+        if ($request->hasFile('image')) {
+            MediaServices::upload($artist, $request->file('image'), 'artists');
+        }
 
         return redirect()->route('control.artists.index')->with(
             [
@@ -106,7 +109,10 @@ class ArtistController extends Controller
         $artist = Artist::create($data);
 
         $artist->artistBranches()->sync($request->input('artist_branches', []));
-        MediaServices::upload($artist, $request->file('image'), 'artists');
+
+        if ($request->hasFile('image')) {
+            MediaServices::upload($artist, $request->file('image'), 'artists');
+        }
 
         return redirect()->route('control.artists.index')->with(
             [

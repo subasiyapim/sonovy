@@ -101,7 +101,7 @@ class Label extends Model implements HasMedia
 
     public function country(): BelongsTo
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(\App\Models\System\Country::class);
     }
 
     public function user(): BelongsTo
