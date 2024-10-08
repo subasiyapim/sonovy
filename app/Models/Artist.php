@@ -31,8 +31,9 @@ class Artist extends Model implements HasMedia
     protected $fillable = [
         'user_id',
         'name',
-        'description',
+        'about',
         'country_id',
+        'phone',
         'ipi_code',
         'isni_code',
         'website',
@@ -103,12 +104,6 @@ class Artist extends Model implements HasMedia
         return $this->belongsToMany(ArtistBranch::class, 'artist_artist_branch', 'artist_id', 'artist_branch_id');
     }
 
-    public function broadcasts(): BelongsToMany
-    {
-        return $this->belongsToMany(Broadcast::class, 'artist_broadcast', 'artist_id', 'broadcast_id')
-            ->withPivot('is_main');
-    }
-
     public function platforms(): BelongsToMany
     {
         return $this->belongsToMany(Platform::class, 'artist_platform', 'artist_id', 'platform_id')
@@ -128,11 +123,6 @@ class Artist extends Model implements HasMedia
     public function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
-    }
-
-    public function addedBy()
-    {
-        return $this->belongsTo(User::class, 'added_by');
     }
 
 }
