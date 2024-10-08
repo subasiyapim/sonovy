@@ -1,0 +1,127 @@
+<?php
+
+namespace App\Http\Controllers\Control;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Label\LabelStoreRequest;
+use App\Http\Requests\Label\LabelUpdateRequest;
+use App\Models\Label;
+use App\Services\CountryServices;
+use App\Services\MediaServices;
+use App\Services\LabelServices;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
+use App\Models\Country;
+
+class LabelController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $labels = Label::with('country')->advancedFilter();
+
+        return inertia('Control/Labels/Index', compact('labels'));
+
+    }
+
+
+    public function create()
+    {
+        abort_if(Gate::denies('label_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+
+        $countries = CountryServices::get();
+
+
+        return inertia('Control/Labels/Create', compact('countries'));
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(LabelStoreRequest $request)
+    {
+        $label = LabelServices::create($request->validated());
+
+        return redirect()->back()->with([
+            'notification' => [
+                'title' => 'Success',
+                'message' => 'Label created successfully',
+                'data' => $label
+            ]
+        ]);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Label $label)
+    {
+        abort_if(Gate::denies('label_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        return response()->json($label->load('media'), Response::HTTP_OK);
+    }
+
+    public function edit(Label $label)
+    {
+
+
+        abort_if(Gate::denies('label_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $countries = CountryServices::get();
+
+
+        return inertia('Control/Labels/Edit', compact('label', 'countries'));
+
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(LabelUpdateRequest $request, Label $label)
+    {
+
+        LabelServices::update($label, $request->validated());
+
+        return redirect()->back()->with([
+            'notification' => [
+                'title' => 'Success',
+                'message' => 'Label updated successfully',
+                'data' => $label
+            ]
+        ]);
+    }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'search' => 'required|string|max:255'
+        ]);
+
+
+        $search = $request->input('search');
+
+        $labels = LabelServices::search($search);
+
+        return response()->json($labels, Response::HTTP_OK);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Label $label)
+    {
+        abort_if(Gate::denies('label_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $label->delete();
+
+        return redirect()->back();
+    }
+}
