@@ -35,4 +35,24 @@ if (!function_exists('getLocalizationList')) {
     }
 }
 
+if (!function_exists('getDataFromInputFormat')) {
+    function getDataFromInputFormat($data, $key = 'id', $label = 'name', $iconKey = null): array
+    {
+        $result = [];
+        
+        foreach ($data as $item) {
+            $result[] = [
+                'value' => $item[$key],
+                'label' => $item[$label],
+                'iconKey' => $iconKey
+                    ? $iconKey === 'image'
+                        ? $item[$iconKey]['thumb']
+                        : $item[$iconKey]
+                    : null
+            ];
+        }
+        return $result;
+    }
+}
+
 

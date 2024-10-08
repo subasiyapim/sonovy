@@ -94,9 +94,9 @@ class Platform extends Model implements HasMedia
     {
         $file = $this->getMedia('platforms')->last();
         if ($file) {
-            $file->url = $file->getUrl();
-            $file->small = $file->getUrl('small');
-            $file->thumb = $file->getUrl('thumb');
+            $file->url = asset($file->getUrl());
+            $file->small = asset($file->getUrl('small'));
+            $file->thumb = asset($file->getUrl('thumb'));
         }
 
         return $file;

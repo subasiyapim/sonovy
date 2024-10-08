@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Artist\ArtistStoreRequest;
+use App\Http\Requests\Artist\ArtistUpdateRequest;
 use App\Models\Artist;
+use App\Models\ArtistBranch;
 use App\Models\Platform;
 use App\Services\ArtistBranchServices;
 use App\Services\CountryServices;
+use App\Services\MediaServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,11 +35,11 @@ class ArtistController extends Controller
      */
     public function create()
     {
-        abort_if(Gate::denies('broadcast_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('artist_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $countries = CountryServices::get();
-        $platforms = Platform::all();
-        $artistBranches = ArtistBranchServices::getBranchesFromInputFormat();
+        $countries = getDataFromInputFormat(CountryServices::get(), 'id', 'name', 'emoji');
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'image');
+        $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
         return inertia('Control/Artists/Create', compact('countries', 'platforms', 'artistBranches'));
     }
@@ -43,9 +47,24 @@ class ArtistController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ArtistStoreRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['added_by'] = auth()->id();
+
+        $artist = Artist::create($data);
+
+        $artist->artistBranches()->sync($request->input('artist_branches', []));
+        MediaServices::upload($artist, $request->file('image'), 'artists');
+
+        return redirect()->route('control.artists.index')->with(
+            [
+                'notification' => [
+                    'type' => 'success',
+                    'message' => __('control.notification_created', ['model' => __('control.artist.title_singular')])
+                ]
+            ]
+        );
     }
 
     /**
@@ -53,7 +72,11 @@ class ArtistController extends Controller
      */
     public function show(Artist $artist)
     {
-        //
+        abort_if(Gate::denies('artist_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $artist->load('artistBranches');
+
+        return inertia('Control/Artists/Show', compact('artist'));
     }
 
     /**
@@ -61,15 +84,38 @@ class ArtistController extends Controller
      */
     public function edit(Artist $artist)
     {
-        //
+        abort_if(Gate::denies('artist_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $countries = getDataFromInputFormat(CountryServices::get(), 'id', 'name', 'emoji');
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'image');
+        $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
+
+        $artist->load('artistBranches', 'platforms');
+
+        return inertia('Control/Artists/Edit', compact('artist', 'countries', 'platforms', 'artistBranches'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Artist $artist)
+    public function update(ArtistUpdateRequest $request, Artist $artist)
     {
-        //
+        $data = $request->validated();
+        $data['added_by'] = auth()->id();
+
+        $artist = Artist::create($data);
+
+        $artist->artistBranches()->sync($request->input('artist_branches', []));
+        MediaServices::upload($artist, $request->file('image'), 'artists');
+
+        return redirect()->route('control.artists.index')->with(
+            [
+                'notification' => [
+                    'type' => 'success',
+                    'message' => __('control.notification_updated', ['model' => __('control.artist.title_singular')])
+                ]
+            ]
+        );
     }
 
     /**
@@ -77,6 +123,17 @@ class ArtistController extends Controller
      */
     public function destroy(Artist $artist)
     {
-        //
+        abort_if(Gate::denies('artist_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $artist->delete();
+
+        return redirect()->route('control.artists.index')->with(
+            [
+                'notification' => [
+                    'type' => 'success',
+                    'message' => __('control.notification_deleted', ['model' => __('control.artist.title_singular')])
+                ]
+            ]
+        );
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Artist;
 
+use App\Models\System\Country;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class ArtistStoreRequest extends FormRequest
 {
@@ -24,13 +26,15 @@ class ArtistStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'country_id' => ['required', 'exists:countries,id'],
+            'about' => ['nullable', 'string', 'max:500'],
+            'country_id' => ['required', Rule::exists(Country::class, 'id')],
             'ipi_code' => ['nullable'],
             'isni_code' => ['nullable'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg'],
-            'artist_branches' => ['required', 'array'],
+            'website' => ['nullable', 'url'],
+            'phone' => ['nullable', 'string'],
             'platforms' => ['nullable', 'array'],
-            'description' => ['nullable', 'string', 'max:500'],
+            'artist_branches' => ['required', 'array'],
         ];
     }
 
@@ -49,7 +53,8 @@ class ArtistStoreRequest extends FormRequest
             'image' => __('panel.artist.form.image'),
             'artist_branches' => __('panel.artist.form.artist_branches'),
             'platforms' => __('panel.artist.form.platforms'),
-            'description' => __('panel.artist.form.description'),
+            'about' => __('panel.artist.form.about'),
+            'phone' => __('panel.artist.form.phone'),
         ];
     }
 }

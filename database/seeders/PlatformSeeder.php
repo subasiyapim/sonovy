@@ -7,6 +7,7 @@ use App\Models\Platform;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class PlatformSeeder extends Seeder
 {
@@ -23,7 +24,10 @@ class PlatformSeeder extends Seeder
                 "code" => 'amazon',
                 "url" => 'https://www.amazon.com',
                 "status" => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::DOWNLOADABLE->value,
@@ -32,7 +36,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'spotify',
                 'url' => 'https://www.spotify.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::DOWNLOADABLE->value,
@@ -41,7 +48,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'spotify_premium',
                 'url' => 'https://www.spotify.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::DOWNLOADABLE->value,
@@ -50,7 +60,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'netflix',
                 'url' => 'https://www.netflix.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::DOWNLOADABLE->value,
@@ -59,7 +72,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'apple',
                 'url' => 'https://www.apple.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::DOWNLOADABLE->value,
@@ -68,7 +84,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'google',
                 'url' => 'https://www.google.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::STREAMING->value,
@@ -77,7 +96,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'youtube',
                 'url' => 'https://www.youtube.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::STREAMING->value,
@@ -86,7 +108,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'tiktok',
                 'url' => 'https://www.tiktok.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -95,7 +120,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'facebook',
                 'url' => 'https://www.facebook.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -104,7 +132,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'instagram',
                 'url' => 'https://www.instagram.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -113,7 +144,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'twitter',
                 'url' => 'https://www.twitter.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -122,7 +156,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'linkedin',
                 'url' => 'https://www.linkedin.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -131,7 +168,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'snapchat',
                 'url' => 'https://www.snapchat.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -140,7 +180,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'pinterest',
                 'url' => 'https://www.pinterest.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -149,7 +192,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'reddit',
                 'url' => 'https://www.reddit.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -158,7 +204,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'tumblr',
                 'url' => 'https://www.tumblr.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -167,7 +216,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'viber',
                 'url' => 'https://www.viber.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -176,7 +228,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'wechat',
                 'url' => 'https://www.wechat.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
             [
                 'type' => PlatformTypeEnum::SOCIAL_MEDIA->value,
@@ -185,7 +240,10 @@ class PlatformSeeder extends Seeder
                 'code' => 'line',
                 'url' => 'https://www.line.com',
                 'status' => 1,
-                "authenticators" => [json_decode('{"key": "password", "value": "34343434"}'), json_decode('{"key": "username", "value": "3847837834"}')]
+                "authenticators" => [
+                    json_decode('{"key": "password", "value": "34343434"}'),
+                    json_decode('{"key": "username", "value": "3847837834"}')
+                ]
             ],
         ];
 
@@ -194,11 +252,18 @@ class PlatformSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         foreach ($data as $item) {
-            Platform::updateOrCreate(
+            $platform = Platform::updateOrCreate(
                 [
                     'name' => $item['name'],
                 ],
                 $item);
+
+            $platform->addMediaFromUrl('https://picsum.photos/400/400')
+                ->usingFileName(Str::slug($platform->name).'.jpg')
+                ->toMediaCollection('platforms', 'tenant_'.tenant('id'));
+
         }
+
+
     }
 }

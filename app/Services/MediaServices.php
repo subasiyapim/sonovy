@@ -10,25 +10,25 @@ class MediaServices
     /**
      * @param $model
      * @param $media
-     * @param string $name
-     * @param string $file_name
-     * @param string $collection_name
+     * @param  string  $name
+     * @param  string  $file_name
+     * @param  string  $collection_name
      * @return void
      */
 
-    public static function upload($model, $media, string $name = null, string $file_name = null, string $collection_name = 'default', string $disk = 'public'): void
+    public static function upload($model, $media, string $collection_name = 'default', string $disk = 'public'): void
     {
         if (!$media) {
             return;
         }
 
-        $name = $name ?? uniqid() . '-' . time();
-        $file_name = $file_name ?? uniqid() . '-' . time() . '-' . $media->getClientOriginalName();
+        $name = uniqid().'-'.time();
+        $file_name = uniqid().'-'.time().'-'.$media->getClientOriginalName();
 
         $model->addMedia($media)
             ->usingFileName($file_name)
             ->usingName($name)
-            ->toMediaCollection($collection_name, $disk);
+            ->toMediaCollection($collection_name, 'tenant_'.tenant('id'));
     }
 
     public static function mediaUpload(mixed $media, $type = 1)

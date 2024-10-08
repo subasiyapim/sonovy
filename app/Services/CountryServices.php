@@ -56,7 +56,7 @@ class CountryServices
 
     public static function get()
     {
-        return CountryResource::collection(Country::active()->get())->resolve();
+        return CountryResource::collection(\App\Models\System\Country::get())->resolve();
     }
 
     public static function getActiveCountriesFromInputFormat()
