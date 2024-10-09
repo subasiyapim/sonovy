@@ -8,7 +8,6 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Control\RoleController;
 use App\Http\Controllers\Control\UserController;
-use App\Http\Controllers\Control\LabelController;
 use App\Http\Controllers\Control\ProductController;
 use App\Http\Controllers\Control\SongController;
 use App\Http\Controllers\Control\SettingController;

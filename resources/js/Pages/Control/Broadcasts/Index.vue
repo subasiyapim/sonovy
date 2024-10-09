@@ -58,7 +58,7 @@
                 </template>
             </AppCard>
         </div>
-        <AppTable v-model="usePage().props.broadcasts">
+        <AppTable v-model="usePage().props.products">
             <AppTableColumn label="1. Sütun">
                 <template #default="scope"> asds{{ scope.row.name }}</template>
             </AppTableColumn>

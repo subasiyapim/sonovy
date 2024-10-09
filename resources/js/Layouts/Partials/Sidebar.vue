@@ -15,7 +15,7 @@
         <AppTextInput class="w-full" placeholder="Yayın, Artist ara...">
               <template #icon><SearchIcon color="var(--soft-400)"/></template>
         </AppTextInput>
-        <SecondaryButton @click="router.visit(route('control.broadcasts.create'))" class="w-full">
+        <SecondaryButton @click="router.visit(route('control.products.create'))" class="w-full">
             <template #icon><AddIcon/></template>
             Yeni Yayın Oluştur
         </SecondaryButton>
@@ -27,7 +27,7 @@
             </MenuItem >
              <MenuItem title="Katalog" :icon="DashboardIcon">
                 <template #sub>
-                    <a :href="route('control.broadcasts.index')" class="radius-8 sub-menu-item"> Yayınlar</a>
+                    <a :href="route('control.products.index')" class="radius-8 sub-menu-item"> Yayınlar</a>
                     <a :href="route('control.songs.index')" class="radius-8 sub-menu-item"> Parçalar</a>
                     <a :href="route('control.artists.index')" class="radius-8 sub-menu-item"> Sanatçılar</a>
                     <a :href="route('control.labels.index')" class="radius-8 sub-menu-item"> Plak Şirketleri</a>
