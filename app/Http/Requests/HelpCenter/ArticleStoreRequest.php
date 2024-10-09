@@ -49,9 +49,9 @@ class ArticleStoreRequest extends FormRequest
     {
         return [
             'image' => __('control.help_center.form.image'),
-            'title' => __('panel.help_center.form.question'),
-            'subtitle' => __('panel.help_center.form.answer'),
-            'description' => __('panel.help_center.form.question'),
+            'title' => __('control.help_center.form.question'),
+            'subtitle' => __('control.help_center.form.answer'),
+            'description' => __('control.help_center.form.question'),
         ];
     }
 }

@@ -61,13 +61,13 @@ class EarningJob implements ShouldQueue
                 $this->earningReport->status = EarningReportStatusEnum::PROCESSING->value;
                 $this->earningReport->save();
 
-                Log::info('Processing earning report ID: ' . $this->earningReport->id . ' Status: ' . $this->earningReport->status);
+                Log::info('Processing earning report ID: '.$this->earningReport->id.' Status: '.$this->earningReport->status);
 
                 $this->balance = str_replace(',', '.', $this->earningReport->net_revenue);
 
                 // Genel sistem komisyonunu düş
                 $systemCommission = bcmul($this->balance, bcdiv($this->general_system_commission_rate, '100'));
-                Log::info('General system commission: ' . $systemCommission);
+                Log::info('General system commission: '.$systemCommission);
                 $this->balance = bcsub($this->balance, $systemCommission);
 
                 $this->song = Song::with('participants', 'broadcasts.label.user')
@@ -76,38 +76,40 @@ class EarningJob implements ShouldQueue
                     ->first();
 
                 if ($this->song) {
-                    Log::info('Found song with ISRC: ' . $this->song->isrc);
+                    Log::info('Found song with ISRC: '.$this->song->isrc);
 
                     $labelShare = $this->calculateLabelShare();
-                    Log::info('Label share calculated: ' . $labelShare);
+                    Log::info('Label share calculated: '.$labelShare);
                     $participantEarnings = $this->calculateParticipantEarnings($labelShare);
-                    Log::info('Participant earnings calculated: ' . json_encode($participantEarnings));
+                    Log::info('Participant earnings calculated: '.json_encode($participantEarnings));
 
                     $totalParticipantEarnings = array_sum(array_column($participantEarnings, 'earning'));
                     $labelFinalEarning = bcsub($labelShare, $totalParticipantEarnings);
 
                     $sales_type = $this->earningReport->sales_type == 'PLATFORM PROMOTION' ? 'Promosyon' : 'Kazanç';
                     // Label'a ve katılımcılara ödeme yap
-                    $this->createEarnings($this->earningReport, $labelFinalEarning, $this->earningReport->label_id, $sales_type);
+                    $this->createEarnings($this->earningReport, $labelFinalEarning, $this->earningReport->label_id,
+                        $sales_type);
                     foreach ($participantEarnings as $participantEarning) {
-                        $this->createEarnings($this->earningReport, $participantEarning['earning'], $participantEarning['user_id'], __('panel.earning.participant_earning'));
+                        $this->createEarnings($this->earningReport, $participantEarning['earning'],
+                            $participantEarning['user_id'], __('control.earning.participant_earning'));
                     }
 
                     // İşlem başarılı olduysa durumu COMPLETED olarak güncelle
                     $this->earningReport->status = EarningReportStatusEnum::COMPLETED->value;
-                    Log::info('Earning report ID: ' . $this->earningReport->id . ' marked as COMPLETED with label earning: ' . $labelFinalEarning . ' and total participant earnings: ' . $totalParticipantEarnings);
+                    Log::info('Earning report ID: '.$this->earningReport->id.' marked as COMPLETED with label earning: '.$labelFinalEarning.' and total participant earnings: '.$totalParticipantEarnings);
                     $this->earningReport->save();
                     DB::commit();
                 } else {
                     // Şarkı bulunamazsa durumu FAILED olarak güncelle
-                    Log::warning('Song not found for ISRC code: ' . $this->earningReport->isrc_code);
+                    Log::warning('Song not found for ISRC code: '.$this->earningReport->isrc_code);
                     $this->earningReport->status = EarningReportStatusEnum::FAILED->value;
                     $this->earningReport->save();
                     DB::commit();
                 }
             } catch (\Exception $e) {
                 // Herhangi bir hata olursa durumu FAILED olarak güncelle
-                Log::error('EarningJob failed for earning report ID: ' . $this->earningReport->id . ' with error: ' . $e->getMessage());
+                Log::error('EarningJob failed for earning report ID: '.$this->earningReport->id.' with error: '.$e->getMessage());
                 $this->earningReport->status = EarningReportStatusEnum::FAILED->value;
                 $this->earningReport->save();
                 DB::rollBack();
@@ -122,7 +124,7 @@ class EarningJob implements ShouldQueue
         $labelUser = $this->song->broadcasts()->first()->label?->user;
         $labelCommissionRate = $labelUser->commission_rate;
         $labelShare = bcmul($this->balance, bcdiv($labelCommissionRate, '100'));
-        Log::info('Label commission rate: ' . $labelCommissionRate . ' Label share: ' . $labelShare);
+        Log::info('Label commission rate: '.$labelCommissionRate.' Label share: '.$labelShare);
         $this->balance = bcsub($this->balance, $labelShare);
         return $labelShare;
     }
@@ -141,7 +143,7 @@ class EarningJob implements ShouldQueue
                         'earning' => $this->roundEarning($participantEarning)
                     ];
 
-                    Log::info('Participant earning: ' . $participantEarning . ' for user ID: ' . $user->id);
+                    Log::info('Participant earning: '.$participantEarning.' for user ID: '.$user->id);
 
                     // Üst kullanıcıya pay ekle
                     $this->distributeToUpperUsers($participantEarnings, $user, $participantEarning);
@@ -163,13 +165,13 @@ class EarningJob implements ShouldQueue
                     'user_id' => $upperUser->id,
                     'earning' => $this->roundEarning($upperEarning)
                 ];
-                Log::info('Upper user earning: ' . $upperEarning . ' for upper user ID: ' . $upperUser->id);
+                Log::info('Upper user earning: '.$upperEarning.' for upper user ID: '.$upperUser->id);
                 $user = $upperUser;
                 $upperUser = $upperUser->parent_user;
                 $earning = $upperEarning;
             }
         } catch (\Exception $e) {
-            Log::error('Failed to distribute earnings to upper users: ' . $e->getMessage());
+            Log::error('Failed to distribute earnings to upper users: '.$e->getMessage());
         }
     }
 
@@ -209,14 +211,14 @@ class EarningJob implements ShouldQueue
     {
         // Eğer kazanç 15 ondalık haneden büyükse aşağı yönde yuvarla
         if (strlen(substr(strrchr($earning, "."), 1)) > 15) {
-            Log::info('Earning amount before rounding: ' . $earning);
+            Log::info('Earning amount before rounding: '.$earning);
             $roundedEarning = bcadd($earning, '0', 15);
-            Log::info('Earning amount after rounding: ' . $roundedEarning);
+            Log::info('Earning amount after rounding: '.$roundedEarning);
             return $roundedEarning;
         }
         // Eğer kazanç 15 ondalık haneden küçükse, 15 ondalık haneye tamamla
         $completedEarning = bcadd($earning, '0', 15);
-        Log::info('Earning amount completed to 15 decimal places: ' . $completedEarning);
+        Log::info('Earning amount completed to 15 decimal places: '.$completedEarning);
         return $completedEarning;
     }
 }

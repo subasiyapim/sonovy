@@ -47,8 +47,8 @@ class SiteFeatureStoreRequest extends FormRequest
     {
         return [
             'icon' => __('control.site_features.form.icon'),
-            'title' => __('panel.site_features.form.title'),
-            'text' => __('panel.site_features.form.text'),
+            'title' => __('control.site_features.form.title'),
+            'text' => __('control.site_features.form.text'),
         ];
     }
 }

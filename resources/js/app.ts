@@ -2,12 +2,14 @@ import '../css/app.css';
 import './bootstrap';
 import '../css/general.scss';
 
-import { createInertiaApp } from '@inertiajs/vue3';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createApp, DefineComponent, h } from 'vue';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import {createInertiaApp} from '@inertiajs/vue3';
+import {resolvePageComponent} from 'laravel-vite-plugin/inertia-helpers';
+import {createApp, DefineComponent, h} from 'vue';
+import {ZiggyVue} from '../../vendor/tightenco/ziggy';
 import debounce from './Directives/Debounce';
 import clickOutside from './Directives/ClickOutside';
+import {createPinia} from 'pinia';
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 import VueTippy from 'vue-tippy'
@@ -22,8 +24,8 @@ createInertiaApp({
             `./Pages/${name}.vue`,
             import.meta.glob<DefineComponent>('./Pages/**/*.vue'),
         ),
-    setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
+    setup({el, App, props, plugin}) {
+        createApp({render: () => h(App, props)})
             .directive('debounce', (el, binding) => debounce(el, binding))
             .directive('click-outside', clickOutside)
             .use(VueTippy,
@@ -40,6 +42,7 @@ createInertiaApp({
             )
             .use(plugin)
             .use(ZiggyVue)
+            .use(createPinia())
             .mount(el);
     },
     progress: {

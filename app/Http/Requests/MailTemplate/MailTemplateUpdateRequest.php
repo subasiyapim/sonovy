@@ -34,10 +34,10 @@ class MailTemplateUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'code' => __('panel.mail_template.form.code'),
-            'name' => __('panel.mail_template.form.name'),
-            'translations.*.subject' => __('panel.mail_template.form.subject'),
-            'translations.*.body' => __('panel.mail_template.form.body'),
+            'code' => __('control.mail_template.form.code'),
+            'name' => __('control.mail_template.form.name'),
+            'translations.*.subject' => __('control.mail_template.form.subject'),
+            'translations.*.body' => __('control.mail_template.form.body'),
         ];
     }
 }

@@ -43,7 +43,8 @@ class BankController extends Controller
         return redirect()
             ->back()
             ->with([
-                'notification' => __('panel.notification_created', ['model' => __('panel.bank_account.title_singular')])
+                'notification' => __('control.notification_created',
+                    ['model' => __('control.bank_account.title_singular')])
             ]);
 
     }
@@ -74,7 +75,8 @@ class BankController extends Controller
         return redirect()
             ->back()
             ->with([
-                'notification' => __('panel.notification_updated', ['model' => __('panel.bank_account.title_singular')])
+                'notification' => __('control.notification_updated',
+                    ['model' => __('control.bank_account.title_singular')])
             ]);
 
     }
@@ -86,7 +88,8 @@ class BankController extends Controller
         return redirect()
             ->back()
             ->with([
-                'notification' => __('panel.notification_deleted', ['model' => __('panel.bank_account.title_singular')])
+                'notification' => __('control.notification_deleted',
+                    ['model' => __('control.bank_account.title_singular')])
             ]);
 
     }

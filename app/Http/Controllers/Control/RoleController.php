@@ -48,7 +48,9 @@ class RoleController extends Controller
         $role->permissions()->sync($request->permissions);
 
         return to_route('dashboard.roles.index')
-            ->with(['notification' => __('panel.notification_created', ['model' => __('panel.role.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_created', ['model' => __('control.role.title_singular')])
+            ]);
     }
 
     /**
@@ -88,7 +90,9 @@ class RoleController extends Controller
         $role->permissions()->sync($request->permissions);
 
         return to_route('dashboard.roles.index')
-            ->with(['notification' => __('panel.notification_updated', ['model' => __('panel.role.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_updated', ['model' => __('control.role.title_singular')])
+            ]);
     }
 
     /**
@@ -103,7 +107,9 @@ class RoleController extends Controller
         }
 
         return to_route('dashboard.roles.index')
-            ->with(['notification' => __('panel.notification_deleted', ['model' => __('panel.role.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_deleted', ['model' => __('control.role.title_singular')])
+            ]);
 
     }
 }

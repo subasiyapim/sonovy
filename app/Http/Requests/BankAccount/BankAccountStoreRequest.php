@@ -34,10 +34,10 @@ class BankAccountStoreRequest extends FormRequest
     {
         return [
             'title' => __('control.bank_account.form.title'),
-            'country_id' => __('panel.bank_account.form.country'),
-            'name' => __('panel.bank_account.form.name'),
-            'iban' => __('panel.bank_account.form.iban'),
-            'swift' => __('panel.bank_account.form.swift'),
+            'country_id' => __('control.bank_account.form.country'),
+            'name' => __('control.bank_account.form.name'),
+            'iban' => __('control.bank_account.form.iban'),
+            'swift' => __('control.bank_account.form.swift'),
         ];
 
     }

@@ -68,7 +68,7 @@ class PlanController extends Controller
 
         return to_route('dashboard.plans.index')
             ->with(
-                ['notification' => __('panel.notification_created', ['model' => __('panel.plan.title_singular')])]
+                ['notification' => __('control.notification_created', ['model' => __('control.plan.title_singular')])]
             );
     }
 
@@ -117,7 +117,7 @@ class PlanController extends Controller
 
         return to_route('dashboard.plans.index')
             ->with(
-                ['notification' => __('panel.notification_updated', ['model' => __('panel.plan.title_singular')])]
+                ['notification' => __('control.notification_updated', ['model' => __('control.plan.title_singular')])]
             );
     }
 
@@ -134,7 +134,7 @@ class PlanController extends Controller
 
         return to_route('dashboard.plans.index')
             ->with(
-                ['notification' => __('panel.notification_deleted', ['model' => __('panel.plan.title_singular')])]
+                ['notification' => __('control.notification_deleted', ['model' => __('control.plan.title_singular')])]
             );
     }
 
@@ -146,7 +146,7 @@ class PlanController extends Controller
 
         return to_route('dashboard.plans.index')
             ->with(
-                ['notification' => __('panel.notification_updated', ['model' => __('panel.plan.title_singular')])]
+                ['notification' => __('control.notification_updated', ['model' => __('control.plan.title_singular')])]
             );
     }
 }

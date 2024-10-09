@@ -70,6 +70,8 @@ class SiteController extends Controller
         DB::commit();
 
         return redirect()->back()
-            ->with(['notification' => __('panel.notification_created', ['model' => __('panel.site.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_created', ['model' => __('control.site.title_singular')])
+            ]);
     }
 }

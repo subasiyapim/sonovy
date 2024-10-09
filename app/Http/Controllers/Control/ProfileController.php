@@ -45,7 +45,7 @@ class ProfileController extends Controller
 
         foreach ($available_plan_items as $key => $value) {
             $available_plan_items[$key] = [
-                'name' => __('panel.plan_item.plan_items.'.$key),
+                'name' => __('control.plan_item.plan_items.'.$key),
                 'count' => $value,
             ];
         }
@@ -74,7 +74,9 @@ class ProfileController extends Controller
         }
 
         return redirect()->back()
-            ->with(['notification' => __('panel.notification_updated', ['model' => __('panel.user.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+            ]);
     }
 
     public function updateBillInfo(InvoiceInfoUpdateRequest $request)
@@ -86,7 +88,9 @@ class ProfileController extends Controller
         $user->save();
 
         return redirect()->back()
-            ->with(['notification' => __('panel.notification_updated', ['model' => __('panel.user.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+            ]);
     }
 
     public function updateUserBillInfo(InvoiceInfoUpdateRequest $request)
@@ -99,7 +103,9 @@ class ProfileController extends Controller
         $user->save();
 
         return redirect()->back()
-            ->with(['notification' => __('panel.notification_updated', ['model' => __('panel.user.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+            ]);
     }
 
     public function addCreditCard(Request $request)
@@ -113,10 +119,10 @@ class ProfileController extends Controller
 
         $validation->setAttributeNames(
             [
-                'card_number' => __('panel.profile.credit_card.form.card_number'),
-                'card_holder' => __('panel.profile.credit_card.form.card_holder'),
-                'expiration_date' => __('panel.profile.credit_card.form.expiration_date'),
-                'cvv' => __('panel.profile.credit_card.form.cvv'),
+                'card_number' => __('control.profile.credit_card.form.card_number'),
+                'card_holder' => __('control.profile.credit_card.form.card_holder'),
+                'expiration_date' => __('control.profile.credit_card.form.expiration_date'),
+                'cvv' => __('control.profile.credit_card.form.cvv'),
             ]
         );
 
@@ -134,7 +140,9 @@ class ProfileController extends Controller
         $user->update(['credit_cards' => $credit_cards]);
 
         return redirect()->back()
-            ->with(['notification' => __('panel.notification_updated', ['model' => __('panel.user.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+            ]);
     }
 
     public function setDefaultCreditCard(Request $request)
@@ -151,7 +159,9 @@ class ProfileController extends Controller
         $user->update(['credit_cards' => $credit_cards]);
 
         return redirect()->back()
-            ->with(['notification' => __('panel.notification_updated', ['model' => __('panel.user.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+            ]);
     }
 
     public function updateCreditCard(Request $request)
@@ -167,10 +177,10 @@ class ProfileController extends Controller
 
         $validation->setAttributeNames(
             [
-                'card_number' => __('panel.profile.credit_card.form.card_number'),
-                'card_holder' => __('panel.profile.credit_card.form.card_holder'),
-                'expiration_date' => __('panel.profile.credit_card.form.expiration_date'),
-                'cvv' => __('panel.profile.credit_card.form.cvv'),
+                'card_number' => __('control.profile.credit_card.form.card_number'),
+                'card_holder' => __('control.profile.credit_card.form.card_holder'),
+                'expiration_date' => __('control.profile.credit_card.form.expiration_date'),
+                'cvv' => __('control.profile.credit_card.form.cvv'),
             ]
         );
 
@@ -187,7 +197,8 @@ class ProfileController extends Controller
 
         return redirect()->back()
             ->with([
-                'notification' => __('panel.notification_updated', ['model' => __('panel.profile.credit_card.title')])
+                'notification' => __('control.notification_updated',
+                    ['model' => __('control.profile.credit_card.title')])
             ]);
     }
 
@@ -203,7 +214,8 @@ class ProfileController extends Controller
 
         return redirect()->back()
             ->with([
-                'notification' => __('panel.notification_updated', ['model' => __('panel.profile.credit_card.title')])
+                'notification' => __('control.notification_updated',
+                    ['model' => __('control.profile.credit_card.title')])
             ]);
     }
 

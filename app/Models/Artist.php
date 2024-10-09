@@ -120,6 +120,12 @@ class Artist extends Model implements HasMedia
         return $this->belongsTo(User::class, 'added_by');
     }
 
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'artist_product', 'artist_id', 'product_id')
+            ->withPivot(['is_main']);
+    }
+
     public function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');

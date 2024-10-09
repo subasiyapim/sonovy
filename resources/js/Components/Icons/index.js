@@ -37,6 +37,9 @@ import LockIcon from './LockIcon.vue';
 import LoginIcon from './LoginIcon.vue';
 import SendIcon from './SendIcon.vue';
 import InfoFilledIcon from './InfoFilledIcon.vue';
+import SpotifyIcon from './SpotifyIcon.vue';
+import AppleMusicIcon from './AppleMusicIcon.vue';
+
 export {
     AddIcon,
     DashboardIcon,
@@ -74,5 +77,7 @@ export {
     EyeOffIcon,
     LoginIcon,
     SendIcon,
-    InfoFilledIcon
+    InfoFilledIcon,
+    SpotifyIcon,
+    AppleMusicIcon,
 }

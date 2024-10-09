@@ -35,7 +35,7 @@ class ArtistBranchesRequest extends FormRequest
         return [
             'translations' => 'required|array',
             'translations.*.name' => 'required|string|unique:artist_branch_translations,name',
-            'translations.*.locale' => 'nullable|string|in:' . implode(',', LocaleService::getLocalizationList()),
+            'translations.*.locale' => 'nullable|string|in:'.implode(',', LocaleService::getLocalizationList()),
         ];
 
     }
@@ -44,16 +44,16 @@ class ArtistBranchesRequest extends FormRequest
     {
         return [
             'translations' => 'required|array',
-            'translations.*.name' => 'required|string|unique:artist_branch_translations,name,' . $this->route('artist_branch')->id . ',artist_branch_id',
-            'translations.*.locale' => 'nullable|string|in:' . implode(',', LocaleService::getLocalizationList()),
+            'translations.*.name' => 'required|string|unique:artist_branch_translations,name,'.$this->route('artist_branch')->id.',artist_branch_id',
+            'translations.*.locale' => 'nullable|string|in:'.implode(',', LocaleService::getLocalizationList()),
         ];
     }
 
     public function attributes()
     {
         return [
-            'translations.*.name' => __('panel.artist-branch.form.name'),
-            'translations.*.locale' => __('panel.artist-branch.fields.locale'),
+            'translations.*.name' => __('control.artist-branch.form.name'),
+            'translations.*.locale' => __('control.artist-branch.fields.locale'),
         ];
 
     }

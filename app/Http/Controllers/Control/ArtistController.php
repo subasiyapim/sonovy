@@ -5,13 +5,12 @@ namespace App\Http\Controllers\Control;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Artist\ArtistStoreRequest;
 use App\Http\Requests\Artist\ArtistUpdateRequest;
+use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
 use App\Models\ArtistBranch;
 use App\Models\Platform;
-use App\Services\ArtistBranchServices;
 use App\Services\CountryServices;
 use App\Services\MediaServices;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,7 +23,8 @@ class ArtistController extends Controller
     {
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $artists = Artist::with('artistBranches')->advancedFilter();
+        $artists = ArtistResource::collection(Artist::with('artistBranches')->advancedFilter())->resource;
+
 
         return inertia('Control/Artists/Index', compact('artists'));
 

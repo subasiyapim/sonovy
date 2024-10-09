@@ -101,7 +101,9 @@ class UserController extends Controller
         UserVerifyService::generate($user);
 
         return to_route('dashboard.users.index')
-            ->with(['notification' => __('panel.notification_created', ['model' => __('panel.user.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_created', ['model' => __('control.user.title_singular')])
+            ]);
     }
 
     /**
@@ -203,7 +205,9 @@ class UserController extends Controller
         $user->update($data);
 
         return to_route('dashboard.users.index')
-            ->with(['notification' => __('panel.notification_updated', ['model' => __('panel.user.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+            ]);
 
     }
 
@@ -218,7 +222,9 @@ class UserController extends Controller
 
 
         return to_route('dashboard.users.index')
-            ->with(['notification' => __('panel.notification_deleted', ['model' => __('panel.user.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_deleted', ['model' => __('control.user.title_singular')])
+            ]);
     }
 
     public function search(Request $request)

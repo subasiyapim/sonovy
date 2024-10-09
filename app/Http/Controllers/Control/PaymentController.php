@@ -259,7 +259,7 @@ class  PaymentController extends Controller
                     return to_route('dashboard.profile.detail')
                         ->with([
                             'notification' => [
-                                'message' => __('panel.order.notification_payment_successful'),
+                                'message' => __('control.order.notification_payment_successful'),
                                 'type' => 'success'
                             ]
                         ]);
@@ -274,7 +274,7 @@ class  PaymentController extends Controller
                 return to_route('dashboard.profile.detail')
                     ->with([
                         'notification' => [
-                            'message' => __('panel.order.notification_order_not_found'),
+                            'message' => __('control.order.notification_order_not_found'),
                             'type' => 'error'
                         ]
                     ]);
@@ -284,7 +284,7 @@ class  PaymentController extends Controller
             return to_route('dashboard.profile.detail')
                 ->with([
                     'notification' => [
-                        'message' => __('panel.order.notification_payment_callback_error'),
+                        'message' => __('control.order.notification_payment_callback_error'),
                         'type' => 'error'
                     ]
                 ]);

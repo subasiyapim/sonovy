@@ -104,7 +104,7 @@ class ProductApplyController extends Controller
                 AnnouncementTypeEnum::SITE->value
             ],
             'content_type' => 'success',
-            'content' => $product->name.' '.__('panel.product.successfully_published'),
+            'content' => $product->name.' '.__('control.product.successfully_published'),
             'receivers' => AnnouncementReceiversEnum::SELECTED->value,
             'selected' => [$product->added_by],
             'url' => route('dashboard.broadcasts.show', $product->id)

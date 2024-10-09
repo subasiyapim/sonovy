@@ -93,7 +93,7 @@ class ProductController extends Controller
         $product_types = getDataFromInputFormat(ProductTypeEnum::getTitles(), 'id', 'name', null, true);
         $platforms = Platform::all()->groupBy('type')->map(function ($platforms) {
             return getDataFromInputFormat($platforms, 'id', 'name', 'image');
-        });
+        })->toArray();
         $all_platforms = getDataFromInputFormat(Platform::all(['name', 'id']), 'id', 'name', 'image');
         $publish_country_types = getDataFromInputFormat(ProductPublishedCountryTypeEnum::getTitles(), 'id', 'name',
             null, true);
@@ -163,8 +163,8 @@ class ProductController extends Controller
 
             return redirect()->route('control.products.index')
                 ->with([
-                    'notification' => __('panel.notification_created',
-                        ['model' => __('panel.product.title_singular')])
+                    'notification' => __('control.notification_created',
+                        ['model' => __('control.product.title_singular')])
                 ]);
 
         } catch (Exception $exception) {
@@ -293,7 +293,7 @@ class ProductController extends Controller
 
         return to_route('control.products.index')
             ->with([
-                'notification' => __('panel.notification_updated', ['model' => __('panel.product.title_singular')])
+                'notification' => __('control.notification_updated', ['model' => __('control.product.title_singular')])
             ]);
     }
 
@@ -308,7 +308,7 @@ class ProductController extends Controller
 
         return to_route('control.roles.index')
             ->with([
-                'notification' => __('panel.notification_deleted', ['model' => __('panel.product.title_singular')])
+                'notification' => __('control.notification_deleted', ['model' => __('control.product.title_singular')])
             ]);
     }
 
@@ -358,7 +358,7 @@ class ProductController extends Controller
         if ($result['status']) {
             if (key_exists('isrc', $result['data'])) {
 
-                return response()->json(['status' => false, 'message' => __('panel.product.form.isrc_exist')]);
+                return response()->json(['status' => false, 'message' => __('control.product.form.isrc_exist')]);
             } elseif (key_exists('error', $result['data'])) {
 
                 if ($result['data']['error'] == 'Not Found') {
@@ -366,7 +366,7 @@ class ProductController extends Controller
                     return response()->json(['status' => true]);
                 } elseif ($result['data']['error'] == 'Invalid isrc.') {
 
-                    return response()->json(['status' => false, 'message' => __('panel.product.form.isrc_format')]);
+                    return response()->json(['status' => false, 'message' => __('control.product.form.isrc_format')]);
                 } else {
                     return response()->json(['status' => false, 'message' => $result['data']['error']]);
                 }
@@ -392,8 +392,8 @@ class ProductController extends Controller
 
         return redirect()->back()
             ->with([
-                'notification' => __('panel.notification_created',
-                    ['model' => __('panel.convert_audio.title_singular')])
+                'notification' => __('control.notification_created',
+                    ['model' => __('control.convert_audio.title_singular')])
             ]);
     }
 
@@ -419,8 +419,8 @@ class ProductController extends Controller
 
         return redirect()->back()
             ->with([
-                'notification' => __('panel.notification_created',
-                    ['model' => __('panel.participant.title_singular')])
+                'notification' => __('control.notification_created',
+                    ['model' => __('control.participant.title_singular')])
             ]);
     }
 
@@ -432,8 +432,8 @@ class ProductController extends Controller
 
         return redirect()->back()
             ->with([
-                'notification' => __('panel.notification_deleted',
-                    ['model' => __('panel.participant.title_singular')])
+                'notification' => __('control.notification_deleted',
+                    ['model' => __('control.participant.title_singular')])
             ]);
 
     }

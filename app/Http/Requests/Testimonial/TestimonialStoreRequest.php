@@ -32,7 +32,7 @@ class TestimonialStoreRequest extends FormRequest
         ];
 
         foreach ($langs as $lang) {
-            $arr['text.' . $lang] = ['required', 'string', 'max:1000'];
+            $arr['text.'.$lang] = ['required', 'string', 'max:1000'];
         }
         //dd($arr, $this->all());
         return $arr;
@@ -46,10 +46,10 @@ class TestimonialStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('panel.testimonials.form.name'),
-            'role' => __('panel.testimonials.form.role'),
-            'avatar' => __('panel.testimonials.form.avatar'),
-            'text' => __('panel.testimonials.form.text'),
+            'name' => __('control.testimonials.form.name'),
+            'role' => __('control.testimonials.form.role'),
+            'avatar' => __('control.testimonials.form.avatar'),
+            'text' => __('control.testimonials.form.text'),
         ];
     }
 }

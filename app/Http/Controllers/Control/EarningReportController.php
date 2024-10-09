@@ -128,8 +128,8 @@ class EarningReportController extends Controller
         // Redirect back to the earnings index with a success notification
         return redirect()->route('dashboard.earnings.index')
             ->with([
-                'notification' => __('panel.notification_created',
-                    ['model' => __('panel.earning_report.title_singular')])
+                'notification' => __('control.notification_created',
+                    ['model' => __('control.earning_report.title_singular')])
             ]);
     }
 
@@ -194,7 +194,7 @@ class EarningReportController extends Controller
         $earningReportFile->delete();
 
         return redirect()->route('dashboard.uploaded-earning-report-index')
-            ->with(['notification' => __('panel.notification_deleted', ['model' => __('Rapor dosyası')])]);
+            ->with(['notification' => __('control.notification_deleted', ['model' => __('Rapor dosyası')])]);
     }
 
 
@@ -219,8 +219,8 @@ class EarningReportController extends Controller
 
         return redirect()->route('dashboard.earnings.index')
             ->with([
-                'notification' => __('panel.notification_updated',
-                    ['model' => __('panel.earning_report.title_singular')])
+                'notification' => __('control.notification_updated',
+                    ['model' => __('control.earning_report.title_singular')])
             ]);
     }
 

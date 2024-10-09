@@ -59,7 +59,10 @@ class FeatureController extends Controller
 
         return to_route('dashboard.features.index')
             ->with(
-                ['notification' => __('panel.notification_created', ['model' => __('panel.feature.title_singular')])]
+                [
+                    'notification' => __('control.notification_created',
+                        ['model' => __('control.feature.title_singular')])
+                ]
             );
     }
 
@@ -107,7 +110,10 @@ class FeatureController extends Controller
 
         return to_route('dashboard.features.index')
             ->with(
-                ['notification' => __('panel.notification_updated', ['model' => __('panel.feature.title_singular')])]
+                [
+                    'notification' => __('control.notification_updated',
+                        ['model' => __('control.feature.title_singular')])
+                ]
             );
     }
 
@@ -123,7 +129,10 @@ class FeatureController extends Controller
 
         return to_route('dashboard.features.index')
             ->with(
-                ['notification' => __('panel.notification_deleted', ['model' => __('panel.feature.title_singular')])]
+                [
+                    'notification' => __('control.notification_deleted',
+                        ['model' => __('control.feature.title_singular')])
+                ]
             );
     }
 }

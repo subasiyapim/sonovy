@@ -31,8 +31,8 @@ class ArtistBranchController extends Controller
 
         return to_route('dashboard.artist-branches.index')
             ->with([
-                'notification' => __('panel.notification_created',
-                    ['model' => __('panel.artist-branch.title_singular')])
+                'notification' => __('control.notification_created',
+                    ['model' => __('control.artist-branch.title_singular')])
             ]);
     }
 
@@ -42,8 +42,8 @@ class ArtistBranchController extends Controller
 
         return to_route('dashboard.artist-branches.index')
             ->with([
-                'notification' => __('panel.notification_updated',
-                    ['model' => __('panel.artist-branch.title_singular')])
+                'notification' => __('control.notification_updated',
+                    ['model' => __('control.artist-branch.title_singular')])
             ]);
     }
 
@@ -53,8 +53,8 @@ class ArtistBranchController extends Controller
 
         return to_route('dashboard.artist-branches.index')
             ->with([
-                'notification' => __('panel.notification_deleted',
-                    ['model' => __('panel.artist-branch.title_singular')])
+                'notification' => __('control.notification_deleted',
+                    ['model' => __('control.artist-branch.title_singular')])
             ]);
     }
 

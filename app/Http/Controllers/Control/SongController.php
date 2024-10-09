@@ -88,7 +88,9 @@ class SongController extends Controller
 
 
         return to_route('dashboard.songs.index')
-            ->with(['notification' => __('panel.notification_updated', ['model' => __('panel.song.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_updated', ['model' => __('control.song.title_singular')])
+            ]);
     }
 
     public function destroy(Song $song)
@@ -103,7 +105,7 @@ class SongController extends Controller
                         [
                             'type' => 'error',
                             'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                            'model' => __('panel.song.title_singular')
+                            'model' => __('control.song.title_singular')
                         ]
                 ]);
         }
@@ -191,7 +193,7 @@ class SongController extends Controller
         $song->update($validated);
 
         return redirect()->back()->with([
-            'notification' => __('panel.notification_updated', ['model' => __('panel.song.title_singular')])
+            'notification' => __('control.notification_updated', ['model' => __('control.song.title_singular')])
         ]);
     }
 
@@ -219,7 +221,7 @@ class SongController extends Controller
 
             // Başarılı geri dönüş
             return redirect()->back()->with([
-                'notification' => __('panel.notification_updated', ['model' => __('panel.song.title_singular')])
+                'notification' => __('control.notification_updated', ['model' => __('control.song.title_singular')])
             ]);
 
         } catch (ValidationException $e) {
@@ -232,7 +234,7 @@ class SongController extends Controller
                 'notification' => [
                     'type' => 'error',
                     'text' => $e->getMessage(),
-                    'model' => __('panel.song.title_singular'),
+                    'model' => __('control.song.title_singular'),
                     'code' => $e->getCode() // Hata kodu gönderimi
                 ]
             ])->withInput();

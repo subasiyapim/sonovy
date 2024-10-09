@@ -59,7 +59,7 @@ class MailTemplateController extends Controller
 
         return redirect()->route('dashboard.mail-templates.index')->with([
             'notification' => [
-                'text' => __('panel.notification_created', ['model' => __('panel.mail_template.title_singular')]),
+                'text' => __('control.notification_created', ['model' => __('control.mail_template.title_singular')]),
                 'type' => 'success',
             ]
         ]);
@@ -108,7 +108,7 @@ class MailTemplateController extends Controller
 
         return redirect()->route('dashboard.mail-templates.index')->with([
             'notification' => [
-                'text' => __('panel.notification_updated', ['model' => __('panel.mail_template.title_singular')]),
+                'text' => __('control.notification_updated', ['model' => __('control.mail_template.title_singular')]),
                 'type' => 'success',
             ]
         ]);
@@ -125,7 +125,7 @@ class MailTemplateController extends Controller
 
         return redirect()->route('dashboard.mail-templates.index')->with([
             'notification' => [
-                'text' => __('panel.notification_deleted', ['model' => __('panel.mail_template.title_singular')]),
+                'text' => __('control.notification_deleted', ['model' => __('control.mail_template.title_singular')]),
                 'type' => 'success',
             ]
         ]);

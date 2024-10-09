@@ -64,7 +64,7 @@ class SettingController extends Controller
 
         return to_route('dashboard.settings.index')
             ->with([
-                'notification' => __('panel.notification_updated', ['model' => __('panel.setting.title_singular')])
+                'notification' => __('control.notification_updated', ['model' => __('control.setting.title_singular')])
             ]);
     }
 

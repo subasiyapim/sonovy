@@ -57,13 +57,13 @@ class AnnouncementStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('panel.announcement.form.name'),
-            'type' => __('panel.announcement.form.type'),
-            'content' => __('panel.announcement.form.content'),
-            'send_type' => __('panel.announcement.form.send_type'),
-            'from' => __('panel.announcement.form.from'),
-            'to' => __('panel.announcement.form.to'),
-            'receivers' => __('panel.announcement.form.receivers'),
+            'name' => __('control.announcement.form.name'),
+            'type' => __('control.announcement.form.type'),
+            'content' => __('control.announcement.form.content'),
+            'send_type' => __('control.announcement.form.send_type'),
+            'from' => __('control.announcement.form.from'),
+            'to' => __('control.announcement.form.to'),
+            'receivers' => __('control.announcement.form.receivers'),
         ];
     }
 }

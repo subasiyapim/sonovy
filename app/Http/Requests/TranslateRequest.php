@@ -30,8 +30,8 @@ class TranslateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'source' => __('panel.setting.form.source'),
-            'target' => __('panel.setting.form.target')
+            'source' => __('control.setting.form.source'),
+            'target' => __('control.setting.form.target')
         ];
     }
 }

@@ -29,7 +29,7 @@ class LanguageController extends Controller
             [
                 'notification' => [
                     'type' => 'success',
-                    'message' => __('panel.general.success_message')
+                    'message' => __('control.general.success_message')
                 ]
             ]
         );

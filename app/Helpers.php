@@ -38,14 +38,19 @@ if (!function_exists('getLocalizationList')) {
 if (!function_exists('getDataFromInputFormat')) {
     /**
      * @param $data
-     * @param $key
-     * @param $label
+     * @param  [string, integer]  $key
+     * @param  string  $label
      * @param $iconKey
-     * @param $isEnum
+     * @param  boolean  $isEnum
      * @return array
      */
-    function getDataFromInputFormat($data, $key = 'id', $label = 'name', $iconKey = null, $isEnum = false): array
-    {
+    function getDataFromInputFormat(
+        $data,
+        $key = 'id',
+        string $label = 'name',
+        $iconKey = null,
+        bool $isEnum = false
+    ): array {
         $result = [];
 
         if ($isEnum) {

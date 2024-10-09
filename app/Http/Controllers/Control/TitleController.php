@@ -38,7 +38,9 @@ class TitleController extends Controller
         Title::create($request->validated()["translations"]);
 
         return to_route('dashboard.titles.index')
-            ->with(['notification' => __('panel.notification_created', ['model' => __('panel.title.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_created', ['model' => __('control.title.title_singular')])
+            ]);
     }
 
     /**
@@ -65,7 +67,9 @@ class TitleController extends Controller
         $title->update($request->validated()["translations"]);
 
         return to_route('dashboard.titles.index')
-            ->with(['notification' => __('panel.notification_updated', ['model' => __('panel.title.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_updated', ['model' => __('control.title.title_singular')])
+            ]);
     }
 
     /**
@@ -78,6 +82,8 @@ class TitleController extends Controller
         $title->delete();
 
         return to_route('dashboard.titles.index')
-            ->with(['notification' => __('panel.notification_deleted', ['model' => __('panel.title.title_singular')])]);
+            ->with([
+                'notification' => __('control.notification_deleted', ['model' => __('control.title.title_singular')])
+            ]);
     }
 }

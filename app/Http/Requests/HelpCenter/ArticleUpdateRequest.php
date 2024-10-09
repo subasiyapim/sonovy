@@ -51,7 +51,7 @@ class ArticleUpdateRequest extends FormRequest
             'image' => __('control.help_center.form.image'),
             'title' => __('control.help_center.form.question'),
             'subtitle' => __('control.help_center.form.answer'),
-            'description' => __('panel.help_center.form.question'),
+            'description' => __('control.help_center.form.question'),
         ];
     }
 }

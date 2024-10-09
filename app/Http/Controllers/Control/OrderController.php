@@ -71,7 +71,7 @@ class  OrderController extends Controller
                 return to_route('dashboard.profile.detail')
                     ->with([
                         'notification' => [
-                            'message' => __('panel.order.notification_payment_successful'),
+                            'message' => __('control.order.notification_payment_successful'),
                             'type' => 'success'
                         ]
                     ]);
@@ -117,7 +117,7 @@ class  OrderController extends Controller
                     return to_route('dashboard.profile.detail')
                         ->with([
                             'notification' => [
-                                'message' => __('panel.order.notification_payment_successful'),
+                                'message' => __('control.order.notification_payment_successful'),
                                 'type' => 'success'
                             ]
                         ]);
@@ -166,7 +166,7 @@ class  OrderController extends Controller
                 return ['status' => true];
             } else {
 
-                return ['status' => false, 'message' => __('panel.order.notification_payment_successful')];
+                return ['status' => false, 'message' => __('control.order.notification_payment_successful')];
             }
         } else { // Payment With Card
 
