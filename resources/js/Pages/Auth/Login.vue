@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue'
+import {FormElement} from '@/Components/Form'
+import {PrimaryButton} from '@/Components/Buttons'
+import {LoginIcon} from '@/Components/Icons'
 import { Head, Link, useForm } from '@inertiajs/vue3';
-
-defineProps<{
-    canResetPassword?: boolean;
-    status?: string;
-}>();
-
 const form = useForm({
     email: '',
     password: '',
     remember: false,
 });
+
 
 const submit = () => {
     form.post(route('login'), {
@@ -28,71 +21,26 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Log in" />
-
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
-            {{ status }}
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4 block">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
-                        >Remember me</span
-                    >
-                </label>
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                >
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Log in
-                </PrimaryButton>
+    <AuthLayout>
+         <h1  class="label-xl c-strong-950 !text-center"> Tekrardan Hoşgeldiniz </h1>
+         <p class="paragraph-sm c-sub-600 !text-center mb-6"> Yayınlarınızı yönetmek için giriş yapın </p>
+        <form @submit.prevent="submit" class="flex flex-col gap-3">
+            <FormElement v-model="form.email" direction="vertical" label="Email Adresi" placeholder="hello@muzikdagitim.com"></FormElement>
+            <FormElement v-model="form.password" direction="vertical" label="Şifre" type="password" placeholder="• • • • • • • • • • "></FormElement>
+           <div class="text-end">
+             <a :href="route('password.request')" class="label-xs c-neutral-500">Şifremi Unuttum</a>
+           </div>
+            <PrimaryButton @click="submit">
+                <template #suffix>
+                    <LoginIcon class="ms-1" color="var(--dark-green-500)" />
+                </template>
+                Giriş Yap
+            </PrimaryButton>
+            <div class="flex items-center gap-1 justify-center my-3">
+                    <p class="label-xs c-sub-600">Hesabınız yok mu?</p>
+                    <a href="/register" class="label-xs c-dark-green-600">Hesap Oluştur</a>
             </div>
         </form>
-    </GuestLayout>
+    </AuthLayout>
+
 </template>

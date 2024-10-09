@@ -1,0 +1,19 @@
+
+
+
+<template>
+
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0.960111 5.98628C0.568611 5.85578 0.564861 5.64503 0.967611 5.51078L15.2829 0.73928C15.6796 0.60728 15.9069 0.82928 15.7959 1.21778L11.7054 15.5323C11.5929 15.929 11.3641 15.9425 11.1961 15.566L8.50061 9.50003L13.0006 3.50003L7.00061 8.00003L0.960111 5.98628Z" :fill="color"/>
+</svg>
+
+
+
+</template>
+<script setup>
+const props =defineProps({
+        color:{
+            default:'white'
+        }
+});
+</script>

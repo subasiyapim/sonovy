@@ -1,66 +1,37 @@
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-
-defineProps<{
-    status?: string;
-}>();
-
+import AuthLayout from '@/Layouts/AuthLayout.vue'
+import {FormElement} from '@/Components/Form'
+import {PrimaryButton} from '@/Components/Buttons'
+import {LockIcon,ChevronLeftIcon,SendIcon} from '@/Components/Icons'
+import { Head, Link, useForm } from '@inertiajs/vue3';
 const form = useForm({
     email: '',
+    password: '',
+    remember: false,
 });
-
-const submit = () => {
-    form.post(route('password.email'));
-};
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Forgot Password" />
+    <AuthLayout>
+        <template #icon>
+            <LockIcon color="var(--strong-950)" />
+        </template>
+         <h1  class="label-xl c-strong-950 !text-center"> Şifremi Sıfırla </h1>
+         <p class="paragraph-sm c-sub-600 !text-center mb-6"> Şifrenizi sıfırlamak için e-posta adresinize 6 haneli sıfırlama kodu göndereceğiz. </p>
+        <form @submit.prevent="submit" class="flex flex-col gap-3">
+            <FormElement direction="vertical" label="Email Adresi" placeholder="hello@muzikdagitim.com"></FormElement>
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            Forgot your password? No problem. Just let us know your email
-            address and we will email you a password reset link that will allow
-            you to choose a new one.
-        </div>
 
-        <div
-            v-if="status"
-            class="mb-4 text-sm font-medium text-green-600 dark:text-green-400"
-        >
-            {{ status }}
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Email Password Reset Link
-                </PrimaryButton>
-            </div>
+            <PrimaryButton>
+                Kod Gönder
+                <template #suffix>
+                    <SendIcon class="ms-1" color="var(--dark-green-500)" />
+                </template>
+            </PrimaryButton>
+            <div class="text-end">
+             <a :href="route('login')" class="label-xs c-neutral-500 flex items-center gap-1 justify-center mt-2"> <ChevronLeftIcon color="var(--neutral-500)" /> Geri Dön</a>
+           </div>
         </form>
-    </GuestLayout>
+    </AuthLayout>
+
 </template>

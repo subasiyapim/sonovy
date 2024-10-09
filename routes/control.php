@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Control\BroadcastController;
 use App\Http\Controllers\Control\DashboardController;
 use App\Http\Controllers\Control\ArtistController;
+use App\Http\Controllers\Control\LabelController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Control\RoleController;
