@@ -28,9 +28,9 @@ enum AlbumTypeEnum: int
     public function title()
     {
         return match ($this) {
-            self::SINGLE => __('panel.album.type_single'),
-            self::ALBUM => __('panel.album.type_album'),
-            self::EP => __('panel.album.type_ep'),
+            self::SINGLE => __('control.album.type_single'),
+            self::ALBUM => __('control.album.type_album'),
+            self::EP => __('control.album.type_ep'),
         };
     }
 }

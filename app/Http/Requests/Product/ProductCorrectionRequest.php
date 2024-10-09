@@ -36,7 +36,7 @@ class ProductCorrectionRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'correction' => __('panel.broadcasts-apply.correction')
+            'correction' => __('control.broadcasts-apply.correction')
         ];
     }
 }

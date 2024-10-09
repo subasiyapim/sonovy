@@ -29,10 +29,10 @@ enum UserTypeEnum: int
     public function title()
     {
         return match ($this) {
-            self::ARTIST => __('panel.user.type_artist'),
-            self::LABEL => __('panel.user.type_label'),
-            self::DISTRIBUTOR => __('panel.user.type_distributor'),
-            self::ADMIN => __('panel.user.type_admin'),
+            self::ARTIST => __('control.user.type_artist'),
+            self::LABEL => __('control.user.type_label'),
+            self::DISTRIBUTOR => __('control.user.type_distributor'),
+            self::ADMIN => __('control.user.type_admin'),
         };
     }
 }

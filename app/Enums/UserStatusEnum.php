@@ -28,9 +28,9 @@ enum UserStatusEnum: int
     public function title()
     {
         return match ($this) {
-            self::PENDING_APPROVAL => __('panel.user.status_enum.status_pending_approval'),
-            self::ACTIVE => __('panel.user.status_enum.status_active'),
-            self::PASSIVE => __('panel.user.status_enum.status_passive'),
+            self::PENDING_APPROVAL => __('control.user.status_enum.status_pending_approval'),
+            self::ACTIVE => __('control.user.status_enum.status_active'),
+            self::PASSIVE => __('control.user.status_enum.status_passive'),
         };
     }
 }

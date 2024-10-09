@@ -33,8 +33,8 @@ class FeatureUpdateRequest extends FormRequest
             'description' => 'required|array',
         ];
         foreach ($langs as $lang) {
-            $arr['title.' . $lang] = ['required', 'string', 'max:255'];
-            $arr['description.' . $lang] = ['required', 'string', 'max:5000'];
+            $arr['title.'.$lang] = ['required', 'string', 'max:255'];
+            $arr['description.'.$lang] = ['required', 'string', 'max:5000'];
         }
         return $arr;
     }
@@ -42,12 +42,12 @@ class FeatureUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            /*'period' => __('panel.feature.form.period'),
-            'limit' => __('panel.feature.form.limit'),*/
-            'is_active' => __('panel.feature.form.is_active'),
-            'amount' => __('panel.feature.form.amount'),
-            'title.*.name' => __('panel.feature.form.title'),
-            'description.*.description' => __('panel.feature.form.description'),
+            /*'period' => __('control.feature.form.period'),
+            'limit' => __('control.feature.form.limit'),*/
+            'is_active' => __('control.feature.form.is_active'),
+            'amount' => __('control.feature.form.amount'),
+            'title.*.name' => __('control.feature.form.title'),
+            'description.*.description' => __('control.feature.form.description'),
         ];
     }
 }

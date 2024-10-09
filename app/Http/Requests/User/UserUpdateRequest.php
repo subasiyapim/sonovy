@@ -27,7 +27,7 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'email' => 'required|email|unique:users,email,' . $this->route('user')->id,
+            'email' => 'required|email|unique:users,email,'.$this->route('user')->id,
             'role_id' => ['required', 'exists:roles,id'],
             'commission_rate' => ['nullable', 'numeric', 'min:0.1', 'max:99.99'],
             'gender' => ['nullable', 'in:1,0'],
@@ -48,7 +48,7 @@ class UserUpdateRequest extends FormRequest
             'platforms' => ['required_if:access_all_platforms,0', 'array'],
             'platforms.*.id' => ['required_if:access_all_platforms,0', 'exists:platforms,id'],
 
-            'phone' => 'required|string|unique:users,phone,' . $this->route('user')->id,
+            'phone' => 'required|string|unique:users,phone,'.$this->route('user')->id,
             'password' => 'nullable|string|min:6',
 
             //'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
@@ -59,12 +59,12 @@ class UserUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('panel.user.form.name.label'),
-            'email' => __('panel.user.form.email.label'),
-            'country_id' => __('panel.user.form.country_id.label'),
-            'phone' => __('panel.user.form.phone.label'),
-            'password' => __('panel.user.form.password.label'),
-            'role_id' => __('panel.user.form.role_id.label'),
+            'name' => __('control.user.form.name.label'),
+            'email' => __('control.user.form.email.label'),
+            'country_id' => __('control.user.form.country_id.label'),
+            'phone' => __('control.user.form.phone.label'),
+            'password' => __('control.user.form.password.label'),
+            'role_id' => __('control.user.form.role_id.label'),
         ];
     }
 }

@@ -43,11 +43,11 @@ class CopyrightStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'broadcast_type' => __('panel.copyright.fields.broadcast_type'),
-            'platform' => __('panel.copyright.fields.platform'),
-            'type' => __('panel.copyright.fields.type'),
-            'product_id' => __('panel.copyright.fields.product_id'),
-            'songs' => __('panel.copyright.fields.songs'),
+            'broadcast_type' => __('control.copyright.fields.broadcast_type'),
+            'platform' => __('control.copyright.fields.platform'),
+            'type' => __('control.copyright.fields.type'),
+            'product_id' => __('control.copyright.fields.product_id'),
+            'songs' => __('control.copyright.fields.songs'),
 
         ];
     }

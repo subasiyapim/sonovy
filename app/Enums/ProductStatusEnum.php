@@ -25,12 +25,12 @@ enum ProductStatusEnum: string
     public function title()
     {
         return match ($this) {
-            self::NEW => __('panel.product.status_new'),
-            self::WAITING_FOR_APPROVAL => __('panel.product.status_waiting'),
-            self::APPROVED => __('panel.product.status_approved'),
-            self::REJECTED => __('panel.product.status_rejected'),
-            self::NOT_BROADCASTING => __('panel.product.status_not_producting'),
-            self::DRAFT => __('panel.product.status_draft'),
+            self::NEW => __('control.product.status_new'),
+            self::WAITING_FOR_APPROVAL => __('control.product.status_waiting'),
+            self::APPROVED => __('control.product.status_approved'),
+            self::REJECTED => __('control.product.status_rejected'),
+            self::NOT_BROADCASTING => __('control.product.status_not_producting'),
+            self::DRAFT => __('control.product.status_draft'),
         };
     }
 }

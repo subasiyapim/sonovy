@@ -33,8 +33,8 @@ class RegisterRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'email' => __('panel.auth.form.email'),
-            'password' => __('panel.auth.form.password')
+            'email' => __('control.auth.form.email'),
+            'password' => __('control.auth.form.password')
         ];
     }
 

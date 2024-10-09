@@ -26,9 +26,9 @@ enum ProductTypeEnum: int
     public function title()
     {
         return match ($this) {
-            self::SOUND => __('panel.broadcast.type_audio'),
-            self::VIDEO => __('panel.broadcast.type_video'),
-            self::RINGTONE => __('panel.broadcast.type_ringtone'),
+            self::SOUND => __('control.broadcast.type_audio'),
+            self::VIDEO => __('control.broadcast.type_video'),
+            self::RINGTONE => __('control.broadcast.type_ringtone'),
         };
     }
 }

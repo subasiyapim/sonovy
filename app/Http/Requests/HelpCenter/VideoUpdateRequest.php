@@ -30,7 +30,7 @@ class VideoUpdateRequest extends FormRequest
         ];
 
         foreach ($langs as $lang) {
-            $arr['title.' . $lang] = ['required', 'string', 'max:255'];
+            $arr['title.'.$lang] = ['required', 'string', 'max:255'];
         }
         //dd($arr, $this->all());
         return $arr;
@@ -44,7 +44,7 @@ class VideoUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'title' => __('panel.faq.form.question'),
+            'title' => __('control.faq.form.question'),
         ];
     }
 }

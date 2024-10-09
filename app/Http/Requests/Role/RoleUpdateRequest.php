@@ -35,8 +35,8 @@ class RoleUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('panel.role.form.name'),
-            'permissions' => __('panel.role.form.permissions')
+            'name' => __('control.role.form.name'),
+            'permissions' => __('control.role.form.permissions')
         ];
     }
 

@@ -31,8 +31,8 @@ class SiteFeatureStoreRequest extends FormRequest
         ];
 
         foreach ($langs as $lang) {
-            $arr['title.' . $lang] = ['required', 'string', 'max:255'];
-            $arr['text.' . $lang] = ['required', 'string', 'max:1000'];
+            $arr['title.'.$lang] = ['required', 'string', 'max:255'];
+            $arr['text.'.$lang] = ['required', 'string', 'max:1000'];
         }
         //dd($arr, $this->all());
         return $arr;
@@ -46,7 +46,7 @@ class SiteFeatureStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'icon' => __('panel.site_features.form.icon'),
+            'icon' => __('control.site_features.form.icon'),
             'title' => __('panel.site_features.form.title'),
             'text' => __('panel.site_features.form.text'),
         ];

@@ -27,9 +27,9 @@ enum SongTypeEnum: int
     public function title()
     {
         return match ($this) {
-            self::SOUND => __('panel.song.enums.type_sound'),
-            self::VIDEO => __('panel.song.enums.type_video'),
-            self::RINGTONE => __('panel.song.enums.type_ringtone'),
+            self::SOUND => __('control.song.enums.type_sound'),
+            self::VIDEO => __('control.song.enums.type_video'),
+            self::RINGTONE => __('control.song.enums.type_ringtone'),
         };
     }
 

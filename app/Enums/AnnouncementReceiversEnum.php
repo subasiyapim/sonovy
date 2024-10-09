@@ -40,9 +40,9 @@ enum AnnouncementReceiversEnum: string
     public function title()
     {
         return match ($this) {
-            self::ALL => __('panel.announcement.form.receivers_type_all'),
-            self::SELECTED => __('panel.announcement.form.receivers_type_selected'),
-            self::ALL_BUT => __('panel.announcement.form.receivers_type_all_but'),
+            self::ALL => __('control.announcement.form.receivers_type_all'),
+            self::SELECTED => __('control.announcement.form.receivers_type_selected'),
+            self::ALL_BUT => __('control.announcement.form.receivers_type_all_but'),
         };
     }
 }

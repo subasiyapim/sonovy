@@ -49,12 +49,14 @@ class UserStoreRequest extends FormRequest
             'platforms.*.id' => ['required_if:access_all_platforms,0', 'exists:platforms,id'],
 
             'phone' => 'required|string|unique:users,phone',
-            'password' => ['required', 'string',
+            'password' => [
+                'required', 'string',
                 Password::min(8)
                     ->mixedCase()
                     ->numbers()
                     ->symbols()
-                    ->uncompromised()],
+                    ->uncompromised()
+            ],
 
             //'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ];
@@ -63,23 +65,23 @@ class UserStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('panel.user.form.name.label'),
-            'email' => __('panel.user.form.email.label'),
-            'role_id' => __('panel.user.form.role_id.label'),
-            'commission_rate' => __('panel.user.form.commission_rate.label'),
-            'gender' => __('panel.user.form.gender.label'),
-            'country_id' => __('panel.user.form.country_id.label'),
-            'state_id' => __('panel.user.form.state_id.label'),
-            'city_id' => __('panel.user.form.city_id.label'),
-            'birth_date' => __('panel.user.form.birth_date.label'),
-            'access_all_artist' => __('panel.user.form.access_all_artist.label'),
-            'artists' => __('panel.user.form.artists.label'),
-            'access_all_labels' => __('panel.user.form.access_all_labels.label'),
-            'labels' => __('panel.user.form.labels.label'),
-            'access_all_platforms' => __('panel.user.form.access_all_platforms.label'),
-            'platforms' => __('panel.user.form.platforms.label'),
-            'phone' => __('panel.user.form.phone.label'),
-            'password' => __('panel.user.form.password.label'),
+            'name' => __('control.user.form.name.label'),
+            'email' => __('control.user.form.email.label'),
+            'role_id' => __('control.user.form.role_id.label'),
+            'commission_rate' => __('control.user.form.commission_rate.label'),
+            'gender' => __('control.user.form.gender.label'),
+            'country_id' => __('control.user.form.country_id.label'),
+            'state_id' => __('control.user.form.state_id.label'),
+            'city_id' => __('control.user.form.city_id.label'),
+            'birth_date' => __('control.user.form.birth_date.label'),
+            'access_all_artist' => __('control.user.form.access_all_artist.label'),
+            'artists' => __('control.user.form.artists.label'),
+            'access_all_labels' => __('control.user.form.access_all_labels.label'),
+            'labels' => __('control.user.form.labels.label'),
+            'access_all_platforms' => __('control.user.form.access_all_platforms.label'),
+            'platforms' => __('control.user.form.platforms.label'),
+            'phone' => __('control.user.form.phone.label'),
+            'password' => __('control.user.form.password.label'),
         ];
     }
 }

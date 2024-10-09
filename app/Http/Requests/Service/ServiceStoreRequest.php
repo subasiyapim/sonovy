@@ -31,7 +31,7 @@ class ServiceStoreRequest extends FormRequest
     public function attributes()
     {
         return [
-            'service' => __('panel.site.form.title'),
+            'service' => __('control.site.form.title'),
         ];
     }
 }

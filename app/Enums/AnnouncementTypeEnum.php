@@ -44,10 +44,10 @@ enum AnnouncementTypeEnum: string
     public function title()
     {
         return match ($this) {
-            self::SITE => __('panel.announcement.form.type_site'),
-            self::MAINTENANCE => __('panel.announcement.form.type_maintenance'),
-            self::EMAIL => __('panel.announcement.form.type_email'),  // Fixed typo here
-            self::SMS => __('panel.announcement.form.type_sms'),
+            self::SITE => __('control.announcement.form.type_site'),
+            self::MAINTENANCE => __('control.announcement.form.type_maintenance'),
+            self::EMAIL => __('control.announcement.form.type_email'),  // Fixed typo here
+            self::SMS => __('control.announcement.form.type_sms'),
         };
     }
 }

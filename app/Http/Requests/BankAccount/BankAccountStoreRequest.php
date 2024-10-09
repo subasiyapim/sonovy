@@ -33,7 +33,7 @@ class BankAccountStoreRequest extends FormRequest
     public function attributes()
     {
         return [
-            'title' => __('panel.bank_account.form.title'),
+            'title' => __('control.bank_account.form.title'),
             'country_id' => __('panel.bank_account.form.country'),
             'name' => __('panel.bank_account.form.name'),
             'iban' => __('panel.bank_account.form.iban'),

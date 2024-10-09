@@ -52,10 +52,10 @@ enum OrderStatusEnum: string
     public function title()
     {
         return match ($this) {
-            self::NEW => __('panel.order.enums.new'),
-            self::PAID => __('panel.order.enums.paid'),
-            self::REJECTED => __('panel.order.enums.rejected'),
-            self::FAILED => __('panel.order.enums.failed'),
+            self::NEW => __('control.order.enums.new'),
+            self::PAID => __('control.order.enums.paid'),
+            self::REJECTED => __('control.order.enums.rejected'),
+            self::FAILED => __('control.order.enums.failed'),
         };
     }
 }

@@ -23,7 +23,7 @@ class SiteStoreRequest extends FormRequest
     {
         return [
             'logo' => ['nullable', 'image', 'max:2048'], // 2MB
-            'domain' => ['required', 'string', 'unique:sites,domain,' . auth()->id()],
+            'domain' => ['required', 'string', 'unique:sites,domain,'.auth()->id()],
             'title' => ['required', 'string'],
             'dns' => ['required', 'string'],
             'email' => ['required', 'email'],
@@ -38,17 +38,17 @@ class SiteStoreRequest extends FormRequest
     public function attributes()
     {
         return [
-            'logo' => __('panel.site.form.logo'),
-            'domain' => __('panel.site.form.domain'),
-            'title' => __('panel.site.form.title'),
-            'dns' => __('panel.site.form.dns'),
-            'email' => __('panel.site.form.email'),
-            'copyright_email' => __('panel.site.form.email'),
-            'phone' => __('panel.site.form.phone'),
-            'has_contact_form' => __('panel.site.form.has_contact_form'),
-            'user_id' => __('panel.site.form.user_id'),
-            'language_id' => __('panel.site.form.language_id'),
-            'timezone_id' => __('panel.site.form.timezone_id'),
+            'logo' => __('control.site.form.logo'),
+            'domain' => __('control.site.form.domain'),
+            'title' => __('control.site.form.title'),
+            'dns' => __('control.site.form.dns'),
+            'email' => __('control.site.form.email'),
+            'copyright_email' => __('control.site.form.email'),
+            'phone' => __('control.site.form.phone'),
+            'has_contact_form' => __('control.site.form.has_contact_form'),
+            'user_id' => __('control.site.form.user_id'),
+            'language_id' => __('control.site.form.language_id'),
+            'timezone_id' => __('control.site.form.timezone_id'),
         ];
     }
 }

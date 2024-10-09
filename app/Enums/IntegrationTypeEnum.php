@@ -38,11 +38,11 @@ enum IntegrationTypeEnum: int
     public function title()
     {
         return match ($this) {
-            self::SMS => __('panel.integration.enum_types.sms'),
-            self::EMAIL => __('panel.integration.enum_types.email'),
-            self::PAYMENT_GATEWAY => __('panel.integration.enum_types.payment_gateway'),
-            self::OTHER => __('panel.integration.enum_types.other'),
-            self::DSP_INTEGRATON => __('panel.integration.enum_types.dsp_integration'),
+            self::SMS => __('control.integration.enum_types.sms'),
+            self::EMAIL => __('control.integration.enum_types.email'),
+            self::PAYMENT_GATEWAY => __('control.integration.enum_types.payment_gateway'),
+            self::OTHER => __('control.integration.enum_types.other'),
+            self::DSP_INTEGRATON => __('control.integration.enum_types.dsp_integration'),
         };
     }
 }

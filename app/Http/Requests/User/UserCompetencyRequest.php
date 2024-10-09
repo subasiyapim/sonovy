@@ -32,8 +32,8 @@ class UserCompetencyRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'acr_cloud_analysis' => __('panel.user.competency.fields.acr_cloud_analysis'),
-            'auto_publish' => __('panel.user.competency.fields.auto_publish')
+            'acr_cloud_analysis' => __('control.user.competency.fields.acr_cloud_analysis'),
+            'auto_publish' => __('control.user.competency.fields.auto_publish')
         ];
     }
 }

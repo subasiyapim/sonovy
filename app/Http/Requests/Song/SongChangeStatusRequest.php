@@ -32,9 +32,9 @@ class SongChangeStatusRequest extends FormRequest
     public function attributes()
     {
         return [
-            'id' => __('panel.song.form.id'),
-            'note' => __('panel.song.form.note'),
-            'status' => __('panel.song.form.status'),
+            'id' => __('control.song.form.id'),
+            'note' => __('control.song.form.note'),
+            'status' => __('control.song.form.status'),
         ];
     }
 }

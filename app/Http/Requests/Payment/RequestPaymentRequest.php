@@ -28,7 +28,7 @@ class RequestPaymentRequest extends FormRequest
         return match ($this->process_type) {
             1 => [
                 'process_type' => 'required',
-                'amount' => 'required|numeric|max:' . $earning . '|not_in:0',
+                'amount' => 'required|numeric|max:'.$earning.'|not_in:0',
                 'account_id' => 'required|exists:bank_accounts,id',
             ],
             default => [
@@ -41,8 +41,8 @@ class RequestPaymentRequest extends FormRequest
     public function attributes()
     {
         return [
-            'amount' => __('panel.payment.form.amount'),
-            'account_id' => __('panel.payment.form.account_id'),
+            'amount' => __('control.payment.form.amount'),
+            'account_id' => __('control.payment.form.account_id'),
         ];
 
     }

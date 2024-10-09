@@ -36,7 +36,7 @@ class ProductChangeStatusRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'status' => __('panel.broadcasts-apply.status')
+            'status' => __('control.broadcasts-apply.status')
         ];
     }
 }

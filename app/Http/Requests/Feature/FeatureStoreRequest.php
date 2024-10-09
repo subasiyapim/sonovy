@@ -34,8 +34,8 @@ class FeatureStoreRequest extends FormRequest
             'description' => 'required|array',
         ];
         foreach ($langs as $lang) {
-            $arr['title.' . $lang] = ['required', 'string', 'max:150', 'min:1'];
-            $arr['description.' . $lang] = ['required', 'string', 'max:500', 'min:1'];
+            $arr['title.'.$lang] = ['required', 'string', 'max:150', 'min:1'];
+            $arr['description.'.$lang] = ['required', 'string', 'max:500', 'min:1'];
         }
 
         return $arr;
@@ -54,12 +54,12 @@ class FeatureStoreRequest extends FormRequest
     public function attributes()
     {
         return [
-            'period' => __('panel.feature.form.period'),
-            'limit' => __('panel.feature.form.limit'),
-            'is_active' => __('panel.feature.form.is_active'),
-            'amount' => __('panel.feature.form.amount'),
-            'translations.*.name' => __('panel.feature.form.name'),
-            'translations.*.description' => __('panel.feature.form.description'),
+            'period' => __('control.feature.form.period'),
+            'limit' => __('control.feature.form.limit'),
+            'is_active' => __('control.feature.form.is_active'),
+            'amount' => __('control.feature.form.amount'),
+            'translations.*.name' => __('control.feature.form.name'),
+            'translations.*.description' => __('control.feature.form.description'),
         ];
     }
 }

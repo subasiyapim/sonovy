@@ -34,11 +34,11 @@ class FAQUpdateRequest extends FormRequest
         ];
 
         foreach ($langs as $lang) {
-            $arr['title.' . $lang] = ['required', 'string', 'max:255'];
-            $arr['subtitle.' . $lang] = ['required', 'string', 'max:255'];
-            $arr['description.' . $lang] = ['required', 'string', 'max:5000'];
-            $arr['question.' . $lang] = ['required', 'string', 'max:255'];
-            $arr['answer.' . $lang] = ['required', 'string', 'max:1000'];
+            $arr['title.'.$lang] = ['required', 'string', 'max:255'];
+            $arr['subtitle.'.$lang] = ['required', 'string', 'max:255'];
+            $arr['description.'.$lang] = ['required', 'string', 'max:5000'];
+            $arr['question.'.$lang] = ['required', 'string', 'max:255'];
+            $arr['answer.'.$lang] = ['required', 'string', 'max:1000'];
         }
         //dd($arr, $this->all());
         return $arr;
@@ -52,11 +52,11 @@ class FAQUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'title' => __('panel.help_center.form.question'),
-            'subtitle' => __('panel.help_center.form.answer'),
-            'description' => __('panel.help_center.form.question'),
-            'question' => __('panel.help_center.form.question'),
-            'answer' => __('panel.help_center.form.answer')
+            'title' => __('control.help_center.form.question'),
+            'subtitle' => __('control.help_center.form.answer'),
+            'description' => __('control.help_center.form.question'),
+            'question' => __('control.help_center.form.question'),
+            'answer' => __('control.help_center.form.answer')
         ];
     }
 }

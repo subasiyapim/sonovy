@@ -35,7 +35,7 @@ class PlatformRequest extends FormRequest
     public function createRules()
     {
         return [
-            'type' => ['required', 'in:' . implode(',', array_keys(PlatformTypeEnum::getTitles()))],
+            'type' => ['required', 'in:'.implode(',', array_keys(PlatformTypeEnum::getTitles()))],
             'name' => ['required', 'string'],
             'visible_name' => ['required', 'string'],
             'status' => ['required', 'boolean'],
@@ -51,7 +51,7 @@ class PlatformRequest extends FormRequest
     public function updateRules()
     {
         return [
-            'type' => ['required', 'in:' . implode(',', array_keys(PlatformTypeEnum::getTitles()))],
+            'type' => ['required', 'in:'.implode(',', array_keys(PlatformTypeEnum::getTitles()))],
             'name' => ['required', 'string'],
             'visible_name' => ['required', 'string'],
             'code' => ['nullable', 'string', 'unique:platforms,code'],
@@ -68,17 +68,17 @@ class PlatformRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'type' => __('panel.platform.form.type'),
-            'name' => __('panel.platform.form.name'),
-            'visible_name' => __('panel.platform.form.visible_name'),
-            'code' => __('panel.platform.form.code'),
-            'status' => __('panel.platform.form.status'),
-            'description' => __('panel.platform.form.description'),
-            'url' => __('panel.platform.form.url'),
-            'authenticators' => __('panel.platform.form.authenticators'),
-            'authenticators.*.key' => __('panel.platform.form.key'),
-            'authenticators.*.value' => __('panel.platform.form.value'),
-            'image' => __('panel.platform.form.image'),
+            'type' => __('control.platform.form.type'),
+            'name' => __('control.platform.form.name'),
+            'visible_name' => __('control.platform.form.visible_name'),
+            'code' => __('control.platform.form.code'),
+            'status' => __('control.platform.form.status'),
+            'description' => __('control.platform.form.description'),
+            'url' => __('control.platform.form.url'),
+            'authenticators' => __('control.platform.form.authenticators'),
+            'authenticators.*.key' => __('control.platform.form.key'),
+            'authenticators.*.value' => __('control.platform.form.value'),
+            'image' => __('control.platform.form.image'),
         ];
 
     }

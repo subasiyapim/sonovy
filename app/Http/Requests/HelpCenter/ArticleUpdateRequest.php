@@ -32,9 +32,9 @@ class ArticleUpdateRequest extends FormRequest
         ];
 
         foreach ($langs as $lang) {
-            $arr['title.' . $lang] = ['required', 'string', 'max:255'];
-            $arr['subtitle.' . $lang] = ['required', 'string', 'max:255'];
-            $arr['description.' . $lang] = ['required', 'string', 'max:5000'];
+            $arr['title.'.$lang] = ['required', 'string', 'max:255'];
+            $arr['subtitle.'.$lang] = ['required', 'string', 'max:255'];
+            $arr['description.'.$lang] = ['required', 'string', 'max:5000'];
         }
         //dd($arr, $this->all());
         return $arr;
@@ -48,9 +48,9 @@ class ArticleUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'image' => __('panel.help_center.form.image'),
-            'title' => __('panel.help_center.form.question'),
-            'subtitle' => __('panel.help_center.form.answer'),
+            'image' => __('control.help_center.form.image'),
+            'title' => __('control.help_center.form.question'),
+            'subtitle' => __('control.help_center.form.answer'),
             'description' => __('panel.help_center.form.question'),
         ];
     }

@@ -46,15 +46,15 @@ class ArtistStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('panel.artist.form.name'),
-            'country_id' => __('panel.artist.form.country'),
-            'ipi_code' => __('panel.artist.form.ipi_code'),
-            'isni_code' => __('panel.artist.form.isni_code'),
-            'image' => __('panel.artist.form.image'),
-            'artist_branches' => __('panel.artist.form.artist_branches'),
-            'platforms' => __('panel.artist.form.platforms'),
-            'about' => __('panel.artist.form.about'),
-            'phone' => __('panel.artist.form.phone'),
+            'name' => __('control.artist.form.name'),
+            'country_id' => __('control.artist.form.country'),
+            'ipi_code' => __('control.artist.form.ipi_code'),
+            'isni_code' => __('control.artist.form.isni_code'),
+            'image' => __('control.artist.form.image'),
+            'artist_branches' => __('control.artist.form.artist_branches'),
+            'platforms' => __('control.artist.form.platforms'),
+            'about' => __('control.artist.form.about'),
+            'phone' => __('control.artist.form.phone'),
         ];
     }
 }

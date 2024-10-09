@@ -35,9 +35,9 @@ class RoleStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'code' => __('panel.role.form.code'),
-            'name' => __('panel.role.form.name'),
-            'permissions' => __('panel.role.form.permissions')
+            'code' => __('control.role.form.code'),
+            'name' => __('control.role.form.name'),
+            'permissions' => __('control.role.form.permissions')
         ];
     }
 }

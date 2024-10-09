@@ -37,14 +37,14 @@ class InvoiceInfoUpdateRequest extends FormRequest
     public function attributes()
     {
         return [
-            'invoice_type' => __('panel.invoice.form.type'),
-            'tax_office' => __('panel.invoice.form.tax_office'),
-            'tax_number' => __('panel.invoice.form.tax_number'),
-            'registration_number' => __('panel.invoice.form.registration_number'),
-            'country_id' => __('panel.invoice.form.country_id'),
-            'zip_code' => __('panel.invoice.form.zipcode'),
-            'address' => __('panel.invoice.form.address'),
-            'commercial_number' => __('panel.invoice.form.commercial_number'),
+            'invoice_type' => __('control.invoice.form.type'),
+            'tax_office' => __('control.invoice.form.tax_office'),
+            'tax_number' => __('control.invoice.form.tax_number'),
+            'registration_number' => __('control.invoice.form.registration_number'),
+            'country_id' => __('control.invoice.form.country_id'),
+            'zip_code' => __('control.invoice.form.zipcode'),
+            'address' => __('control.invoice.form.address'),
+            'commercial_number' => __('control.invoice.form.commercial_number'),
         ];
     }
 }

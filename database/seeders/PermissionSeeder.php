@@ -173,47 +173,47 @@ class PermissionSeeder extends Seeder
         ],
 //Product
         [
-            'code' => 'broadcast_list',
+            'code' => 'product_list',
             'tr' => ['name' => 'Yayın Listele',],
             'en' => ['name' => 'Product List',],
         ],
         [
-            'code' => 'broadcast_create',
+            'code' => 'product_create',
             'tr' => ['name' => 'Yayın Ekle',],
             'en' => ['name' => 'Product Create',],
         ],
         [
-            'code' => 'broadcast_edit',
+            'code' => 'product_edit',
             'tr' => ['name' => 'Yayın Düzenle',],
             'en' => ['name' => 'Product Edit',],
         ],
         [
-            'code' => 'broadcast_delete',
+            'code' => 'product_delete',
             'tr' => ['name' => 'Yayın Sil',],
             'en' => ['name' => 'Product Delete',],
         ],
         [
-            'code' => 'broadcast_show',
+            'code' => 'product_show',
             'tr' => ['name' => 'Yayın Görüntüle',],
             'en' => ['name' => 'Product Show',],
         ],
         [
-            'code' => 'broadcast_apply_list',
+            'code' => 'product_apply_list',
             'tr' => ['name' => 'Yayın Başvuru Listele',],
             'en' => ['name' => 'Product Apply List',],
         ],
         [
-            'code' => 'broadcast_approve',
+            'code' => 'product_approve',
             'tr' => ['name' => 'Yayın Onayla',],
             'en' => ['name' => 'Product Approve',],
         ],
         [
-            'code' => 'broadcast_apply_correction',
+            'code' => 'product_apply_correction',
             'tr' => ['name' => 'Yayın Düzeltme Başvurusu',],
             'en' => ['name' => 'Product Apply Correction',],
         ],
         [
-            'code' => 'broadcast_change_status',
+            'code' => 'product_change_status',
             'tr' => ['name' => 'Yayın Durumu Değiştir',],
             'en' => ['name' => 'Product Change Status',],
         ],
@@ -484,13 +484,13 @@ class PermissionSeeder extends Seeder
         ],
 //Excel Export
         [
-            'code' => 'excel_export_broadcasts',
+            'code' => 'excel_export_products',
             'tr' => ['name' => 'Excel Yayınları Dışa Aktar',],
             'en' => ['name' => 'Excel Export Products',],
         ],
 //Excel Import
         [
-            'code' => 'excel_import_broadcasts',
+            'code' => 'excel_import_products',
             'tr' => ['name' => 'Excel Yayınları İçe Aktar',],
             'en' => ['name' => 'Excel Import Products',],
         ],
@@ -746,12 +746,12 @@ class PermissionSeeder extends Seeder
         ],
 //DDEX
         [
-            'code' => 'broadcast_make_xml',
+            'code' => 'product_make_xml',
             'tr' => ['name' => 'DDEX XML Oluştur',],
             'en' => ['name' => 'DDEX XML Generate',],
         ],
         [
-            'code' => 'broadcast_download_xml',
+            'code' => 'product_download_xml',
             'tr' => ['name' => 'DDEX XML İndir',],
             'en' => ['name' => 'DDEX XML Download',],
         ],

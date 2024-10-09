@@ -36,21 +36,40 @@ if (!function_exists('getLocalizationList')) {
 }
 
 if (!function_exists('getDataFromInputFormat')) {
-    function getDataFromInputFormat($data, $key = 'id', $label = 'name', $iconKey = null): array
+    /**
+     * @param $data
+     * @param $key
+     * @param $label
+     * @param $iconKey
+     * @param $isEnum
+     * @return array
+     */
+    function getDataFromInputFormat($data, $key = 'id', $label = 'name', $iconKey = null, $isEnum = false): array
     {
         $result = [];
-        
-        foreach ($data as $item) {
-            $result[] = [
-                'value' => $item[$key],
-                'label' => $item[$label],
-                'iconKey' => $iconKey
-                    ? $iconKey === 'image'
-                        ? $item[$iconKey]['thumb']
-                        : $item[$iconKey]
-                    : null
-            ];
+
+        if ($isEnum) {
+            foreach ($data as $key => $item) {
+                $result[] = [
+                    'value' => $key,
+                    'label' => $item,
+                ];
+            }
+        } else {
+            foreach ($data as $item) {
+                $result[] = [
+                    'value' => $item[$key],
+                    'label' => $item[$label],
+                    'iconKey' => $iconKey
+                        ? $iconKey === 'image'
+                            ? $item[$iconKey]['thumb']
+                            : $item[$iconKey]
+                        : null
+                ];
+            }
         }
+
+
         return $result;
     }
 }

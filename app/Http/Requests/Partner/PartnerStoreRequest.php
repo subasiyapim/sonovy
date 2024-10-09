@@ -36,7 +36,7 @@ class PartnerStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('panel.label.form.name'),
+            'name' => __('control.label.form.name'),
         ];
     }
 }

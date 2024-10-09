@@ -40,14 +40,14 @@ class OrderStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'amount' => __('panel.order.form.amount'),
-            'plan_id' => __('panel.order.form.plan_id'),
-            'payment_type' => __('panel.order.form.payment_type'),
-            'card_holder' => __('panel.order.form.card_holder'),
-            'expiration_date' => __('panel.order.form.expiration_date'),
-            'card_number' => __('panel.order.form.card_number'),
-            'cvv' => __('panel.order.form.cvv'),
-            'payment_period' => __('panel.order.form.payment_period'),
+            'amount' => __('control.order.form.amount'),
+            'plan_id' => __('control.order.form.plan_id'),
+            'payment_type' => __('control.order.form.payment_type'),
+            'card_holder' => __('control.order.form.card_holder'),
+            'expiration_date' => __('control.order.form.expiration_date'),
+            'card_number' => __('control.order.form.card_number'),
+            'cvv' => __('control.order.form.cvv'),
+            'payment_period' => __('control.order.form.payment_period'),
         ];
     }
 

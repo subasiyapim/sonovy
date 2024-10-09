@@ -33,9 +33,9 @@ class PlanItemRequest extends FormRequest
     public function attributes()
     {
         return [
-            'category' => __('panel.plan_item.form.category'),
-            'type' => __('panel.plan_item.form.type'),
-            'translations.*.name' => __('panel.plan_item.form.name'),
+            'category' => __('control.plan_item.form.category'),
+            'type' => __('control.plan_item.form.type'),
+            'translations.*.name' => __('control.plan_item.form.name'),
         ];
     }
 

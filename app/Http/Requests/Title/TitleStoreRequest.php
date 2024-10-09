@@ -27,14 +27,14 @@ class TitleStoreRequest extends FormRequest
         return [
             'translations' => 'required|array',
             'translations.*.title' => 'required|string',
-            'translations.*.locale' => 'nullable|string|in:' . implode(',', LocaleService::getLocalizationList()),
+            'translations.*.locale' => 'nullable|string|in:'.implode(',', LocaleService::getLocalizationList()),
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'translations.*.title' => __('panel.title.form.title'),
+            'translations.*.title' => __('control.title.form.title'),
         ];
     }
 }

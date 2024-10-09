@@ -32,7 +32,7 @@ class TitleUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'translations.*.title' => __('panel.title.form.title'),
+            'translations.*.title' => __('control.title.form.title'),
         ];
     }
 }

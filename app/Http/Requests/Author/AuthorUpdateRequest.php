@@ -39,11 +39,11 @@ class AuthorUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('panel.author.form.name'),
-            'birth_date' => __('panel.author.form.birth_date'),
-            'is_registered_pro' => __('panel.author.form.is_registered_pro'),
-            'pro_id' => __('panel.author.form.pro_id'),
-            'cae_ipi_number' => __('panel.author.form.cae_ipi_number'),
+            'name' => __('control.author.form.name'),
+            'birth_date' => __('control.author.form.birth_date'),
+            'is_registered_pro' => __('control.author.form.is_registered_pro'),
+            'pro_id' => __('control.author.form.pro_id'),
+            'cae_ipi_number' => __('control.author.form.cae_ipi_number'),
         ];
     }
 }

@@ -17,9 +17,10 @@ use App\Http\Requests\Product\ConvertAudioRequest;
 use App\Http\Resources\Panel\CountryResource;
 use App\Jobs\ConvertAudioJob;
 use App\Models\Artist;
+use App\Models\ArtistBranch;
 use App\Models\Product;
 use App\Models\ConvertAudio;
-use App\Models\Country;
+use App\Models\System\Country;
 use App\Models\Genre;
 use App\Models\Label;
 use App\Models\Participant;
@@ -60,7 +61,7 @@ class ProductController extends Controller
     public function index(Request $request): \Inertia\Response|ResponseFactory
     {
 
-        abort_if(Gate::denies('broadcast_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('product_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
 
         $products = Product::with('artists', 'label', 'publishedCountries', 'songs')
@@ -75,35 +76,29 @@ class ProductController extends Controller
         $statuses = ProductStatusEnum::getTitles();
         $types = ProductTypeEnum::getTitles();
 
-        return inertia('Control/Products/Index', compact('broadcasts', 'country_count', 'statuses', 'types'));
+        return inertia('Control/Products/Index', compact('products', 'country_count', 'statuses', 'types'));
     }
 
     public function create(): \Inertia\Response|ResponseFactory
     {
-        abort_if(Gate::denies('broadcast_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('product_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $genres = Genre::pluck('name', 'id');
-        $artists = Artist::pluck('name', 'id');
-        $labels = Label::pluck('name', 'id');
-        $counties = CountryServices::get();
-        $languages = LanguageServices::get();
-        $users = User::pluck('name', 'id');
-        $platform_types = PlatformTypeEnum::getTitles();
-        $product_types = ProductTypeEnum::getTitles();
-
-        //TODO veritabanına eklenecek settingslere olabilir
-        $barcode_type = 1;
-        $platforms = Platform::get()->groupBy('type')->map(function ($platforms) {
-            return $platforms->pluck('name', 'id');
+        $genres = getDataFromInputFormat(Genre::get(['name', 'id']), 'id', 'name');
+        $artists = getDataFromInputFormat(Artist::get(['name', 'id']), 'id', 'name');
+        $labels = getDataFromInputFormat(Label::get(['name', 'id']), 'id', 'name');
+        $counties = getDataFromInputFormat(\App\Models\System\Country::get(['name', 'id']), 'id', 'name', 'emoji');
+        $languages = getDataFromInputFormat(\App\Models\System\Country::get(['name', 'id']), 'id', 'name', 'emoji');
+        $users = getDataFromInputFormat(User::get(['name', 'id']), 'id', 'name');
+        $platform_types = getDataFromInputFormat(Platform::get(['name', 'id', 'type']), 'id', 'name');
+        $product_types = getDataFromInputFormat(ProductTypeEnum::getTitles(), 'id', 'name', null, true);
+        $platforms = Platform::all()->groupBy('type')->map(function ($platforms) {
+            return getDataFromInputFormat($platforms, 'id', 'name', 'image');
         });
-
-        $all_platforms = Platform::all();
-        $publish_country_types = ProductPublishedCountryTypeEnum::getTitles();
-
-        $platform_download_price = Platform::$PLATFORM_DOWNLOAD_PRICE;
-
-        $artistBranches = ArtistBranchServices::getBranchesFromInputFormat();
-
+        $all_platforms = getDataFromInputFormat(Platform::all(['name', 'id']), 'id', 'name', 'image');
+        $publish_country_types = getDataFromInputFormat(ProductPublishedCountryTypeEnum::getTitles(), 'id', 'name',
+            null, true);
+        $platform_download_price = getDataFromInputFormat(Platform::$PLATFORM_DOWNLOAD_PRICE, 'id', 'name', null, true);
+        $artistBranches = getDataFromInputFormat(ArtistBranch::get(['name', 'id'], 'id', 'name'));
         $availablePlanItems = Auth::user()->availablePlanItemsCount();
 
         return inertia('Control/Products/Create',
@@ -113,13 +108,12 @@ class ProductController extends Controller
                 'labels',
                 'counties',
                 'languages',
-                'broadcast_types',
+                'product_types',
                 'platform_types',
                 'platforms',
                 'all_platforms',
                 'platform_download_price',
                 'publish_country_types',
-                'barcode_type',
                 'artistBranches',
                 'availablePlanItems',
                 'users'
@@ -167,7 +161,7 @@ class ProductController extends Controller
 
             DB::commit();
 
-            return redirect()->route('dashboard.broadcasts.index')
+            return redirect()->route('control.products.index')
                 ->with([
                     'notification' => __('panel.notification_created',
                         ['model' => __('panel.product.title_singular')])
@@ -186,7 +180,7 @@ class ProductController extends Controller
      */
     public function show(Product $product): \Inertia\Response|ResponseFactory
     {
-        abort_if(Gate::denies('broadcast_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('product_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $product->load('artists', 'label', 'publishedCountries', 'genre', 'subGenre', 'language', 'label',
             'hashtags', 'downloadPlatforms', 'songs.participants.user.roles', 'addedBy', 'promotions');
@@ -208,13 +202,13 @@ class ProductController extends Controller
 
         return inertia('Control/Products/Show',
             compact('product', 'genres', 'artists', 'labels', 'countries', 'languages', 'platform_types',
-                'broadcast_types', 'platforms', 'publish_country_types', 'time_zones', 'youtube_channel_themes',
+                'product_types', 'platforms', 'publish_country_types', 'time_zones', 'youtube_channel_themes',
                 'statuses'));
     }
 
     public function edit(Product $product): \Inertia\Response|ResponseFactory
     {
-        abort_if(Gate::denies('broadcast_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('product_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $genres = Genre::pluck('name', 'id');
         $artists = Artist::pluck('name', 'id');
@@ -251,7 +245,7 @@ class ProductController extends Controller
                 'labels',
                 'counties',
                 'languages',
-                'broadcast_types',
+                'product_types',
                 'platform_types',
                 'platforms',
                 'all_platforms',
@@ -297,7 +291,7 @@ class ProductController extends Controller
             event(new NewProductEvent($product));
         }
 
-        return to_route('dashboard.broadcasts.index')
+        return to_route('control.products.index')
             ->with([
                 'notification' => __('panel.notification_updated', ['model' => __('panel.product.title_singular')])
             ]);
@@ -308,11 +302,11 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): RedirectResponse
     {
-        abort_if(Gate::denies('broadcast_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('product_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $product->delete();
 
-        return to_route('dashboard.roles.index')
+        return to_route('control.roles.index')
             ->with([
                 'notification' => __('panel.notification_deleted', ['model' => __('panel.product.title_singular')])
             ]);
@@ -334,15 +328,15 @@ class ProductController extends Controller
 
     public function export(): BinaryFileResponse
     {
-        abort_if(Gate::denies('excel_export_broadcasts'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('excel_export_products'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return Excel::download(new ProductExport, 'broadcasts.xlsx');
+        return Excel::download(new ProductExport, 'products.xlsx');
 
     }
 
     public function checkUPC(Request $request): JsonResponse
     {
-        abort_if(Gate::denies('broadcast_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('product_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $result = iTunesServices::lookup($request->q, $request->type);
         if ($result['status']) {
@@ -357,7 +351,7 @@ class ProductController extends Controller
 
     public function checkISRC(Request $request): JsonResponse
     {
-        abort_if(Gate::denies('broadcast_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('product_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $result = MusicBrainzServices::lookupISRC($request->isrc);
 
@@ -384,7 +378,7 @@ class ProductController extends Controller
 
     public function getISRC(Request $request): false|string
     {
-        abort_if(Gate::denies('broadcast_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('product_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return ISRCServices::make($request->input('type'), $request->has('index') ? $request->input('index') : null);
     }
@@ -546,8 +540,8 @@ class ProductController extends Controller
      */
     protected static function createPromotions(ProductStoreRequest $request, $product): void
     {
-        if (isset($request->broadcast_promotion_text) && is_array($request->broadcast_promotion_text) && count($request->broadcast_promotion_text) > 0) {
-            foreach ($request->broadcast_promotion_text as $value) {
+        if (isset($request->product_promotion_text) && is_array($request->product_promotion_text) && count($request->product_promotion_text) > 0) {
+            foreach ($request->product_promotion_text as $value) {
                 $product->introductions()->updateOrCreate(
                     [
                         'language_id' => $value['language_id'],

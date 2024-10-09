@@ -3,9 +3,45 @@
 use App\Http\Controllers\Control\DashboardController;
 use App\Http\Controllers\Control\ArtistController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\Control\RoleController;
+use App\Http\Controllers\Control\UserController;
+use App\Http\Controllers\Control\LabelController;
+use App\Http\Controllers\Control\ProductController;
+use App\Http\Controllers\Control\SongController;
+use App\Http\Controllers\Control\SettingController;
+use App\Http\Controllers\Control\ContractController;
+use App\Http\Controllers\Control\AuthorController;
+use App\Http\Controllers\Control\PlatformController;
+use App\Http\Controllers\Control\PlanController;
+use App\Http\Controllers\Control\PlanItemController;
+use App\Http\Controllers\Control\CountryController;
+use App\Http\Controllers\Control\AnnouncementController;
+use App\Http\Controllers\Control\AnnouncementTemplateController;
+use App\Http\Controllers\Control\TitleController;
+use App\Http\Controllers\Control\FeatureController;
+use App\Http\Controllers\Control\HelpCenterFAQController;
+use App\Http\Controllers\Control\HelpCenterArticleController;
+use App\Http\Controllers\Control\HelpCenterVideoController;
+use App\Http\Controllers\Control\PartnerController;
+use App\Http\Controllers\Control\SiteFeatureController;
+use App\Http\Controllers\Control\TestimonialController;
+use App\Http\Controllers\Control\ContactUsController;
+use App\Http\Controllers\Control\WorkController;
+use App\Http\Controllers\Control\OrderController;
+use App\Http\Controllers\Control\PaymentController;
+use App\Http\Controllers\Control\SubscriptionManagementController;
+use App\Http\Controllers\Control\ExtraServiceController;
+use App\Http\Controllers\Control\ServiceController;
+use App\Http\Controllers\Control\BroadcastApplyController;
+use App\Http\Controllers\Control\SummaryController;
+use App\Http\Controllers\Control\StatisticController;
+use App\Http\Controllers\Control\DistributionReportController;
+use App\Http\Controllers\Control\PlayListPerformanceController;
+use App\Http\Controllers\Control\ShortFormattedVideosController;
+use App\Http\Controllers\Control\FinanceAndEarningController;
+use App\Http\Controllers\Control\EarningController;
+use App\Http\Controllers\Control\EarningReportController;
 
 
 Route::group(
@@ -27,11 +63,11 @@ Route::group(
 
     Route::resource('artists', ArtistController::class)->names('artists');
     Route::resource('labels', LabelController::class)->names('labels');
-    Route::resource('products', BroadcastController::class)->names('products');
+    Route::resource('products', ProductController::class)->names('products');
 
-    Route::post('products/add-participant', [BroadcastController::class, 'addParticipant'])
+    Route::post('products/add-participant', [ProductController::class, 'addParticipant'])
         ->name('products.add-participant');
-    Route::post('products/delete-participant', [BroadcastController::class, 'deleteParticipants'])
+    Route::post('products/delete-participant', [ProductController::class, 'deleteParticipants'])
         ->name('products.delete-participant');
 
     Route::post('song/change-status', [SongController::class, 'changeStatus'])->name('song-change-status');
@@ -70,9 +106,9 @@ Route::group(
     Route::delete('contact-us', [ContactUsController::class, 'destroy'])->name('contact-us.destroy');
 
     // Get ISRC
-    Route::get('getISRC', [BroadcastController::class, 'getISRC'])->name('products.get-isrc');
+    Route::get('getISRC', [ProductController::class, 'getISRC'])->name('products.get-isrc');
     // Check ISRC
-    Route::get('checkISRC', [BroadcastController::class, 'checkISRC'])->name('products.check-isrc');
+    Route::get('checkISRC', [ProductController::class, 'checkISRC'])->name('products.check-isrc');
 
     Route::group(['prefix' => 'works', 'as' => 'works.'], function () {
         Route::get('/', [WorkController::class, 'index'])->name('index');
@@ -180,7 +216,7 @@ Route::group(
 
     //Search routes
     Route::group(['prefix' => 'search', 'as' => 'search.',], function () {
-        Route::get('products', [BroadcastController::class, 'search'])->name('products');
+        Route::get('products', [ProductController::class, 'search'])->name('products');
         Route::get('artists', [ArtistController::class, 'search'])->name('artists');
 
         Route::get('artists-platform-search', [ArtistController::class, 'searchPlatform'])
@@ -197,7 +233,7 @@ Route::group(
         Route::get('users', [UserController::class, 'search'])->name('users');
         Route::get('announcement-templates', [AnnouncementTemplateController::class, 'search'])
             ->name('announcement-templates');
-        Route::get('upc', [BroadcastController::class, 'checkUPC'])->name('upc');
+        Route::get('upc', [ProductController::class, 'checkUPC'])->name('upc');
         Route::get('isrc', [SongController::class, 'checkISRC'])->name('isrc');
         Route::get('services', [ServiceController::class, 'search'])->name('services');
     });
@@ -236,17 +272,17 @@ Route::group(
 
         //Export
         Route::group(['prefix' => 'export', 'as' => 'export.'], function () {
-            Route::get('products', [BroadcastController::class, 'export'])->name('products');
+            Route::get('products', [ProductController::class, 'export'])->name('products');
         });
 
         //Import
         Route::group(['prefix' => 'import', 'as' => 'import.'], function () {
-            Route::post('products', [BroadcastController::class, 'import'])->name('products');
+            Route::post('products', [ProductController::class, 'import'])->name('products');
         });
 
     });
 
-    Route::post('convert-audio', [BroadcastController::class, 'convertAudio'])->name('product.convert-audio');
+    Route::post('convert-audio', [ProductController::class, 'convertAudio'])->name('product.convert-audio');
 
     Route::resource('integrations', IntegrationController::class)->names('integrations')->only([
         'index', 'edit', 'update'

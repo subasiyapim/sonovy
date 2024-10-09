@@ -28,9 +28,9 @@ enum UserGenderEnum: int
     public function title()
     {
         return match ($this) {
-            self::MALE => __('panel.user.enum.male'),
-            self::FEMALE => __('panel.user.enum.female'),
-            self::OTHER => __('panel.user.enum.other'),
+            self::MALE => __('control.user.enum.male'),
+            self::FEMALE => __('control.user.enum.female'),
+            self::OTHER => __('control.user.enum.other'),
         };
     }
 }

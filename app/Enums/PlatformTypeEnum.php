@@ -37,10 +37,10 @@ enum PlatformTypeEnum: int
     public function title()
     {
         return match ($this) {
-            self::SOCIAL_MEDIA => __('panel.platform.type_social_media'),
-            self::DOWNLOADABLE => __('panel.platform.type_downloadable'),
-            self::STREAMING => __('panel.platform.type_streaming'),
-            self::DSP_INTEGRATION => __('panel.platform.type_dsp_integration'),
+            self::SOCIAL_MEDIA => __('control.platform.type_social_media'),
+            self::DOWNLOADABLE => __('control.platform.type_downloadable'),
+            self::STREAMING => __('control.platform.type_streaming'),
+            self::DSP_INTEGRATION => __('control.platform.type_dsp_integration'),
         };
     }
 }

@@ -28,9 +28,9 @@ enum FeaturePeriodEnum: string
     public function title()
     {
         return match ($this) {
-            self::ONE_TIME => __('panel.feature.enums.period_one_time'),
-            self::MONTHLY => __('panel.feature.enums.period_monthly'),
-            self::ANNUAL => __('panel.feature.enums.period_annual'),
+            self::ONE_TIME => __('control.feature.enums.period_one_time'),
+            self::MONTHLY => __('control.feature.enums.period_monthly'),
+            self::ANNUAL => __('control.feature.enums.period_annual'),
         };
     }
 }

@@ -41,13 +41,13 @@ class LabelUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('panel.label.form.name'),
-            'country_id' => __('panel.label.form.country_id'),
-            'address' => __('panel.label.form.address'),
-            'image' => __('panel.label.form.image'),
-            'phone' => __('panel.label.form.phone'),
-            'web' => __('panel.label.form.web'),
-            'email' => __('panel.label.form.email'),
+            'name' => __('control.label.form.name'),
+            'country_id' => __('control.label.form.country_id'),
+            'address' => __('control.label.form.address'),
+            'image' => __('control.label.form.image'),
+            'phone' => __('control.label.form.phone'),
+            'web' => __('control.label.form.web'),
+            'email' => __('control.label.form.email'),
         ];
     }
 }
