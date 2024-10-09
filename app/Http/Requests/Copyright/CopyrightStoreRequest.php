@@ -28,7 +28,7 @@ class CopyrightStoreRequest extends FormRequest
             'broadcast_type' => ['required', 'numeric'],
             'platform' => ['required', 'numeric'],
             'type' => ['nullable', 'numeric'],
-            'broadcast_id' => ['required', 'numeric'],
+            'product_id' => ['required', 'numeric'],
             'songs' => ['nullable', 'array'],
             'songs.*.id' => ['required', 'exists:songs,id'],
             'songs.*.url' => ['required', 'string'],
@@ -46,7 +46,7 @@ class CopyrightStoreRequest extends FormRequest
             'broadcast_type' => __('panel.copyright.fields.broadcast_type'),
             'platform' => __('panel.copyright.fields.platform'),
             'type' => __('panel.copyright.fields.type'),
-            'broadcast_id' => __('panel.copyright.fields.broadcast_id'),
+            'product_id' => __('panel.copyright.fields.product_id'),
             'songs' => __('panel.copyright.fields.songs'),
 
         ];

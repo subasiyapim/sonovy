@@ -66,7 +66,7 @@ class HandleInertiaRequests extends Middleware
             },
             'default_barcode_type' => 1, //UPC
             'editable_catalogues' => [
-                'broadcast' => true,
+                'product' => true,
                 'song' => true,
                 'artist' => false,
                 'label' => false,

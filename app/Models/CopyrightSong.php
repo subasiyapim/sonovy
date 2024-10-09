@@ -26,8 +26,8 @@ class CopyrightSong extends Model
         return $this->belongsTo(Copyright::class);
     }
 
-    public function broadcast(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Broadcast::class);
+        return $this->belongsTo(Product::class);
     }
 }

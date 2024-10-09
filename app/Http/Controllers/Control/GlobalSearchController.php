@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
 use App\Models\Artist;
-use App\Models\Broadcast;
+use App\Models\Product;
 use App\Models\Label;
 use App\Models\Song;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class GlobalSearchController extends Controller
         $artists = Artist::where('name', 'like', '%'.$request->search.'%')->get();
         $songs = Song::where('name', 'like', '%'.$request->search.'%')->get();
         $labels = Label::where('name', 'like', '%'.$request->search.'%')->get();
-        $broadcasts = Broadcast::where('name', 'like', '%'.$request->search.'%')->get();
+        $products = Product::where('name', 'like', '%'.$request->search.'%')->get();
 
         $arr = [];
         foreach ($artists as $artist) {
@@ -52,12 +52,12 @@ class GlobalSearchController extends Controller
             ];
         }
 
-        foreach ($broadcasts as $broadcast) {
+        foreach ($products as $product) {
             $arr[] = [
-                'id' => $broadcast->id,
-                'name' => $broadcast->name,
+                'id' => $product->id,
+                'name' => $product->name,
                 'type' => 'yayın',
-                'slug' => "broadcast"
+                'slug' => "product"
             ];
         }
 

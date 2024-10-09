@@ -72,8 +72,8 @@ class EarningReportController extends Controller
             $earning = -abs($earning);
         }
 
-        // Get the first broadcast associated with the song
-        $broadcast = $song->broadcasts()->firstOrFail();
+        // Get the first product associated with the song
+        $product = $song->broadcasts()->firstOrFail();
 
         // Build the earnings array
         $earnings = [
@@ -82,13 +82,13 @@ class EarningReportController extends Controller
                 'sales_date' => $request->input('sales_date'),
                 'platform' => Platform::findOrFail($request->input('platform_id'))->name,
                 'country' => Country::findOrFail($request->input('country_id'))->name,
-                'label_name' => $broadcast->label->name ?? 'N/A',
-                'artist_name' => $broadcast->artists->first()->name ?? 'N/A',
-                'release_name' => $broadcast->name ?? 'N/A',
+                'label_name' => $product->label->name ?? 'N/A',
+                'artist_name' => $product->artists->first()->name ?? 'N/A',
+                'release_name' => $product->name ?? 'N/A',
                 'song_name' => $song->name ?? 'N/A',
-                'upc_code' => $broadcast->upc_code ?? 'N/A',
+                'upc_code' => $product->upc_code ?? 'N/A',
                 'isrc_code' => $request->input('isrc_code'),
-                'catalog_number' => $broadcast->catalog_number ?? 'N/A',
+                'catalog_number' => $product->catalog_number ?? 'N/A',
                 'release_type' => 'Yayın',
                 'sales_type' => $request->input('sales_type'),
                 'quantity' => 1,

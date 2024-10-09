@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\NewBroadcastEvent;
+use App\Events\NewProductEvent;
 use App\Jobs\CheckACRJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -20,7 +20,7 @@ class CheckACRListener
     /**
      * Handle the event.
      */
-    public function handle(NewBroadcastEvent $event): void
+    public function handle(NewProductEvent $event): void
     {
 
         CheckACRJob::dispatch($event->broadcast);

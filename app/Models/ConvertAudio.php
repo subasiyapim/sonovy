@@ -13,7 +13,7 @@ class ConvertAudio extends Model
     protected $table = 'convert_audio';
 
     protected $fillable = [
-        'broadcast_id',
+        'product_id',
         'song_id',
         'release_date',
         'timezone_id',
@@ -24,9 +24,9 @@ class ConvertAudio extends Model
         'error'
     ];
 
-    public function broadcast(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Broadcast::class);
+        return $this->belongsTo(Product::class);
     }
 
     public function song(): BelongsTo

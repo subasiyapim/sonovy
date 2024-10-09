@@ -10,11 +10,11 @@ class Introduction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['broadcast_id', 'language_id', 'p_line', 'description'];
+    protected $fillable = ['product_id', 'language_id', 'p_line', 'description'];
 
-    public function broadcast(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Broadcast::class);
+        return $this->belongsTo(Product::class);
     }
 
     public function language(): BelongsTo

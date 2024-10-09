@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('participants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('broadcast_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('song_id')->constrained()->cascadeOnDelete();
             $table->tinyText('tasks');
             $table->tinyInteger('rate')->default(0);

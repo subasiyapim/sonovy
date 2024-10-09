@@ -15,7 +15,7 @@ class Upc extends Model
 
     protected $table = 'upcs';
 
-    protected $fillable = ['upc', 'broadcast_id', 'use_by_date'];
+    protected $fillable = ['upc', 'product_id', 'use_by_date'];
 
     protected array $filterable = ['upc', 'use_by_date', 'broadcast.name'];
 
@@ -35,9 +35,9 @@ class Upc extends Model
         return $query->whereNull('use_by_date');
     }
 
-    public function broadcast(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Broadcast::class);
+        return $this->belongsTo(Product::class);
     }
 
     protected function serializeDate(DateTimeInterface $date): string

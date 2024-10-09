@@ -171,51 +171,51 @@ class PermissionSeeder extends Seeder
             'tr' => ['name' => 'Etiket Görüntüle',],
             'en' => ['name' => 'Label Show',],
         ],
-//Broadcast
+//Product
         [
             'code' => 'broadcast_list',
             'tr' => ['name' => 'Yayın Listele',],
-            'en' => ['name' => 'Broadcast List',],
+            'en' => ['name' => 'Product List',],
         ],
         [
             'code' => 'broadcast_create',
             'tr' => ['name' => 'Yayın Ekle',],
-            'en' => ['name' => 'Broadcast Create',],
+            'en' => ['name' => 'Product Create',],
         ],
         [
             'code' => 'broadcast_edit',
             'tr' => ['name' => 'Yayın Düzenle',],
-            'en' => ['name' => 'Broadcast Edit',],
+            'en' => ['name' => 'Product Edit',],
         ],
         [
             'code' => 'broadcast_delete',
             'tr' => ['name' => 'Yayın Sil',],
-            'en' => ['name' => 'Broadcast Delete',],
+            'en' => ['name' => 'Product Delete',],
         ],
         [
             'code' => 'broadcast_show',
             'tr' => ['name' => 'Yayın Görüntüle',],
-            'en' => ['name' => 'Broadcast Show',],
+            'en' => ['name' => 'Product Show',],
         ],
         [
             'code' => 'broadcast_apply_list',
             'tr' => ['name' => 'Yayın Başvuru Listele',],
-            'en' => ['name' => 'Broadcast Apply List',],
+            'en' => ['name' => 'Product Apply List',],
         ],
         [
             'code' => 'broadcast_approve',
             'tr' => ['name' => 'Yayın Onayla',],
-            'en' => ['name' => 'Broadcast Approve',],
+            'en' => ['name' => 'Product Approve',],
         ],
         [
             'code' => 'broadcast_apply_correction',
             'tr' => ['name' => 'Yayın Düzeltme Başvurusu',],
-            'en' => ['name' => 'Broadcast Apply Correction',],
+            'en' => ['name' => 'Product Apply Correction',],
         ],
         [
             'code' => 'broadcast_change_status',
             'tr' => ['name' => 'Yayın Durumu Değiştir',],
-            'en' => ['name' => 'Broadcast Change Status',],
+            'en' => ['name' => 'Product Change Status',],
         ],
 //Song
         [
@@ -486,13 +486,13 @@ class PermissionSeeder extends Seeder
         [
             'code' => 'excel_export_broadcasts',
             'tr' => ['name' => 'Excel Yayınları Dışa Aktar',],
-            'en' => ['name' => 'Excel Export Broadcasts',],
+            'en' => ['name' => 'Excel Export Products',],
         ],
 //Excel Import
         [
             'code' => 'excel_import_broadcasts',
             'tr' => ['name' => 'Excel Yayınları İçe Aktar',],
-            'en' => ['name' => 'Excel Import Broadcasts',],
+            'en' => ['name' => 'Excel Import Products',],
         ],
 //Announcement
         [

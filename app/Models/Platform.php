@@ -102,9 +102,9 @@ class Platform extends Model implements HasMedia
         return $file;
     }
 
-    public function broadcasts(): BelongsToMany
+    public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Broadcast::class, 'broadcast_download_platform', 'platform_id', 'broadcast_id')
+        return $this->belongsToMany(Product::class, 'broadcast_download_platform', 'platform_id', 'product_id')
             ->withPivot('price', 'pre_order_date', 'release_date');
     }
 

@@ -20,9 +20,9 @@ class Genre extends Model
         'code',
     ];
 
-    public function broadcasts()
+    public function products()
     {
-        return $this->belongsToMany(Broadcast::class, 'broadcast_genre', 'genre_id', 'broadcast_id');
+        return $this->belongsToMany(Product::class, 'product_genre', 'genre_id', 'product_id');
     }
 
 }

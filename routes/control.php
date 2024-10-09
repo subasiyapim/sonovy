@@ -19,7 +19,7 @@ Route::group(
 
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     Route::resource('roles', RoleController::class)->names('roles');
 
     Route::resource('users', UserController::class)->names('users');
@@ -27,12 +27,12 @@ Route::group(
 
     Route::resource('artists', ArtistController::class)->names('artists');
     Route::resource('labels', LabelController::class)->names('labels');
-    Route::resource('broadcasts', BroadcastController::class)->names('broadcasts');
+    Route::resource('products', BroadcastController::class)->names('products');
 
-    Route::post('broadcasts/add-participant', [BroadcastController::class, 'addParticipant'])
-        ->name('broadcasts.add-participant');
-    Route::post('broadcasts/delete-participant', [BroadcastController::class, 'deleteParticipants'])
-        ->name('broadcasts.delete-participant');
+    Route::post('products/add-participant', [BroadcastController::class, 'addParticipant'])
+        ->name('products.add-participant');
+    Route::post('products/delete-participant', [BroadcastController::class, 'deleteParticipants'])
+        ->name('products.delete-participant');
 
     Route::post('song/change-status', [SongController::class, 'changeStatus'])->name('song-change-status');
     Route::resource('songs', SongController::class)->names('songs');
@@ -70,9 +70,9 @@ Route::group(
     Route::delete('contact-us', [ContactUsController::class, 'destroy'])->name('contact-us.destroy');
 
     // Get ISRC
-    Route::get('getISRC', [BroadcastController::class, 'getISRC'])->name('broadcasts.get-isrc');
+    Route::get('getISRC', [BroadcastController::class, 'getISRC'])->name('products.get-isrc');
     // Check ISRC
-    Route::get('checkISRC', [BroadcastController::class, 'checkISRC'])->name('broadcasts.check-isrc');
+    Route::get('checkISRC', [BroadcastController::class, 'checkISRC'])->name('products.check-isrc');
 
     Route::group(['prefix' => 'works', 'as' => 'works.'], function () {
         Route::get('/', [WorkController::class, 'index'])->name('index');
@@ -130,16 +130,16 @@ Route::group(
         [EarningReportController::class, 'deleteFile'])->name('earning-report-delete');
 
     Route::group(
-        ['prefix' => 'broadcasts-apply', 'as' => 'broadcasts-apply.'], function () {
+        ['prefix' => 'products-apply', 'as' => 'products-apply.'], function () {
         Route::get('/', [BroadcastApplyController::class, 'index'])->name('index');
         Route::post('/change-status', [BroadcastApplyController::class, 'changeStatus'])
             ->name('change-status');
         Route::post('/correction', [BroadcastApplyController::class, 'correction'])
             ->name('correction');
 
-        Route::post('make-ddex-xml/{broadcast}',
+        Route::post('make-ddex-xml/{product}',
             [BroadcastApplyController::class, 'makeDdexXml'])->name('make-ddex-xml');
-        Route::get('download-ddex-xml/{broadcast}',
+        Route::get('download-ddex-xml/{product}',
             [BroadcastApplyController::class, 'downloadDdexXml'])->name('download-ddex-xml');
     });
 
@@ -180,7 +180,7 @@ Route::group(
 
     //Search routes
     Route::group(['prefix' => 'search', 'as' => 'search.',], function () {
-        Route::get('broadcasts', [BroadcastController::class, 'search'])->name('broadcasts');
+        Route::get('products', [BroadcastController::class, 'search'])->name('products');
         Route::get('artists', [ArtistController::class, 'search'])->name('artists');
 
         Route::get('artists-platform-search', [ArtistController::class, 'searchPlatform'])
@@ -216,7 +216,7 @@ Route::group(
     });
 
     Route::group(['prefix' => 'find', 'as' => 'find.'], function () {
-        Route::post('broadcast', [PubController::class, 'findBroadcast'])->name('broadcasts');
+        Route::post('product', [PubController::class, 'findBroadcast'])->name('products');
         Route::post('song', [PubController::class, 'findSong'])->name('songs');
         Route::post('label', [PubController::class, 'findLabel'])->name('labels');
         Route::post('plan', [PubController::class, 'findPlan'])->name('plans');
@@ -236,17 +236,17 @@ Route::group(
 
         //Export
         Route::group(['prefix' => 'export', 'as' => 'export.'], function () {
-            Route::get('broadcasts', [BroadcastController::class, 'export'])->name('broadcasts');
+            Route::get('products', [BroadcastController::class, 'export'])->name('products');
         });
 
         //Import
         Route::group(['prefix' => 'import', 'as' => 'import.'], function () {
-            Route::post('broadcasts', [BroadcastController::class, 'import'])->name('broadcasts');
+            Route::post('products', [BroadcastController::class, 'import'])->name('products');
         });
 
     });
 
-    Route::post('convert-audio', [BroadcastController::class, 'convertAudio'])->name('broadcast.convert-audio');
+    Route::post('convert-audio', [BroadcastController::class, 'convertAudio'])->name('product.convert-audio');
 
     Route::resource('integrations', IntegrationController::class)->names('integrations')->only([
         'index', 'edit', 'update'

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\BroadcastTypeEnum;
+use App\Enums\ProductTypeEnum;
 use App\Enums\PaymentProcessTypeEnum;
 use App\Enums\PaymentStatusEnum;
 use App\Models\Earning;
@@ -34,8 +34,9 @@ class EarningService
     {
         $user = auth()->user();
 
-        if (!$user)
+        if (!$user) {
             return false;
+        }
 
         $roles = $user->roles->pluck('code')->toArray();
 
@@ -305,7 +306,7 @@ class EarningService
         $startDate = Carbon::parse($start_date)->format('Y-m-d') ?? Carbon::now()->subMonth();
         $endDate = Carbon::parse($end_date)->format('Y-m-d') ?? Carbon::now();
 
-        $query = Earning::query()->with(['platform', 'country', 'label', 'artist', 'song', 'song.broadcasts'])
+        $query = Earning::query()->with(['platform', 'country', 'label', 'artist', 'song', 'song.products'])
             ->when(self::hasAdmin(), function ($query) {
                 return $query;
             }, function ($query) {
@@ -328,7 +329,7 @@ class EarningService
         // Seçili tarih aralığındaki tüm şarkıların toplam dinleme sayısını al
         $totalPlaysQuery = (clone $query)->whereHas('song', function ($query) {
             $query->whereHas('broadcasts', function ($query) {
-                $query->where('type', BroadcastTypeEnum::SOUND->value);
+                $query->where('type', ProductTypeEnum::SOUND->value);
             });
         });
 
@@ -338,7 +339,7 @@ class EarningService
         $songs = $query->selectRaw('song_id, song_name, SUM(quantity) as total_plays')
             ->whereHas('song', function ($query) {
                 $query->whereHas('broadcasts', function ($query) {
-                    $query->where('type', BroadcastTypeEnum::SOUND->value);
+                    $query->where('type', ProductTypeEnum::SOUND->value);
                 });
             })
             ->groupBy('song_id', 'song_name')
@@ -346,7 +347,7 @@ class EarningService
 
         // Yüzdelik oranı hesapla ve sonuçlara ekle
         foreach ($songs as $song) {
-            $song->total_plays = (int)$song->total_plays; // total_plays'i sayıya çevir
+            $song->total_plays = (int) $song->total_plays; // total_plays'i sayıya çevir
             $song->play_percentage = $totalPlays > 0 ? ($song->total_plays / $totalPlays) * 100 : 0;
 
             // İlişkili label ve artist bilgilerini al
@@ -386,7 +387,7 @@ class EarningService
 
         // Yüzdelik oranı hesapla ve sonuçlara ekle
         foreach ($albums as $album) {
-            $album->total_streams = (int)$album->total_streams; // total_streams'i sayıya çevir
+            $album->total_streams = (int) $album->total_streams; // total_streams'i sayıya çevir
             $album->stream_percentage = $totalStreams > 0 ? ($album->total_streams / $totalStreams) * 100 : 0;
 
             // İlişkili label, artist ve yayın tarihi bilgilerini al
@@ -431,13 +432,14 @@ class EarningService
         $totalStreams = $totalStreamsQuery->sum('quantity');
 
         // Gruplama ve toplama işlemlerini uygula ve ilişkileri önceden yükle
-        $artists = $query->select('artist_name', DB::raw('SUM(quantity) as total_streams'), DB::raw('COUNT(DISTINCT song_id) as total_songs'))
+        $artists = $query->select('artist_name', DB::raw('SUM(quantity) as total_streams'),
+            DB::raw('COUNT(DISTINCT song_id) as total_songs'))
             ->groupBy('artist_name')
             ->get();
 
         // Yüzdelik oranı hesapla ve sonuçlara ekle
         foreach ($artists as $artist) {
-            $artist->total_streams = (int)$artist->total_streams; // total_streams'i sayıya çevir
+            $artist->total_streams = (int) $artist->total_streams; // total_streams'i sayıya çevir
             $artist->stream_percentage = $totalStreams > 0 ? ($artist->total_streams / $totalStreams) * 100 : 0;
         }
 
@@ -458,13 +460,14 @@ class EarningService
         $totalStreams = $totalStreamsQuery->sum('quantity');
 
         // Gruplama ve toplama işlemlerini uygula ve ilişkileri önceden yükle
-        $labels = $query->select('label_name', DB::raw('SUM(quantity) as total_streams'), DB::raw('COUNT(DISTINCT song_id) as total_songs'))
+        $labels = $query->select('label_name', DB::raw('SUM(quantity) as total_streams'),
+            DB::raw('COUNT(DISTINCT song_id) as total_songs'))
             ->groupBy('label_name')
             ->get();
 
         // Yüzdelik oranı hesapla ve sonuçlara ekle
         foreach ($labels as $label) {
-            $label->total_streams = (int)$label->total_streams; // total_streams'i sayıya çevir
+            $label->total_streams = (int) $label->total_streams; // total_streams'i sayıya çevir
             $label->stream_percentage = $totalStreams > 0 ? ($label->total_streams / $totalStreams) * 100 : 0;
         }
 
@@ -485,13 +488,14 @@ class EarningService
         $totalStreams = $totalStreamsQuery->sum('quantity');
 
         // Gruplama ve toplama işlemlerini uygula ve ilişkileri önceden yükle
-        $platforms = $query->select('platform', DB::raw('SUM(quantity) as total_streams'), DB::raw('COUNT(DISTINCT song_id) as total_songs'))
+        $platforms = $query->select('platform', DB::raw('SUM(quantity) as total_streams'),
+            DB::raw('COUNT(DISTINCT song_id) as total_songs'))
             ->groupBy('platform')
             ->get();
 
         // Yüzdelik oranı hesapla ve sonuçlara ekle
         foreach ($platforms as $platform) {
-            $platform->total_streams = (int)$platform->total_streams; // total_streams'i sayıya çevir
+            $platform->total_streams = (int) $platform->total_streams; // total_streams'i sayıya çevir
             $platform->stream_percentage = $totalStreams > 0 ? ($platform->total_streams / $totalStreams) * 100 : 0;
         }
 
@@ -512,13 +516,14 @@ class EarningService
         $totalStreams = $totalStreamsQuery->sum('quantity');
 
         // Gruplama ve toplama işlemlerini uygula ve ilişkileri önceden yükle
-        $countries = $query->select('country', DB::raw('SUM(quantity) as total_streams'), DB::raw('COUNT(DISTINCT song_id) as total_songs'))
+        $countries = $query->select('country', DB::raw('SUM(quantity) as total_streams'),
+            DB::raw('COUNT(DISTINCT song_id) as total_songs'))
             ->groupBy('country')
             ->get();
 
         // Yüzdelik oranı hesapla ve sonuçlara ekle
         foreach ($countries as $country) {
-            $country->total_streams = (int)$country->total_streams; // total_streams'i sayıya çevir
+            $country->total_streams = (int) $country->total_streams; // total_streams'i sayıya çevir
             $country->stream_percentage = $totalStreams > 0 ? ($country->total_streams / $totalStreams) * 100 : 0;
         }
 
@@ -535,7 +540,8 @@ class EarningService
     public static function earningsOfTheUser(User $user)
     {
         $earnings = Earning::where('user_id', $user->id)
-            ->select('platform', DB::raw('DATE_FORMAT(sales_date, "%Y-%m") as month_year'), DB::raw('SUM(earning) as total_earning'))
+            ->select('platform', DB::raw('DATE_FORMAT(sales_date, "%Y-%m") as month_year'),
+                DB::raw('SUM(earning) as total_earning'))
             ->groupBy('platform', 'month_year')
             ->orderBy('platform')
             ->orderBy('month_year')

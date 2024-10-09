@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Broadcast;
+use App\Models\Product;
 use App\Models\ConvertAudio;
 use App\Models\Setting;
 use App\Models\Song;

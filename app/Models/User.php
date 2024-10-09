@@ -198,9 +198,9 @@ class User extends Authenticatable implements HasMedia
         $counts['users'] -= $this->sub_users()->count();
         $counts['songs'] -= $this->songs()->count();
 
-        $broadcasts = $this->broadcasts()->with('promotions');
-        $counts['albums'] -= $broadcasts->count();
-        $counts['promotions'] -= $broadcasts->get()->pluck('promotions')->flatten()->count();
+        $products = $this->broadcasts()->with('promotions');
+        $counts['albums'] -= $products->count();
+        $counts['promotions'] -= $products->get()->pluck('promotions')->flatten()->count();
 
         return $counts;
     }
@@ -296,7 +296,7 @@ class User extends Authenticatable implements HasMedia
 
     public function broadcasts(): HasMany
     {
-        return $this->hasMany(Broadcast::class, 'added_by');
+        return $this->hasMany(Product::class, 'added_by');
     }
 
     public function orders(): HasMany

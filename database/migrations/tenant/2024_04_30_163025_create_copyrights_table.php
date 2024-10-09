@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->tinyInteger('broadcast_type');
             $table->tinyInteger('platform');
             $table->tinyInteger('type')->nullable();
-            $table->foreignId('broadcast_id')->constrained();
+            $table->foreignId('product_id')->constrained();
             $table->timestamps();
         });
     }

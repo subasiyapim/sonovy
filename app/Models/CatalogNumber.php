@@ -15,7 +15,7 @@ class CatalogNumber extends Model
     protected $fillable = [
         'catalog_number',
         'is_used',
-        'broadcast_id',
+        'product_id',
     ];
 
     protected $casts = [
@@ -25,17 +25,17 @@ class CatalogNumber extends Model
     protected $filterable = [
         'catalog_number',
         'is_used',
-        'broadcast.name'
+        'product.name'
     ];
 
     protected $orderable = [
         'catalog_number',
         'is_used',
-        'broadcast.name'
+        'product.name'
     ];
 
-    public function broadcast(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Broadcast::class);
+        return $this->belongsTo(Product::class);
     }
 }

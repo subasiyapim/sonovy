@@ -26,7 +26,7 @@ class IncomeReportJob implements ShouldQueue
     public $report_type;
     public $label_ids;
     public $artist_ids;
-    public $broadcast_ids;
+    public $product_ids;
     public $song_ids;
     public $platform_ids;
     public $country_ids;
@@ -39,7 +39,7 @@ class IncomeReportJob implements ShouldQueue
         $this->report_type = $report_type;
 
         if ($report_type && $report_type !== 'all' && $data) {
-            $property = $report_type . '_ids';
+            $property = $report_type.'_ids';
             $this->$property = $data;
         }
     }
@@ -49,7 +49,7 @@ class IncomeReportJob implements ShouldQueue
         if (!$this->start_date && !$this->end_date) {
             Log::warning('Start date and end date are required for generating reports.');
         } else {
-            if ($this->report_type && $this->report_type !== 'all' && $this->{$this->report_type . '_ids'}) {
+            if ($this->report_type && $this->report_type !== 'all' && $this->{$this->report_type.'_ids'}) {
                 $this->generateReportsWithType();
             } else {
                 $this->generateReports();
@@ -62,7 +62,8 @@ class IncomeReportJob implements ShouldQueue
         $userIds = $this->user_id ? [$this->user_id] : Earning::distinct()->pluck('user_id');
 
         foreach ($userIds as $userId) {
-            $this->generateReport($this->start_date, $this->end_date, null, null, $userId, $this->{$this->report_type . '_ids'});
+            $this->generateReport($this->start_date, $this->end_date, null, null, $userId,
+                $this->{$this->report_type.'_ids'});
         }
     }
 
@@ -75,8 +76,14 @@ class IncomeReportJob implements ShouldQueue
         }
     }
 
-    protected function generateReport($start_date, $end_date, $quarterName = null, $year = null, $userId = null, $data = null): void
-    {
+    protected function generateReport(
+        $start_date,
+        $end_date,
+        $quarterName = null,
+        $year = null,
+        $userId = null,
+        $data = null
+    ): void {
         $earnings = Earning::with('report.song.broadcasts', 'user')
             ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
                 $query->whereHas('report', function ($query) use ($start_date, $end_date) {
@@ -85,7 +92,7 @@ class IncomeReportJob implements ShouldQueue
             })
             ->when($this->label_ids, function ($query) {
                 $query->whereHas('report', function ($query) {
-                    Log::info('Labels: ' . json_encode($this->label_ids));
+                    Log::info('Labels: '.json_encode($this->label_ids));
                     $query->whereIn('label_id', $this->label_ids);
                 });
             })
@@ -94,9 +101,9 @@ class IncomeReportJob implements ShouldQueue
                     $query->whereIn('artist_id', $this->artist_ids);
                 });
             })
-            ->when($this->broadcast_ids, function ($query) {
+            ->when($this->product_ids, function ($query) {
                 $query->whereHas('report.song.broadcasts', function ($query) {
-                    $query->whereIn('broadcast_id', $this->broadcast_ids);
+                    $query->whereIn('product_id', $this->product_ids);
                 });
             })
             ->when($this->song_ids, function ($query) {
@@ -121,7 +128,7 @@ class IncomeReportJob implements ShouldQueue
             ->get();
 
         // Log the earnings to check if data is fetched
-        Log::info('Earnings: ' . $earnings->toJson());
+        Log::info('Earnings: '.$earnings->toJson());
 
         $monthlyAmounts = $earnings->groupBy(function ($earning) {
             return Carbon::parse($earning->report->sales_date)->format('m');
@@ -129,7 +136,7 @@ class IncomeReportJob implements ShouldQueue
             return $month->sum('earning');
         });
 
-        $logFileName = $quarterName && $year ? "{$quarterName}-{$year}" : Carbon::parse($start_date)->format('Y-m-d') . '-' . Carbon::parse($end_date)->format('Y-m-d') . '-' . $this->report_type;
+        $logFileName = $quarterName && $year ? "{$quarterName}-{$year}" : Carbon::parse($start_date)->format('Y-m-d').'-'.Carbon::parse($end_date)->format('Y-m-d').'-'.$this->report_type;
 
         if ($earnings->isNotEmpty()) {
             if ($quarterName && $year) {
@@ -161,7 +168,7 @@ class IncomeReportJob implements ShouldQueue
                 );
 
                 // Log the report to check if it includes monthly_amount
-                Log::info('Report Created: ' . $report->toJson());
+                Log::info('Report Created: '.$report->toJson());
 
                 $reportExport = new ReportExport($earnings, $logFileName, $report);
                 $reportExport->saveAndUpload();

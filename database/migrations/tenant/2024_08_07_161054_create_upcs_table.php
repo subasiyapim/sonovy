@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Broadcast;
+use App\Models\Product;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('upcs', function (Blueprint $table) {
             $table->id();
             $table->string('upc')->unique();
-            $table->foreignIdFor(Broadcast::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Product::class)->nullable()->constrained()->cascadeOnDelete();
             $table->date('use_by_date')->nullable();
             $table->timestamps();
         });

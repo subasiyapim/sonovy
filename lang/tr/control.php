@@ -168,7 +168,7 @@ return [
             "resolved" => "Sonuçlanmış Talepler",
         ],
         'form' => [
-            'broadcast_type' => 'İtiraz yapılacak yayın türü',
+            'product_type' => 'İtiraz yapılacak yayın türü',
             'platform' => 'İtiraz yapılacak platform',
             'type' => 'İtiraz tipini seçin',
             'page_title' => 'Yeni telif itirazı',
@@ -212,13 +212,13 @@ return [
             'column_4' => "Yayın tarihi",
         ],
         'copyright_statistics' => "Telif İstatistikleri",
-        'most_copyright_issue_broadcasts' => "En çok telif sorunu olan yayınlar",
+        'most_copyright_issue_products' => "En çok telif sorunu olan yayınlar",
         'previos_period' => 'vs önceki dönem',
 
 
     ],
-    'broadcast' => [
-        'broadcast_type' => 'Yayın Türü',
+    'product' => [
+        'product_type' => 'Yayın Türü',
         'page_title' => 'Yayın Listesi',
         'artist_catalog_name' => 'Sanatçı & Katalog Adı',
         'status_published_regions' => 'Durum / Yayınlanan bölgeler',
@@ -229,7 +229,7 @@ return [
         'status_waiting' => 'Onay Bekliyor',
         'status_approved' => 'Onaylandı',
         'status_rejected' => 'Reddedildi',
-        'status_not_broadcasting' => 'Yayınlanmıyor',
+        'status_not_producting' => 'Yayınlanmıyor',
         'status_draft' => 'Taslak',
         'type' => 'Tür',
         'type_audio' => 'Ses',
@@ -238,7 +238,7 @@ return [
         'published_country_type_all' => 'Tüm Ülkelerde Yayınlansın',
         'published_country_type_except_selected' => 'Seçtiklerim hariç tüm ülkelerde yayınlansın',
         'published_country_type_only_selected' => 'Sadece seçtiğim ülkelerde yayınlansın',
-        'broadcast' => 'yayını',
+        'product' => 'yayını',
         'piece' => 'Parça',
         'status' => 'Durum',
         'successfully_published' => 'Başarıyla yayınlandı',
@@ -437,7 +437,7 @@ return [
             'buy_additional_rights' => '10 Ek hak satın al',
         ],
     ],
-    'broadcasts-apply' => [
+    'products-apply' => [
         'title' => 'Yayın talepleri',
         'status' => 'Durum',
         'correction' => 'Düzeltme',
@@ -822,7 +822,7 @@ return [
                 "column_3" => "Yayın Tarihi",
                 "column_4" => "Dinlenme oranı",
             ],
-            'broadcasts' => [
+            'products' => [
                 "column_1" => "Albüm adı",
                 "column_2" => "Sanatçı/Albüm",
                 "column_3" => "Yayın Tarihi",
@@ -846,8 +846,8 @@ return [
         'this_month' => 'Bu Ay',
         'this_year' => 'Bu yıl',
         'catalog_summary' => 'Katalog Özeti',
-        'all_broadcasts' => 'Tüm Yayınlar',
-        'draft_broadcasts' => 'Taslak Yayınlar',
+        'all_products' => 'Tüm Yayınlar',
+        'draft_products' => 'Taslak Yayınlar',
         'artists' => 'Sanatçılar',
         'labels' => 'Plak Şirketleri',
         'songs' => 'Şarkılar',
@@ -857,7 +857,7 @@ return [
         'monthly_listening_report' => [
             "listens" => "Dinlenme Sayısı",
             "songs_downloaded" => "Şarkı indirmeleri",
-            "broadcasts_downloaded" => "Albüm indirmeleri",
+            "products_downloaded" => "Albüm indirmeleri",
             "video_downloaded" => "Video indirmeleri",
         ],
         'best_of_this_month' => "En iyiler",
@@ -1499,7 +1499,7 @@ return [
         'form' => [
             'id' => 'ID',
             'upc' => 'UPC',
-            'broadcast_id' => 'Yayın',
+            'product_id' => 'Yayın',
             'use_by_date' => 'Kullanım Tarihi',
             'created_at' => 'Oluşturulma Tarihi',
             'file' => 'Dosya',

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Enums\BroadcastStatusEnum;
-use App\Enums\BroadcastTypeEnum;
+use App\Enums\ProductStatusEnum;
+use App\Enums\ProductTypeEnum;
 use App\Models\Setting;
 use App\Models\Song;
 use Illuminate\Support\Facades\DB;
@@ -13,17 +13,17 @@ class ISRCServices
 {
     public static function make($type, $index = null)
     {
-      
+
         // Varsayılan değerleri ayarla
         $country_code = Setting::where('key', 'isrc_country_code')->first()->value ?? 'TR';
         $year_code = Setting::where('key', 'isrc_year')->first()->value ?? '24';
         $registration_code = Setting::where('key', 'isrc_registration_code')->first()->value ?? '001';
 
         // Kod aralığını belirle
-        if ($type == BroadcastTypeEnum::SOUND->value || $type == BroadcastTypeEnum::RINGTONE->value) {
+        if ($type == ProductTypeEnum::SOUND->value || $type == ProductTypeEnum::RINGTONE->value) {
             $min_code = 1;
             $max_code = 49999;
-        } elseif ($type == BroadcastTypeEnum::VIDEO->value) {
+        } elseif ($type == ProductTypeEnum::VIDEO->value) {
             $min_code = 50000;
             $max_code = 99999;
         } else {

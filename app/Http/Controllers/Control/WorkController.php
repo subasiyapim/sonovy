@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Control;
 
 use App\Enums\AlbumTypeEnum;
 use App\Http\Controllers\Controller;
-use App\Models\Broadcast;
+use App\Models\Product;
 use App\Models\Contract;
 use App\Models\Song;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ class WorkController extends Controller
             ->advancedFilter();
 
 
-        // $broadcast = Broadcast::advancedFilter();
+        // $product = Product::advancedFilter();
         return inertia('Control/Works/Index', compact('works'));
     }
 

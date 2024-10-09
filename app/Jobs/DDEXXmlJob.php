@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Enums\BroadcastTypeEnum;
-use App\Models\Broadcast;
+use App\Enums\ProductTypeEnum;
+use App\Models\Product;
 use App\Services\DDEXService;
 use DOMDocument;
 use Illuminate\Bus\Queueable;
@@ -18,16 +18,16 @@ class DDEXXmlJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $broadcast;
+    protected $product;
 
     /**
      * Create a new job instance.
      *
-     * @param Broadcast $broadcast
+     * @param  Product  $product
      */
-    public function __construct(Broadcast $broadcast)
+    public function __construct(Product $product)
     {
-        $this->broadcast = $broadcast;
+        $this->broadcast = $product;
     }
 
     /**
@@ -36,13 +36,13 @@ class DDEXXmlJob implements ShouldQueue
     public function handle(): void
     {
         switch (intval($this->broadcast->type->value)) {
-            case BroadcastTypeEnum::SOUND->value:
+            case ProductTypeEnum::SOUND->value:
                 DDEXService::makeAudioXml($this->broadcast);
                 break;
-            case BroadcastTypeEnum::VIDEO->value:
+            case ProductTypeEnum::VIDEO->value:
                 DDEXService::makeVideoXml($this->broadcast);
                 break;
-            case BroadcastTypeEnum::RINGTONE->value:
+            case ProductTypeEnum::RINGTONE->value:
                 DDEXService::makeRingToneXml($this->broadcast);
                 break;
             default:

@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Exports\ReportExport;
-use App\Models\Broadcast;
+use App\Models\Product;
 use App\Models\Earning;
 use App\Models\Report;
 use App\Models\User;

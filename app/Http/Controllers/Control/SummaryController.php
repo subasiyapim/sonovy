@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Control;
 
-use App\Enums\BroadcastStatusEnum;
-use App\Enums\BroadcastTypeEnum;
+use App\Enums\ProductStatusEnum;
+use App\Enums\ProductTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Artist;
-use App\Models\Broadcast;
+use App\Models\Product;
 use App\Models\Label;
 use App\Models\Participant;
 use App\Models\Song;
@@ -66,15 +66,15 @@ class SummaryController extends Controller
     protected static function getCatalogCounts($request): array
     {
         return [
-            'broadcast' => Broadcast::when($request->input('d_1') && $request->input('d_2'),
+            'product' => Product::when($request->input('d_1') && $request->input('d_2'),
                 function ($query) use ($request) {
                     $query->whereBetween('created_at', [request()->input('d_1'), request()->input('d_2')]);
                 })->count(),
 
-            'draft_broadcast' => Broadcast::when($request->input('d_1') && $request->input('d_2'),
+            'draft_broadcast' => Product::when($request->input('d_1') && $request->input('d_2'),
                 function ($query) use ($request) {
                     $query->whereBetween('created_at', [request()->input('d_1'), request()->input('d_2')]);
-                })->where('status', BroadcastStatusEnum::DRAFT->value)->count(),
+                })->where('status', ProductStatusEnum::DRAFT->value)->count(),
 
             'artist' => Artist::when($request->input('d_1') && $request->input('d_2'),
                 function ($query) use ($request) {
@@ -89,7 +89,7 @@ class SummaryController extends Controller
                 $query->whereBetween('created_at', [request()->input('d_1'), request()->input('d_2')]);
             })->count(),
 
-            'participant' => Broadcast::with('songs.participants')
+            'participant' => Product::with('songs.participants')
                 ->when($request->input('d_1') && $request->input('d_2'), function ($query) use ($request) {
                     $query->whereBetween('created_at', [request()->input('d_1'), request()->input('d_2')]);
                 })->whereHas('songs.participants')->count(),

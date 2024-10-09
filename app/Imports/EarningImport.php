@@ -28,9 +28,11 @@ class EarningImport implements ToModel, WithValidation, SkipsEmptyRows, WithHead
     {
         Log::info('Row data: ', $row);
 
-        $song = Song::with(['broadcasts' => function ($query) {
-            $query->with(['label.user', 'artists']);
-        }])
+        $song = Song::with([
+            'products' => function ($query) {
+                $query->with(['label.user', 'artists']);
+            }
+        ])
             ->where('isrc', $row['isrc'])
             ->first();
 
@@ -43,7 +45,7 @@ class EarningImport implements ToModel, WithValidation, SkipsEmptyRows, WithHead
                 ['name' => $row['platform']],
                 [
                     'visible_name' => $row['platform'],
-                    'code' => Str::slug($row['platform'] . '-' . rand(1000, 9999)),
+                    'code' => Str::slug($row['platform'].'-'.rand(1000, 9999)),
                     'type' => 1,
                     'status' => 1
                 ]
@@ -52,11 +54,11 @@ class EarningImport implements ToModel, WithValidation, SkipsEmptyRows, WithHead
             $country_id = Country::where('name', $row['ulke'])->value('id');
             Log::info('Country ID: ', ['country_id' => $country_id]);
 
-            $broadcast = $song->broadcasts->first();
-            Log::info('Broadcast: ', ['broadcast' => $broadcast]);
+            $product = $song->products->first();
+            Log::info('Product: ', ['product' => $product]);
 
-            $artist_id = $broadcast?->artists->first()?->id;
-            $label_id = $broadcast?->label?->user?->id;
+            $artist_id = $product?->artists->first()?->id;
+            $label_id = $product?->label?->user?->id;
 
             Log::info('Artist ID: ', ['artist_id' => $artist_id]);
             Log::info('Label ID: ', ['label_id' => $label_id]);
@@ -92,7 +94,7 @@ class EarningImport implements ToModel, WithValidation, SkipsEmptyRows, WithHead
             );
         }
 
-        Log::warning('Song not found for ISRC: ' . $row['isrc']);
+        Log::warning('Song not found for ISRC: '.$row['isrc']);
         return null;
     }
 

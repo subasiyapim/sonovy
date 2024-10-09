@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Control;
 
-use App\Enums\BroadcastStatusEnum;
+use App\Enums\ProductStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Artist;
-use App\Models\Broadcast;
+use App\Models\Product;
 use App\Models\Label;
 use App\Models\Song;
 use App\Services\EarningService;
@@ -27,12 +27,12 @@ class StatisticController extends Controller
 
         //Catalog counts
         $catalog_counts = [
-            'broadcast' => Broadcast::count(),
-            'draft_broadcast' => Broadcast::where('status', BroadcastStatusEnum::DRAFT->value)->count(),
+            'product' => Product::count(),
+            'draft_broadcast' => Product::where('status', ProductStatusEnum::DRAFT->value)->count(),
             'artist' => Artist::count(),
             'label' => Label::count(),
             'song' => Song::count(),
-            'participant' => Broadcast::with('songs.participants')->whereHas('songs.participants')->count(),
+            'participant' => Product::with('songs.participants')->whereHas('songs.participants')->count(),
 
         ];
 

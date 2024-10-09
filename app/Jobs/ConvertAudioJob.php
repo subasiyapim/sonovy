@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Enums\ConvertAudioEnum;
-use App\Models\Broadcast;
+use App\Models\Product;
 use App\Models\ConvertAudio;
 use App\Models\Song;
 use Illuminate\Bus\Queueable;
@@ -21,7 +21,7 @@ class ConvertAudioJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected Broadcast $broadcast;
+    protected Product $product;
     protected Song $song;
     protected ConvertAudio $convertAudio;
 
@@ -38,13 +38,13 @@ class ConvertAudioJob implements ShouldQueue, ShouldBeUnique
     /**
      * Create a new job instance.
      */
-    public function __construct(Broadcast $broadcast, Song $song, $request)
+    public function __construct(Product $product, Song $song, $request)
     {
-        $this->broadcast = $broadcast;
+        $this->broadcast = $product;
         $this->song = $song;
         $this->convertAudio = ConvertAudio::create(
             [
-                'broadcast_id' => $broadcast->id,
+                'product_id' => $product->id,
                 'song_id' => $song->id,
                 'output_file' => null,
                 'error' => null,
@@ -62,14 +62,14 @@ class ConvertAudioJob implements ShouldQueue, ShouldBeUnique
      */
     public function handle(): void
     {
-        $song_file = storage_path('app/public/' . $this->song->path);
+        $song_file = storage_path('app/public/'.$this->song->path);
         $cover_image = $this->broadcast->image->url;
 
         if (!File::exists(storage_path('app/public/converted-songs'))) {
             File::makeDirectory(storage_path('app/public/converted-songs'), 0777, true, true);
         }
 
-        $temp_output_file = storage_path('app/public/converted-songs/' . uniqid() . '.mp4');
+        $temp_output_file = storage_path('app/public/converted-songs/'.uniqid().'.mp4');
 
         try {
             $this->convertAudio->update(['status' => ConvertAudioEnum::CONVERTING]);
@@ -81,7 +81,7 @@ class ConvertAudioJob implements ShouldQueue, ShouldBeUnique
             $process->run();
 
             if ($process->isSuccessful()) {
-                $output_file_path = uniqid() . '.mp4';
+                $output_file_path = uniqid().'.mp4';
                 Storage::disk('converted-songs')->put($output_file_path, file_get_contents($temp_output_file));
 
                 $output_url = Storage::disk('converted-songs')->url($output_file_path);
@@ -101,7 +101,7 @@ class ConvertAudioJob implements ShouldQueue, ShouldBeUnique
                         'error' => $process->getErrorOutput()
                     ]
                 );
-                Log::error('FFMpeg Conversion Failed: ' . $process->getErrorOutput());
+                Log::error('FFMpeg Conversion Failed: '.$process->getErrorOutput());
             }
         } catch (\Exception $e) {
             $this->convertAudio->update(
@@ -112,7 +112,7 @@ class ConvertAudioJob implements ShouldQueue, ShouldBeUnique
             );
 
             unlink($temp_output_file);
-            Log::error('Error converting audio to video: ' . $e->getMessage());
+            Log::error('Error converting audio to video: '.$e->getMessage());
         }
     }
 }

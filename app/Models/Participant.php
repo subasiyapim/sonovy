@@ -12,7 +12,7 @@ class Participant extends Model
     use HasFactory;
 
     protected $fillable = [
-        'broadcast_id',
+        'product_id',
         'user_id',
         'song_id',
         'tasks',
@@ -23,9 +23,9 @@ class Participant extends Model
         'tasks' => 'array',
     ];
 
-    public function broadcast(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Broadcast::class);
+        return $this->belongsTo(Product::class);
     }
 
     public function song(): BelongsTo

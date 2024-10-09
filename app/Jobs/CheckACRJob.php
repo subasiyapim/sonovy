@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Broadcast;
+use App\Models\Product;
 use App\Models\Setting;
 use App\Services\ACRServices;
 use App\Services\FFMpegServices;
@@ -19,7 +19,7 @@ class CheckACRJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public Broadcast $broadcast;
+    public Product $product;
 
     public $trim_audio_start_time;
     public $trim_audio_end_time;
@@ -29,12 +29,13 @@ class CheckACRJob
     /**
      * Create a new job instance.
      */
-    public function __construct(Broadcast $broadcast)
+    public function __construct(Product $product)
     {
-        $this->broadcast = $broadcast;
+        $this->product = $product;
 
         $settings = Cache::remember('settings', 3600, function () {
-            return Setting::whereIn('key', ['trim_video_start_time', 'trim_video_end_time', 'trim_audio_start_time', 'trim_audio_end_time'])
+            return Setting::whereIn('key',
+                ['trim_video_start_time', 'trim_video_end_time', 'trim_audio_start_time', 'trim_audio_end_time'])
                 ->get()
                 ->pluck('value', 'key');
         });
@@ -51,22 +52,25 @@ class CheckACRJob
     public function handle(): void
     {
 
-        if (!File::exists(public_path() . '/storage/songs/samples')) {
-            File::makeDirectory(public_path() . '/storage/songs/samples', 0777, true, true);
+        if (!File::exists(public_path().'/storage/songs/samples')) {
+            File::makeDirectory(public_path().'/storage/songs/samples', 0777, true, true);
         }
 
-        foreach ($this->broadcast->songs as $song) {
+        foreach ($this->product->songs as $song) {
 
             //$file = Storage::get('public/' . $song->path);
-            $file = public_path() . '/storage/' . $song->path;
-            $file_name = public_path() . '/storage/songs/samples/' . explode('/', $song->path)[1];
-            $storage_file = 'public/songs/samples/' . explode('/', $song->path)[1];
+            $file = public_path().'/storage/'.$song->path;
+            $file_name = public_path().'/storage/songs/samples/'.explode('/', $song->path)[1];
+            $storage_file = 'public/songs/samples/'.explode('/', $song->path)[1];
             if ($song->type == 1) {
-                $trimmed = FFMpegServices::trimAudio($file, $file_name, $this->trim_audio_start_time, $this->trim_audio_end_time);
+                $trimmed = FFMpegServices::trimAudio($file, $file_name, $this->trim_audio_start_time,
+                    $this->trim_audio_end_time);
             } elseif ($song->type == 2) {
-                $trimmed = FFMpegServices::trimVideo($file, $file_name, $this->trim_video_start_time, $this->trim_video_end_time);
+                $trimmed = FFMpegServices::trimVideo($file, $file_name, $this->trim_video_start_time,
+                    $this->trim_video_end_time);
             } else {
-                $trimmed = FFMpegServices::trimAudio($file, $file_name, $this->trim_audio_start_time, $this->trim_audio_end_time);
+                $trimmed = FFMpegServices::trimAudio($file, $file_name, $this->trim_audio_start_time,
+                    $this->trim_audio_end_time);
             }
 
             if ($trimmed['status'] !== false) {

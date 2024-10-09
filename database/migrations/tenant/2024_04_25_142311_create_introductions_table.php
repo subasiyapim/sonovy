@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('introductions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('broadcast_id')->constrained('broadcasts');
+            $table->foreignId('product_id')->constrained('products');
             $table->foreignId('language_id')->constrained('languages');
             $table->string('p_line');
             $table->tinyText('description');

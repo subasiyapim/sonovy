@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('broadcast_id')->constrained();
+            $table->foreignId('product_id')->constrained();
             $table->foreignId('platform_id')->constrained();
             $table->string('title');
             $table->tinyText('description');

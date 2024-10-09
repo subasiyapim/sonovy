@@ -14,26 +14,26 @@ class Copyright extends Model
     use HasAdvancedFilter;
 
     protected $fillable = [
-        'broadcast_type',
+        'product_type',
         'platform',
         'type',
-        'broadcast_id',
+        'product_id',
     ];
 
     protected $orderable = [
         'id',
-        'broadcast_type',
+        'product_type',
         'platform',
         'type',
-        'broadcast_id',
+        'product_id',
     ];
 
     protected $filterable = [
         'id',
-        'broadcast_type',
+        'product_type',
         'platform',
         'type',
-        'broadcast_id',
+        'product_id',
     ];
 
     public static array $COPYRIGHT_TYPES = [
@@ -55,9 +55,9 @@ class Copyright extends Model
         return $this->hasMany(CopyrightSong::class);
     }
 
-    public function broadcast(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Broadcast::class);
+        return $this->belongsTo(Product::class);
     }
 
 }

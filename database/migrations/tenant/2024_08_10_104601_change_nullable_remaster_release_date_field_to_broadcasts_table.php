@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('broadcasts', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table) {
             $table->date('remaster_release_date')->nullable()->change();
         });
     }
@@ -20,7 +20,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('broadcasts', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table) {
             $table->date('remaster_release_date')->nullable(false)->change();
         });
     }

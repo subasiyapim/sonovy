@@ -18,7 +18,7 @@ class CopyrightController extends Controller
         abort_if(Gate::denies('copyright_list') && Gate::denies('copyright_management'), Response::HTTP_FORBIDDEN,
             '403 Forbidden');
 
-        $copyrights = Copyright::with('copyrightSongs', 'broadcast')
+        $copyrights = Copyright::with('copyrightSongs', 'product')
             ->advancedFilter();
 
         return inertia('Control/Copyrights/Index', compact('copyrights'));
@@ -41,7 +41,7 @@ class CopyrightController extends Controller
                 'broadcast_type' => $request->broadcast_type,
                 'platform' => $request->platform,
                 'type' => $request->type,
-                'broadcast_id' => $request->broadcast_id,
+                'product_id' => $request->product_id,
             ]
         );
 

@@ -12,7 +12,7 @@ use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\Panel\UserResource;
 use App\Models\Artist;
 use App\Models\BankAccount;
-use App\Models\Broadcast;
+use App\Models\Product;
 use App\Models\Country;
 use App\Models\Label;
 use App\Models\User;
@@ -128,7 +128,7 @@ class UserController extends Controller
         $sub_users = User::where('parent_id', '=', $user->id)->get();
         $labels = Label::with('country')->where('added_by', '=', $user->i)->get();
         $artists = Artist::where('added_by', '=', $user->i)->get();
-        $broadcasts = Broadcast::with('artists', 'label', 'publishedCountries', 'songs')->where('added_by', '=',
+        $products = Product::with('artists', 'label', 'publishedCountries', 'songs')->where('added_by', '=',
             $user->i)->get();
 
 

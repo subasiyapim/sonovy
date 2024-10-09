@@ -105,9 +105,9 @@ class Song extends Model implements HasMedia
         return $this->belongsTo(Country::class);
     }
 
-    public function broadcasts(): BelongsToMany
+    public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Broadcast::class, 'broadcast_song', 'song_id', 'broadcast_id');
+        return $this->belongsToMany(Product::class, 'product_song', 'song_id', 'product_id');
     }
 
     public function remixer(): BelongsTo

@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('convert_audio', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Broadcast::class, 'broadcast_id');
+            $table->foreignIdFor(\App\Models\Product::class, 'product_id');
             $table->foreignIdFor(\App\Models\Song::class, 'song_id');
             $table->date('release_date');
             $table->foreignIdFor(\App\Models\Timezone::class, 'timezone_id');

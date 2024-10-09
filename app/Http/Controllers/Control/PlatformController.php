@@ -111,7 +111,7 @@ class PlatformController extends Controller
 
         $artist_platform = DB::table('artist_platform')->where('platform_id', $request->validated()['slave_id'])->get();
         $platform_user = DB::table('platform_user')->where('platform_id', $request->validated()['slave_id'])->get();
-        $broadcast_download_platform = DB::table('broadcast_download_platform')->where('platform_id',
+        $product_download_platform = DB::table('broadcast_download_platform')->where('platform_id',
             $request->validated()['slave_id'])->get();
         $earnings = DB::table('earnings')->where('platform_id', $request->validated()['slave_id'])->get();
 
@@ -125,7 +125,7 @@ class PlatformController extends Controller
                 $request->input('slave_id'))->update(['platform_id' => $request->input('master_id')]);
         });
 
-        $broadcast_download_platform->each(function () use ($request) {
+        $product_download_platform->each(function () use ($request) {
             DB::table('broadcast_download_platform')->where('platform_id',
                 $request->input('slave_id'))->update(['platform_id' => $request->input('master_id')]);
         });

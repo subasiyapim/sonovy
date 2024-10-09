@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Control;
 
-use App\Enums\BroadcastStatusEnum;
+use App\Enums\ProductStatusEnum;
 use App\Enums\SongTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Song\SongChangeStatusRequest;
@@ -96,7 +96,7 @@ class SongController extends Controller
         abort_if(Gate::denies('song_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         //Eğer şarkıya ait yayın varsa silinemez ve inertia ile hata mesajı döndürülür
-        if ($song->broadcasts()->where('status', BroadcastStatusEnum::APPROVED->value)->exists()) {
+        if ($song->broadcasts()->where('status', ProductStatusEnum::APPROVED->value)->exists()) {
             return redirect()->back()->with(
                 [
                     'notification' =>

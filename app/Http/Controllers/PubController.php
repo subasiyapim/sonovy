@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\AnnouncementTemplate;
 use App\Models\Artist;
 use App\Models\ArtistBranch;
-use App\Models\Broadcast;
+use App\Models\Product;
 use App\Models\City;
 use App\Models\Feature;
 use App\Models\Label;
@@ -59,6 +59,7 @@ class PubController extends Controller
 
         return response()->json($song, Response::HTTP_OK);
     }
+
     public function findUser(Request $request)
     {
 
@@ -69,6 +70,7 @@ class PubController extends Controller
 
         return response()->json($song, Response::HTTP_OK);
     }
+
     public function findArtist(Request $request)
     {
 
@@ -106,10 +108,11 @@ class PubController extends Controller
         $id = $request->id;
 
 
-        $label = Broadcast::with('songs')->where('id', '=', $id)->first();
+        $label = Product::with('songs')->where('id', '=', $id)->first();
 
         return response()->json($label, Response::HTTP_OK);
     }
+
     public function findAnnouncementTemplates(Request $request)
     {
 
@@ -184,7 +187,6 @@ class PubController extends Controller
 
         return response()->json($service, Response::HTTP_OK);
     }
-
 
 
     public function findPlan(Request $request)

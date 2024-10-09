@@ -17,7 +17,7 @@ class UpcController extends Controller
     public function index()
     {
 
-        $used_upcs = Upc::usedUpcs()->with('broadcast')->orderBy('id', 'asc')->advancedFilter();
+        $used_upcs = Upc::usedUpcs()->with('product')->orderBy('id', 'asc')->advancedFilter();
         $not_used_upcs = Upc::notUsedUpcs()->orderBy('id', 'asc')->advancedFilter();
 
         return inertia('Control/Upcs/Index', compact('used_upcs', 'not_used_upcs'));

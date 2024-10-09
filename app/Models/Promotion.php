@@ -11,16 +11,16 @@ class Promotion extends Model
     use HasFactory;
 
     protected $fillable = [
-        'broadcast_id',
+        'product_id',
         'platform_id',
         'title',
         'description',
         'date',
     ];
 
-    public function broadcast(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Broadcast::class);
+        return $this->belongsTo(Product::class);
     }
 
     public function platform(): BelongsTo
