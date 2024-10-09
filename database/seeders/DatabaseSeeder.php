@@ -16,17 +16,17 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             //SYSTEM SEEDERS
-//            \Database\Seeders\System\CountrySeeder::class,
-//            \Database\Seeders\System\CitySeeder::class,
-//            \Database\Seeders\System\DistrictSeeder::class,
+        //    \Database\Seeders\System\CountrySeeder::class,
+        //    \Database\Seeders\System\CitySeeder::class,
+        //    \Database\Seeders\System\DistrictSeeder::class,
 
-//            \Database\Seeders\System\TenantSeeder::class,
+           //\Database\Seeders\System\TenantSeeder::class,
 
 
-            //TENANCY SEEDERS
+            // TENANCY SEEDERS
 
             \Database\Seeders\PermissionSeeder::class,
-            \Database\Seeders\RoleSeeder::class,
+            // \Database\Seeders\RoleSeeder::class,
             \Database\Seeders\UserSeeder::class,
             \Database\Seeders\PermissionRoleSeeder::class,
             \Database\Seeders\RoleUserSeeder::class,

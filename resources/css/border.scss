@@ -1,0 +1,21 @@
+@import './colors.scss';
+.soft-hr{
+    border: 1px solid var(--soft-200)
+}
+.border-soft-200{
+    border-color: var(--soft-200);
+}
+.border-text-input {
+    border: 1px solid var(--white-600);
+}
+.border-white-600 {
+    border-color: var(--white-600);
+}
+.border-dark-green-600 {
+    border-color: var(--dark-green-600);
+}
+
+.border-error-500 {
+    border-color: var(--error-500);
+}
+

@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Control\BroadcastController;
 use App\Http\Controllers\Control\DashboardController;
 use App\Http\Controllers\Control\ArtistController;
+use App\Http\Controllers\Control\LabelController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +21,7 @@ Route::group(
 
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     Route::resource('roles', RoleController::class)->names('roles');
 
     Route::resource('users', UserController::class)->names('users');
