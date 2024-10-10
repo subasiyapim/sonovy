@@ -98,7 +98,11 @@ class ProductController extends Controller
         $publish_country_types = getDataFromInputFormat(ProductPublishedCountryTypeEnum::getTitles(), 'id', 'name',
             null, true);
         $platform_download_price = getDataFromInputFormat(Platform::$PLATFORM_DOWNLOAD_PRICE, 'id', 'name', null, true);
-        $artistBranches = getDataFromInputFormat(ArtistBranch::get(['name', 'id'], 'id', 'name'));
+
+        $artistBranches = getDataFromInputFormat(ArtistBranch::with('translations')
+            ->whereHas('translations', function ($query) {
+                $query->where('locale', app()->getLocale());
+            })->get(), 'id', 'name');
         $availablePlanItems = Auth::user()->availablePlanItemsCount();
 
         return inertia('Control/Products/Create',

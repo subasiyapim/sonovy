@@ -22,6 +22,6 @@ class ArtistBranch extends Model implements TranslatableContract
     protected $table = 'artist_branches';
     public array $translatedAttributes = ['name'];
 
-    protected array $filterable = ['id', 'translations.name'];
-    protected array $orderable = ['id', 'translations.name'];
+    protected array $filterable = ['id'];
+    protected array $orderable = ['id'];
 }
