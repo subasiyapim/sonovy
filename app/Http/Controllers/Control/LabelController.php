@@ -22,8 +22,9 @@ class LabelController extends Controller
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $labels = Label::with('country')->advancedFilter();
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
-        return inertia('Control/Labels/Index', compact('labels'));
+        return inertia('Control/Labels/Index', compact('labels','countries'));
 
     }
 

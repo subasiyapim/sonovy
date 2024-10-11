@@ -82,9 +82,7 @@ const elementsCount = slotNames.reduce((acc, slotName) => {
 }, 0);
 const searching = ref(false);
 
-const onInput = (e) => {
-    console.log(e);
-}
+
 
 const onSearchStart = () => {
     if (!searching.value) {

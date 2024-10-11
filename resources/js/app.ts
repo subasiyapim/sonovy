@@ -9,7 +9,6 @@ import {ZiggyVue} from '../../vendor/tightenco/ziggy';
 import debounce from './Directives/Debounce';
 import clickOutside from './Directives/ClickOutside';
 import {createPinia} from 'pinia';
-
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 import VueTippy from 'vue-tippy'
@@ -40,6 +39,7 @@ createInertiaApp({
                     }, // => Global default options * see all props
                 }
             )
+
             .use(plugin)
             .use(ZiggyVue)
             .use(createPinia())

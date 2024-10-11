@@ -31,17 +31,14 @@
                     </div>
                 </template>
 
-                <div v-if="config.data != null && config.data.length > 0" class="max-h-[250px] overflow-scroll">
-                    <div v-for="el in config.data" :data-id="el[config.value ?? 'value']"  @click="chooseValue(el)"  :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'" class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
-
-                        <div class="w-4 h-4 flex items-center justify-center border border-soft-200 rounded-full  shadow">
-                            <div v-if="checkIfChecked(el[config.value ?? 'value'])" class="bg-dark-green-600 w-3 h-3 rounded-full border-dark-green-600">
-                            </div>
-                        </div>
+                <div v-if="config.data != null && config.data.length > 0">
+                    <div @click="chooseValue(el)" v-for="el in config.data" :data-id="el[config.value ?? 'value']" :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'" class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
+                       <div v-if="type == 'multiselect'" :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-dark-green-600 border-dark-green-600' : 'bg-white  border-soft-200'" class="w-3 h-3 border  rounded-sm shadow"></div>
+                        <div v-else class="border border-soft-200 rounded-sm shadow"></div>
                         <span class="paragraph-sm c-strong-950"> {{el[config.label ?? 'label']}}</span>
                     </div>
                 </div>
-                <div v-else class="flex flex-col gap-5 items-center justify-center min-h-[224px] ">
+                <div v-else class="flex flex-col gap-5 items-center justify-center min-h-[224px]">
                     <img src="@/assets/images/empty_state.png" class="w-16 h-16">
                     <p class="label-medium c-strong-950">Maalesef sonuç bulunamadı:(</p>
                     <slot name="empty" />
@@ -49,6 +46,12 @@
             </div>
         </transition>
    </div>
+
+      <div class="flex items-center gap-2 mt-2">
+            <StatusBadge v-for="(el,index) in element" :showClose="true" @close="element.splice(index,1)" :showIcon="false" >
+                <span class="label-xs c-sub-600">{{config.data.find((option) => option[config.value ?? 'value'] == el)[config.label ?? 'label']}}</span>
+            </StatusBadge>
+      </div>
 
 </template>
 
@@ -68,19 +71,29 @@ const props = defineProps({
 })
 const emits = defineEmits(['update:modelValue'])
 const element = computed({
-    get: () => props.modelValue,
+    get: () => props.modelValue ?? [],
     set: (value) => emits('update:modelValue',value),
 })
 const isOpen = ref(false);
 const dropdownDirection = ref('bottom');  // Direction for dropdown
 const dropdownStyle = ref({});  // Inline style for dropdown (e.g., top or bottom)
 const selectContainer = ref(null);  // Reference to the select container element
+const onClose = () => {
 
+}
 const getShowLabel = computed(() => {
-    const findedElement =  props.config?.data?.find((e) => e[props.config.value ?? 'value'] == element.value);
+    const filteredData = props.config?.data?.filter((e) => {
 
-        return findedElement == null ? '' : findedElement[props.config.label ?? 'label'];
+       return element.value.find((checkValue) => checkValue == e[props.config.value ?? 'value']);
+    });
+
+    let finalStr = '';
+    filteredData.forEach((e,index) => {
+
+            finalStr += `${index != 0 ? ' , ' : ''}${e[props.config.label ?? 'label']}`
     })
+    return finalStr;
+})
 const open = async () => {
       isOpen.value = !isOpen.value;
     if (isOpen.value) {
@@ -88,16 +101,15 @@ const open = async () => {
         await nextTick(); // Wait until DOM has updated
         adjustDropdownDirection();
 
-    }else {
-
-
     }
 }
 
 const checkIfChecked = computed(() => {
     return (rowValue) => {
-        return rowValue == element.value;
 
+        if(rowValue)
+            return element.value.find((e) => e == rowValue);
+        return false;
     }
 })
 const hasSlot = (name) => {
@@ -106,7 +118,6 @@ const hasSlot = (name) => {
 
 const handleClickOutside = () => {
     if(isOpen.value){
-        console.log("GELDİİİİİ");
         isOpen.value = false;
     }
 }
@@ -127,7 +138,18 @@ const adjustDropdownDirection = () => {
 }
 
 const chooseValue = (val) => {
-     element.value = val[props.config.value ?? 'value'];
+    const v = val[props.config.value ?? 'value'];
+    const vIndex =  element.value.findIndex((el) => el == v);
+
+    if(vIndex < 0){
+        element.value.push(v);
+    }else {
+        element.value.splice(vIndex,1);
+    }
+
+
+
+
 }
 
 // Handle window resize event to recheck dropdown direction

@@ -93,9 +93,10 @@
 
 
 //Select
+
 .smallSelect  {
 
-     background-image: url("data:image/svg+xml,%3Csvg%20width%3D%228%22%20height%3D%226%22%20viewBox%3D%220%200%208%206%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M4.00004%203.7034L6.97004%200.733398L7.81844%201.5818L4.00004%205.4002L0.181641%201.5818L1.03004%200.733398L4.00004%203.7034Z%22%20fill%3D%22%23335CFF%22%2F%3E%3C%2Fsvg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg%20width%3D%228%22%20height%3D%226%22%20viewBox%3D%220%200%208%206%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M4.00004%203.7034L6.97004%200.733398L7.81844%201.5818L4.00004%205.4002L0.181641%201.5818L1.03004%200.733398L4.00004%203.7034Z%22%20fill%3D%22%23335CFF%22%2F%3E%3C%2Fsvg%3E");
 
     background-position: right 0.5rem center;
     background-repeat: no-repeat;
@@ -115,6 +116,7 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
+
 
 
 
@@ -141,4 +143,15 @@
 }
 .rotate-icon-enter-to {
   transform: rotate(90deg);
+}
+
+
+
+.hasError .appSelectInput{
+    background: var(--red-50);
+}
+
+.appSelectInput::placeholder{
+    color: var(--soft-400);
+    @extend .label-sm;
 }

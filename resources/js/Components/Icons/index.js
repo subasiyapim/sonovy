@@ -39,6 +39,8 @@ import SendIcon from './SendIcon.vue';
 import InfoFilledIcon from './InfoFilledIcon.vue';
 import SpotifyIcon from './SpotifyIcon.vue';
 import AppleMusicIcon from './AppleMusicIcon.vue';
+import CheckFilledIcon from './CheckFilledIcon.vue';
+import CloseIcon from './CloseIcon.vue';
 
 export {
     AddIcon,
@@ -80,4 +82,6 @@ export {
     InfoFilledIcon,
     SpotifyIcon,
     AppleMusicIcon,
+    CheckFilledIcon,
+    CloseIcon
 }

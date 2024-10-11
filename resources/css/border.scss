@@ -8,6 +8,11 @@
 .border-text-input {
     border: 1px solid var(--white-600);
 }
+.hasError .border-text-input{
+    border: 1px solid var(--error-500);
+    background: var(--red-50);
+}
+
 .border-white-600 {
     border-color: var(--white-600);
 }

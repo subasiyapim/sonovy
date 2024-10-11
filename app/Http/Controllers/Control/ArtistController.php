@@ -24,9 +24,10 @@ class ArtistController extends Controller
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $artists = ArtistResource::collection(Artist::with('artistBranches')->advancedFilter())->resource;
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
 
-        return inertia('Control/Artists/Index', compact('artists'));
+        return inertia('Control/Artists/Index', compact('artists','countries'));
 
     }
 

@@ -1,7 +1,7 @@
 <template>
   <AdminLayout title="Tüm Sanatçılar" parentTitle="Katalog">
 
-    <AppTable v-model="usePage().props.artists" @addNewClicked="openDialog">
+    <AppTable ref="artistTable" v-model="usePage().props.artists" @addNewClicked="openDialog" :config="appTableConfig" :slug="route('control.artists.index')">
       <AppTableColumn label="Sanatçı Adı">
         <template #default="scope">
           <div class="flex items-center gap-2 ">
@@ -11,7 +11,7 @@
               >
             </div>
             <div>
-              <h3 class="font-bold text-lg">{{ scope.row.name }}</h3>
+              <h3 class="c-sub-600 text-sm leading-4 font-bold">{{ scope.row.name }}</h3>
               <div class="flex flex-row gap-x-2 items-center" v-if="scope.row.platforms">
                 <template v-for="platform in scope.row.platforms" :key="platform.id">
                   <a v-if="platform.code === 'spotify'"
@@ -37,7 +37,10 @@
       </AppTableColumn>
       <AppTableColumn label="Durum">
         <template #default="scope">
-          {{ scope.row.status }}
+
+          <StatusBadge>
+             {{ scope.row.status }}
+          </StatusBadge>
         </template>
       </AppTableColumn>
 
@@ -49,19 +52,19 @@
 
       <AppTableColumn label="Tarzlar">
         <template #default="scope">
-          <span v-for="(branch, index) in scope.row.artist_branches" :key="index">
+          <BasicBadge class="mx-1" v-for="(branch, index) in scope.row.artist_branches" :key="index">
             {{ branch }}
-          </span>
+          </BasicBadge>
           <span v-if="scope.row.artist_branches_count > 0">+{{ scope.row.artist_branches_count }}</span>
         </template>
       </AppTableColumn>
       <AppTableColumn label="Aksiyonlar">
         <template #default="scope">
           <div class="flex gap-3">
-            <IconButton>
+            <IconButton @click="deleteRow(scope.row)">
               <TrashIcon color="var(--sub-600)"/>
             </IconButton>
-            <IconButton>
+            <IconButton @click="editRow(scope.row)">
               <EditIcon color="var(--sub-600)"/>
             </IconButton>
           </div>
@@ -90,7 +93,7 @@
 <script setup>
 import {usePage} from '@inertiajs/vue3';
 
-import {ref} from 'vue';
+import {ref,computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
@@ -99,9 +102,10 @@ import {AddIcon, TrashIcon, EditIcon, AppleMusicIcon, SpotifyIcon} from '@/Compo
 import {AddArtistDialog} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 import {Link} from "@inertiajs/vue3";
-
+import {StatusBadge,BasicBadge} from '@/Components/Badges'
+import {showNotification}  from '@/Components/Notification';
 const defaultStore = useDefaultStore();
-
+const artistTable = ref();
 const props = defineProps({
   artists: Object
 })
@@ -109,6 +113,39 @@ const props = defineProps({
 const isModalOn = ref(false);
 const openDialog = () => {
   isModalOn.value = !isModalOn.value;
+}
+
+const appTableConfig = computed(() =>  {
+    return {
+        filters: [
+            {
+                title:"Durum",
+                param:"status",
+                options: [
+                    {value:1,label:"Yeni"},
+                    {value:2,label:"Eski"}
+                ]
+            },
+            {
+                title:"Tarz",
+                param:"genre",
+                options: [
+                    {value:1,label:"Pop"},
+                    {value:2,label:"Rock"}
+                ]
+            },
+        ]
+    }
+})
+
+
+const deleteRow = (row) => {
+    //EXAMPLE ROW SİLME İÇİN
+    showNotification();
+    artistTable.value.removeRowData(row);
+}
+const editRow = () => {
+
 }
 </script>
 

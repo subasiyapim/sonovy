@@ -1,5 +1,6 @@
 :root{
 
+    --red-50:#FFEBEC;
     --weak-50:#F5F7FA;
     --strong-950: #0E121B;
     --sub-600: #525866;
@@ -92,4 +93,8 @@
     }
       .c-error-500{
         color: var(--error-500);
+    }
+
+    .c-red-50{
+        color: var(--red-50);
     }

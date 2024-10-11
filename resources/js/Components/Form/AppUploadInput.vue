@@ -43,16 +43,21 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive ,computed} from 'vue';
 import {RegularButton} from '@/Components/Buttons'
 
-defineProps({
+const props = defineProps({
+    modelValue:{},
     label:{},
     note:{}
 })
+const emits = defineEmits(['update:modelValue']);
 const fileInput = ref(null);
 const isDragging = ref(false);
-const image = ref(null);
+const image = computed({
+    get:() => props.modelValue ,
+    set:(value) => emits('update:modelValue',value)
+})
 
 
 const triggerFileInput = () => {
@@ -71,6 +76,7 @@ const handleFiles = (files) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         image.value = {file,url: e.target.result}
+
       };
 
       reader.readAsDataURL(file);
