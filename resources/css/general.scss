@@ -5,6 +5,10 @@
 @import './texts.scss';
 @import './dialog.scss';
 
+:root{
+  --toastify-color-success: #ffffff !important;
+  --toastify-color-error: #ffffff !important;
+}
 .sub-menu-item{
      padding: 8px 12px;
      color: var(--sub-600);
@@ -154,4 +158,21 @@
 .appSelectInput::placeholder{
     color: var(--soft-400);
     @extend .label-sm;
+}
+
+
+.Toastify__toast--success {
+    background: var(--dark-green-600) !important;
+}
+.Toastify__toast--error {
+    background: var(--error-500) !important;
+}
+.Toastify__toast-body{
+    @extend .paragraph-sm;
+    color: white;
+}
+
+.Toastify__toast{
+    min-height: auto !important;
+    max-height: auto !important;
 }

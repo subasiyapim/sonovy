@@ -16,6 +16,9 @@ import VueTippy from 'vue-tippy'
 import 'tippy.js/dist/tippy.css' // optional for styling
 
 
+import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>
@@ -39,7 +42,11 @@ createInertiaApp({
                     }, // => Global default options * see all props
                 }
             )
-
+            .use(Vue3Toastify,
+            {
+                autoClose: 3000,
+                hideProgressBar:true,
+            })
             .use(plugin)
             .use(ZiggyVue)
             .use(createPinia())

@@ -1,8 +1,13 @@
 <template>
   <AdminLayout title="Tüm Sanatçılar" parentTitle="Katalog">
 
-    <AppTable ref="artistTable" v-model="usePage().props.artists" @addNewClicked="openDialog" :config="filters"
-              :slug="route('control.artists.index')">
+    <AppTable
+        ref="artistTable"
+        v-model="usePage().props.artists"
+        @addNewClicked="openDialog"
+        :config="appTableConfig"
+
+        :slug="route('control.artists.index')">
       <AppTableColumn label="Sanatçı Adı">
         <template #default="scope">
           <div class="flex items-center gap-2 ">
@@ -105,6 +110,7 @@ import {useDefaultStore} from "@/Stores/default";
 import {Link} from "@inertiajs/vue3";
 import {StatusBadge, BasicBadge} from '@/Components/Badges'
 import {showNotification} from '@/Components/Notification';
+import { toast } from 'vue3-toastify';
 
 const defaultStore = useDefaultStore();
 const artistTable = ref();
@@ -124,24 +130,7 @@ const openDialog = () => {
 
 const appTableConfig = computed(() => {
   return {
-    filters: [
-      {
-        title: "Durum",
-        param: "status",
-        options: [
-          {value: 1, label: "Yeni"},
-          {value: 2, label: "Eski"}
-        ]
-      },
-      {
-        title: "Tarz",
-        param: "genre",
-        options: [
-          {value: 1, label: "Pop"},
-          {value: 2, label: "Rock"}
-        ]
-      },
-    ]
+    filters: props.filters,
   }
 })
 
@@ -149,6 +138,7 @@ const appTableConfig = computed(() => {
 const deleteRow = (row) => {
   //EXAMPLE ROW SİLME İÇİN
   showNotification();
+  toast.error('Başarıyla Silindi');
   artistTable.value.removeRowData(row);
 }
 const editRow = () => {
