@@ -17,26 +17,30 @@ class ArtistSeeder extends Seeder
      */
     public function run(): void
     {
-        $randomArtistBranchIds = [];
-        for ($i = 0; $i < 5; $i++) {
-            $randomArtistBranchIds[] = ArtistBranch::inRandomOrder()->first()->id;
-        }
-
-        shuffle($randomArtistBranchIds);
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('artists')->truncate();
         DB::table('artist_artist_branch')->truncate();
 
-
-        Artist::factory(10)->create([
+        Artist::factory(26)->create([
             'added_by' => \App\Models\User::inRandomOrder()->first()->id,
-        ])->each(function (Artist $artist) use ($randomArtistBranchIds) {
+        ])->each(function (Artist $artist) {
+            $randomArtistBranchIds = [];
+            $usedIds = [];
+
+            for ($i = 0; $i < rand(1, 6); $i++) {
+                $artistBranch = ArtistBranch::inRandomOrder()->whereNotIn('id', $usedIds)->first();
+                if ($artistBranch) {
+                    $randomArtistBranchIds[] = $artistBranch->id;
+                    $usedIds[] = $artistBranch->id;
+                }
+            }
+
             $artist->artistBranches()->attach($randomArtistBranchIds);
 
+            // Sanatçıya rastgele bir resim ekleniyor
             $artist->addMediaFromUrl('https://picsum.photos/400/400')
                 ->usingFileName(Str::slug($artist->name).'.jpg')
                 ->toMediaCollection('artists', 'tenant_'.tenant('id'));
         });
-
     }
 }

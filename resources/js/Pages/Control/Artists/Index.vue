@@ -1,5 +1,5 @@
 <template>
-  <AdminLayout title="Tüm Sanatçılar" parentTitle="Katalog">
+  <AdminLayout :title="__('control.artist.header')" parentTitle="Katalog">
 
     <AppTable
         ref="artistTable"
@@ -8,7 +8,7 @@
         :config="appTableConfig"
 
         :slug="route('control.artists.index')">
-      <AppTableColumn label="Sanatçı Adı">
+      <AppTableColumn :label="__('control.artist.fields.name')">
         <template #default="scope">
           <div class="flex items-center gap-2 ">
             <div class="w-12 h-12 rounded-full overflow-hidden">
@@ -50,13 +50,13 @@
         </template>
       </AppTableColumn>
 
-      <AppTableColumn label="Top. Parça Sayısı">
+      <AppTableColumn :label="__('control.artist.fields.tracks_count')">
         <template #default="scope">
           {{ scope.row.tracks_count }}
         </template>
       </AppTableColumn>
 
-      <AppTableColumn label="Tarzlar">
+      <AppTableColumn :label="__('control.artist.fields.genres')">
         <template #default="scope">
           <BasicBadge class="mx-1" v-for="(branch, index) in scope.row.artist_branches" :key="index">
             {{ branch }}
@@ -64,7 +64,7 @@
           <span v-if="scope.row.artist_branches_count > 0">+{{ scope.row.artist_branches_count }}</span>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Aksiyonlar">
+      <AppTableColumn :label="__('control.general.actions')">
         <template #default="scope">
           <div class="flex gap-3">
             <IconButton @click="deleteRow(scope.row)">
@@ -79,14 +79,14 @@
       <template #empty>
         <div class="flex flex-col items-center justify-center gap-8">
           <div>
-            <h2 class="label-medium c-strong-950">Henüz yayınız bulunmamaktadır.</h2>
-            <h3 class="paragraph-medium c-neutral-500">Oluşturucağınız tüm yayınlar burada listelenecektir.</h3>
+            <h2 class="label-medium c-strong-950">{{ __('control.artist.notfound') }}</h2>
+            <h3 class="paragraph-medium c-neutral-500">{{ __('control.artist.notfound_subtitle') }}</h3>
           </div>
           <PrimaryButton>
             <template #icon>
               <AddIcon/>
             </template>
-            İlk Yayını Oluştur
+            {{ __('control.artist.first_create_btn') }}
           </PrimaryButton>
         </div>
       </template>
