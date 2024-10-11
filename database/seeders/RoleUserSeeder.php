@@ -17,10 +17,13 @@ class RoleUserSeeder extends Seeder
         $admin_role = Role::where('code', 'admin')->first();
         $admin = User::where('email', 'admin@admin.com')->first();
 
+        $super_admin_role = Role::where('code', 'super_admin')->first();
+        $super_admin = User::where('email', 'superadmin@admin.com')->first();
+
         $user_role = Role::where('code', 'user')->first();
         $user = User::where('email', 'user@user.com')->first();
 
-        // Sync roles eğer varsa ekleme yapmaz. ve var olanları sime! syncWithoutDetaching
+        $super_admin->roles()->syncWithoutDetaching($super_admin_role);
         $admin->roles()->syncWithoutDetaching($admin_role);
         $user->roles()->syncWithoutDetaching($user_role);
 

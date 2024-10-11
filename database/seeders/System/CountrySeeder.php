@@ -44,5 +44,11 @@ class CountrySeeder extends Seeder
                     'emojiU' => $row['emojiU'],
                 ]);
         }
+
+        $this->call([
+            CountryLanguageSeeder::class,
+            CitySeeder::class,
+            DistrictSeeder::class,
+        ]);
     }
 }

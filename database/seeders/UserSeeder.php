@@ -10,6 +10,13 @@ class UserSeeder extends Seeder
 {
     private static array $users = [
         [
+            'name' => 'MD Süper Admin',
+            'email' => 'superadmin@admin.com',
+            'password' => 'password',
+            'phone' => '5325805080',
+            'is_verified' => 1,
+        ],
+        [
             'name' => 'MD Admin',
             'email' => 'admin@admin.com',
             'password' => 'password',
