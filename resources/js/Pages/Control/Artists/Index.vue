@@ -1,7 +1,8 @@
 <template>
   <AdminLayout title="Tüm Sanatçılar" parentTitle="Katalog">
 
-    <AppTable ref="artistTable" v-model="usePage().props.artists" @addNewClicked="openDialog" :config="appTableConfig" :slug="route('control.artists.index')">
+    <AppTable ref="artistTable" v-model="usePage().props.artists" @addNewClicked="openDialog" :config="filters"
+              :slug="route('control.artists.index')">
       <AppTableColumn label="Sanatçı Adı">
         <template #default="scope">
           <div class="flex items-center gap-2 ">
@@ -39,7 +40,7 @@
         <template #default="scope">
 
           <StatusBadge>
-             {{ scope.row.status }}
+            {{ scope.row.status }}
           </StatusBadge>
         </template>
       </AppTableColumn>
@@ -93,7 +94,7 @@
 <script setup>
 import {usePage} from '@inertiajs/vue3';
 
-import {ref,computed} from 'vue';
+import {ref, computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
@@ -102,12 +103,18 @@ import {AddIcon, TrashIcon, EditIcon, AppleMusicIcon, SpotifyIcon} from '@/Compo
 import {AddArtistDialog} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 import {Link} from "@inertiajs/vue3";
-import {StatusBadge,BasicBadge} from '@/Components/Badges'
-import {showNotification}  from '@/Components/Notification';
+import {StatusBadge, BasicBadge} from '@/Components/Badges'
+import {showNotification} from '@/Components/Notification';
+
 const defaultStore = useDefaultStore();
 const artistTable = ref();
 const props = defineProps({
-  artists: Object
+  artists: Object,
+  filters: {
+    type: Array,
+    default: () => [],
+    required: true
+  }
 })
 
 const isModalOn = ref(false);
@@ -115,34 +122,34 @@ const openDialog = () => {
   isModalOn.value = !isModalOn.value;
 }
 
-const appTableConfig = computed(() =>  {
-    return {
-        filters: [
-            {
-                title:"Durum",
-                param:"status",
-                options: [
-                    {value:1,label:"Yeni"},
-                    {value:2,label:"Eski"}
-                ]
-            },
-            {
-                title:"Tarz",
-                param:"genre",
-                options: [
-                    {value:1,label:"Pop"},
-                    {value:2,label:"Rock"}
-                ]
-            },
+const appTableConfig = computed(() => {
+  return {
+    filters: [
+      {
+        title: "Durum",
+        param: "status",
+        options: [
+          {value: 1, label: "Yeni"},
+          {value: 2, label: "Eski"}
         ]
-    }
+      },
+      {
+        title: "Tarz",
+        param: "genre",
+        options: [
+          {value: 1, label: "Pop"},
+          {value: 2, label: "Rock"}
+        ]
+      },
+    ]
+  }
 })
 
 
 const deleteRow = (row) => {
-    //EXAMPLE ROW SİLME İÇİN
-    showNotification();
-    artistTable.value.removeRowData(row);
+  //EXAMPLE ROW SİLME İÇİN
+  showNotification();
+  artistTable.value.removeRowData(row);
 }
 const editRow = () => {
 

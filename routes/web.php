@@ -12,12 +12,11 @@ use Illuminate\Support\Facades\Validator;
 Route::group(
     [
         'middleware' => [
-            \App\Http\Middleware\InitializeTenantMiddleware::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain::class,
         ]
     ], function () {
-        
+
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/support-center', [SupportController::class, 'index'])->name('support.index');
     Route::get('/faq', [SupportController::class, 'faq'])->name('support.faq');

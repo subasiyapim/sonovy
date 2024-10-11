@@ -8,6 +8,7 @@ use App\Http\Requests\Artist\ArtistUpdateRequest;
 use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
 use App\Models\ArtistBranch;
+use App\Models\Genre;
 use App\Models\Platform;
 use App\Services\CountryServices;
 use App\Services\MediaServices;
@@ -25,9 +26,33 @@ class ArtistController extends Controller
 
         $artists = ArtistResource::collection(Artist::with('artistBranches')->advancedFilter())->resource;
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        $filters = [
+            [
+                'title' => __('control.artist.fields.status'),
+                'param' => 'status',
+                'options' => [
+                    [
+                        'value' => 2,
+                        'label' => __('control.artist.fields.status_active')
+                    ],
+                    [
+                        'value' => 1,
+                        'label' => __('control.artist.fields.status_inactive')
+                    ],
+                ],
+            ],
+            [
+                'title' => __('control.artist.fields.genre'),
+                'param' => 'genre',
+                'options' => getDataFromInputFormat(Genre::all(), 'id', 'name')
+            ]
+        ];
 
-
-        return inertia('Control/Artists/Index', compact('artists','countries'));
+        return inertia('Control/Artists/Index', [
+            'artists' => $artists,
+            'countries' => $countries,
+            'filters' => $filters
+        ]);
 
     }
 
