@@ -54,29 +54,55 @@ Route::group(
         'as' => 'control.',
     ], function () {
 
-
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    //Catalog routes
+    Route::group(['prefix' => 'catalog', 'as' => 'catalog.'], function () {
+        Route::resource('artists', ArtistController::class)->names('artists');
+        Route::resource('labels', LabelController::class)->names('labels');
+        Route::apiResource('artist-branches', ArtistBranchController::class)->names('artist-branches');
+
+        Route::resource('songs', SongController::class)->names('songs');
+        Route::post('song/change-status', [SongController::class, 'changeStatus'])->name('song-change-status');
+        Route::get('songs/{song}/search-track', [SongController::class, 'searchTrack'])->name('songs.search-track');
+        Route::get('songs/{song}/get-lyrics', [SongController::class, 'getLyrics'])->name('songs.get-lyrics');
+        Route::post('songs/{song}/store-lyrics', [SongController::class, 'storeLyrics'])->name('songs.store-lyrics');
+
+        Route::resource('products', ProductController::class)->names('products');
+        Route::post('products/add-participant',
+            [ProductController::class, 'addParticipant'])->name('products.add-participant');
+        Route::post('products/delete-participant',
+            [ProductController::class, 'deleteParticipants'])->name('products.delete-participant');
+        // Get ISRC
+        Route::get('getISRC', [ProductController::class, 'getISRC'])->name('products.get-isrc');
+        // Check ISRC
+        Route::get('checkISRC', [ProductController::class, 'checkISRC'])->name('products.check-isrc');
+
+        Route::group(
+            ['prefix' => 'products-apply', 'as' => 'products-apply.'], function () {
+            Route::get('/', [BroadcastApplyController::class, 'index'])->name('index');
+            Route::post('/change-status', [BroadcastApplyController::class, 'changeStatus'])
+                ->name('change-status');
+            Route::post('/correction', [BroadcastApplyController::class, 'correction'])
+                ->name('correction');
+
+            Route::post('make-ddex-xml/{product}',
+                [BroadcastApplyController::class, 'makeDdexXml'])->name('make-ddex-xml');
+            Route::get('download-ddex-xml/{product}',
+                [BroadcastApplyController::class, 'downloadDdexXml'])->name('download-ddex-xml');
+        });
+    });
+
+    //Statistics Routes
+    Route::group(['prefix' => 'statistics', 'as' => 'statistics.'], function () {
+        Route::get('statistics', [StatisticController::class, 'index'])->name('statistics.index');
+    });
 
     Route::resource('roles', RoleController::class)->names('roles');
 
     Route::resource('users', UserController::class)->names('users');
     Route::post('user/competency/{user}', [UserController::class, 'competency'])->name('users.competency');
-
-    Route::resource('artists', ArtistController::class)->names('artists');
-    Route::resource('labels', LabelController::class)->names('labels');
-    Route::resource('products', ProductController::class)->names('products');
-
-    Route::post('products/add-participant', [ProductController::class, 'addParticipant'])
-        ->name('products.add-participant');
-    Route::post('products/delete-participant', [ProductController::class, 'deleteParticipants'])
-        ->name('products.delete-participant');
-
-    Route::post('song/change-status', [SongController::class, 'changeStatus'])->name('song-change-status');
-    Route::resource('songs', SongController::class)->names('songs');
-    Route::get('songs/{song}/search-track', [SongController::class, 'searchTrack'])->name('songs.search-track');
-    Route::get('songs/{song}/get-lyrics', [SongController::class, 'getLyrics'])->name('songs.get-lyrics');
-    Route::post('songs/{song}/store-lyrics', [SongController::class, 'storeLyrics'])->name('songs.store-lyrics');
-
+    
     Route::resource('settings', SettingController::class)->names('settings')->only(['index', 'edit', 'update']);
     Route::resource('contracts', ContractController::class)->names('contracts');
     Route::resource('authors', AuthorController::class)->names('authors');
@@ -106,10 +132,6 @@ Route::group(
     Route::get('contact-us/show/{id}', [ContactUsController::class, 'show'])->name('contact-us.show');
     Route::delete('contact-us', [ContactUsController::class, 'destroy'])->name('contact-us.destroy');
 
-    // Get ISRC
-    Route::get('getISRC', [ProductController::class, 'getISRC'])->name('products.get-isrc');
-    // Check ISRC
-    Route::get('checkISRC', [ProductController::class, 'checkISRC'])->name('products.check-isrc');
 
     Route::group(['prefix' => 'works', 'as' => 'works.'], function () {
         Route::get('/', [WorkController::class, 'index'])->name('index');
@@ -147,7 +169,7 @@ Route::group(
 
 
     Route::get('summary', [SummaryController::class, 'index'])->name('summary.index');
-    Route::get('statistics', [StatisticController::class, 'index'])->name('statistics.index');
+
     Route::get('distribution-reports', [DistributionReportController::class, 'index'])->name('distribution.index');
     Route::get('playlist-performance',
         [PlayListPerformanceController::class, 'index'])->name('playlistperformance.index');
@@ -166,19 +188,6 @@ Route::group(
     Route::delete('earning-report-delete/{earningReportFile}',
         [EarningReportController::class, 'deleteFile'])->name('earning-report-delete');
 
-    Route::group(
-        ['prefix' => 'products-apply', 'as' => 'products-apply.'], function () {
-        Route::get('/', [BroadcastApplyController::class, 'index'])->name('index');
-        Route::post('/change-status', [BroadcastApplyController::class, 'changeStatus'])
-            ->name('change-status');
-        Route::post('/correction', [BroadcastApplyController::class, 'correction'])
-            ->name('correction');
-
-        Route::post('make-ddex-xml/{product}',
-            [BroadcastApplyController::class, 'makeDdexXml'])->name('make-ddex-xml');
-        Route::get('download-ddex-xml/{product}',
-            [BroadcastApplyController::class, 'downloadDdexXml'])->name('download-ddex-xml');
-    });
 
     Route::group(
         ['prefix' => 'profile', 'as' => 'profile.'], function () {
@@ -207,7 +216,7 @@ Route::group(
 
     //Artist Branches
     Route::get('list', [ArtistBranchController::class, 'getBranches'])->name('artist-branches.from-input-format');
-    Route::apiResource('artist-branches', ArtistBranchController::class)->names('artist-branches');
+
 
     Route::get('hashtags', fn() => HashtagServices::getHashtags())->name('hashtags');
 
