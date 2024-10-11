@@ -46,13 +46,7 @@ use App\Http\Controllers\Control\EarningReportController;
 
 
 Route::group(
-    [
-        'middleware' => [
-            'auth'
-        ],
-        'prefix' => 'control',
-        'as' => 'control.',
-    ], function () {
+    ['middleware' => ['auth'], 'prefix' => 'control', 'as' => 'control.',], function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -102,7 +96,7 @@ Route::group(
 
     Route::resource('users', UserController::class)->names('users');
     Route::post('user/competency/{user}', [UserController::class, 'competency'])->name('users.competency');
-    
+
     Route::resource('settings', SettingController::class)->names('settings')->only(['index', 'edit', 'update']);
     Route::resource('contracts', ContractController::class)->names('contracts');
     Route::resource('authors', AuthorController::class)->names('authors');
