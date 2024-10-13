@@ -31,7 +31,7 @@
             </button>
        </div>
        <div class="flex p-5 border-t border-soft-200 gap-4">
-        <RegularButton  class="flex-1">İptal</RegularButton>
+        <RegularButton @click="isDialogOn = false"  class="flex-1">İptal</RegularButton>
         <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled"  class="flex-1">
             <template #icon><AddIcon /></template>
             Kaydet</PrimaryButton>
@@ -107,7 +107,7 @@ const onSubmit = (e) => {
             // console.log("ARTİST RESPONSE",artistResponse);
             // emits('onArtistAdded', artistResponse)
             console.log("BARLAIRLII",e);
-            element.value = false;
+            isDialogOn.value = false;
         },
         onError: (e) => {
             console.log("HATAAAA",e);

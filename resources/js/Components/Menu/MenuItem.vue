@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a :href="route" class="flex items-center gap-2 menuItem"  @click.prevet="onClick">
+        <a :href="route" class="flex items-center gap-2 menuItem" :class="active ? 'active' : ''"  @click.prevet="onClick">
             <component :is="icon" />
             <div class="flex-1">
                 <p>{{title}}</p>
@@ -33,7 +33,10 @@
         title:{type:String},
         active:{type:Boolean},
         route:{type:String,default:'#'},
-        icon:{}
+        icon:{},
+        active:{
+            default:false,
+        }
 
     })
 

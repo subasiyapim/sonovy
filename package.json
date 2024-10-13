@@ -21,6 +21,7 @@
         "vue-tsc": "^2.0.24"
     },
     "dependencies": {
+        "@vuepic/vue-datepicker": "^9.0.3",
         "pinia": "^2.2.4",
         "sass": "^1.79.4",
         "vue-tippy": "^6.4.4",

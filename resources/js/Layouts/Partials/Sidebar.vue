@@ -27,11 +27,11 @@
             </MenuItem >
              <MenuItem title="Katalog" :icon="DashboardIcon">
                 <template #sub>
-                    <a :href="route('control.products.index')" class="radius-8 sub-menu-item"> Yayınlar</a>
-                    <a :href="route('control.songs.index')" class="radius-8 sub-menu-item"> Parçalar</a>
-                    <a :href="route('control.artists.index')" class="radius-8 sub-menu-item"> Sanatçılar</a>
-                    <a :href="route('control.labels.index')" class="radius-8 sub-menu-item"> Plak Şirketleri</a>
-                    <a :href="'#'" class="radius-8 sub-menu-item"> Tarzlar</a>
+                    <sub-menu-item :path="route('control.products.index')">Yayınlar</sub-menu-item>
+                    <sub-menu-item :path="route('control.songs.index')">Parçalar</sub-menu-item>
+                    <sub-menu-item :path="route('control.artists.index')">Sanatçılar</sub-menu-item>
+                    <sub-menu-item :path="route('control.labels.index')">Plak Şirketleri</sub-menu-item>
+                    <sub-menu-item :path="'#'">Tarzlar</sub-menu-item>
                 </template>
             </MenuItem >
 
@@ -77,6 +77,7 @@ import { AppTextInput } from '@/Components/Form';
 import {SecondaryButton} from '@/Components/Buttons';
 import {AddIcon,SearchIcon,DashboardIcon,VerifiedFilledIcon,TeklifManagementIcon,StatisticsIcon,IcraIcon,EarningManagementIcon,NotificationIcon,PersonSettingsIcon,CmsIcon,SettingsIcon,SupportCenterIcon} from '@/Components/Icons'
 import MenuItem from '@/Components/Menu/MenuItem.vue'
+import SubMenuItem from '@/Components/Menu/SubMenuItem.vue'
 import {usePage, router} from '@inertiajs/vue3';
 
 </script>

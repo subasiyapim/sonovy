@@ -19,7 +19,7 @@
        </div>
 
        <div class="flex p-5 border-t border-soft-200 gap-4">
-        <RegularButton @click="element = false"  class="flex-1">İptal</RegularButton>
+        <RegularButton @click="isDialogOn = false"  class="flex-1">İptal</RegularButton>
         <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled"  class="flex-1">
             <template #icon><AddIcon /></template>
             Kaydet</PrimaryButton>
@@ -84,7 +84,7 @@ const onSubmit = (e) => {
             adding.value = false;
         },
         onSuccess: async (e) => {
-            element.value = false;
+            isDialogOn.value = false;
         },
         onError: (e) => {
             console.log("HATAAAA",e);
