@@ -12,6 +12,7 @@ use App\Models\Genre;
 use App\Models\Platform;
 use App\Services\CountryServices;
 use App\Services\MediaServices;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,7 +25,17 @@ class ArtistController extends Controller
     {
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $artists = ArtistResource::collection(Artist::with('artistBranches')->advancedFilter())->resource;
+        $artists = Artist::with('artistBranches', 'platforms', 'country', 'products')
+            ->when(request('status') == 1, function ($query) {
+                $query->whereDoesntHave('products');
+            })
+            ->when(request('status') == 2, function ($query) {
+                $query->whereHas('products');
+            })
+            ->when(request('s_date') && request('e_date'), function ($query) {
+                $query->whereBetween('created_at', [request('s_date'), request('e_date')]);
+            })
+            ->advancedFilter();
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
         $filters = [
             [
@@ -32,12 +43,12 @@ class ArtistController extends Controller
                 'param' => 'status',
                 'options' => [
                     [
-                        'value' => 2,
-                        'label' => __('control.artist.fields.status_active')
-                    ],
-                    [
                         'value' => 1,
                         'label' => __('control.artist.fields.status_inactive')
+                    ],
+                    [
+                        'value' => 2,
+                        'label' => __('control.artist.fields.status_active')
                     ],
                 ],
             ],
@@ -49,7 +60,7 @@ class ArtistController extends Controller
         ];
 
         return inertia('Control/Artists/Index', [
-            'artists' => $artists,
+            'artists' => ArtistResource::collection($artists)->resource,
             'countries' => $countries,
             'filters' => $filters
         ]);

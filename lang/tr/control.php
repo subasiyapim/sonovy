@@ -106,11 +106,15 @@ return [
         ]
     ],
     'artist' => [
+        'header' => 'Tüm sanaçılar',
         'title' => 'Eser Sahipleri',
         'title_singular' => 'Sanatçı',
         'add' => 'Sanatçı Ekle',
         'branches' => 'Çalıştığı sanat dalları',
-        'form' => [
+        'notfound' => 'Henüz ekli bir sanatçı bulunmamaktadır.',
+        'notfound_subtitle' => 'Ekleyeceğiniz tüm sanatçılar burada listelenecektir.',
+        'first_create_btn' => 'İlk Sanatçıyı Ekle',
+        'fields' => [
             'id' => 'ID',
             'name' => 'Sanatçı Ad Soyad',
             'name_placeholder' => 'Örn: Şebnem Ferah, Tarkan vb.',
@@ -141,6 +145,13 @@ return [
             'created_at' => 'Oluşturulma Tarihi',
             'updated_at' => 'Güncellenme Tarihi',
             'description' => 'Açıklama',
+            'status' => 'Durum',
+            'status_all' => 'Tüm Sanatçılar',
+            'status_active' => 'Aktif sanatçı',
+            'status_inactive' => 'Pasif sanatçı',
+            'genre' => 'Tarz',
+            'genres' => 'Tarzlar',
+            'tracks_count' => 'Toplam Parça Sayısı',
         ],
 
     ],

@@ -9,6 +9,8 @@ import {ZiggyVue} from '../../vendor/tightenco/ziggy';
 import debounce from './Directives/Debounce';
 import clickOutside from './Directives/ClickOutside';
 import {createPinia} from 'pinia';
+import __ from "./libs/locale";
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -53,6 +55,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(createPinia())
+            .use(__)
             .mount(el);
     },
     progress: {

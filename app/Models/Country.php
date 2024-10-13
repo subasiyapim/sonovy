@@ -19,6 +19,7 @@ class Country extends Model
 
     protected $fillable = [
         'name',
+        'language',
         'ise3',
         'iso2',
         'numeric_code',
