@@ -8,13 +8,17 @@
 :root{
   --toastify-color-success: #ffffff !important;
   --toastify-color-error: #ffffff !important;
+   --dp-border-color: var(--soft-200);
+   --dp-border-radius: 10px !important;
+   --dp-font-size: 14px !important;
+   --dp-text-color:var(--sub-600) !important;
 }
 .sub-menu-item{
      padding: 8px 12px;
      color: var(--sub-600);
 
 }
-.sub-menu-item:hover{
+.sub-menu-item:hover,.sub-menu-item.active{
     @extend .bg-white-600;
 
 }

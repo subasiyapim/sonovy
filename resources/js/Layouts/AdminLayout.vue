@@ -7,7 +7,6 @@
         <div class="flex-1 relative overflow-scroll">
             <div class="flex items-center staticTopInfo">
                 <div class="flex items-center gap-3.5 flex-1">
-
                        <IconButton hasBorder size="medium">
                             <ArrowLeftIcon color="var(--sub-600)" />
                        </IconButton>
@@ -26,9 +25,17 @@
                             <NotificationIcon color="var(--sub-600)" />
                         </IconButton>
                         <div class="w-[229px]">
-                         <AppTextInput  placeholder="Tarih seçiniz...">
+                         <!-- <AppTextInput  placeholder="Tarih seçiniz...">
                             <template #icon><CalendarIcon color="var(--sub-600)"/></template>
-                        </AppTextInput>
+                        </AppTextInput> -->
+
+                        <VueDatePicker @cleared="onDateCleared" @range-end="onDateChaned"  range v-model="choosenDate" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+                            <template #input-icon>
+                              <div class="p-3">
+                                    <CalendarIcon color="var(--sub-600)"/>
+                              </div>
+                            </template>
+                        </VueDatePicker>
                        </div>
 
                 </div>
@@ -57,19 +64,34 @@
 
 
 <script setup>
-import {computed, onMounted,ref} from 'vue'
+import {computed, onMounted,ref,nextTick} from 'vue'
 import Sidebar from '@/Layouts/Partials/Sidebar.vue';
 import {SecondaryButton,IconButton} from '@/Components/Buttons'
 import {ArrowLeftIcon,SearchIcon,NotificationIcon,CalendarIcon} from '@/Components/Icons';
 import AppTextInput from '@/Components/Form/AppTextInput.vue';
 import {router, usePage} from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
-
-
+const choosenDate = ref();
+const emits = defineEmits(['dateChoosen'])
 const props = defineProps({
     title:{type:String},
     parentTitle:{type:String},
 })
+let params = new URLSearchParams(window.location.search)
+
+if (params.get('e_date') && params.get('s_date')) {
+    choosenDate.value = [params.get('s_date'),params.get('e_date')]
+}
+const onDateChaned = (e) => {
+  nextTick(() => {
+    emits('dateChoosen',choosenDate.value);
+  })
+}
+
+const onDateCleared = (e) => {
+
+   emits('dateChoosen',null);
+}
 
 
 

@@ -12,6 +12,8 @@ import {createPinia} from 'pinia';
 import __ from "./libs/locale";
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 import VueTippy from 'vue-tippy'
 // or
@@ -32,6 +34,7 @@ createInertiaApp({
         createApp({render: () => h(App, props)})
             .directive('debounce', (el, binding) => debounce(el, binding))
             .directive('click-outside', clickOutside)
+            .component('VueDatePicker', VueDatePicker)
             .use(VueTippy,
                 // optional
                 {

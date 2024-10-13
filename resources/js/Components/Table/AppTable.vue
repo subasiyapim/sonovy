@@ -30,10 +30,10 @@
   <table class="w-full appTable">
     <thead>
     <tr class="border border-white-600">
-      <th class="bg-white-500" v-for="(column, index) in columns" :key="index">
+      <th @click="onClickHeader(column)" :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns" :key="index">
         <div class="flex items-center gap-2 justify-start">
           {{ column.props.label }}
-          <TableOrderIcon color="var(--sub-600)"/>
+          <TableOrderIcon v-if="column.props.sortable" color="var(--sub-600)"/>
         </div>
       </th>
     </tr>
@@ -134,7 +134,9 @@ const query = ref({
   'order': params.get('order') ?? null,
   'mine': params.get('mine') ?? null,
   's': params.get('s') ?? null,
-
+  'e_date': params.get('s') ?? null,
+  'e_date': params.get('e_date') ?? null,
+  's_date': params.get('s_date') ?? null,
 })
 const totalPage = ref(16)
 const props = defineProps({
@@ -189,6 +191,7 @@ const render = (e) => {
 };
 
 function deleteNullProperties(obj) {
+
     for (let key in obj) {
         if (obj.hasOwnProperty(key) && obj[key] === null) {
             delete obj[key];
@@ -198,10 +201,26 @@ function deleteNullProperties(obj) {
 const setQuery = (key, value) => {
     query.value[key] = value;
 }
-const getTableData = () => {
-    console.log("PROPS",props.slug);
-    const path = props.slug ?? route(route().current());
+const search = (key, value) => {
 
+    if(key == 'daterange'){
+        if(value == null){
+              query.value['s_date'] =null;
+            query.value['e_date'] =null;
+        }else {
+              query.value['s_date'] =value[0];
+            query.value['e_date'] =value[1];
+        }
+
+    }else {
+        query.value[key] =value;
+    }
+   getTableData();
+}
+const getTableData = () => {
+
+    const path = props.slug ?? route(route().current());
+    console.log("QUERY VALUE",query.value);
     deleteNullProperties(query.value);
     router.visit(path , {
         data: query.value,
@@ -209,9 +228,20 @@ const getTableData = () => {
     });
 }
 
+const onClickHeader = (column) => {
+
+    if(column.props.sortable){
+         query.value['sort'] = column.props.sortable;
+         query.value['order'] = params.get('order') ? (params.get('order') == 'asc' ? 'desc' : 'asc') : 'asc'
+        // query.value['order'] = query.value['order'] ? (query.value['order'] == 'ascending' ? 'descending' :'ascending') : 'descending';
+        getTableData();
+    }
+
+
+}
 
 const onSearch = (e) => {
-    console.log("GELDİİ",e);
+
     query.value.s = e;
      searching.value = false;
      getTableData();
@@ -250,6 +280,7 @@ onMounted(() => {
 defineExpose({
     removeRowByIndex,
     removeRowData,
+    search
 })
 </script>
 

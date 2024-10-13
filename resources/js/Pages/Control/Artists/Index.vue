@@ -1,5 +1,7 @@
 <template>
-  <AdminLayout :title="__('control.artist.header')" parentTitle="Katalog">
+
+  <AdminLayout @dateChoosen="onDateChoosen" :title="__('control.artist.header')" parentTitle="Katalog">
+
 
     <AppTable
         ref="artistTable"
@@ -41,7 +43,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Durum">
+      <AppTableColumn label="Durum" sortable="status">
         <template #default="scope">
 
           <StatusBadge>
@@ -142,6 +144,11 @@ const deleteRow = (row) => {
   artistTable.value.removeRowData(row);
 }
 const editRow = () => {
+
+}
+const onDateChoosen = (e) => {
+     artistTable.value.search('daterange',e);
+
 
 }
 </script>
