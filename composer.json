@@ -12,6 +12,7 @@
     "astrotomic/laravel-translatable": "^11.15",
     "inertiajs/inertia-laravel": "^1.0",
     "laravel/framework": "^11.9",
+    "laravel/reverb": "^1.0",
     "laravel/sanctum": "^4.0",
     "laravel/tinker": "^2.9",
     "predis/predis": "^2.0",
