@@ -18,13 +18,13 @@ class TenantSeeder extends Seeder
     public function run()
     {
 
-        Tenant::get()->each(function ($tenant) {
-            if (DB::connection('system')->getSchemaBuilder()->hasTable($tenant->tenancy_db_name)) {
-                DB::statement("DROP DATABASE ".$tenant->tenancy_db_name);
-                $tenant->domains()->delete();
-                $tenant->delete();
-            }
-        });
+//        Tenant::get()->each(function ($tenant) {
+//            if (DB::connection('system')->getSchemaBuilder()->hasTable($tenant->tenancy_db_name)) {
+//                DB::statement("DROP DATABASE ".$tenant->tenancy_db_name);
+//                $tenant->domains()->delete();
+//                $tenant->delete();
+//            }
+//        });
 
 
         foreach (['app', 'demo'] as $domain) {
