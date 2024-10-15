@@ -19,13 +19,16 @@ class TenantSeeder extends Seeder
     {
 
         Tenant::get()->each(function ($tenant) {
-            $tenant->domains()->delete();
-            $tenant->delete();
+            if (DB::connection('system')->getSchemaBuilder()->hasTable($tenant->tenancy_db_name)) {
+                DB::statement("DROP DATABASE ".$tenant->tenancy_db_name);
+                $tenant->domains()->delete();
+                $tenant->delete();
+            }
         });
 
 
         foreach (['app', 'demo'] as $domain) {
-            
+
             $uniq_id = uniqid();
             $db_name = 'tenant_'.$domain.'_'.$uniq_id;
             $db_user = 'tenant_'.$domain.'_'.$uniq_id;
