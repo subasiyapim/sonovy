@@ -9,6 +9,7 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 Route::middleware([
     'web',
+
     PreventAccessFromCentralDomains::class,
     InitializeTenancyByDomainOrSubdomain::class,
     InitializeTenantMiddleware::class,

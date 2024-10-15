@@ -15,7 +15,7 @@ Route::group(
             // \App\Http\Middleware\HandleInertiaRequests::class,
         ]
     ], function () {
-
+        
 
     require __DIR__.'/auth.php';
 });
