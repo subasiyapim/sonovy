@@ -16,7 +16,6 @@ class HomeController extends Controller
 {
     public function index()
     {
-        dd(tenant('id'));
         $site_banner = Setting::where('key', 'site_banner')->first()?->value;
         $partners = Partner::all();
         $site_features = SiteFeature::all();
