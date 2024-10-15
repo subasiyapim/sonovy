@@ -212,7 +212,6 @@ if (env('APP_ENV') === 'local') {
 } else {
     $data['central_domains'] = [
         'sonovy.com',
-        'www.sonovy.com',
     ];
 }
 
