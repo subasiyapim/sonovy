@@ -17,7 +17,7 @@ class RedirectIfNoSubdomain
     {
         $host = $request->getHost();
         $baseDomain = env('BASE_URL');
-
+        
         if ($host === $baseDomain) {
             if (env('APP_ENV') === 'local') {
                 return redirect()->to('http://app.'.env('BASE_URL').$request->getRequestUri());
