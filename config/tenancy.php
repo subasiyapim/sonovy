@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Stancl\Tenancy\Database\Models\Domain;
 use Stancl\Tenancy\Database\Models\Tenant;
 
-return [
+$data = [
     'tenant_model' => \App\Models\System\Tenant::class,
     'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
 
@@ -200,4 +200,20 @@ return [
         '--class' => 'DatabaseSeeder', // root seeder class
         // '--force' => true,
     ],
+
 ];
+
+if (env('APP_ENV') === 'local') {
+    $data['central_domains'] = [
+        '127.0.0.1',
+        'localhost',
+        'sonovy.test',
+    ];
+} else {
+    $data['central_domains'] = [
+        'sonovy.com',
+        'www.sonovy.com',
+    ];
+}
+
+return $data;
