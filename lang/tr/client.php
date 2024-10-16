@@ -45,6 +45,34 @@ return [
         'video_main_title' => 'Video Eğitimler',
         'articles' => 'Makaleler',
         'videos' => 'Videolar',
-    ]
+    ],
+    'register' => [
+        'title' => 'Ücretsiz Hesap Oluştur',
+        'subtitle' => 'Hızlıca yayın oluşturmak için ücretsiz hesabınızı oluşturun',
+        'register_btn' => 'Kayıt ol',
+        'login_btn' => 'Giriş yap',
+        'already_have_account' => 'Zaten bir hesabınız var mı?',
+        'login' => 'Giriş yap',
+        'fields' => [
+            'name' => 'Ad',
+            'name_placeholder' => 'Adınızı girin',
+            'surname' => 'Soyad',
+            'surname_placeholder' => 'Soyadınızı girin',
+            'email' => 'Email',
+            'email_placeholder' => 'Email adresinizi girin',
+            'password' => 'Şifre',
+            'password_placeholder' => '**********',
+            'phone' => 'Telefon',
+            'phone_placeholder' => '212 555 55 55',
+        ]
+    ],
+    'verify_email' => [
+        'title' => 'Email Adresinizi Doğrulayın',
+        'description' => 'Kaydolduğunuz için teşekkürler! Başlamadan önce, size az önce e-posta ile gönderdiğimiz bağlantıya tıklayarak e-posta adresinizi doğrulayabilir misiniz? E-postayı almadıysanız, size memnuniyetle bir tane daha göndereceğiz.',
+        'resend_verification_email' => 'Doğrulama e-postasını tekrar gönder',
+        'logout' => 'Çıkış yap',
+        'check_email' => 'Kayıt sırasında verdiğiniz e-posta adresine yeni bir doğrulama bağlantısı gönderilmiştir.',
+    ],
+
 
 ];

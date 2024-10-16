@@ -547,10 +547,13 @@ return [
         ]
     ],
     'auth' => [
-        'form' => [
+        'fields' => [
             'email' => 'E-posta',
-            'password' => 'Şifre'
-        ]
+            'name' => 'Ad Soyad',
+            'surname' => 'Soyad',
+            'password' => 'Şifre',
+            'phone' => 'Telefon',
+        ],
     ],
     'user' => [
         'title' => 'Kullanıcılar',
@@ -665,7 +668,7 @@ return [
                 'validation' => 'Telefon numarası geçerli değil'
             ],
             'status_passive' => 'Pasif',
-            'last_login_at' => 'Son giriş',
+            'last_login_at' => 'Son  ',
             'created_at' => 'Kayıt tarihi',
             'websites' => [
                 'logo' => 'Logo',
