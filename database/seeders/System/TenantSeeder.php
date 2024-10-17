@@ -45,7 +45,7 @@ class TenantSeeder extends Seeder
             // DB::statement("GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user'@'%'");
 
             // Yetkileri uygula
-            DB::statement("FLUSH PRIVILEGES");
+            // DB::statement("FLUSH PRIVILEGES");
 
             // Tenant kaydını oluştur
             $tenant = Tenant::create([
