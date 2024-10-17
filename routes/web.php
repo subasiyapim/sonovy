@@ -35,8 +35,8 @@ Route::group(
         // Create a new database user and grant privileges for localhost
         //DB::statement("CREATE USER '$dbUser'@'localhost' IDENTIFIED BY '$dbPassword'");
         //DB::statement("CREATE DATABASE $dbName");
-        DB::statement("GRANT ALL PRIVILEGES ON $dbName.* TO '$dbUser'@'localhost'");
-        DB::statement("FLUSH PRIVILEGES");
+        //DB::statement("GRANT ALL PRIVILEGES ON $dbName.* TO '$dbUser'@'localhost'");
+        //DB::statement("FLUSH PRIVILEGES");
 
         // Create tenant
         $tenant = \App\Models\System\Tenant::create([
