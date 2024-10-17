@@ -21,7 +21,7 @@ Route::group(
     Route::get('new-tenant', function (Request $request) {
         $domainName = $request->get('name');
         $uniqId = uniqid();
-        $dbName = 'tenant_'.$domainName.'_'.Carbon::now()->format('d_m_Y_H_i_s');
+        $dbName = 'tenant_'.$domainName.'_'.Carbon::now()->format('dmHis');
         $dbUser = 'tenant_'.$domainName;
         $dbPassword = uniqid();
 
@@ -34,7 +34,7 @@ Route::group(
 
         // Create a new database user and grant privileges for localhost
         DB::statement("CREATE USER '$dbUser'@'localhost' IDENTIFIED BY '$dbPassword'");
-        DB::statement("CREATE DATABASE $dbName");
+        //DB::statement("CREATE DATABASE $dbName");
         DB::statement("GRANT ALL PRIVILEGES ON $dbName.* TO '$dbUser'@'localhost'");
         DB::statement("FLUSH PRIVILEGES");
 
