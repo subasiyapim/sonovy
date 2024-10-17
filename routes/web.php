@@ -18,41 +18,42 @@ Route::group(
     ], function () {
 
 
-    Route::get('new-tenant', function (\Illuminate\Http\Request $request) {
-        $domain = $request->get('name');
-        $uniq_id = uniqid();
-        $db_name = 'tenant_'.$domain.'_'.Carbon::now()->format('d_m_Y_H_i_s');
-        $db_user = 'tenant_'.$domain.'_'.$uniq_id;
-        $db_password = uniqid();
-        $domain = \Stancl\Tenancy\Database\Models\Domain::where('domain', $request->name)->exists();
+    Route::get('new-tenant', function (Request $request) {
+        $domainName = $request->get('name');
+        $uniqId = uniqid();
+        $dbName = 'tenant_'.$domainName.'_'.Carbon::now()->format('d_m_Y_H_i_s');
+        $dbUser = 'tenant_'.$domainName;
+        $dbPassword = uniqid();
 
+        // Check if the domain already exists
+        $domainExists = \Stancl\Tenancy\Database\Models\Domain::where('domain', $domainName)->exists();
 
-        if ($domain) {
-            return 'Domain already exists';
+        if ($domainExists) {
+            return response()->json(['message' => 'Domain already exists'], 400);
         }
 
-        // Sadece localhost için kullanıcı oluştur
-        DB::statement("CREATE USER '$db_user'@'localhost' IDENTIFIED BY '$db_password'");
-
-        // Kullanıcıya localhost için tüm yetkileri ver
-        DB::statement("GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user'@'localhost'");
-
-        // Yetkileri uygula
+        // Create a new database user and grant privileges for localhost
+        DB::statement("CREATE USER '$dbUser'@'localhost' IDENTIFIED BY '$dbPassword'");
+        DB::statement("CREATE DATABASE $dbName");
+        DB::statement("GRANT ALL PRIVILEGES ON $dbName.* TO '$dbUser'@'localhost'");
         DB::statement("FLUSH PRIVILEGES");
 
-        $tenant = \App\Models\System\Tenant::create(
-            [
-                'id' => (string) $uniq_id,
-                'tenancy_db_name' => $db_name,
-                'name' => 'tenant_'.$domain,
-                'tenancy_db_username' => $db_user,
-                'tenancy_db_password' => $db_password,
-            ]
-        );
+        // Create tenant
+        $tenant = \App\Models\System\Tenant::create([
+            'id' => $uniqId,
+            'tenancy_db_name' => $dbName,
+            'name' => 'tenant_'.$domainName,
+            'tenancy_db_username' => $dbUser,
+            'tenancy_db_password' => $dbPassword,
+        ]);
 
-        $tenant->domains()->create(['domain' => $domain]);
+        // Associate domain with tenant
+        $tenant->domains()->create(['domain' => $domainName]);
 
-        return $domain.'.'.env('BASE_URL').' created';
+        return response()->json([
+            'message' => 'Tenant created successfully',
+            'url' => $domainName.'.'.env('BASE_URL')
+        ], 201);
     });
 
 });
