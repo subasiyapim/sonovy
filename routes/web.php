@@ -41,6 +41,15 @@ Route::group(
 
         $tenant->domains()->create(['domain' => $name]);
 
+        // Sadece localhost için kullanıcı oluştur
+        DB::statement("CREATE USER '$db_user'@'localhost' IDENTIFIED BY '$db_password'");
+
+        // Kullanıcıya localhost için tüm yetkileri ver
+        DB::statement("GRANT ALL PRIVILEGES ON 'tenant_'.$name.'_'.$uniq_id.* TO '$db_user'@'localhost'");
+
+        // Yetkileri uygula
+        DB::statement("FLUSH PRIVILEGES");
+
         return $name.'.'.env('BASE_URL').' created';
     });
 
