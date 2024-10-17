@@ -20,13 +20,12 @@ class TenantSeeder extends Seeder
     public function run()
     {
 
-        Tenant::get()->each(function ($tenant) {
-            $tenant->domains()->delete();
-            $tenant->delete();
-        });
+//        Tenant::get()->each(function ($tenant) {
+//            $tenant->domains()->delete();
+//            $tenant->delete();
+//        });
 
-
-        foreach (['app', 'demo'] as $domain) {
+        foreach (['app'] as $domain) {
 
             $uniq_id = uniqid();
             $db_name = 'tenant_'.$domain.'_'.Carbon::now()->format('d_m_Y_H_i_s');
