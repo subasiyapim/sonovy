@@ -47,6 +47,8 @@ class TenantSeeder extends Seeder
                 'tenancy_db_password' => $db_password,
             ]);
 
+
+            ///
             $tenant->domains()->create(['domain' => $domain]);
 
         }

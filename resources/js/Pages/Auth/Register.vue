@@ -56,7 +56,7 @@ const submit = () => {
       <FormElement
           v-model="form.password"
           direction="vertical"
-          :error="form.errors.password"
+          :error="form.errors?.password"
           :label="__('client.register.fields.password')"
           :placeholder="__('client.register.fields.password_placeholder')"
           type="password"/>
