@@ -6,6 +6,7 @@ use App\Models\System\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class TenantSeeder extends Seeder
 {
