@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Stancl\Tenancy\Database\Models\Domain;
 
 class TenantSeeder extends Seeder
 {
@@ -51,7 +52,8 @@ class TenantSeeder extends Seeder
             ]);
 
             // Domaini tenant ile ilişkilendir
-            $tenant->domains()->create(['domain' => $domain]);
+            //$tenant->domains()->create(['domain' => $domain]);
+            Domain::create(['domain' => $domain, 'tenant_id' => $tenant->id]);
 
             // Sadece localhost için kullanıcı oluştur
             //DB::statement("CREATE USER '$db_user'@'localhost' IDENTIFIED BY '$db_password'");
