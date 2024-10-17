@@ -36,7 +36,7 @@ Route::group(
         $data = [
             'id' => $uniqId,
             'tenancy_db_name' => $dbName,
-            'name' => 'tenant_'.$domainName,
+            'name' => $domainName,
         ];
 
         if (env('APP_ENV') != 'local') {
