@@ -28,7 +28,7 @@ class TenantSeeder extends Seeder
         foreach (['app', 'demo'] as $domain) {
 
             $uniq_id = uniqid();
-            $db_name = 'tenant_'.$domain.'_'.$uniq_id;
+            $db_name = 'tenant_'.$domain.'_'.Carbon::now()->format('d_m_Y_H_i_s');
             $db_user = 'tenant_'.$domain.'_'.$uniq_id;
             $db_password = uniqid();
 
