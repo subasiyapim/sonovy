@@ -20,7 +20,7 @@ Route::group(
     Route::get('new-tenant', function (Request $request) {
         $domainName = $request->get('name');
         $uniqId = uniqid();
-        $dbName = 'tenant_'.$domainName.'_'.Carbon::now()->format('dmHis');
+        $dbName = 'tenant_'.$domainName.'_'.$uniqId;
         $dbUser = 'tenant_'.$domainName;
         $dbPassword = uniqid();
 

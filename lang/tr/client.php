@@ -46,6 +46,21 @@ return [
         'articles' => 'Makaleler',
         'videos' => 'Videolar',
     ],
+    'login' => [
+        'title' => 'Tekrar Hoşgeldiniz',
+        'subtitle' => 'Yayınlarınızı yönetmek için giriş yapın',
+        'login_btn' => 'Giriş yap',
+        'register_btn' => 'Kayıt ol',
+        'forgot_password' => 'Şifremi unuttum',
+        'dont_have_account' => 'Hesabınız yok mu?',
+        'register' => 'Hesap Oluştur',
+        'fields' => [
+            'email' => 'Email',
+            'email_placeholder' => 'Email adresinizi girin',
+            'password' => 'Şifre',
+            'password_placeholder' => '**********',
+        ]
+    ],
     'register' => [
         'title' => 'Ücretsiz Hesap Oluştur',
         'subtitle' => 'Hızlıca yayın oluşturmak için ücretsiz hesabınızı oluşturun',
