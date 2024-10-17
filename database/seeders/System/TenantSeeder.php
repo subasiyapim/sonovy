@@ -56,8 +56,12 @@ class TenantSeeder extends Seeder
                 'tenancy_db_password' => $db_password,
             ]);
 
+            Log::info('Tenant created: '.json_encode($tenant));
+
             // Domaini tenant ile ilişkilendir
             $tenant->domains()->create(['domain' => $domain]);
+
+            Log::info('Domain created: '.json_encode($tenant->domains));
         }
     }
 

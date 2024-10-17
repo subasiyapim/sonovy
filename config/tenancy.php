@@ -12,17 +12,6 @@ $data = [
     'domain_model' => Domain::class,
 
     /**
-     * The list of domains hosting your central app.
-     *
-     * Only relevant if you're using the domain or subdomain identification middleware.
-     */
-    'central_domains' => [
-        '127.0.0.1',
-        'localhost',
-        'sonovy.test',
-    ],
-
-    /**
      * Tenancy bootstrappers are executed when tenancy is initialized.
      * Their responsibility is making Laravel features tenant-aware.
      *
@@ -211,7 +200,7 @@ if (env('APP_ENV') === 'local') {
     ];
 } else {
     $data['central_domains'] = [
-        'sonovy.com',
+        env('BASE_URL'),
     ];
 }
 
