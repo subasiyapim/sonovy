@@ -193,16 +193,11 @@ $data = [
 
 ];
 
-if (env('APP_ENV') === 'local') {
-    $data['central_domains'] = [
-        '127.0.0.1',
-        'localhost',
-        'sonovy.test',
-    ];
-} else {
-    $data['central_domains'] = [
-        env('BASE_URL'),
-    ];
-}
+
+$data['central_domains'] = [
+    '127.0.0.1',
+    'localhost',
+    env('BASE_URL'),
+];
 
 return $data;

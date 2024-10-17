@@ -16,8 +16,7 @@ Route::group(
             // \App\Http\Middleware\HandleInertiaRequests::class,
         ]
     ], function () {
-
-
+        
     Route::get('new-tenant', function (Request $request) {
         $domainName = $request->get('name');
         $uniqId = uniqid();
@@ -33,13 +32,19 @@ Route::group(
         }
 
         // Create tenant
-        $tenant = \App\Models\System\Tenant::create([
+
+        $data = [
             'id' => $uniqId,
             'tenancy_db_name' => $dbName,
             'name' => 'tenant_'.$domainName,
-            'tenancy_db_username' => $dbUser,
-            'tenancy_db_password' => $dbPassword,
-        ]);
+        ];
+
+        if (env('APP_ENV') != 'local') {
+            $data['tenancy_db_username'] = $dbUser;
+            $data['tenancy_db_password'] = $dbPassword;
+        }
+
+        $tenant = \App\Models\System\Tenant::create($data);
 
         // Associate domain with tenant
         $tenant->domains()->create(['domain' => $domainName]);
