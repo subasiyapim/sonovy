@@ -5,6 +5,7 @@ namespace Database\Seeders\System;
 use App\Models\System\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TenantSeeder extends Seeder
 {
