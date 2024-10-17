@@ -31,14 +31,14 @@ class TenantSeeder extends Seeder
             $db_user = 'tenant_'.$domain.'_'.$uniq_id;
             $db_password = uniqid();
 
-            // Veritabanını oluştur
-            DB::statement("CREATE DATABASE $db_name");
-
-            // Sadece localhost için kullanıcı oluştur
-            DB::statement("CREATE USER '$db_user'@'localhost' IDENTIFIED BY '$db_password'");
-
-            // Kullanıcıya localhost için tüm yetkileri ver
-            DB::statement("GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user'@'localhost'");
+//            // Veritabanını oluştur
+//            DB::statement("CREATE DATABASE $db_name");
+//
+//            // Sadece localhost için kullanıcı oluştur
+//            DB::statement("CREATE USER '$db_user'@'localhost' IDENTIFIED BY '$db_password'");
+//
+//            // Kullanıcıya localhost için tüm yetkileri ver
+//            DB::statement("GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user'@'localhost'");
 
             // Eğer uzak bağlantıya izin vermek istiyorsanız, şu satırları aktif hale getirin:
             // DB::statement("CREATE USER '$db_user'@'%' IDENTIFIED BY '$db_password'");
