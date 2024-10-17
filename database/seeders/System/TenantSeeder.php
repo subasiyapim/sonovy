@@ -47,13 +47,13 @@ class TenantSeeder extends Seeder
                 'id' => (string) $uniq_id,
                 'name' => $domain,
                 'tenancy_db_name' => $db_name,
-                'tenancy_db_username' => $db_user,
-                'tenancy_db_password' => $db_password,
+                //'tenancy_db_username' => $db_user,
+                //'tenancy_db_password' => $db_password,
             ]);
 
             // Domaini tenant ile ilişkilendir
             //$tenant->domains()->create(['domain' => $domain]);
-            Domain::create(['domain' => $domain, 'tenant_id' => $tenant->id]);
+            //Domain::create(['domain' => $domain, 'tenant_id' => $tenant->id]);
 
             // Sadece localhost için kullanıcı oluştur
             //DB::statement("CREATE USER '$db_user'@'localhost' IDENTIFIED BY '$db_password'");
