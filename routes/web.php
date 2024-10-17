@@ -20,7 +20,10 @@ Route::group(
     Route::get('new-tenant', function (\Illuminate\Http\Request $request) {
         $name = $request->get('name');
         $uniq_id = uniqid();
+        $db_user = 'tenant_'.$name.'_'.$uniq_id;
+        $db_password = uniqid();
         $domain = \Stancl\Tenancy\Database\Models\Domain::where('domain', $request->name)->exists();
+
 
         if ($domain) {
             return 'Domain already exists';
@@ -30,7 +33,9 @@ Route::group(
             [
                 'id' => (string) $uniq_id,
                 'tenancy_db_name' => 'tenant_'.$name.'_'.$uniq_id,
-                'name' => 'tenant_'.$name.'_'.$uniq_id
+                'name' => 'tenant_'.$name.'_'.$uniq_id,
+                'tenancy_db_username' => $db_user,
+                'tenancy_db_password' => $db_password,
             ]
         );
 
