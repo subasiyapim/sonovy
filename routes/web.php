@@ -16,7 +16,7 @@ Route::group(
             // \App\Http\Middleware\HandleInertiaRequests::class,
         ]
     ], function () {
-        
+
     Route::get('new-tenant', function (Request $request) {
         $domainName = $request->get('name');
         $uniqId = uniqid();
@@ -55,4 +55,15 @@ Route::group(
         ], 201);
     });
 
+    Route::get('delete-tenant', function (Request $request) {
+        $tenant = \App\Models\System\Tenant::where('name', $request->name)->first();
+
+        if (!$tenant) {
+            return response()->json(['message' => 'Tenant not found'], 404);
+        }
+
+        $tenant->delete();
+
+        return response()->json(['message' => 'Tenant deleted successfully'], 200);
+    });
 });
