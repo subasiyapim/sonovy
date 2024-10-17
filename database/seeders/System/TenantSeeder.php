@@ -53,8 +53,8 @@ class TenantSeeder extends Seeder
                 'id' => (string) $uniq_id,
                 'name' => $domain,
                 'tenancy_db_name' => $db_name,
-                'tenancy_db_username' => $db_user,
-                'tenancy_db_password' => $db_password,
+                // 'tenancy_db_username' => $db_user,
+                //'tenancy_db_password' => $db_password,
             ]);
 
             Log::info('Tenant created: '.json_encode($tenant));
