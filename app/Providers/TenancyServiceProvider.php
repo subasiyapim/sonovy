@@ -105,7 +105,7 @@ class TenancyServiceProvider extends ServiceProvider
         $this->mapRoutes();
 
         $this->makeTenancyMiddlewareHighestPriority();
-        
+
     }
 
     protected function bootEvents()

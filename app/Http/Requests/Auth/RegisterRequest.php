@@ -25,21 +25,26 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'surname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:6',
+            'phone' => 'required|string|max:255',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'email' => __('control.auth.form.email'),
-            'password' => __('control.auth.form.password')
+            'name' => __('client.register.fields.name'),
+            'surname' => __('client.register.fields.surname'),
+            'email' => __('client.register.fields.email'),
+            'password' => __('client.register.fields.password'),
+            'phone' => __('client.register.fields.phone'),
         ];
     }
 
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json($validator->errors(), 422));
-    }
+//    protected function failedValidation(Validator $validator)
+//    {
+//        throw new HttpResponseException(response()->json($validator->errors(), 422));
+//    }
 }

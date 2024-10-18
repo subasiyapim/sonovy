@@ -6,7 +6,7 @@ export const useDefaultStore = defineStore({
     state: () => ({}),
     getters: {},
     actions: {
-        profileImage(name) {
+        profileImage(name: string) {
             const profileImageColor = '7F9CF5'
             const profileImageBackgroundColor = 'EBF4FF'
 

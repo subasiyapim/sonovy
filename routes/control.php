@@ -46,7 +46,7 @@ use App\Http\Controllers\Control\EarningReportController;
 
 
 Route::group(
-    ['middleware' => ['auth'], 'prefix' => 'control', 'as' => 'control.',], function () {
+    ['middleware' => ['auth', 'verified'], 'prefix' => 'control', 'as' => 'control.',], function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

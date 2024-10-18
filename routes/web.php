@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\SupportController;
@@ -12,48 +13,57 @@ use Illuminate\Support\Facades\Validator;
 Route::group(
     [
         'middleware' => [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain::class,
+            // \App\Http\Middleware\HandleInertiaRequests::class,
         ]
     ], function () {
 
-    Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::get('/support-center', [SupportController::class, 'index'])->name('support.index');
-    Route::get('/faq', [SupportController::class, 'faq'])->name('support.faq');
-    Route::get('/faq/{id}', [SupportController::class, 'faq_show'])->name('support.faq.show');
-    Route::get('/video-education', [SupportController::class, 'video'])->name('support.video');
-    Route::get('/support-blog', [SupportController::class, 'blog'])->name('support.blog');
-    Route::get('/support-blog/{id}', [SupportController::class, 'blog_show'])->name('support.blog.show');
-    Route::get('/blog/{id}/show', [SupportController::class, 'show'])->name('blog.show');
-    Route::post('/contact-us/store', [ContactUsController::class, 'store'])->name('contact-us.store');
+    Route::get('new-tenant', function (Request $request) {
+        $domainName = $request->get('name');
+        $uniqId = uniqid();
+        $dbName = 'tenant_'.$domainName.'_'.$uniqId;
+        $dbUser = 'tenant_'.$domainName;
+        $dbPassword = uniqid();
 
-    Route::group(['prefix' => 'search', 'as' => 'search.'], function () {
-        Route::get('countries', function (Request $request) {
+        // Check if the domain already exists
+        $domainExists = \Stancl\Tenancy\Database\Models\Domain::where('domain', $domainName)->exists();
 
-            Validator::make($request->all(), [
-                'search' => 'required|string|min:3|max:255'
-            ])->validate();
+        if ($domainExists) {
+            return response()->json(['message' => 'Domain already exists'], 400);
+        }
 
-            $search = $request->input('search');
+        // Create tenant
 
-            return CountryServices::search($search);
-        })->name('countries');
+        $data = [
+            'id' => $uniqId,
+            'tenancy_db_name' => $dbName,
+            'name' => $domainName,
+        ];
 
+        if (env('APP_ENV') != 'local') {
+            $data['tenancy_db_username'] = $dbUser;
+            $data['tenancy_db_password'] = $dbPassword;
+        }
 
-        Route::get('articles', function (Request $request) {
+        $tenant = \App\Models\System\Tenant::create($data);
 
-            Validator::make($request->all(), [
-                'search' => 'required|string|min:3|max:255'
-            ])->validate();
+        // Associate domain with tenant
+        $tenant->domains()->create(['domain' => $domainName]);
 
-            $search = $request->input('search');
-
-            return HelpCenterArticleServices::search($search);
-        })->name('articles');
-
-
+        return response()->json([
+            'message' => 'Tenant created successfully',
+            'url' => $domainName.'.'.env('BASE_URL')
+        ], 201);
     });
 
+    Route::get('delete-tenant', function (Request $request) {
+        $tenant = \App\Models\System\Tenant::where('name', $request->name)->first();
 
-    require __DIR__.'/auth.php';
+        if (!$tenant) {
+            return response()->json(['message' => 'Tenant not found'], 404);
+        }
+
+        $tenant->delete();
+
+        return response()->json(['message' => 'Tenant deleted successfully'], 200);
+    });
 });

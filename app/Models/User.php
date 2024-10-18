@@ -7,6 +7,7 @@ use App\Services\EarningService;
 use App\Traits\DataTables\HasAdvancedFilter;
 use Carbon\Carbon;
 use DateTimeInterface;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,6 +21,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Notifications\VerifyEmail;
 use function Symfony\Component\String\s;
 
 /**
@@ -28,7 +30,7 @@ use function Symfony\Component\String\s;
  * @method static where(string $string, mixed $input)
  * @method static find(int|string|null $id)
  */
-class User extends Authenticatable implements HasMedia
+class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
@@ -45,6 +47,7 @@ class User extends Authenticatable implements HasMedia
     protected $fillable = [
         'parent_id',
         'name',
+        'surname',
         'email',
         'password',
         'country_id',
@@ -76,6 +79,7 @@ class User extends Authenticatable implements HasMedia
     protected array $filterable = [
         'id',
         'name',
+        'surname',
         'email',
         'password',
         'country_id',
@@ -85,6 +89,7 @@ class User extends Authenticatable implements HasMedia
     protected array $orderable = [
         'id',
         'name',
+        'surname',
         'email',
         'password',
         'country_id',

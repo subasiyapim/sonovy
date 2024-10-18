@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             //    \Database\Seeders\System\CountrySeeder::class,
 
             // TENANCY SEEDERS
-
             \Database\Seeders\PermissionSeeder::class,
             \Database\Seeders\RoleSeeder::class,
             \Database\Seeders\UserSeeder::class,
