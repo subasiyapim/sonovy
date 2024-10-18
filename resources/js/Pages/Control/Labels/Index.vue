@@ -57,7 +57,7 @@
       </template>
     </AppTable>
 
-    <AddLabelDialog v-model="isModalOn"/>
+    <LabelDialog v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -71,7 +71,7 @@ import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton, IconButton} from '@/Components/Buttons'
 import {AddIcon, LabelsIcon, ArtistsIcon, TrashIcon, EditIcon} from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
-import {AddLabelDialog} from '@/Components/Dialog';
+import {LabelDialog} from '@/Components/Dialog';
 
 
 const data = ref([

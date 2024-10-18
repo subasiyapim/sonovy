@@ -25,7 +25,7 @@ class ArtistResource extends JsonResource
             'image' => $this->image,
             'status' => $this->products->count() > 0 ? 'Aktif sanatçı' : 'Pasif sanatçı',
             'tracks_count' => $this->products->count().' parça',
-            'artist_branches' => $this->artistBranches->pluck('name')->take(4),
+            'artist_branches' => $this->artistBranches->pluck('name','id')->take(4),
             'artist_branches_count' => $this->artistBranches->count() > 4 ? $this->artistBranches->count() - 4 : 0,
         ];
     }

@@ -58,11 +58,13 @@ class ArtistController extends Controller
                 'options' => getDataFromInputFormat(Genre::all(), 'id', 'name')
             ]
         ];
+        $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
         return inertia('Control/Artists/Index', [
             'artists' => ArtistResource::collection($artists)->resource,
             'countries' => $countries,
-            'filters' => $filters
+            'filters' => $filters,
+            "artistBranches" => $artistBranches,
         ]);
 
     }

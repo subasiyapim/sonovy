@@ -6,7 +6,7 @@
     <AppTable
         ref="artistTable"
         v-model="usePage().props.artists"
-        @addNewClicked="openDialog"
+        @addNewClicked="openAddDialog"
         :config="appTableConfig"
         :slug="route('control.catalog.artists.index')">
       <AppTableColumn :label="__('control.artist.fields.name')" align="left">
@@ -86,7 +86,7 @@
             <h2 class="label-medium c-strong-950">{{ __('control.artist.notfound') }}</h2>
             <h3 class="paragraph-medium c-neutral-500">{{ __('control.artist.notfound_subtitle') }}</h3>
           </div>
-          <PrimaryButton>
+          <PrimaryButton @click="openAddDialog">
             <template #icon>
               <AddIcon/>
             </template>
@@ -96,20 +96,20 @@
       </template>
     </AppTable>
 
-    <AddArtistDialog v-model="isModalOn"/>
+    <ArtistDialog :artist="choosenArtist" v-if="isModalOn"  v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
 <script setup>
 import {usePage} from '@inertiajs/vue3';
 
-import {ref, computed} from 'vue';
+import {ref, computed,nextTick} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton, IconButton} from '@/Components/Buttons'
 import {AddIcon, TrashIcon, EditIcon, AppleMusicIcon, SpotifyIcon} from '@/Components/Icons'
-import {AddArtistDialog} from '@/Components/Dialog';
+import {ArtistDialog} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 import {Link} from "@inertiajs/vue3";
 import {StatusBadge, BasicBadge} from '@/Components/Badges'
@@ -127,9 +127,11 @@ const props = defineProps({
   }
 })
 
+const choosenArtist = ref(null);
 const isModalOn = ref(false);
-const openDialog = () => {
-  isModalOn.value = !isModalOn.value;
+const openAddDialog = () => {
+    choosenArtist.value = null;
+    isModalOn.value = !isModalOn.value;
 }
 
 const appTableConfig = computed(() => {
@@ -145,7 +147,11 @@ const deleteRow = (row) => {
   toast.success('Başarıyla Silindi');
   artistTable.value.removeRowData(row);
 }
-const editRow = () => {
+const editRow = (artist) => {
+
+    choosenArtist.value = artist;
+     isModalOn.value = !isModalOn.value;
+
 
 }
 const onDateChoosen = (e) => {
@@ -153,6 +159,8 @@ const onDateChoosen = (e) => {
 
 
 }
+
+
 </script>
 
 <style lang="scss" scoped>
