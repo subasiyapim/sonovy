@@ -59,13 +59,10 @@
 
       <AppTableColumn :label="__('control.artist.fields.genres')">
         <template #default="scope">
-          <BasicBadge class="mx-1" v-for="(branch, index) in scope.row.artist_branches" :key="index">
-            {{ branch }}
+          <BasicBadge class="mx-1" v-for="(genre, index) in scope.row.genres" :key="index">
+            {{ genre }}
           </BasicBadge>
-            <BasicBadge  v-if="scope.row.artist_branches_count > 0" class="mx-1" >
-                 <span>+{{ scope.row.artist_branches_count }}</span>
-          </BasicBadge>
-
+          <span v-if="scope.row.genres_count > 0">+{{ scope.row.genres_count }}</span>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="__('control.general.actions')">
@@ -114,7 +111,7 @@ import {useDefaultStore} from "@/Stores/default";
 import {Link} from "@inertiajs/vue3";
 import {StatusBadge, BasicBadge} from '@/Components/Badges'
 import {showNotification} from '@/Components/Notification';
-import { toast } from 'vue3-toastify';
+import {toast} from 'vue3-toastify';
 
 const defaultStore = useDefaultStore();
 const artistTable = ref();
@@ -155,7 +152,7 @@ const editRow = (artist) => {
 
 }
 const onDateChoosen = (e) => {
-     artistTable.value.search('daterange',e);
+  artistTable.value.search('daterange', e);
 
 
 }

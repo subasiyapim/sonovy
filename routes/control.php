@@ -1,10 +1,24 @@
 <?php
 
+use App\Http\Controllers\Control\BankController;
 use App\Http\Controllers\Control\BroadcastController;
+use App\Http\Controllers\Control\CityController;
+use App\Http\Controllers\Control\CopyrightController;
 use App\Http\Controllers\Control\DashboardController;
 use App\Http\Controllers\Control\ArtistController;
+use App\Http\Controllers\Control\ArtistBranchController;
+use App\Http\Controllers\Control\GlobalSearchController;
+use App\Http\Controllers\Control\IntegrationController;
 use App\Http\Controllers\Control\LabelController;
+use App\Http\Controllers\Control\LanguageController;
+use App\Http\Controllers\Control\MailTemplateController;
+use App\Http\Controllers\Control\MediaController;
+use App\Http\Controllers\Control\ProductApplyController;
+use App\Http\Controllers\Control\ReportController;
+use App\Http\Controllers\Control\SiteController;
+use App\Http\Controllers\Control\UpcController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PubController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Control\RoleController;
 use App\Http\Controllers\Control\UserController;
@@ -34,7 +48,6 @@ use App\Http\Controllers\Control\PaymentController;
 use App\Http\Controllers\Control\SubscriptionManagementController;
 use App\Http\Controllers\Control\ExtraServiceController;
 use App\Http\Controllers\Control\ServiceController;
-use App\Http\Controllers\Control\BroadcastApplyController;
 use App\Http\Controllers\Control\SummaryController;
 use App\Http\Controllers\Control\StatisticController;
 use App\Http\Controllers\Control\DistributionReportController;
@@ -74,16 +87,16 @@ Route::group(
 
         Route::group(
             ['prefix' => 'products-apply', 'as' => 'products-apply.'], function () {
-            Route::get('/', [BroadcastApplyController::class, 'index'])->name('index');
-            Route::post('/change-status', [BroadcastApplyController::class, 'changeStatus'])
+            Route::get('/', [ProductApplyController::class, 'index'])->name('index');
+            Route::post('/change-status', [ProductApplyController::class, 'changeStatus'])
                 ->name('change-status');
-            Route::post('/correction', [BroadcastApplyController::class, 'correction'])
+            Route::post('/correction', [ProductApplyController::class, 'correction'])
                 ->name('correction');
 
             Route::post('make-ddex-xml/{product}',
-                [BroadcastApplyController::class, 'makeDdexXml'])->name('make-ddex-xml');
+                [ProductApplyController::class, 'makeDdexXml'])->name('make-ddex-xml');
             Route::get('download-ddex-xml/{product}',
-                [BroadcastApplyController::class, 'downloadDdexXml'])->name('download-ddex-xml');
+                [ProductApplyController::class, 'downloadDdexXml'])->name('download-ddex-xml');
         });
     });
 
@@ -230,7 +243,9 @@ Route::group(
         Route::get('countries', [CountryController::class, 'search'])
             ->name('countries')->withoutMiddleware('auth:sanctum');
         Route::get('states', [CountryController::class, 'search'])->name('states')->withoutMiddleware('auth:sanctum');
-        Route::get('cities', [CityController::class, 'search'])->name('cities')->withoutMiddleware('auth:sanctum');
+        Route::get('cities', [
+            CityController::class, 'search'
+        ])->name('cities')->withoutMiddleware('auth:sanctum');
         Route::get('songs', [SongController::class, 'search'])->name('songs');
         Route::get('catalog-songs', [SongController::class, 'searchCatalog'])->name('catalog.songs');
         Route::get('platforms', [PlatformController::class, 'search'])->name('platforms');

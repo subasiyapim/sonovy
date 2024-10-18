@@ -47,6 +47,8 @@ import SpotifyIcon from './SpotifyIcon.vue';
 import AppleMusicIcon from './AppleMusicIcon.vue';
 import CheckFilledIcon from './CheckFilledIcon.vue';
 import CloseIcon from './CloseIcon.vue';
+import CommentIcon from "./CommentIcon.vue";
+import ProgressIcon from "./ProgressIcon.vue";
 import SongFileIcon from './SongFileIcon.vue';
 import MinusIcon from './MinusIcon.vue';
 import PlayFilledIcon from './PlayFilledIcon.vue';
@@ -97,6 +99,8 @@ export {
     SpotifyIcon,
     AppleMusicIcon,
     CheckFilledIcon,
+    CommentIcon,
+    ProgressIcon,
     PlayFilledIcon,
     CloseIcon,
     SongFileIcon,

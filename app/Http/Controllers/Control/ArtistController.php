@@ -24,7 +24,7 @@ class ArtistController extends Controller
     public function index()
     {
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
+        
         $artists = Artist::with('artistBranches', 'platforms', 'country', 'products')
             ->when(request('status') == 1, function ($query) {
                 $query->whereDoesntHave('products');
