@@ -7,7 +7,7 @@
         </svg>
         <div v-else class="flex items-center gap-1">
             <slot name="icon"></slot>
-            <p class="label-sm " :class="disabled ? 'c-soft-300' :'text-white'">
+            <p v-if="hasSlot('default')" class="label-sm " :class="disabled ? 'c-soft-300' :'text-white'">
                 <slot />
             </p>
             <slot name="suffix"></slot>
@@ -21,7 +21,8 @@
 
 <script setup>
 
-import {computed} from 'vue';
+import {computed,useSlots} from 'vue';
+const slots = useSlots()
     const props = defineProps({
 
 
@@ -58,6 +59,10 @@ import {computed} from 'vue';
         }
          return buttonClass;
     })
+
+    const hasSlot = (name) => {
+        return !!slots[name];
+    }
 
 </script>
 

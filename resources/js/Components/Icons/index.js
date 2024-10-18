@@ -8,6 +8,9 @@ import SearchIcon from './SearchIcon.vue';
 import NotificationIcon from './NotificationIcon.vue';
 import CalendarIcon from './CalendarIcon.vue';
 import TableOrderIcon from './TableOrderIcon.vue';
+import WorldIcon from './WorldIcon.vue';
+import PhoneIcon from './PhoneIcon.vue';
+import MessageIcon from './MessageIcon.vue';
 
 import ArrowDoubleRightIcon from './ArrowDoubleRightIcon.vue';
 import ArrowDoubleLeftIcon from './ArrowDoubleLeftIcon.vue';
@@ -16,8 +19,11 @@ import CloudIcon from './CloudIcon.vue';
 import LabelsIcon from './LabelsIcon.vue';
 import StickyNoteFilledIcon from './StickyNoteFilledIcon.vue';
 import EyeOnIcon from './EyeOnIcon.vue';
+import LinkIcon from './LinkIcon.vue';
+import DocumentIcon from './DocumentIcon.vue';
 
 import PersonIcon from './PersonIcon.vue';
+import PercantageIcon from './PercantageIcon.vue';
 import PersonSettingsIcon from './PersonSettingsIcon.vue';
 import DurationIcon from './DurationIcon.vue';
 import BroadcastTitleIcon from './BroadcastTitleIcon.vue';
@@ -41,6 +47,10 @@ import SpotifyIcon from './SpotifyIcon.vue';
 import AppleMusicIcon from './AppleMusicIcon.vue';
 import CheckFilledIcon from './CheckFilledIcon.vue';
 import CloseIcon from './CloseIcon.vue';
+import SongFileIcon from './SongFileIcon.vue';
+import MinusIcon from './MinusIcon.vue';
+import PlayFilledIcon from './PlayFilledIcon.vue';
+import PersonCardIcon from './PersonCardIcon.vue';
 
 export {
     AddIcon,
@@ -50,6 +60,7 @@ export {
     ArrowLeftIcon,
     SearchIcon,
     NotificationIcon,
+    MessageIcon,
     CalendarIcon,
     TableOrderIcon,
     ChevronLeftIcon,
@@ -63,8 +74,11 @@ export {
     DurationIcon,
     BroadcastTitleIcon,
     GenreIcon,
+    DocumentIcon,
     VerifiedFilledIcon,
     TrashIcon,
+    WorldIcon,
+    PersonCardIcon,
     EditIcon,
     TeklifManagementIcon,
     LockIcon,
@@ -83,5 +97,11 @@ export {
     SpotifyIcon,
     AppleMusicIcon,
     CheckFilledIcon,
-    CloseIcon
+    PlayFilledIcon,
+    CloseIcon,
+    SongFileIcon,
+    MinusIcon,
+    LinkIcon,
+    PercantageIcon,
+    PhoneIcon,
 }

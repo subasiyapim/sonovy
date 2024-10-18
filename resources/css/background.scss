@@ -1,9 +1,13 @@
 @import './colors.scss';
-.bg-white-500 {
-    background: var(--white-500)
-}
+
 .bg-weak-50 {
     background: var(--weak-50);
+}
+.bg-white-400 {
+    background: var(--white-400)
+}
+.bg-white-500 {
+    background: var(--white-500)
 }
 .bg-white-600 {
     background: var(--white-600)
@@ -16,6 +20,9 @@
 }
 .bg-dark-green-800{
    background: var(--dark-green-800);
+}
+.bg-soft-200{
+    background: var(--soft-200);
 }
 .bg-red-50{
     background: var(--red-50);

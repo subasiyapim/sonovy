@@ -10,11 +10,13 @@
     --soft-400: #99A0AE;
 
     --green-500:#1FC16B;
+    --white-400: #FBFAF9;
     --white-500: #FAF9F8;
     --white-600: #EEEBE8;
     --white-900: #969595;
     --dark-green-500: #5BCF82;
     --dark-green-600: #49A668;
+    --dark-green-700: #377C4E;
 
     --dark-green-800: #0D2D23;
     --dark-green-950: #091F19;
@@ -55,6 +57,9 @@
 
     }
 
+    .c-white-400 {
+         color: var(--dark-green-400);
+    }
     .c-white-500 {
          color: var(--dark-green-500);
     }
@@ -75,6 +80,10 @@
 
     .c-dark-green-600 {
          color: var(--dark-green-600);
+
+    }
+    .c-dark-green-700 {
+         color: var(--dark-green-700);
 
     }
 

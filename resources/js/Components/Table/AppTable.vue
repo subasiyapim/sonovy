@@ -1,6 +1,6 @@
 <template>
 
-  <div>
+  <div  v-if="hasSearch || config?.filters" >
 
     <div class="flex items-center mb-4">
       <div class="flex-1 flex items-center gap-7">
@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div v-if="hasSearch" class="flex items-center gap-2">
         <AppTextInput @change="onSearch" @input="onInput" v-model="term" placeholder="Ara...">
           <template #icon>
             <SearchIcon color="var(--sub-600)"/>
@@ -31,7 +31,8 @@
     <thead>
     <tr class="border border-white-600">
       <th @click="onClickHeader(column)" :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns" :key="index">
-        <div class="flex items-center gap-2 justify-start">
+
+        <div class="flex items-center gap-2 paragraph-xs c-sub-600" :class="column.props.align == 'center' ? 'justify-center' : (column.props.align == 'right' ? 'justify-end' : 'justify-start' )">
           {{ column.props.label }}
           <TableOrderIcon v-if="column.props.sortable" color="var(--sub-600)"/>
         </div>
@@ -41,12 +42,12 @@
     <tbody>
     <tr v-for="(row, rowIndex) in data" :key="rowIndex">
       <td v-for="(column, colIndex) in columns" :key="colIndex">
-        <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
+        <render :rowIndex="rowIndex" :colIndex="colIndex"  :row="row"></render>
       </td>
     </tr>
     </tbody>
   </table>
-   <div v-if="searching" class="h-[400px] flex flex-col items-center justify-center">
+   <div v-if="searching" class="h-[300px] flex flex-col items-center justify-center">
        <div class="w-12 h-12">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><radialGradient id="a12" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)"><stop offset="0" stop-color="#43FF0D"></stop><stop offset=".3" stop-color="#43FF0D" stop-opacity=".9"></stop><stop offset=".6" stop-color="#43FF0D" stop-opacity=".6"></stop><stop offset=".8" stop-color="#43FF0D" stop-opacity=".3"></stop><stop offset="1" stop-color="#43FF0D" stop-opacity="0"></stop></radialGradient><circle transform-origin="center" fill="none" stroke="url(#a12)" stroke-width="8" stroke-linecap="round" stroke-dasharray="200 1000" stroke-dashoffset="0" cx="100" cy="100" r="70"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="360;0" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"></animateTransform></circle><circle transform-origin="center" fill="none" opacity=".2" stroke="#43FF0D" stroke-width="8" stroke-linecap="round" cx="100" cy="100" r="70"></circle></svg>
        </div>
@@ -71,7 +72,7 @@
                 </a>
 
 
-                <Link :href="route('control.artists.index',{page:p})"
+                <Link :href="route('control.catalog.artists.index',{page:p})"
                     v-for="p in Math.ceil((tableData.total / tableData.per_page)) >= 7 ? 6 : Math.ceil((tableData.total / tableData.per_page))"
                     class="p-2 radius-8 w-10 h-10 border border-soft-200-500 flex items-center justify-center">
                 {{ p }}
@@ -101,8 +102,8 @@
             </div>
         </template>
 
-        <div v-if="data == null || data.length <= 0" class="h-[400px] flex flex-col items-center justify-center gap-8">
-            <img src="@/assets/images/empty_state.png" class="w-32 h-32">
+        <div v-if="data == null || data.length <= 0" class="h-[300px] flex flex-col items-center justify-center gap-8">
+            <img v-if="showEmptyImage" src="@/assets/images/empty_state.png" class="w-32 h-32">
             <slot name="empty"/>
         </div>
  </div>
@@ -156,6 +157,12 @@ const props = defineProps({
   },
   config:{
     type:Object,
+  },
+  hasSearch:{
+    default:true,
+  },
+  showEmptyImage:{
+    default:true
   }
 })
 const emits = defineEmits(['update:modelValue', 'addNewClicked']);
@@ -183,10 +190,10 @@ onMounted(() => {
 });
 
 const render = (e) => {
-
   return h(slots.default()[e.colIndex], {
     row: data.value[e.rowIndex],
-    index: e.rowIndex
+    index: e.rowIndex,
+   ...slots.default()[e.colIndex].props
   }, slots.default()[e.colIndex].children);
 };
 
