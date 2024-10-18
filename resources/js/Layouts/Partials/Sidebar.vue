@@ -1,6 +1,6 @@
 <template>
 
-  <div class="bg-white-500 flex flex-col w-full md:h-screen md:w-[272px]  sideBar overflow-y-hidden">
+  <div class="bg-white-500 flex flex-col w-full md:h-screen md:w-[272px]  sideBar overflow-y-hidden border border-white-600">
        <div class=" p-3">
            <div class="p-3 flex  gap-3 items-center ">
                  <img class="cursor-pointer w-10 h-10 " alt=""  src="@/assets/images/logo.png">
@@ -15,7 +15,8 @@
         <AppTextInput class="w-full" placeholder="Yayın, Artist ara...">
               <template #icon><SearchIcon color="var(--soft-400)"/></template>
         </AppTextInput>
-        <SecondaryButton @click="router.visit(route('control.products.create'))" class="w-full">
+
+        <SecondaryButton @click="router.visit(route('control.catalog.products.create'))" class="w-full">
             <template #icon><AddIcon/></template>
             Yeni Yayın Oluştur
         </SecondaryButton>
@@ -25,12 +26,12 @@
              <MenuItem title="Dashboard" :icon="DashboardIcon">
 
             </MenuItem >
-             <MenuItem title="Katalog" :icon="DashboardIcon">
+             <MenuItem title="Katalog" :icon="DashboardIcon" wrapper="catalog">
                 <template #sub>
-                    <sub-menu-item :path="route('control.products.index')">Yayınlar</sub-menu-item>
-                    <sub-menu-item :path="route('control.songs.index')">Parçalar</sub-menu-item>
-                    <sub-menu-item :path="route('control.artists.index')">Sanatçılar</sub-menu-item>
-                    <sub-menu-item :path="route('control.labels.index')">Plak Şirketleri</sub-menu-item>
+                    <sub-menu-item :path="'control.catalog.products.index'">Yayınlar</sub-menu-item>
+                    <sub-menu-item :path="'control.catalog.songs.index'">Parçalar</sub-menu-item>
+                    <sub-menu-item :path="'control.catalog.artists.index'">Sanatçılar</sub-menu-item>
+                    <sub-menu-item :path="'control.catalog.labels.index'">Plak Şirketleri</sub-menu-item>
                     <sub-menu-item :path="'#'">Tarzlar</sub-menu-item>
                 </template>
             </MenuItem >

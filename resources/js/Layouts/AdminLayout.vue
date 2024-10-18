@@ -41,7 +41,7 @@
                 </div>
 
             </div>
-           <div class="px-8 pt-6 pb-10">
+           <div class="" :class="hasPadding ? 'px-8 pt-6 pb-10' :'' ">
                  <slot />
            </div>
 
@@ -76,6 +76,9 @@ const emits = defineEmits(['dateChoosen'])
 const props = defineProps({
     title:{type:String},
     parentTitle:{type:String},
+    hasPadding:{
+        default:true,
+    },
 })
 let params = new URLSearchParams(window.location.search)
 

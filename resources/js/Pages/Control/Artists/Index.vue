@@ -8,18 +8,17 @@
         v-model="usePage().props.artists"
         @addNewClicked="openDialog"
         :config="appTableConfig"
-
-        :slug="route('control.artists.index')">
-      <AppTableColumn :label="__('control.artist.fields.name')">
+        :slug="route('control.catalog.artists.index')">
+      <AppTableColumn :label="__('control.artist.fields.name')" align="left">
         <template #default="scope">
-          <div class="flex items-center gap-2 ">
+          <div class="flex justify-start items-center gap-2 w-full">
             <div class="w-12 h-12 rounded-full overflow-hidden">
               <img :alt="scope.row.name"
                    :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.name)"
               >
             </div>
             <div>
-              <h3 class="c-sub-600 text-sm leading-4 font-bold">{{ scope.row.name }}</h3>
+              <a :href="route('control.catalog.artists.show',scope.row.id)" class="c-sub-600 text-sm leading-4 font-bold">{{ scope.row.name }}</a>
               <div class="flex flex-row gap-x-2 items-center" v-if="scope.row.platforms">
                 <template v-for="platform in scope.row.platforms" :key="platform.id">
                   <a v-if="platform.code === 'spotify'"
@@ -63,7 +62,10 @@
           <BasicBadge class="mx-1" v-for="(branch, index) in scope.row.artist_branches" :key="index">
             {{ branch }}
           </BasicBadge>
-          <span v-if="scope.row.artist_branches_count > 0">+{{ scope.row.artist_branches_count }}</span>
+            <BasicBadge  v-if="scope.row.artist_branches_count > 0" class="mx-1" >
+                 <span>+{{ scope.row.artist_branches_count }}</span>
+          </BasicBadge>
+
         </template>
       </AppTableColumn>
       <AppTableColumn :label="__('control.general.actions')">
@@ -140,7 +142,7 @@ const appTableConfig = computed(() => {
 const deleteRow = (row) => {
   //EXAMPLE ROW SİLME İÇİN
   showNotification();
-  toast.error('Başarıyla Silindi');
+  toast.success('Başarıyla Silindi');
   artistTable.value.removeRowData(row);
 }
 const editRow = () => {

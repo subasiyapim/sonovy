@@ -2,6 +2,7 @@
 
   <div class="flex items-center" :class="align == 'center' ? 'justify-center' : (align == 'left' ? 'justify-start' : 'justify-end' )">
     <slot :row="row" :index="index" />
+
   </div>
 </template>
 

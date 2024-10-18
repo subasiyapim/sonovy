@@ -2,14 +2,16 @@
   <AdminLayout title="Tüm Plak Şirketleri" parentTitle="Katalog">
 
     <AppTable v-model="usePage().props.labels" @addNewClicked="openDialog">
-      <AppTableColumn label="Plak Şirketi">
+      <AppTableColumn label="Plak Şirketi" align="left">
         <template #default="scope">
 
           <div class="flex items-center gap-2 ">
             <div class="w-12 h-12 rounded-full overflow-hidden">
               <img v-if="scope.row.image" :src="scope.row.image.thumb">
             </div>
-            {{ scope.row.name }}
+             <a :href="route('control.catalog.labels.show',scope.row.id)" class="c-sub-600 text-sm leading-4 font-bold">{{ scope.row.name }}</a>
+
+
           </div>
         </template>
       </AppTableColumn>
@@ -27,7 +29,7 @@
       <AppTableColumn label="Hakediş Durum">
         <template #default="scope">-</template>
       </AppTableColumn>
-      <AppTableColumn label="Aksiyonlar">
+      <AppTableColumn label="Aksiyonlar" align="right">
         <template #default="scope">
           <div class="flex gap-3">
             <IconButton>

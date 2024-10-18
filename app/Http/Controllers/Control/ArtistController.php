@@ -97,7 +97,7 @@ class ArtistController extends Controller
             MediaServices::upload($artist, $request->file('image'), 'artists');
         }
 
-        return redirect()->route('control.artists.index')->with(
+        return redirect()->route('control.catalog.artists.index')->with(
             [
                 'notification' => [
                     'type' => 'success',
@@ -151,7 +151,7 @@ class ArtistController extends Controller
             MediaServices::upload($artist, $request->file('image'), 'artists');
         }
 
-        return redirect()->route('control.artists.index')->with(
+        return redirect()->route('control.catalog.artists.index')->with(
             [
                 'notification' => [
                     'type' => 'success',
@@ -170,7 +170,7 @@ class ArtistController extends Controller
 
         $artist->delete();
 
-        return redirect()->route('control.artists.index')->with(
+        return redirect()->route('control.catalog.artists.index')->with(
             [
                 'notification' => [
                     'type' => 'success',
