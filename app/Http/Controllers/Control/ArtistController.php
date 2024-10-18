@@ -24,7 +24,7 @@ class ArtistController extends Controller
     public function index()
     {
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        
+
         $artists = Artist::with('artistBranches', 'platforms', 'country', 'products')
             ->when(request('status') == 1, function ($query) {
                 $query->whereDoesntHave('products');
@@ -36,7 +36,9 @@ class ArtistController extends Controller
                 $query->whereBetween('created_at', [request('s_date'), request('e_date')]);
             })
             ->advancedFilter();
+
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+
         $filters = [
             [
                 'title' => __('control.artist.fields.status'),

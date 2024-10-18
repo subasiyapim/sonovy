@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Country;
+use App\Models\System\Country;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
