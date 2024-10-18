@@ -16,7 +16,6 @@ class ArtistResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection,
             'id' => $this->id,
             'name' => $this->name,
             'about' => $this->about,
@@ -25,14 +24,27 @@ class ArtistResource extends JsonResource
             'image' => $this->image,
             'status' => $this->products->count() > 0 ? 'Aktif sanatçı' : 'Pasif sanatçı',
             'tracks_count' => $this->products->count().' parça',
-            'artist_branches' => $this->artistBranches->pluck('name')->take(4),
-            'artist_branches_count' => $this->artistBranches->count() > 4 ? $this->artistBranches->count() - 4 : 0,
+            'genres' => $this->getGenres(),
+            'genres_count' => $this->getGenres()->count(),
         ];
     }
 
-    private function artistStatus(mixed $id)
+    private function getGenres()
     {
+        $genres = $this->products->flatMap(function ($product) {
+            $names = [];
 
+            if ($product->genre) {
+                $names[] = $product->genre->name;
+            }
 
+            if ($product->subGenre) {
+                $names[] = $product->subGenre->name;
+            }
+
+            return $names;
+        });
+
+        return $genres->unique()->values();
     }
 }

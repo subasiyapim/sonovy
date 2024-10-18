@@ -9,7 +9,7 @@
         @addNewClicked="openDialog"
         :config="appTableConfig"
 
-        :slug="route('control.artists.index')">
+        :slug="route('control.catalog.artists.index')">
       <AppTableColumn :label="__('control.artist.fields.name')">
         <template #default="scope">
           <div class="flex items-center gap-2 ">
@@ -60,10 +60,10 @@
 
       <AppTableColumn :label="__('control.artist.fields.genres')">
         <template #default="scope">
-          <BasicBadge class="mx-1" v-for="(branch, index) in scope.row.artist_branches" :key="index">
-            {{ branch }}
+          <BasicBadge class="mx-1" v-for="(genre, index) in scope.row.genres" :key="index">
+            {{ genre }}
           </BasicBadge>
-          <span v-if="scope.row.artist_branches_count > 0">+{{ scope.row.artist_branches_count }}</span>
+          <span v-if="scope.row.genres_count > 0">+{{ scope.row.genres_count }}</span>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="__('control.general.actions')">
@@ -112,7 +112,7 @@ import {useDefaultStore} from "@/Stores/default";
 import {Link} from "@inertiajs/vue3";
 import {StatusBadge, BasicBadge} from '@/Components/Badges'
 import {showNotification} from '@/Components/Notification';
-import { toast } from 'vue3-toastify';
+import {toast} from 'vue3-toastify';
 
 const defaultStore = useDefaultStore();
 const artistTable = ref();
@@ -147,7 +147,7 @@ const editRow = () => {
 
 }
 const onDateChoosen = (e) => {
-     artistTable.value.search('daterange',e);
+  artistTable.value.search('daterange', e);
 
 
 }

@@ -79,4 +79,29 @@ if (!function_exists('getDataFromInputFormat')) {
     }
 }
 
+if (!function_exists('maskString')) {
+    function maskString($string)
+    {
+        $length = mb_strlen($string);
+        if ($length <= 2) {
+            return $string;
+        }
+        return substr_replace($string, str_repeat('*', $length - 2), 0, $length - 2);
+    }
+}
 
+if (!function_exists('emailMasking')) {
+    function emailMasking(&$email)
+    {
+        $email_arr = explode('@', $email);
+
+        $masked_local = maskString($email_arr[0]);
+        $masked_domain = maskString($email_arr[1]);
+
+        $masked_email = $masked_local.'@'.$masked_domain;
+
+        $email = $masked_email;
+
+        return $email;
+    }
+}

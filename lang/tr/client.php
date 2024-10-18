@@ -88,6 +88,26 @@ return [
         'logout' => 'Çıkış yap',
         'check_email' => 'Kayıt sırasında verdiğiniz e-posta adresine yeni bir doğrulama bağlantısı gönderilmiştir.',
     ],
-
+    'forgot_password' => [
+        'title' => 'Şifremi Sıfırla',
+        'subtitle' => 'Şifrenizi sıfırlamak için e-posta adresinize 6 haneli sıfırlama kodu göndereceğiz.',
+        'send_reset_link' => 'Kod gönder',
+        'back_btn' => 'Geri dön',
+        'email_sent' => 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.',
+        'email' => 'Email adresiniz',
+        'email_placeholder' => 'hello@sonovy.com',
+    ],
+    'forgot_password_pin' => [
+        'title' => 'Sıfırlama Kodunu Giriniz',
+        'subtitle' => ':email mail adresinize 6 haneli doğrulama kodu gönderdik. Lütfen kodu giriniz.',
+        'time' => ':time saniye içinde ',
+        'resend_code' => 'Kodu tekrar gönder',
+        'verify_code' => 'Kodu doğrula',
+        'back_btn' => 'Geri dön',
+        'validating_code' => 'Kod doğrulanıyor...',
+        'code' => 'Kod',
+        'code_incorrect' => 'Girdiğiniz kod yanlış. Lütfen tekrar deneyin.',
+        'code_expired' => 'Kodun süresi doldu. Lütfen tekrar deneyin.',
+    ]
 
 ];

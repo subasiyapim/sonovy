@@ -24,7 +24,7 @@ class ArtistController extends Controller
     public function index()
     {
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
+        
         $artists = Artist::with('artistBranches', 'platforms', 'country', 'products')
             ->when(request('status') == 1, function ($query) {
                 $query->whereDoesntHave('products');
@@ -97,7 +97,7 @@ class ArtistController extends Controller
             MediaServices::upload($artist, $request->file('image'), 'artists');
         }
 
-        return redirect()->route('control.artists.index')->with(
+        return redirect()->route('control.catalog.artists.index')->with(
             [
                 'notification' => [
                     'type' => 'success',
@@ -151,7 +151,7 @@ class ArtistController extends Controller
             MediaServices::upload($artist, $request->file('image'), 'artists');
         }
 
-        return redirect()->route('control.artists.index')->with(
+        return redirect()->route('control.catalog.artists.index')->with(
             [
                 'notification' => [
                     'type' => 'success',
@@ -170,7 +170,7 @@ class ArtistController extends Controller
 
         $artist->delete();
 
-        return redirect()->route('control.artists.index')->with(
+        return redirect()->route('control.catalog.artists.index')->with(
             [
                 'notification' => [
                     'type' => 'success',
