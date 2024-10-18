@@ -31,7 +31,7 @@
                     </div>
                 </template>
 
-                <div v-if="config.data != null && config.data.length > 0">
+                <div v-if="config.data != null && config.data.length > 0" class="max-h-[250px] overflow-scroll">
                     <div @click="chooseValue(el)" v-for="el in config.data" :data-id="el[config.value ?? 'value']" :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'" class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
                        <div v-if="type == 'multiselect'" :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-dark-green-600 border-dark-green-600' : 'bg-white  border-soft-200'" class="w-3 h-3 border  rounded-sm shadow"></div>
                         <div v-else class="border border-soft-200 rounded-sm shadow"></div>

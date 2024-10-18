@@ -1,7 +1,7 @@
-import AddArtistDialog from './Artist/Add.vue';
-import AddLabelDialog from './Label/Add.vue';
+import ArtistDialog from './Artist/index.vue';
+import LabelDialog from './Label/index.vue';
 
 export {
-    AddArtistDialog,
-    AddLabelDialog
+    ArtistDialog,
+    LabelDialog
 }
