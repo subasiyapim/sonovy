@@ -71,8 +71,9 @@ class LabelController extends Controller
         abort_if(Gate::denies('label_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $label->load('country');
+        return inertia('Control/Labels/Show', compact('label'));
 
-        return response()->json($label->load('media'), Response::HTTP_OK);
+
     }
 
     public function edit(Label $label)

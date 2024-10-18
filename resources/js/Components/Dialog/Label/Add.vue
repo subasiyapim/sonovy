@@ -29,7 +29,7 @@
 
 <script setup>
 import BaseDialog from '../BaseDialog.vue';
-import SectionHeader from '../Components/SectionHeader.vue';
+import {SectionHeader} from '@/Components/Widgets';
 import {AddIcon} from '@/Components/Icons'
 import {RegularButton,PrimaryButton} from '@/Components/Buttons'
 import {computed,ref} from 'vue';
