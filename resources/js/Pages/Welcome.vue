@@ -1,12 +1,12 @@
-<script setup lang="ts">
+<script setup>
 import {Head, Link, usePage} from '@inertiajs/vue3';
 
-defineProps<{
-  canLogin?: boolean;
-  canRegister?: boolean;
+defineProps < {
+  canLogin? : boolean;
+  canRegister? : boolean;
   laravelVersion: string;
   phpVersion: string;
-}>();
+} > ();
 
 function handleImageError() {
   document.getElementById('screenshot-container')?.classList.add('!hidden');
