@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('platform')->nullable();
             $table->foreignIdFor(\App\Models\Platform::class)->nullable()->constrained();
             $table->string('country')->nullable();
-            $table->foreignIdFor(\App\Models\Country::class, 'country_id')->nullable()->constrained();
+            $table->foreignIdFor(\App\Models\System\Country::class, 'country_id')->nullable();
             $table->string('label_name')->nullable();
             $table->foreignIdFor(\App\Models\Label::class, 'label_id')->nullable()->constrained();
             $table->string('artist_name')->nullable();

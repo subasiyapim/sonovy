@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->tinyInteger('gender')->nullable()->after('email_verified_at');
-            $table->foreignId('place_of_birth_id')->nullable()->after('gender')->constrained('cities')->cascadeOnDelete();
+            $table->foreignId('place_of_birth_id')->nullable()->after('gender');
             $table->date('birth_date')->nullable()->after('place_of_birth_id');
             $table->boolean('access_all_artists')->default(true)->after('birth_date');
             $table->boolean('access_all_labels')->default(true)->after('access_all_artists');

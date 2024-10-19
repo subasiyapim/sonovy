@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\City;
-use App\Models\Country;
-use App\Models\State;
+use App\Models\System\City;
+use App\Models\System\Country;
+use App\Models\System\District;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -23,9 +23,9 @@ return new class extends Migration {
             $table->string('tax_office')->nullable();
             $table->integer('tax_number')->nullable();
             $table->string('commercial_register_number')->nullable();
-            $table->foreignIdFor(Country::class, 'country_id')->constrained();
-            $table->foreignIdFor(State::class, 'state_id')->constrained();
-            $table->foreignIdFor(City::class, 'city_id')->constrained();
+            $table->foreignIdFor(Country::class, 'country_id');
+            $table->foreignIdFor(District::class, 'district_id');
+            $table->foreignIdFor(City::class, 'city_id');
             $table->string('zip_code');
             $table->string('address');
             $table->tinyText('note')->nullable();

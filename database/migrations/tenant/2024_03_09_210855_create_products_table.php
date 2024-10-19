@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Country;
+use App\Models\System\Country;
 use App\Models\Genre;
 use App\Models\Label;
 use Illuminate\Database\Migrations\Migration;
@@ -47,7 +47,7 @@ return new class extends Migration {
             $table->string('ean_code')->nullable();
             $table->string('jan_code')->nullable();
             $table->string('catalog_number')->nullable();
-            $table->foreignIdFor(Country::class, 'language_id')->nullable()->constrained('countries');
+            $table->foreignIdFor(Country::class, 'language_id')->nullable();
 
             $table->date('release_date')->nullable()->comment('Yayının kayıt üretim yılı');
             $table->date('original_release_date')->nullable()->comment('Orjinal / fiziksel yayın tarihi (Opsiyonel)');

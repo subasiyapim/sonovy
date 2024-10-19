@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
-use App\Models\Country;
+use App\Models\System\Country;
 use App\Services\CountryServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;

@@ -10,6 +10,7 @@ use App\Models\Artist;
 use App\Models\ArtistBranch;
 use App\Models\Genre;
 use App\Models\Platform;
+use App\Models\System\Country;
 use App\Services\CountryServices;
 use App\Services\MediaServices;
 use Illuminate\Http\Request;
@@ -78,7 +79,7 @@ class ArtistController extends Controller
     {
         abort_if(Gate::denies('artist_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $countries = getDataFromInputFormat(CountryServices::get(), 'id', 'name', 'emoji');
+        $countries = getDataFromInputFormat(CountryServices::get(), 'id', 'native', 'emoji');
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'image');
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 

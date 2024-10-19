@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Country;
+use App\Models\System\Country;
 use App\Models\Genre;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->string('isrc')->nullable()->unique();
             $table->boolean('is_instrumental')->default(0);
             $table->boolean('is_explicit')->default(0);
-            $table->foreignIdFor(Country::class, 'language_id')->nullable()->constrained('countries');
+            $table->foreignIdFor(Country::class, 'language_id')->nullable();
             $table->tinyText('lyrics')->nullable();
             $table->string('iswc')->nullable()->unique();
             $table->string('preview_start')->nullable();

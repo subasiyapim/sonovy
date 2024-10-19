@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('earning_reports', function (Blueprint $table) {
             $table->foreignIdFor(\App\Models\Platform::class, 'platform_id')->nullable()->after('platform');
-            $table->foreignIdFor(\App\Models\Country::class, 'country_id')->nullable()->after('country');
+            $table->foreignIdFor(\App\Models\System\Country::class, 'country_id')->nullable()->after('country');
             $table->foreignIdFor(\App\Models\Label::class, 'label_id')->nullable()->after('label_name');
             $table->foreignIdFor(\App\Models\Artist::class, 'artist_id')->nullable()->after('artist_name');
             $table->foreignIdFor(\App\Models\Song::class, 'song_id')->nullable()->after('song_name');

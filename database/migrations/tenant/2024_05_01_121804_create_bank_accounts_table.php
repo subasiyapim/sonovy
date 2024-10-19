@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('title')->comment('örn: Şirket hesabı, Kişsel hesap');
-            $table->foreignId('country_id')->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\System\Country::class, 'country_id');
             $table->string('name');
             $table->string('iban')->unique();
             $table->string('swift_code')->nullable();
