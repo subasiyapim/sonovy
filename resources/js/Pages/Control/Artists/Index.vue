@@ -142,8 +142,10 @@ const appTableConfig = computed(() => {
 const deleteRow = (row) => {
   //EXAMPLE ROW SİLME İÇİN
   showNotification();
-  toast.success('Sanatçı başarıyla silindi');
-  artistTable.value.removeRowData(row);
+//   toast.success('Sanatçı başarıyla silindi');
+//   artistTable.value.removeRowData(row);
+  artistTable.value.addRow(row);
+  artistTable.value.addRow(row,'end');
   //artistTable.value.addRowData(row);
 }
 const editRow = (artist) => {

@@ -276,6 +276,11 @@ const onFilterSelected = (event,filter) => {
 const removeRowByIndex = (index) => {
     data.value.splice(index,1);
 }
+const addRow = (row, direction = 'start') => {
+    if(direction == 'end')  data.value.push(row);
+    else if(direction == 'start')  data.value.unshift(row);
+
+}
 const removeRowData = (row) => {
     const findedIndex = data.value.findIndex((el) => row == el);
     if(findedIndex >= 0) data.value.splice(findedIndex,1);
@@ -287,7 +292,8 @@ onMounted(() => {
 defineExpose({
     removeRowByIndex,
     removeRowData,
-    search
+    search,
+    addRow,
 })
 </script>
 
