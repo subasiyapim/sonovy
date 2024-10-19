@@ -180,3 +180,25 @@
     min-height: auto !important;
     max-height: auto !important;
 }
+
+
+
+.pinField{
+    @extend .border-soft-200;
+    @extend .c-strong-950;
+    text-align: center;
+    font-size: 28px;
+    line-height: 32px;
+    width: 56px;
+    height: 64px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+}
+.pinField:focus{
+    @extend .bg-dark-green-25;
+    @extend .border-dark-green-600;
+    box-shadow: 0px 0px 0px 4px #99A0AE29;
+
+
+}

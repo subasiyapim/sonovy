@@ -1,9 +1,10 @@
 <script setup>
 import {computed} from 'vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
+import {PrimaryButton} from '@/Components/Buttons';
 import {Head, Link, useForm} from '@inertiajs/vue3';
-
+import PinputField from '@/Components/Pinput/PinputField.vue';
+import {MessageIcon2,ChevronLeftIcon,CheckIcon,CheckFilledIcon} from '@/Components/Icons'
 const props = defineProps({
   status: Object
 });
@@ -20,12 +21,18 @@ const verificationLinkSent = computed(
 </script>
 
 <template>
-  <GuestLayout>
+  <AuthLayout>
+
+     <template #icon>
+      <MessageIcon2 color="var(--strong-950)"/>
+    </template>
     <Head title="Email Verification"/>
-    <h2 class="text-lg font-bold text-white py-2">{{ __('client.verify_email.title') }}</h2>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-      {{ __('client.verify_email.description') }}
-    </div>
+       <h1 class="label-xl c-strong-950 !text-center" v-text="__('client.verify_email.title')"/>
+        <p class="paragraph-sm c-sub-600 !text-center mb-6" v-text=" __('client.verify_email.description',{email:'asdsd'})"/>
+
+
+
+
 
     <div
         class="mb-4 text-sm font-medium text-green-600 dark:text-green-400"
@@ -33,25 +40,24 @@ const verificationLinkSent = computed(
     >
       {{ __('client.verify_email.check_email') }}
     </div>
+     <PinputField v-model="form.code" @onCompleted="submit"></PinputField>
 
-    <form @submit.prevent="submit">
-      <div class="mt-4 flex items-center justify-between">
+      <div class="mt-4 flex flex-col items-center justify-between">
         <PrimaryButton
+            class="w-full"
             :class="{ 'opacity-25': form.processing }"
-            :disabled="form.processing"
-        >
-          {{ __('client.verify_email.resend_verification_email') }}
+            :disabled="form.processing">
+            <template #suffix>
+                <CheckIcon color="var(--dark-green-500)" />
+            </template>
+          {{ __('client.verify_email.submit') }}
         </PrimaryButton>
 
-        <Link
-            :href="route('logout')"
-            method="post"
-            as="button"
-            class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-        >{{ __('client.verify_email.logout') }}
-        </Link
-        >
+        <div class="text-end">
+            <a :href="route('login')" class="label-xs c-neutral-500 flex items-center gap-1 justify-center mt-2">
+            <ChevronLeftIcon color="var(--neutral-500)"/>
+            {{ __('client.forgot_password.back_btn') }}</a>
+        </div>
       </div>
-    </form>
-  </GuestLayout>
+  </AuthLayout>
 </template>

@@ -86,8 +86,9 @@ return [
     ],
     'verify_email' => [
         'title' => 'Email Adresinizi Doğrulayın',
-        'description' => 'Kaydolduğunuz için teşekkürler! Başlamadan önce, size az önce e-posta ile gönderdiğimiz bağlantıya tıklayarak e-posta adresinizi doğrulayabilir misiniz? E-postayı almadıysanız, size memnuniyetle bir tane daha göndereceğiz.',
+        'description' => ':email eposta adresinize 6 haneli doğrulama kodu gönderdik. Lütfen kodu giriniz.',
         'resend_verification_email' => 'Doğrulama e-postasını tekrar gönder',
+        'submit' => 'Kodu Doğrula',
         'logout' => 'Çıkış yap',
         'check_email' => 'Kayıt sırasında verdiğiniz e-posta adresine yeni bir doğrulama bağlantısı gönderilmiştir.',
     ],
