@@ -181,7 +181,7 @@ const props = defineProps({
 
 const defaultStore = useDefaultStore();
 
-const commission_rate = ref(0);
+const commission_rate = ref(props.label.user.commission_rate ?? 0);
 
 const appIncrementerConfig = {
   formatter: (value) => {

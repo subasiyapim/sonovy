@@ -70,7 +70,7 @@ class LabelController extends Controller
     {
         abort_if(Gate::denies('label_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $label->load('country', 'products.songs');
+        $label->load('country', 'products.songs', 'user');
         return inertia('Control/Labels/Show', compact('label'));
 
 

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -15,6 +16,7 @@ class UserSeeder extends Seeder
             'password' => 'password',
             'phone' => '5325805080',
             'is_verified' => 1,
+            'commission_rate' => 10,
         ],
         [
             'name' => 'MD Admin',
@@ -22,6 +24,7 @@ class UserSeeder extends Seeder
             'password' => 'password',
             'phone' => '5325805080',
             'is_verified' => 1,
+            'commission_rate' => 7,
         ],
         [
             'name' => 'MD User',
@@ -29,6 +32,7 @@ class UserSeeder extends Seeder
             'password' => 'password',
             'phone' => '5325805080',
             'is_verified' => 1,
+            'commission_rate' => 18,
         ]
     ];
 
@@ -52,5 +56,9 @@ class UserSeeder extends Seeder
                 ]
             );
         }
+
+        User::factory(100)->create()->each(function ($user) {
+            User::factory(rand(1, 5))->create(['parent_id' => $user->id]);
+        });
     }
 }

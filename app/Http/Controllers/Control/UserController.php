@@ -40,7 +40,7 @@ class UserController extends Controller
         abort_if(Gate::denies('user_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $user = Auth::user();
         $hasAdmin = $user->roles()->pluck('code')->contains('admin');
-        $query = User::with('roles', 'sub_users', 'parent_user', 'country', 'state', 'city');
+        $query = User::with('roles', 'sub_users', 'parent_user', 'country', 'district', 'city');
 
         // If 'sub_users' is present in the request, get users with sub_user IDs
         $subUserId = $request->get('sub_users');
