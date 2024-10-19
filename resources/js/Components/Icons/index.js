@@ -11,6 +11,8 @@ import TableOrderIcon from './TableOrderIcon.vue';
 import WorldIcon from './WorldIcon.vue';
 import PhoneIcon from './PhoneIcon.vue';
 import MessageIcon from './MessageIcon.vue';
+import MessageIcon2 from './MessageIcon2.vue';
+import CheckIcon from './CheckIcon.vue';
 
 import ArrowDoubleRightIcon from './ArrowDoubleRightIcon.vue';
 import ArrowDoubleLeftIcon from './ArrowDoubleLeftIcon.vue';
@@ -62,7 +64,9 @@ export {
     ArrowLeftIcon,
     SearchIcon,
     NotificationIcon,
+    CheckIcon,
     MessageIcon,
+    MessageIcon2,
     CalendarIcon,
     TableOrderIcon,
     ChevronLeftIcon,

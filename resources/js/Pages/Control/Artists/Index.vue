@@ -144,6 +144,7 @@ const deleteRow = (row) => {
   showNotification();
   toast.success('Sanatçı başarıyla silindi');
   artistTable.value.removeRowData(row);
+  //artistTable.value.addRowData(row);
 }
 const editRow = (artist) => {
 
