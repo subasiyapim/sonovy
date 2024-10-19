@@ -126,6 +126,7 @@ class PasswordResetLinkController extends Controller
         Session::put('forget_code', $code);
         Session::put('forget_email', $email);
         Session::put('forget_masked_email', emailMasking($email));
+        Session::put('forget_token', Str::random(60));
 
         DB::table('password_reset_tokens')
             ->updateOrInsert(
