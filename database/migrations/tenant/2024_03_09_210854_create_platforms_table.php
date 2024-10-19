@@ -14,7 +14,13 @@ return new class extends Migration {
             $table->id();
             $table->tinyInteger('type');
             $table->string('name');
+            $table->string('visible_name')->nullable();
             $table->string('code')->unique();
+            $table->string('url')->nullable();
+            $table->json('authenticators')->nullable();
+            $table->tinyText('description')->nullable();
+            $table->text('icon')->nullable();
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
     }

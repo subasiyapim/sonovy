@@ -11,6 +11,7 @@ use App\Models\ArtistBranch;
 use App\Models\Genre;
 use App\Models\Platform;
 use App\Models\System\Country;
+use App\Services\ArtistServices;
 use App\Services\CountryServices;
 use App\Services\MediaServices;
 use Illuminate\Http\Request;
@@ -40,6 +41,8 @@ class ArtistController extends Controller
 
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
+        $usedGenres = ArtistServices::usedGenres($artists);
+
         $filters = [
             [
                 'title' => __('control.artist.fields.status'),
@@ -58,7 +61,7 @@ class ArtistController extends Controller
             [
                 'title' => __('control.artist.fields.genre'),
                 'param' => 'genre',
-                'options' => getDataFromInputFormat(Genre::all(), 'id', 'name')
+                'options' => getDataFromInputFormat($usedGenres, 'id', 'name')
             ]
         ];
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
@@ -119,7 +122,7 @@ class ArtistController extends Controller
     {
         abort_if(Gate::denies('artist_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $artist->load('artistBranches');
+        $artist->load('artistBranches', 'platforms', 'country', 'products.songs');
 
         return inertia('Control/Artists/Show', compact('artist'));
     }

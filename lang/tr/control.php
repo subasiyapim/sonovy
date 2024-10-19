@@ -62,7 +62,7 @@ return [
         'select_placeholder' => 'Seçiniz',
         'success_message' => 'İşlem başarıyla gerçekleştirildi.',
         'validation_error' => 'Eksik veya hatalı bilgiler var',
-
+        'detail' => 'Detay',
         'dates' => [
             "last_7_days" => "Son 7 Gün",
             "last_14_days" => "Son 14 Gün",
@@ -107,6 +107,7 @@ return [
     ],
     'artist' => [
         'header' => 'Tüm sanaçılar',
+        'show_header' => 'Sanatçı Detayı',
         'title' => 'Eser Sahipleri',
         'title_singular' => 'Sanatçı',
         'add' => 'Sanatçı Ekle',
@@ -114,6 +115,7 @@ return [
         'notfound' => 'Henüz ekli bir sanatçı bulunmamaktadır.',
         'notfound_subtitle' => 'Ekleyeceğiniz tüm sanatçılar burada listelenecektir.',
         'first_create_btn' => 'İlk Sanatçıyı Ekle',
+        'album_notfound' => 'Henüz ekli bir albüm bulunmamaktadır.',
         'fields' => [
             'id' => 'ID',
             'name' => 'Sanatçı Ad Soyad',
@@ -153,7 +155,10 @@ return [
             'genres' => 'Tarzlar',
             'tracks_count' => 'Toplam Parça Sayısı',
         ],
-
+        'artist_info' => 'Sanatçının Bilgileri',
+        'artist_albums' => 'Sanatçının Albümleri',
+        'platforms' => 'Tüm platformlar',
+        'about' => 'Sanatçı Hakkında',
     ],
     'label' => [
         'title' => 'Plak Şirketleri',

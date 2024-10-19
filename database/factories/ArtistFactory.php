@@ -22,6 +22,9 @@ class ArtistFactory extends Factory
             'country_id' => \App\Models\System\Country::inRandomOrder()->first()->id,
             'ipi_code' => $this->faker->randomNumber(8),
             'isni_code' => $this->faker->randomNumber(8),
+            'phone' => $this->faker->phoneNumber,
+            'website' => $this->faker->url,
+            'about' => $this->faker->text,
             'added_by' => User::inRandomOrder()->first()->id,
         ];
     }

@@ -33,6 +33,7 @@ class Platform extends Model implements HasMedia
         'description',
         'url',
         'authenticators',
+        'icon'
     ];
 
     protected array $filterable = [
@@ -55,8 +56,6 @@ class Platform extends Model implements HasMedia
         'authenticators',
     ];
 
-    protected $appends = ['image'];
-
     protected $casts = [
         'type' => PlatformTypeEnum::class,
         'status' => 'boolean',
@@ -70,37 +69,6 @@ class Platform extends Model implements HasMedia
         3 => 30.0,
         4 => 40.0,
     ];
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('platforms')
-            ->singleFile()
-            ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('thumb')
-                    ->width(100)
-                    ->height(100)
-                    ->keepOriginalImageFormat()
-                    ->optimize();
-
-                $this->addMediaConversion('small')
-                    ->width(400)
-                    ->height(400)
-                    ->keepOriginalImageFormat()
-                    ->optimize();
-            });
-    }
-
-    public function getImageAttribute()
-    {
-        $file = $this->getMedia('platforms')->last();
-        if ($file) {
-            $file->url = asset($file->getUrl());
-            $file->small = asset($file->getUrl('small'));
-            $file->thumb = asset($file->getUrl('thumb'));
-        }
-
-        return $file;
-    }
 
     public function products(): BelongsToMany
     {
