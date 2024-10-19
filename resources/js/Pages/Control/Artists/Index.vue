@@ -18,7 +18,8 @@
               >
             </div>
             <div>
-              <a :href="route('control.catalog.artists.show',scope.row.id)" class="c-sub-600 text-sm leading-4 font-bold">{{ scope.row.name }}</a>
+              <a :href="route('control.catalog.artists.show',scope.row.id)"
+                 class="c-sub-600 text-sm leading-4 font-bold">{{ scope.row.name }}</a>
               <div class="flex flex-row gap-x-2 items-center" v-if="scope.row.platforms">
                 <template v-for="platform in scope.row.platforms" :key="platform.id">
                   <a v-if="platform.code === 'spotify'"
@@ -93,14 +94,14 @@
       </template>
     </AppTable>
 
-    <ArtistDialog :artist="choosenArtist" v-if="isModalOn"  v-model="isModalOn"/>
+    <ArtistDialog :artist="chosenArtist" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
 <script setup>
 import {usePage} from '@inertiajs/vue3';
 
-import {ref, computed,nextTick} from 'vue';
+import {ref, computed, nextTick} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
@@ -124,11 +125,11 @@ const props = defineProps({
   }
 })
 
-const choosenArtist = ref(null);
+const chosenArtist = ref(null);
 const isModalOn = ref(false);
 const openAddDialog = () => {
-    choosenArtist.value = null;
-    isModalOn.value = !isModalOn.value;
+  chosenArtist.value = null;
+  isModalOn.value = !isModalOn.value;
 }
 
 const appTableConfig = computed(() => {
@@ -141,13 +142,13 @@ const appTableConfig = computed(() => {
 const deleteRow = (row) => {
   //EXAMPLE ROW SİLME İÇİN
   showNotification();
-  toast.success('Başarıyla Silindi');
+  toast.success('Sanatçı başarıyla silindi');
   artistTable.value.removeRowData(row);
 }
 const editRow = (artist) => {
 
-    choosenArtist.value = artist;
-     isModalOn.value = !isModalOn.value;
+  chosenArtist.value = artist;
+  isModalOn.value = !isModalOn.value;
 
 
 }

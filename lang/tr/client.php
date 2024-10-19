@@ -7,6 +7,9 @@ return [
         'privacy_policy' => 'Privacy Policy',
         'terms_of_service' => 'Terms of Service',
     ],
+    'notification' => [
+        'deleted_success' => ':model Başarıyla silindi.',
+    ],
     'home' => [
         'header_title' => 'Beautiful analytics to grow smarter',
         'header_description' => 'Powerful, self-serve product and growth analytics to help you convert, engage, and
