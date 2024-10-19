@@ -24,7 +24,7 @@ class LabelController extends Controller
         $labels = Label::with('country')->advancedFilter();
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
-        return inertia('Control/Labels/Index', compact('labels','countries'));
+        return inertia('Control/Labels/Index', compact('labels', 'countries'));
 
     }
 
@@ -70,7 +70,7 @@ class LabelController extends Controller
     {
         abort_if(Gate::denies('label_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $label->load('country');
+        $label->load('country', 'products.songs');
         return inertia('Control/Labels/Show', compact('label'));
 
 

@@ -12,8 +12,7 @@
           class="absolute rounded-full w-32 h-32 bg-blue-300 left-8 -bottom-16 flex items-center justify-center overflow-hidden">
         <img class="w-full h-full object-cover"
              :alt="artist.name"
-             :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)"
-        >
+             :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
         <PrimaryButton>

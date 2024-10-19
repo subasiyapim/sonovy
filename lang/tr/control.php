@@ -163,7 +163,12 @@ return [
     'label' => [
         'title' => 'Plak Şirketleri',
         'title_singular' => 'Plak Şirketi',
-        'form' => [
+        'show_header' => 'Plak Şirketi Detayı',
+        'label_info' => 'Plak Şirketi Bilgileri',
+        'label_albums' => 'Şirketin Albümleri',
+        'album_notfound' => 'Henüz ekli bir albüm bulunmamaktadır.',
+        'commission_rate_description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi aspernatur error est exercitationem expedita fuga hic in, ipsam molestiae nobis provident quo ullam unde! Amet, odio omnis? Debitis placeat, quia!',
+        'fields' => [
             'name' => 'Plak şirketinin adı',
             'name_placeholder' => 'Örn; Island Records',
             'country_id' => 'Ülke',
@@ -172,7 +177,8 @@ return [
             'address_placeholder' => 'Plak şirketinin adresini girin',
             'email' => 'Email',
             'phone' => 'Telefon',
-            'web' => 'Web sitesi'
+            'web' => 'Web sitesi',
+            'commission_rate' => 'Hakediş Oranı',
         ]
 
     ],
