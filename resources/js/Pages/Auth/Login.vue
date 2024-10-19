@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import AuthLayout from '@/Layouts/AuthLayout.vue'
 import {FormElement} from '@/Components/Form'
 import {PrimaryButton} from '@/Components/Buttons'

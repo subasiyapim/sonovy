@@ -1,6 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {Head, usePage} from '@inertiajs/vue3';
+
 
 
 </script>
