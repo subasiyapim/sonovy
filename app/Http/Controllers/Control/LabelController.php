@@ -133,14 +133,14 @@ class LabelController extends Controller
         //TODO Code Refactor
         $notification = [
             'type' => 'success',
-            'message' => __('control.notification_deleted', ['model' => __('control.artist.title_singular')])
+            'message' => __('control.notification_deleted', ['model' => __('control.labels.title_singular')])
         ];
 
 
         if ($accept === 'application/json') {
             return response()->json($notification, Response::HTTP_OK);
         } else {
-            return redirect()->route('control.catalog.artists.index')->with(
+            return redirect()->route('control.catalog.labels.index')->with(
                 [
                     $notification
                 ]

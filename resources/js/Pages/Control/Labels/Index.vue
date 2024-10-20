@@ -1,8 +1,8 @@
 <template>
   <AdminLayout title="Tüm Plak Şirketleri" parentTitle="Katalog">
 
-    <AppTable   ref="pageTable" v-model="usePage().props.labels" @addNewClicked="openDialog">
-      <AppTableColumn label="Plak Şirketi" align="left">
+    <AppTable buttonLabel="Platform Ekle" ref="pageTable" v-model="usePage().props.labels" @addNewClicked="openDialog">
+      <AppTableColumn label="Plak Şirketi" align="left" sortable="name">
         <template #default="scope">
 
           <div class="flex items-center gap-2 ">
@@ -15,7 +15,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Ülke">
+      <AppTableColumn label="Ülke" >
         <template #default="scope">{{ scope.row.name }}</template>
       </AppTableColumn>
 

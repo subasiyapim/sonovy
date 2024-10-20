@@ -17,13 +17,18 @@
         </div>
       </div>
 
-      <div v-if="hasSearch" class="flex items-center gap-2">
-        <AppTextInput @change="onSearch" @input="onInput" v-model="term" placeholder="Ara...">
+      <div v-if="(showAddButton || hasSearch)" class="flex items-center gap-2">
+        <AppTextInput v-if="hasSearch"  @change="onSearch" @input="onInput" v-model="term" placeholder="Ara...">
           <template #icon>
             <SearchIcon color="var(--sub-600)"/>
           </template>
         </AppTextInput>
-        <PrimaryButton @click="$emit('addNewClicked',$event)" v-if="showAddButton"> Ekle</PrimaryButton>
+        <PrimaryButton class="w-full" v-if="showAddButton" @click="$emit('addNewClicked',$event)">
+           <template #icon>
+                 <AddIcon color="var(--dark-green-500)" />
+           </template>
+            <p class="">{{buttonLabel ?? 'Ekle'}}</p>
+        </PrimaryButton>
       </div>
     </div>
   </div>
@@ -123,7 +128,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ArrowDoubleLeftIcon,
-  ArrowDoubleRightIcon
+  ArrowDoubleRightIcon,
+  AddIcon
 } from '@/Components/Icons';
 import {AppTextInput} from '@/Components/Form';
 import {router, Link} from '@inertiajs/vue3';
@@ -170,6 +176,9 @@ const props = defineProps({
   },
   showEmptyImage:{
     default:true
+  },
+  buttonLabel:{
+    default:null,
   }
 })
 const emits = defineEmits(['update:modelValue', 'addNewClicked']);
@@ -294,16 +303,19 @@ const removeRowData = (row) => {
 const removeRowDataFromRemote = async (row) => {
     const path = props.slug ?? route(route().current());
     if(row.id){
-        const response = await crudStore.del(`${path}/${row.id}`);
-        console.log("REPSONSE",response);
-        const findedIndex = data.value.findIndex((el) => row.id == el.id);
-        if(findedIndex >= 0) data.value.splice(findedIndex,1);
+        try {
+            const response = await crudStore.del(`${path}/${row.id}`);
+            console.log("REPSONSE",response);
+            const findedIndex = data.value.findIndex((el) => row.id == el.id);
+            if(findedIndex >= 0) data.value.splice(findedIndex,1);
 
-        toast.success(response.message);
+            toast.success(response.message);
+        } catch (error) {
+                 toast.error("HATAA");
+        }
 
     }else {
         toast.error("Id sağlanmalı");
-
     }
 
 }

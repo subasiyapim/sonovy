@@ -4,6 +4,7 @@
 
 
     <AppTable
+        buttonLabel="Sanatçı Ekle"
         ref="artistTable"
         v-model="usePage().props.artists"
         @addNewClicked="openAddDialog"
