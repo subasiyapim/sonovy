@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Label;
 
+use App\Models\System\Country;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class LabelUpdateRequest extends FormRequest
 {
@@ -24,7 +26,7 @@ class LabelUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'country_id' => ['required', 'exists:countries,id'],
+            'country_id' => ['required', Rule::exists(Country::class, 'id')],
             'address' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg'],
             'phone' => ['nullable'],
@@ -41,13 +43,13 @@ class LabelUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('control.label.form.name'),
-            'country_id' => __('control.label.form.country_id'),
-            'address' => __('control.label.form.address'),
-            'image' => __('control.label.form.image'),
-            'phone' => __('control.label.form.phone'),
-            'web' => __('control.label.form.web'),
-            'email' => __('control.label.form.email'),
+            'name' => __('control.label.fields.name'),
+            'country_id' => __('control.label.fields.country_id'),
+            'address' => __('control.label.fields.address'),
+            'image' => __('control.label.fields.image'),
+            'phone' => __('control.label.fields.phone'),
+            'web' => __('control.label.fields.web'),
+            'email' => __('control.label.fields.email'),
         ];
     }
 }
