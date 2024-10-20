@@ -13,7 +13,9 @@ use App\Models\Platform;
 use App\Models\System\Country;
 use App\Services\ArtistServices;
 use App\Services\CountryServices;
+use App\Services\iTunesServices;
 use App\Services\MediaServices;
+use App\Services\SpotifyServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,7 +67,7 @@ class ArtistController extends Controller
             ]
         ];
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
-        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name');
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name','icon');
 
         return inertia('Control/Artists/Index', [
             'artists' => ArtistResource::collection($artists)->resource,
@@ -109,13 +111,14 @@ class ArtistController extends Controller
 
 
 
-        return redirect()->route('control.catalog.artists.index')->with(
+
+        return redirect()->route( 'control.catalog.artists.index')->with(
             [
 
                 'notification' => [
                     'type' => 'success',
                     'message' => __('control.notification_created', ['model' => __('control.artist.title_singular')]),
-                     'data' => $artist,
+                    'data' => new ArtistResource($artist),
                 ]
             ]
         );
@@ -182,6 +185,7 @@ class ArtistController extends Controller
     {
         abort_if(Gate::denies('artist_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+
         $accept = $request->header('Accept');
         $artist->delete();
 
@@ -198,14 +202,33 @@ class ArtistController extends Controller
         } else {
             return redirect()->route('control.catalog.artists.index')->with(
                 [
-                    'notification' => [
-                        'type' => 'success',
-                        'message' => __('control.notification_deleted', ['model' => __('control.artist.title_singular')])
-                    ]
+                   $notification
                 ]
             );
         }
 
+
+    }
+     public function searchPlatform(Request $request)
+    {
+        $request->validate([
+            'search' => 'required|string|max:255'
+        ]);
+
+
+        $search = $request->input('search');
+
+        $Itunes = iTunesServices::search($search);
+        $spotify = SpotifyServices::search($search, 'artist');
+
+
+        $data = [
+            'itunes' => $Itunes,
+            'spotify' => $spotify,
+        ];
+
+
+        return response()->json($data, Response::HTTP_OK);
 
     }
 }

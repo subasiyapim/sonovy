@@ -221,7 +221,6 @@ const onArtistProcessDone = () => {
     location.reload();
 }
 const remove = () => {
-
     router.delete(route('control.catalog.artists.destroy', props.artist.id), {});
 }
 </script>

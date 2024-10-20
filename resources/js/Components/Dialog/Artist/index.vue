@@ -9,7 +9,7 @@
             <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="image" label="Fotoğraf" type="upload" :config="{label:'Fotoğraf Yükle',note:'Min 400x400px, PNG or JPEG'}"></FormElement>
 
             <FormElement label-width="190px" :required="true" :error="form.errors.name"  label="Ad Soyad" type="custom">
-                <ArtistInput v-model="form.name"  placeholder="Lütfen giriniz"></ArtistInput>
+                <ArtistInput @onPlatformsChoosen="onPlatformsChoosen" v-model="form.name"  placeholder="Lütfen giriniz"></ArtistInput>
             </FormElement>
             <FormElement label-width="190px" :required="true" :error="form.errors.about" :config="{letter:500}" v-model="form.about" label="Sanatçı Hakkında" type="textarea" placeholder="Sanatçı Hakkında" ></FormElement>
             <FormElement label-width="190px" :required="true" :error="form.errors.artist_branches" v-model="form.artist_branches" :config="artistBranchesMultiSelect" label="Sanat Dalları" type="multiselect" placeholder="Lütfen giriniz"></FormElement>
@@ -40,7 +40,7 @@
         <SectionHeader title="PLATFORMLAR" />
         <div class="p-5 flex flex-col">
             <div v-for="platform in form.platforms" class="flex gap-4">
-                <FormElement class="flex-1" direction="vertical" v-model="platform.id" label-width="190px" label="Platform" type="select" :config="{data:usePage().props.platforms}" placeholder="Platform Seç" >
+                <FormElement class="flex-1" direction="vertical" v-model="platform.value" label-width="190px" label="Platform" type="select" :config="{data:usePage().props.platforms}" placeholder="Platform Seç" >
                     <template #option="scope">
                         <!-- <span>{{scope.data.iconKey}}</span> -->
                         <span class="paragraph-sm c-strong-950">
@@ -102,6 +102,18 @@ const form = useForm({
     isni_code: "",
     platforms: []
 });
+
+const onPlatformsChoosen = (e) => {
+    console.log(usePage().props.platforms);
+
+    const finded = usePage().props.platforms.find((el) => el.label == e.platform)
+    finded.url = e.url;
+    const findedIndex = form.platforms.findIndex((el) => el.value == finded.value);
+    if(findedIndex <0)
+        form.platforms.push(finded);
+    else form.platforms[findedIndex] = finded;
+    // form.platforms.push()
+}
 const emits = defineEmits(['update:modelValue','done']);
 const isDialogOn = computed({
     get:() => props.modelValue,
@@ -145,9 +157,8 @@ const onSubmit = (e) => {
 }
 
 const checkIfDisabled = computed(() => {
-    console.log(form['about']);
-    return  form['image'] && form['name'] && form['about'] && form['contry_id'] && (form['artist_branches'].length > 0)
 
+    return  form['image'] && form['name'] && form['about'] && form['contry_id'] && (form['artist_branches'].length > 0)
 
 })
 onMounted(() => {

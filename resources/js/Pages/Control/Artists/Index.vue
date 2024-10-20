@@ -139,16 +139,12 @@ const appTableConfig = computed(() => {
 
 
 const deleteRow = (row) => {
-  //EXAMPLE ROW SİLME İÇİN
   artistTable.value.removeRowDataFromRemote(row);
-  //artistTable.value.addRowData(row);
 }
 const editRow = (artist) => {
 
   chosenArtist.value = artist;
   isModalOn.value = !isModalOn.value;
-
-
 }
 const onDateChoosen = (e) => {
   artistTable.value.search('daterange', e);
@@ -157,8 +153,6 @@ const onDateChoosen = (e) => {
 const onArtistProcessDone = (e) => {
     artistTable.value.addRow(e);
 }
-
-
 </script>
 
 <style lang="scss" scoped>

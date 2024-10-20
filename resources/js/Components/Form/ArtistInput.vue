@@ -1,22 +1,22 @@
 <template>
 
-   <div class="w-full flex h-9 border-text-input flex items-center radius-8 c-white-500 relative">
+   <div v-click-outside="handleClickOutside" class="w-full flex h-9 border-text-input flex items-center radius-8 c-white-500 relative">
 
 
         <input v-model="element" @input="onInput" @change="onChange" v-debounce="400" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent label-sm c-strong-950" :type="type" :placeholder="placeholder">
         <div class="flex gap-1 pe-3">
-            <button :class="choosenSpotify ? '' : 'grayscale'" class="w-5 h-5" @click="onClicked">
+            <button :class="choosenSpotify ? '' : 'grayscale'" class="w-5 h-5" @click="onClicked('spotify')">
                 <SpotifyIcon class="w-full h-full" color="var(--sub-600)" />
             </button>
-            <button :class="choosenSpotify ? '' : 'grayscale'" class="w-5 h-5" @click="onClicked">
+            <button :class="choosenItunes ? '' : 'grayscale'" class="w-5 h-5" @click="onClicked('itunes')">
                 <ItunesIcon  class="w-full h-full" color="var(--sub-600)" />
             </button>
         </div>
          <div v-if="openSearchPlatform" class="absolute max-h-[300px] top-10 bg-white z-10 border rounded-lg overflow-scroll w-full py-2 px-1">
-            <div v-for="item in artists" @click="chooseValue(item)"  :class="checkIfChecked ? 'active' :  ''" class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
+            <div v-for="item in artists" @click="chooseValue(item)"  :class="checkIfChecked(item) ? 'active' :  ''" class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
 
                 <div class="w-4 h-4 flex items-center justify-center border border-soft-200 rounded-full bg-white shadow">
-                    <div v-if="checkIfChecked" class="bg-dark-green-600 w-3 h-3 rounded-full border-dark-green-600">
+                    <div class="bg-dark-green-600 w-3 h-3 rounded-full border-dark-green-600 green-dot">
                     </div>
                 </div>
                 <div class="w-10 h-10 rounded-full bg-blue-300 flex items-center justify-center overflow-hidden">
@@ -25,25 +25,24 @@
                 <div class="flex flex-col flex-1">
                     <span class="label-sm c-strong-950">{{item.name}}</span>
                     <span class="paragraph-xs c-sub-600">123123123</span>
-
                 </div>
-                <ItunesIcon  class="w-5 h-5" color="var(--sub-600)" />
+                <ItunesIcon v-if="choosenPlatform == 'itunes'" class="w-5 h-5" color="var(--sub-600)" />
+                <SpotifyIcon v-if="choosenPlatform == 'spotify'" class="w-5 h-5" color="var(--sub-600)" />
             </div>
              <AppDivider title="VEYA" />
            <div class="px-3 flex flex-col gap-2">
-
-                <FormElement label="Link" direction="verital"  placeholder="Spotify linkini ekleyebilirsiniz">
+                <FormElement label="Link" @input="onInputLink"  direction="verital"  :placeholder=" (choosenPlatform == 'itunes' ?  'Apple' : 'Spotify')+' linkini ekleyebilirsiniz'">
                     <template #tooltip>
                             adsd
                     </template>
                 </FormElement>
                 <div class="flex items-center gap-2 mb-3">
-                    <RegularButton class="flex-1">İptla</RegularButton>
-                    <PrimaryButton class="flex-1">
+                    <RegularButton class="flex-1">İptal</RegularButton>
+                    <PrimaryButton @click="submit" class="flex-1">
                         <template #icon>
                                 <AddIcon color="var(--dark-green-500)" />
                         </template>
-                        Apple Profilini Tanımla
+                       <span v-if="choosenPlatform == 'itunes'"> Apple</span>  <span v-else> Spotify</span> Profilini Tanımla
                     </PrimaryButton>
                 </div>
            </div>
@@ -61,24 +60,12 @@
     import {FormElement} from '@/Components/Form';
     import {RegularButton,PrimaryButton} from '@/Components/Buttons';
     const openSearchPlatform = ref(false)
-    const artists = ref([
-        {
-            image:{
-                thumb:"https://picsum.photos/200",
-            },
-            name:"sdasas sadas"
-        },
-        {
-            image:{
-                thumb:"https://picsum.photos/200",
-            },
-            name:"sdasas sadas"
-        },
-    ]);
-
+    const artists = ref([]);
+    const choosenPlatform = ref(null);
     const choosenSpotify = ref();
     const choosenItunes = ref();
     const queryStore = useQueryStore();
+
     const slots = useSlots()
     const props = defineProps({
         type:{type:String},
@@ -86,7 +73,7 @@
         modelValue:{}
 
     })
-    const emits = defineEmits(['update:modelValue','change','input']);
+    const emits = defineEmits(['update:modelValue','change','input','onPlatformsChoosen']);
 
     const element = computed({
         get:() => props.modelValue,
@@ -99,13 +86,25 @@
         return !!slots[name];
     }
     const checkIfChecked = computed(() => {
-        return false;
+        return (row) => {
+            if(choosenPlatform.value){
+                if(choosenPlatform.value == 'spotify') return choosenSpotify.value == row;
+                else return choosenItunes.value == row;
+            }
+            return false;
+        }
+
     })
-    const chooseValue = () => {
-
+    const chooseValue = (item) => {
+        if(choosenPlatform.value == 'spotify') choosenSpotify.value = item
+        if(choosenPlatform.value == 'itunes') choosenItunes.value = item
+        submit();
     }
-    const onClicked = () => {
+    const onClicked = (platform) => {
+        openSearchPlatform.value = false;
 
+        choosenPlatform.value = platform;
+        openSearchPlatform.value = true;
     }
     const onInput = (e) => {
 
@@ -115,15 +114,38 @@
 
         emits('change',e.target.value);
 
-        // const artistRepsonse = await queryStore.search(e.target.value, route('control.search.artists'));
-        // artists.value = artistRepsonse;
+        const artistRepsonse = await queryStore.search(e.target.value, route('control.search.artists'));
+        artists.value = artistRepsonse;
     }
+    const handleClickOutside = () => {
+        openSearchPlatform.value = false;
 
+    }
+    const onInputLink = (e) => {
+        choosenPlatform.value == 'spotify' ? choosenSpotify.value = {url:e.target.value} : choosenItunes.value = {url:e.target.value}
+    }
+    const submit = () => {
+        let data = {};
+        if(choosenPlatform.value == 'spotify')
+            data ={...choosenSpotify.value,platform:'Spotify'};
+        else
+            data = {...choosenItunes.value,platform:'Apple'};
+
+        emits('onPlatformsChoosen',data)
+        openSearchPlatform.value = false;
+
+    }
 </script>
 
-<style scope>
+<style scoped>
 
-.selectMenuItem:hover{
+.green-dot{
+    display:none;
+}
+.selectMenuItem.active .green-dot {
+    display:block;
+}
+.selectMenuItem:hover,.selectMenuItem.active{
     background: var(--white-600);
 }
 </style>
