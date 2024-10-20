@@ -18,7 +18,7 @@
           <SearchIcon color="var(--soft-400)"/>
         </template>
       </AppTextInput>
-      <SecondaryButton @click="router.visit(route('control.products.create'))" class="w-full">
+      <SecondaryButton @click="router.visit(route('control.catalog.products.create'))" class="w-full">
         <template #icon>
           <AddIcon/>
         </template>
