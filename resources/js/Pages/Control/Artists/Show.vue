@@ -1,6 +1,6 @@
 <template>
 
-  <AdminLayout :title="__('control.artist.show_header')" parentTitle="Artist" :hasPadding="false">
+  <AdminLayout :showDatePicker="false" :title="__('control.artist.show_header')" parentTitle="Katalog" subParent="Tüm Şarkılar" :hasPadding="false">
 
     <div class="bg-white-400 h-44 p-5 relative">
       <div class="">
@@ -15,12 +15,12 @@
              :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
-        <PrimaryButton>
+        <PrimaryButton @click="remove">
           <template #icon>
             <TrashIcon color="var(--dark-green-500)"/>
           </template>
         </PrimaryButton>
-        <PrimaryButton>
+        <PrimaryButton @click="isModalOn = true">
           <template #icon>
             <EditIcon color="var(--dark-green-500)"/>
           </template>
@@ -173,12 +173,14 @@
       </div>
 
     </div>
+    <ArtistDialog @done="onArtistProcessDone" :artist="artist" v-if="isModalOn" v-model="isModalOn"/>
 
   </AdminLayout>
 </template>
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import {ArtistDialog} from '@/Components/Dialog';
 import {
   DocumentIcon,
   EditIcon,
@@ -195,8 +197,10 @@ import {
 import {PrimaryButton} from '@/Components/Buttons'
 import {useDefaultStore} from "@/Stores/default";
 import {TidalIcon, YoutubeIcon} from "@/Components/Icons/index.js";
-import {computed} from "vue";
+import {computed,ref} from "vue";
+import {router} from '@inertiajs/vue3';
 
+const isModalOn = ref(false);
 
 const props = defineProps({
   artist: {
@@ -205,6 +209,7 @@ const props = defineProps({
   }
 });
 
+
 const defaultStore = useDefaultStore();
 
 const filteredPlatforms = computed(() => {
@@ -212,7 +217,13 @@ const filteredPlatforms = computed(() => {
       ['spotify', 'tidal', 'youtube'].includes(platform.code)
   );
 });
+const onArtistProcessDone = () => {
+    location.reload();
+}
+const remove = () => {
 
+    router.delete(route('control.catalog.artists.destroy', props.artist.id), {});
+}
 </script>
 
 <style lang="scss" scoped>

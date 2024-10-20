@@ -65,12 +65,14 @@ class ArtistController extends Controller
             ]
         ];
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name');
 
         return inertia('Control/Artists/Index', [
             'artists' => ArtistResource::collection($artists)->resource,
             'countries' => $countries,
             'filters' => $filters,
             "artistBranches" => $artistBranches,
+            "platforms" =>  $platforms,
         ]);
 
     }
@@ -105,11 +107,15 @@ class ArtistController extends Controller
             MediaServices::upload($artist, $request->file('image'), 'artists');
         }
 
+
+
         return redirect()->route('control.catalog.artists.index')->with(
             [
+
                 'notification' => [
                     'type' => 'success',
-                    'message' => __('control.notification_created', ['model' => __('control.artist.title_singular')])
+                    'message' => __('control.notification_created', ['model' => __('control.artist.title_singular')]),
+                     'data' => $artist,
                 ]
             ]
         );
@@ -172,19 +178,34 @@ class ArtistController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Artist $artist)
+    public function destroy(Artist $artist,Request $request)
     {
         abort_if(Gate::denies('artist_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        $accept = $request->header('Accept');
         $artist->delete();
 
-        return redirect()->route('control.catalog.artists.index')->with(
-            [
-                'notification' => [
-                    'type' => 'success',
-                    'message' => __('control.notification_deleted', ['model' => __('control.artist.title_singular')])
+
+        //TODO Code Refactor
+        $notification =      [
+            'type' => 'success',
+            'message' => __('control.notification_deleted', ['model' => __('control.artist.title_singular')])
+        ];
+
+
+         if ($accept === 'application/json') {
+            return response()->json( $notification, Response::HTTP_OK);
+        } else {
+            return redirect()->route('control.catalog.artists.index')->with(
+                [
+                    'notification' => [
+                        'type' => 'success',
+                        'message' => __('control.notification_deleted', ['model' => __('control.artist.title_singular')])
+                    ]
                 ]
-            ]
-        );
+            );
+        }
+
+
     }
 }

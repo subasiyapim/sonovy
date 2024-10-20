@@ -56,7 +56,7 @@
         <template v-if="!(data == null || data.length <= 0)">
             <div v-if="!isClient" class="flex items-center  c-sub-600">
             <p class="w-28">
-                Sayfa 1 of {{ Math.ceil((tableData.total / tableData.per_page)) }}
+                Sayfa {{query.page}} of {{ Math.ceil((tableData.total / tableData.per_page)) }}
             </p>
             <div class="flex flex-1 justify-center  gap-3">
 
@@ -74,8 +74,9 @@
 
                 <Link :href="route('control.catalog.artists.index',{page:p})"
                     v-for="p in Math.ceil((tableData.total / tableData.per_page)) >= 7 ? 6 : Math.ceil((tableData.total / tableData.per_page))"
-                    class="p-2 radius-8 w-10 h-10 border border-soft-200-500 flex items-center justify-center">
-                {{ p }}
+                    :class="query.page == p ? 'bg-weak-50' : 'bg-white border border-soft-200'"
+                    class="p-2 radius-8 w-10 h-10  flex items-center justify-center">
+                    {{ p }}
                 </Link>
 
 
@@ -113,6 +114,9 @@
 <script setup>
 
 import {computed, useSlots, ref, onMounted, h} from 'vue';
+import {useCrudStore} from '@/Stores/useCrudStore';
+
+
 import {
   TableOrderIcon,
   SearchIcon,
@@ -124,7 +128,10 @@ import {
 import {AppTextInput} from '@/Components/Form';
 import {router, Link} from '@inertiajs/vue3';
 import {PrimaryButton} from '@/Components/Buttons'
+import {toast} from 'vue3-toastify';
 
+
+const crudStore = useCrudStore();
 let params = new URLSearchParams(window.location.search)
 const searching = ref(false);
 const query = ref({
@@ -227,7 +234,6 @@ const search = (key, value) => {
 const getTableData = () => {
 
     const path = props.slug ?? route(route().current());
-    console.log("QUERY VALUE",query.value);
     deleteNullProperties(query.value);
     router.visit(path , {
         data: query.value,
@@ -285,6 +291,22 @@ const removeRowData = (row) => {
     const findedIndex = data.value.findIndex((el) => row == el);
     if(findedIndex >= 0) data.value.splice(findedIndex,1);
 }
+const removeRowDataFromRemote = async (row) => {
+    const path = props.slug ?? route(route().current());
+    if(row.id){
+        const response = await crudStore.del(`${path}/${row.id}`);
+        console.log("REPSONSE",response);
+        const findedIndex = data.value.findIndex((el) => row.id == el.id);
+        if(findedIndex >= 0) data.value.splice(findedIndex,1);
+
+        toast.success(response.message);
+
+    }else {
+        toast.error("Id sağlanmalı");
+
+    }
+
+}
 
 onMounted(() => {
     getFilterSelects();
@@ -294,6 +316,7 @@ defineExpose({
     removeRowData,
     search,
     addRow,
+    removeRowDataFromRemote
 })
 </script>
 

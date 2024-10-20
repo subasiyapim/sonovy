@@ -7,10 +7,28 @@
 
        <div class="p-5 flex flex-col gap-6">
             <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="image" label="Fotoğraf" type="upload" :config="{label:'Fotoğraf Yükle',note:'Min 400x400px, PNG or JPEG'}"></FormElement>
-            <FormElement label-width="190px" :required="true" :error="form.errors.name" v-model="form.name" label="Ad Soyad" placeholder="Lütfen giriniz"></FormElement>
+
+            <FormElement label-width="190px" :required="true" :error="form.errors.name"  label="Ad Soyad" type="custom">
+                <ArtistInput v-model="form.name"  placeholder="Lütfen giriniz"></ArtistInput>
+            </FormElement>
             <FormElement label-width="190px" :required="true" :error="form.errors.about" :config="{letter:500}" v-model="form.about" label="Sanatçı Hakkında" type="textarea" placeholder="Sanatçı Hakkında" ></FormElement>
             <FormElement label-width="190px" :required="true" :error="form.errors.artist_branches" v-model="form.artist_branches" :config="artistBranchesMultiSelect" label="Sanat Dalları" type="multiselect" placeholder="Lütfen giriniz"></FormElement>
-            <FormElement label-width="190px" :required="true" :error="form.errors.country_id" v-model="form.country_id" label="Ülke" :config="countryConfig"  placeholder="Seçiniz" type="select"></FormElement>
+            <FormElement label-width="190px" :required="true" :error="form.errors.country_id" v-model="form.country_id" label="Ülke" :config="countryConfig"  placeholder="Seçiniz" type="select">
+                <template #option="scope">
+                    <span>{{scope.data.iconKey}}</span>
+                    <span class="paragraph-sm c-strong-950">
+                         {{scope.data.label}}
+                    </span>
+                </template>
+                <template #model="scope">
+
+                    <div v-if="scope.data" class="flex items-center gap-2">
+
+                        <span>{{countryConfig.data.find((el) => el.value == scope.data)?.iconKey}}</span>
+                        <span>{{countryConfig.data.find((el) => el.value == scope.data)?.label}}</span>
+                    </div>
+                </template>
+            </FormElement>
             <FormElement label-width="190px" :error="form.errors.ipi_code" v-model="form.ipi_code" label="IPI"  placeholder="Lütfen giriniz"></FormElement>
             <FormElement label-width="190px" :error="form.errors.isni_code" v-model="form.isni_code" label="ISNI" placeholder="Lütfen giriniz"> </FormElement>
        </div>
@@ -22,8 +40,21 @@
         <SectionHeader title="PLATFORMLAR" />
         <div class="p-5 flex flex-col">
             <div v-for="platform in form.platforms" class="flex gap-4">
-                <FormElement class="flex-1" direction="vertical" v-model="platform.id" label-width="190px" label="Platform"  placeholder="Platform Seç" ></FormElement>
-                <FormElement class="flex-1" direction="vertical" v-model="platform.id" label-width="190px" label="Platform Link" placeholder="lütfen giriniz"> </FormElement>
+                <FormElement class="flex-1" direction="vertical" v-model="platform.id" label-width="190px" label="Platform" type="select" :config="{data:usePage().props.platforms}" placeholder="Platform Seç" >
+                    <template #option="scope">
+                        <!-- <span>{{scope.data.iconKey}}</span> -->
+                        <span class="paragraph-sm c-strong-950">
+                            {{scope.data.label}}
+                        </span>
+                    </template>
+                    <template #model="scope">
+                        <div v-if="scope.data" class="flex items-center gap-2">
+                            <!-- <span>{{countryConfig.data.find((el) => el.value == scope.data)?.iconKey}}</span> -->
+                            <span>{{usePage().props.platforms.find((el) => el.value == scope.data)?.label}}</span>
+                        </div>
+                    </template>
+                </FormElement>
+                <FormElement class="flex-1" direction="vertical" v-model="platform.url" label-width="190px" label="Platform Link" placeholder="lütfen giriniz"> </FormElement>
             </div>
             <button @click="form.platforms.push({})" class="flex items-center gap-2">
                 <AddIcon  color="var(--blue-500)" />
@@ -46,8 +77,9 @@ import {AddIcon} from '@/Components/Icons'
 import {RegularButton,PrimaryButton} from '@/Components/Buttons'
 import {computed,ref,onMounted} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
+import {toast} from 'vue3-toastify';
 
-import {FormElement} from '@/Components/Form'
+import {FormElement,ArtistInput} from '@/Components/Form'
 
 const props = defineProps({
     modelValue: {
@@ -68,11 +100,9 @@ const form = useForm({
     image: "",
     ipi_code: "",
     isni_code: "",
-    platforms: [
-        {}
-    ],
+    platforms: []
 });
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue','done']);
 const isDialogOn = computed({
     get:() => props.modelValue,
     set:(value) => emits('update:modelValue',value)
@@ -103,12 +133,8 @@ const onSubmit = (e) => {
             adding.value = false;
         },
         onSuccess: async (e) => {
-
-            // const artistResponse = await queryStore.last(route('dashboard.last.artists'));
-            // artistResponse.url  = artistResponse.pivot?.url;
-            // console.log("ARTİST RESPONSE",artistResponse);
-            // emits('onArtistAdded', artistResponse)
-            console.log("BARLAIRLII",e);
+            toast.success(e.props.notification.message);
+            emits('done',e.props.notification.data)
             isDialogOn.value = false;
         },
         onError: (e) => {

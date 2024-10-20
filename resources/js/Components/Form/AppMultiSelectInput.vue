@@ -82,12 +82,11 @@ const onClose = () => {
 
 }
 const getShowLabel = computed(() => {
-    const filteredData = props.config?.data?.filter((e) => {
-
-       return element.value.find((checkValue) => checkValue == e[props.config.value ?? 'value']);
-    });
 
     let finalStr = '';
+    const filteredData = props.config?.data?.filter((e) => {
+       return element.value.find((checkValue) => checkValue == e[props.config.value ?? 'value']);
+    });
     filteredData.forEach((e,index) => {
 
             finalStr += `${index != 0 ? ' , ' : ''}${e[props.config.label ?? 'label']}`

@@ -5,11 +5,11 @@
             <slot  name="icon" />
         </div>
 
-        <div v-if="type == 'web'" class="border-r border-soft-200 c-soft-400 pe-2 paragraph-sm">
+        <div v-if="type == 'web'" class="border-r border-soft-200 c-soft-400 pe-2 me-2 paragraph-sm">
             https://
         </div>
 
-         <div v-if="type == 'phone'" class="border-r border-soft-200 c-soft-400 pe-2 me-1 paragraph-sm">
+         <div v-if="type == 'phone'" class="border-r border-soft-200 c-soft-400 pe-2 me-2 paragraph-sm">
             <div class="w-12 max-w-xs mx-auto">
 
                     <select id="options" name="options" class="block w-full phoneSelect paragraph-xs border-none focus:border-none focus:ring-0 focus:outline-none  radius-8">

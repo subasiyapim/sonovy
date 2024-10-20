@@ -58,12 +58,14 @@ import PersonCardIcon from './PersonCardIcon.vue';
 import TidalIcon from './TidalIcon.vue';
 import YoutubeIcon from "./YoutubeIcon.vue";
 import Icon from './Icon.vue';
+import ItunesIcon from './ItunesIcon.vue';
 
 export {
     Icon,
     TidalIcon,
     YoutubeIcon,
     AddIcon,
+    ItunesIcon,
     DashboardIcon,
     ChevronRightIcon,
     ChevronDownIcon,

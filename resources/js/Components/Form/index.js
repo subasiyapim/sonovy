@@ -8,6 +8,7 @@ import TusUploadInput from './TusUploadInput.vue';
 import AppFancyCheckInput from './AppFancyCheckInput.vue';
 import AppRadioInput from './AppRadioInput.vue';
 import AppIncrementer from './AppIncrementer.vue';
+import ArtistInput from './ArtistInput.vue';
 export  {
     AppTextInput,
     AppSelectInput,
@@ -19,5 +20,6 @@ export  {
     AppFancyCheckInput,
     AppRadioInput,
     AppIncrementer,
+    ArtistInput,
 }
 

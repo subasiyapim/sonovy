@@ -3,7 +3,7 @@
         <button class="bg-white  w-10 flex items-center justify-center" @click="onDecrement">
             <MinusIcon color="var(--sub-600)" />
         </button>
-        <input @input="onInput"  class="pointer-events-none appIncrementerButton bg-white w-16 text-center paragragraph-sm c-solid-950 border-none focus:ring-0" v-model="formattedValue" />
+        <input @input="onInput"  class="pointer-events-none appIncrementerButton bg-white w-16 text-center paragragraph-sm c-strong-950 border-none focus:ring-0" v-model="formattedValue" />
         <button class="bg-white  w-10  flex items-center justify-center" @click="onIncrement">
             <AddIcon color="var(--sub-600)" />
         </button>

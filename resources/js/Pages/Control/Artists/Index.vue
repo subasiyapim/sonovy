@@ -1,6 +1,6 @@
 <template>
 
-  <AdminLayout @dateChoosen="onDateChoosen" :title="__('control.artist.header')" parentTitle="Katalog">
+  <AdminLayout :showDatePicker="false" @dateChoosen="onDateChoosen" :title="__('control.artist.header')" parentTitle="Katalog">
 
 
     <AppTable
@@ -94,7 +94,7 @@
       </template>
     </AppTable>
 
-    <ArtistDialog :artist="chosenArtist" v-if="isModalOn" v-model="isModalOn"/>
+    <ArtistDialog @done="onArtistProcessDone" :artist="chosenArtist" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -111,7 +111,6 @@ import {ArtistDialog} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 import {Link} from "@inertiajs/vue3";
 import {StatusBadge, BasicBadge} from '@/Components/Badges'
-import {showNotification} from '@/Components/Notification';
 import {toast} from 'vue3-toastify';
 
 const defaultStore = useDefaultStore();
@@ -141,11 +140,7 @@ const appTableConfig = computed(() => {
 
 const deleteRow = (row) => {
   //EXAMPLE ROW SİLME İÇİN
-  showNotification();
-//   toast.success('Sanatçı başarıyla silindi');
-//   artistTable.value.removeRowData(row);
-  artistTable.value.addRow(row);
-  artistTable.value.addRow(row,'end');
+  artistTable.value.removeRowDataFromRemote(row);
   //artistTable.value.addRowData(row);
 }
 const editRow = (artist) => {
@@ -157,8 +152,10 @@ const editRow = (artist) => {
 }
 const onDateChoosen = (e) => {
   artistTable.value.search('daterange', e);
+}
 
-
+const onArtistProcessDone = (e) => {
+    artistTable.value.addRow(e);
 }
 
 
