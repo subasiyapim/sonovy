@@ -23,9 +23,12 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $name = $this->faker->name();
+        $email = Str::slug($name).'-'.Str::random(2).'@'.$this->faker->safeEmailDomain();
+
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $name,
+            'email' => $email,
             'phone' => fake()->phoneNumber(),
             'is_verified' => 1,
             'email_verified_at' => now(),

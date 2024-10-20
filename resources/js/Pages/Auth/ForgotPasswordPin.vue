@@ -5,7 +5,8 @@ import {PrimaryButton} from '@/Components/Buttons'
 import {CommentIcon, ChevronLeftIcon, SendIcon, ProgressIcon} from '@/Components/Icons'
 import {Head, Link, useForm} from '@inertiajs/vue3';
 import {ref} from "vue";
-
+import PinputField from '@/Components/Pinput/PinputField.vue';
+import InputError from "@/Components/InputError.vue";
 
 const props = defineProps({
   email: {
@@ -58,11 +59,8 @@ const submit = () => {
     <p class="paragraph-sm c-sub-600 !text-center mb-6">
       {{ __('client.forgot_password_pin.subtitle', {email: masked_email}) }}</p>
     <form @submit.prevent="submit" class="flex flex-col gap-3">
-      <FormElement v-model="form.code"
-                   :error="form.errors.code"
-                   direction="vertical"
-                   :label="__('client.forgot_password_pin.code')"/>
-
+      <PinputField v-model="form.code" @onCompleted="submit"></PinputField>
+      <input-error :message="form.errors.code" class="flex justify-center"/>
       <div class="flex flex-row justify-center items-center gap-x-1">
         <p v-text="__('client.forgot_password_pin.time', {time: `${String(Math.floor(time / 60)).padStart(2, '0')}:${String(time % 60).padStart(2, '0')}`})"/>
         <button @click="resetCode"
@@ -71,7 +69,6 @@ const submit = () => {
                 v-text="__('client.forgot_password_pin.resend_code')"
                 type="button"/>
       </div>
-
       <PrimaryButton>
         {{ __('client.forgot_password.send_reset_link') }}
         <template #suffix>

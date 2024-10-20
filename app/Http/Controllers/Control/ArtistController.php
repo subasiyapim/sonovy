@@ -67,14 +67,14 @@ class ArtistController extends Controller
             ]
         ];
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
-        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name','icon');
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
 
         return inertia('Control/Artists/Index', [
             'artists' => ArtistResource::collection($artists)->resource,
             'countries' => $countries,
             'filters' => $filters,
             "artistBranches" => $artistBranches,
-            "platforms" =>  $platforms,
+            "platforms" => $platforms,
         ]);
 
     }
@@ -110,9 +110,7 @@ class ArtistController extends Controller
         }
 
 
-
-
-        return redirect()->route( 'control.catalog.artists.index')->with(
+        return redirect()->route('control.catalog.artists.index')->with(
             [
 
                 'notification' => [
@@ -181,7 +179,7 @@ class ArtistController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Artist $artist,Request $request)
+    public function destroy(Artist $artist, Request $request)
     {
         abort_if(Gate::denies('artist_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -191,25 +189,39 @@ class ArtistController extends Controller
 
 
         //TODO Code Refactor
-        $notification =      [
+        $notification = [
             'type' => 'success',
             'message' => __('control.notification_deleted', ['model' => __('control.artist.title_singular')])
         ];
 
 
-         if ($accept === 'application/json') {
-            return response()->json( $notification, Response::HTTP_OK);
+        if ($accept === 'application/json') {
+            return response()->json($notification, Response::HTTP_OK);
         } else {
             return redirect()->route('control.catalog.artists.index')->with(
                 [
-                   $notification
+                    $notification
                 ]
             );
         }
 
 
     }
-     public function searchPlatform(Request $request)
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'search' => 'required|string|max:255'
+        ]);
+
+        $search = $request->input('search');
+
+        $labels = ArtistServices::search($search);
+
+        return response()->json($labels, Response::HTTP_OK);
+    }
+
+    public function searchPlatform(Request $request)
     {
         $request->validate([
             'search' => 'required|string|max:255'
