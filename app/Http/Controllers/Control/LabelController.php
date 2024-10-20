@@ -22,6 +22,7 @@ class LabelController extends Controller
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $labels = Label::with('country')->advancedFilter();
+        
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
         return inertia('Control/Labels/Index', compact('labels', 'countries'));
@@ -123,7 +124,7 @@ class LabelController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Label $label,Request $request)
+    public function destroy(Label $label, Request $request)
     {
         abort_if(Gate::denies('label_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $accept = $request->header('Accept');

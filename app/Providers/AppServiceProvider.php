@@ -36,7 +36,6 @@ class AppServiceProvider extends ServiceProvider
                 ->action(__('notification.verify_email.action'), $url)
                 ->salutation(__('notification.verify_email.salutation'));
         });
-
-        $this->app->bindMethod();
+        
     }
 }
