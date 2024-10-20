@@ -6,11 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Artist\ArtistStoreRequest;
 use App\Http\Requests\Artist\ArtistUpdateRequest;
 use App\Http\Resources\ArtistResource;
+use App\Jobs\SpotifyImageUploadJob;
 use App\Models\Artist;
 use App\Models\ArtistBranch;
-use App\Models\Genre;
 use App\Models\Platform;
-use App\Models\System\Country;
 use App\Services\ArtistServices;
 use App\Services\CountryServices;
 use App\Services\iTunesServices;
@@ -105,14 +104,23 @@ class ArtistController extends Controller
 
         $artist->artistBranches()->sync($request->input('artist_branches', []));
 
+        foreach ($request->input('platforms', []) as $platform) {
+            $artist->platforms()->syncWithoutDetaching(
+                [
+                    $platform['value'] => ['url' => $platform['url']]
+                ]
+            );
+        }
+
         if ($request->hasFile('image')) {
             MediaServices::upload($artist, $request->file('image'), 'artists');
+        } elseif ($artist->platforms && $artist->platforms->contains('code', 'spotify')) {
+            SpotifyImageUploadJob::dispatch($artist);
         }
 
 
         return redirect()->route('control.catalog.artists.index')->with(
             [
-
                 'notification' => [
                     'type' => 'success',
                     'message' => __('control.notification_created', ['model' => __('control.artist.title_singular')]),
@@ -134,7 +142,7 @@ class ArtistController extends Controller
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
 
-        return inertia('Control/Artists/Show', compact('artist','countries','artistBranches','platforms'));
+        return inertia('Control/Artists/Show', compact('artist', 'countries', 'artistBranches', 'platforms'));
     }
 
     /**
@@ -148,7 +156,7 @@ class ArtistController extends Controller
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'image');
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
-        $artist->load('artistBranches', 'platforms');
+        $artist->load('artistBranches', 'platforms', 'country');
 
         return inertia('Control/Artists/Edit', compact('artist', 'countries', 'platforms', 'artistBranches'));
     }
@@ -174,7 +182,7 @@ class ArtistController extends Controller
                 'notification' => [
                     'type' => 'success',
                     'message' => __('control.notification_updated', ['model' => __('control.artist.title_singular')]),
-                      'data' => new ArtistResource($artist),
+                    'data' => new ArtistResource($artist),
                 ]
             ]
         );
