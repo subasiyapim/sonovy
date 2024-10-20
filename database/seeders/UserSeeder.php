@@ -58,7 +58,11 @@ class UserSeeder extends Seeder
         }
 
         User::factory(100)->create()->each(function ($user) {
-            User::factory(rand(1, 5))->create(['parent_id' => $user->id]);
+            User::factory(rand(1, 5))->create(['parent_id' => $user->id])->each(function ($user) {
+                User::factory(rand(1, 3))->create(['parent_id' => $user->id])->each(function ($user) {
+                    User::factory(rand(1, 2))->create(['parent_id' => $user->id]);
+                });
+            });
         });
     }
 }
