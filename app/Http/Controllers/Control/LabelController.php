@@ -123,12 +123,29 @@ class LabelController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Label $label)
+    public function destroy(Label $label,Request $request)
     {
         abort_if(Gate::denies('label_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
+        $accept = $request->header('Accept');
         $label->delete();
 
-        return redirect()->back();
+
+        //TODO Code Refactor
+        $notification = [
+            'type' => 'success',
+            'message' => __('control.notification_deleted', ['model' => __('control.artist.title_singular')])
+        ];
+
+
+        if ($accept === 'application/json') {
+            return response()->json($notification, Response::HTTP_OK);
+        } else {
+            return redirect()->route('control.catalog.artists.index')->with(
+                [
+                    $notification
+                ]
+            );
+        }
+
     }
 }

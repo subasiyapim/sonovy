@@ -1,7 +1,7 @@
 <template>
   <AdminLayout title="Tüm Plak Şirketleri" parentTitle="Katalog">
 
-    <AppTable v-model="usePage().props.labels" @addNewClicked="openDialog">
+    <AppTable   ref="pageTable" v-model="usePage().props.labels" @addNewClicked="openDialog">
       <AppTableColumn label="Plak Şirketi" align="left">
         <template #default="scope">
 
@@ -32,10 +32,10 @@
       <AppTableColumn label="Aksiyonlar" align="right">
         <template #default="scope">
           <div class="flex gap-3">
-            <IconButton>
+            <IconButton @click="deleteRow(scope.row)">
               <TrashIcon color="var(--sub-600)"/>
             </IconButton>
-            <IconButton>
+            <IconButton @click="editRow(scope.row)">
               <EditIcon color="var(--sub-600)"/>
             </IconButton>
           </div>
@@ -57,7 +57,7 @@
       </template>
     </AppTable>
 
-    <LabelDialog v-model="isModalOn"/>
+    <LabelDialog :label="choosenLabel" @done="onDone" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -72,7 +72,7 @@ import {PrimaryButton, IconButton} from '@/Components/Buttons'
 import {AddIcon, LabelsIcon, ArtistsIcon, TrashIcon, EditIcon} from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {LabelDialog} from '@/Components/Dialog';
-
+const pageTable = ref();
 
 const data = ref([
   {
@@ -82,10 +82,22 @@ const data = ref([
     name: "ikinci"
   },
 ])
-
+const choosenLabel = ref(null);
 const isModalOn = ref(false);
 const openDialog = () => {
   isModalOn.value = !isModalOn.value;
+}
+
+const deleteRow = (row) => {
+  pageTable.value.removeRowDataFromRemote(row);
+}
+const editRow = (artist) => {
+
+  choosenLabel.value = artist;
+  isModalOn.value = !isModalOn.value;
+}
+const onDone = (e) => {
+    pageTable.value.addRow(e);
 }
 </script>
 

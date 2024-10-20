@@ -3,8 +3,8 @@
 
     <div class="flex items-start gap-5 ">
         <div class="w-16 h-16 rounded-full overflow-hidden">
-            <img v-if="!image" src="@/assets/images/avatar.png">
-            <img v-else :src="image.url">
+            <img v-if="!image?.url" src="@/assets/images/avatar.png">
+            <img v-else :src="image?.url">
         </div>
         <div class="flex flex-col items-start justify-start gap-3">
 
@@ -12,7 +12,7 @@
                     <p class="c-strong-950 label-sm ">{{label}}</p>
                     <p class="paragraph-xs c-sub-400 ">{{note}}</p>
                </div>
-                <div v-if="!image">
+                <div v-if="!image?.url">
                     <RegularButton @click="triggerFileInput">
                         Göz At
                     </RegularButton>
@@ -28,10 +28,10 @@
 
         </div>
       <input
+        v-if="rendered"
         ref="fileInput"
         type="file"
         accept="image/*"
-        multiple
         @change="handleFileInput"
         hidden
       />
@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { ref, reactive ,computed} from 'vue';
+import { ref, reactive ,computed,nextTick} from 'vue';
 import {RegularButton} from '@/Components/Buttons'
 
 const props = defineProps({
@@ -51,6 +51,7 @@ const props = defineProps({
     label:{},
     note:{}
 })
+const rendered = ref(true);
 const emits = defineEmits(['update:modelValue']);
 const fileInput = ref(null);
 const isDragging = ref(false);
@@ -61,13 +62,13 @@ const image = computed({
 
 
 const triggerFileInput = () => {
-
   fileInput.value.click();
 };
 
 const handleFileInput = (event) => {
-  const files = Array.from(event.target.files);
-  handleFiles(files);
+    console.log("GELDİİİ");
+    const files = Array.from(event.target.files);
+    handleFiles(files);
 };
 
 const handleFiles = (files) => {
@@ -85,7 +86,14 @@ const handleFiles = (files) => {
 };
 
 const removeImage = () => {
-  image.value = null;
+    rendered.value = false;
+
+
+  image.value = {};
+  console.log(fileInput.value.target);
+  nextTick(() => {
+    rendered.value = true;
+  })
 };
 </script>
 

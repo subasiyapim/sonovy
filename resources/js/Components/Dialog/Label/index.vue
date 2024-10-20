@@ -6,10 +6,25 @@
         <SectionHeader title="PLAK ŞİRKETİ HAKKINDA" />
 
        <div class="p-5 flex flex-col gap-6">
-            <FormElement label-width="190px"  :error="form.errors.image" v-model="form.image" label="Logo" type="upload" :config="{label:'Logo Yükle',note:'Min 400x400px, PNG or JPEG'}"></FormElement>
-            <FormElement label-width="190px"  :error="form.errors.name" v-model="form.name" label="Plak Şirketi Adı" placeholder="Lütfen giriniz"></FormElement>
-            <FormElement label-width="190px"  :error="form.errors.address" v-model="form.address" :config="{letter:500}"   label="Adres" type="textarea" placeholder="Firma adresi" ></FormElement>
-            <FormElement label-width="190px"  :error="form.errors.country_id" v-model="form.country_id" label="Ülke" type="select" :config="countryConfig" placeholder="Seçiniz"></FormElement>
+            <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="form.image" label="Logo" type="upload" :config="{label:'Logo Yükle',note:'Min 400x400px, PNG or JPEG'}"></FormElement>
+            <FormElement label-width="190px" :required="true" :error="form.errors.name" v-model="form.name" label="Plak Şirketi Adı" placeholder="Lütfen giriniz"></FormElement>
+            <FormElement label-width="190px" :required="true" :error="form.errors.address" v-model="form.address" :config="{letter:500}"   label="Adres" type="textarea" placeholder="Firma adresi" ></FormElement>
+            <FormElement label-width="190px" :required="true" :error="form.errors.country_id" v-model="form.country_id" label="Ülke" type="select" :config="countryConfig" placeholder="Seçiniz">
+                 <template #option="scope">
+                    <span>{{scope.data.iconKey}}</span>
+                    <span class="paragraph-sm c-strong-950">
+                         {{scope.data.label}}
+                    </span>
+                </template>
+                <template #model="scope">
+
+                    <div v-if="scope.data" class="flex items-center gap-2">
+
+                        <span>{{countryConfig.data.find((el) => el.value == scope.data)?.iconKey}}</span>
+                        <span>{{countryConfig.data.find((el) => el.value == scope.data)?.label}}</span>
+                    </div>
+                </template>
+            </FormElement>
        </div>
         <SectionHeader title="İLETİŞİM BİLGİLERİ" />
         <div class="p-5 flex flex-col gap-6">
@@ -35,13 +50,16 @@ import {RegularButton,PrimaryButton} from '@/Components/Buttons'
 import {computed,ref} from 'vue';
 import {FormElement} from '@/Components/Form'
 import {useForm,usePage} from '@inertiajs/vue3';
-
+import {toast} from 'vue3-toastify';
 const props = defineProps({
     modelValue: {
         default:false,
     },
+    label:{
+        default:null
+    }
 })
-
+const isUpdating = ref(props.artist ? true :false);
 const adding = ref(false)
 const image = ref();
 const form = useForm({
@@ -56,7 +74,7 @@ const form = useForm({
         {}
     ],
 });
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue','done']);
 const isDialogOn = computed({
     get:() => props.modelValue,
     set:(value) => emits('update:modelValue',value)
@@ -75,15 +93,17 @@ const countryConfig = computed(() => {
 
 
 const onSubmit = (e) => {
-    adding.value = true;
+   adding.value = true;
     if(image.value){
         form.image = image.value?.file;
     }
-    form.post(route('control.labels.store'), {
+    form.post(route('control.catalog.labels.store'), {
         onFinish: () => {
             adding.value = false;
         },
         onSuccess: async (e) => {
+            toast.success(e.props.notification.message);
+            emits('done',e.props.notification.data)
             isDialogOn.value = false;
         },
         onError: (e) => {

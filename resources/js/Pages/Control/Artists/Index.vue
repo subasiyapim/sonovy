@@ -94,7 +94,7 @@
       </template>
     </AppTable>
 
-    <ArtistDialog @done="onArtistProcessDone" :artist="chosenArtist" v-if="isModalOn" v-model="isModalOn"/>
+    <ArtistDialog @done="onDone" :artist="chosenArtist" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -150,7 +150,7 @@ const onDateChoosen = (e) => {
   artistTable.value.search('daterange', e);
 }
 
-const onArtistProcessDone = (e) => {
+const onDone = (e) => {
     artistTable.value.addRow(e);
 }
 </script>
