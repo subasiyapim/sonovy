@@ -22,7 +22,7 @@ class LabelController extends Controller
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $labels = Label::with('country')->advancedFilter();
-        
+
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
         return inertia('Control/Labels/Index', compact('labels', 'countries'));
@@ -70,9 +70,10 @@ class LabelController extends Controller
     public function show(Label $label)
     {
         abort_if(Gate::denies('label_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
         $label->load('country', 'products.songs', 'user');
-        return inertia('Control/Labels/Show', compact('label'));
+        return inertia('Control/Labels/Show', compact('label','countries'));
 
 
     }

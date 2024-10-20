@@ -30,7 +30,7 @@
         <div class="p-5 flex flex-col gap-6">
             <FormElement label-width="190px"  :error="form.errors.phone" v-model="form.phone" label="Telefon Numarası" type="phone"  placeholder="(555) 000-0000" ></FormElement>
             <FormElement label-width="190px"  :error="form.errors.email" v-model="form.email" label="E-mail" type="text"  placeholder="examp@example.com" ></FormElement>
-            <FormElement label-width="190px"  :error="form.errors.web" v-model="form.web" label="Websitesi" placeholder="www.example.com" type="web"> </FormElement>
+            <FormElement label-width="190px"  :error="form.errors.website" v-model="form.website" label="Websitesi" placeholder="www.example.com" type="web"> </FormElement>
        </div>
 
        <div class="flex p-5 border-t border-soft-200 gap-4">
@@ -47,7 +47,7 @@ import BaseDialog from '../BaseDialog.vue';
 import {SectionHeader} from '@/Components/Widgets';
 import {AddIcon} from '@/Components/Icons'
 import {RegularButton,PrimaryButton} from '@/Components/Buttons'
-import {computed,ref} from 'vue';
+import {computed,ref,onMounted} from 'vue';
 import {FormElement} from '@/Components/Form'
 import {useForm,usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
@@ -59,20 +59,18 @@ const props = defineProps({
         default:null
     }
 })
-const isUpdating = ref(props.artist ? true :false);
+const isUpdating = ref(props.label ? true :false);
 const adding = ref(false)
 const image = ref();
 const form = useForm({
     name: '',
     country_id: "",
-    about:"",
-    artist_branches: [],
+    address:"",
     image: "",
-    ipi_code: "",
-    isni_code: "",
-    platforms: [
-        {}
-    ],
+    phone: "",
+    email: "",
+    website: "",
+
 });
 const emits = defineEmits(['update:modelValue','done']);
 const isDialogOn = computed({
@@ -80,9 +78,7 @@ const isDialogOn = computed({
     set:(value) => emits('update:modelValue',value)
 })
 const platforms = ref([{}]);
-const checkIfDisabled = computed(() => {
-    return false;
-})
+
 
 const countryConfig = computed(() => {
     return {
@@ -94,6 +90,24 @@ const countryConfig = computed(() => {
 
 const onSubmit = (e) => {
    adding.value = true;
+     if(isUpdating.value){
+        form
+        .transform((data) => ({
+            ...data,
+            _method: 'PUT'
+        }))
+        .post(route('control.catalog.labels.update', props.label.id), {
+            preserveScroll: true,
+            onSuccess: (e) => {
+                location.reload();
+            },
+            onError: (e) => {
+              console.log("HATAAA",e);
+            }
+        });
+        return;
+    }
+
     if(image.value){
         form.image = image.value?.file;
     }
@@ -112,6 +126,24 @@ const onSubmit = (e) => {
     });
 
 }
+const checkIfDisabled = computed(() => {
+
+    return   form['name'] && form['address'] && form['contry_id'] && (form['artist_branches'].length > 0)
+
+})
+onMounted(() => {
+    if(props.label){
+            form['name'] = props.label['name']
+            form['address'] = props.label['address']
+            form['phone'] = props.label['phone']
+            form['website'] = props.label['website']
+            form['email'] = props.label['email']
+
+            form['platforms'] = props.label['platforms']
+            form['country_id'] = props.label?.country?.id;
+
+    }
+});
 </script>
 
 <style lang="scss" scoped>

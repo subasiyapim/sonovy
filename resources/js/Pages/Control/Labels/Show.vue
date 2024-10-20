@@ -16,12 +16,12 @@
              :src="label.image ? label.image.thumb : defaultStore.profileImage(label.name)">
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
-        <PrimaryButton>
+        <PrimaryButton @click="remove">
           <template #icon>
             <TrashIcon color="var(--dark-green-500)"/>
           </template>
         </PrimaryButton>
-        <PrimaryButton>
+        <PrimaryButton @click="isModalOn = true">
           <template #icon>
             <EditIcon color="var(--dark-green-500)"/>
           </template>
@@ -146,12 +146,13 @@
         </template>
       </div>
     </div>
-
+     <LabelDialog :label="label" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import {router} from '@inertiajs/vue3';
 import {
   PersonCardIcon,
   PercantageIcon,
@@ -166,12 +167,12 @@ import {
   LinkIcon
 } from '@/Components/Icons'
 
-
+const isModalOn = ref(false);
 import {PrimaryButton} from '@/Components/Buttons'
 import {AppIncrementer} from '@/Components/Form'
 import {ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";
-
+import {LabelDialog} from '@/Components/Dialog';
 const props = defineProps({
   label: {
     type: Object,
@@ -189,6 +190,9 @@ const appIncrementerConfig = {
   }
 };
 
+const remove = () => {
+    router.delete(route('control.catalog.labels.destroy', props.label.id), {});
+}
 </script>
 
 <style lang="scss" scoped>

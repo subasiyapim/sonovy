@@ -3,6 +3,7 @@
         <template #icon>
             <AddIcon color="var(--dark-green-950)" />
         </template>
+
         <SectionHeader title="SANATÇI HAKKINDA" />
 
        <div class="p-5 flex flex-col gap-6">
@@ -35,7 +36,7 @@
         <SectionHeader title="İLETİŞİM BİLGİLERİ" />
         <div class="p-5 flex flex-col gap-6">
             <FormElement label-width="190px" v-model="form.phone" label="Telefon Numarası" type="phone"  placeholder="(555) 000-0000" ></FormElement>
-            <FormElement label-width="190px" v-model="form.web" label="Websitesi" placeholder="www.example.com" type="web"> </FormElement>
+            <FormElement label-width="190px" v-model="form.website" label="Websitesi" placeholder="www.example.com" type="web"> </FormElement>
        </div>
         <SectionHeader title="PLATFORMLAR" />
         <div class="p-5 flex flex-col">
@@ -98,6 +99,8 @@ const form = useForm({
     about:"",
     artist_branches: [],
     image: "",
+    phone:"",
+    web:"",
     ipi_code: "",
     isni_code: "",
     platforms: []
@@ -133,10 +136,25 @@ const countryConfig = computed(() => {
     };
 })
 const onSubmit = (e) => {
+    adding.value = true;
     if(isUpdating.value){
+        form
+        .transform((data) => ({
+            ...data,
+            _method: 'PUT'
+        }))
+        .post(route('control.catalog.artists.update', props.artist.id), {
+            preserveScroll: true,
+            onSuccess: (e) => {
+
+            },
+            onError: (e) => {
+              console.log("HATAAA",e);
+            }
+        });
         return;
     }
-    adding.value = true;
+
     if(image.value){
         form.image = image.value?.file;
     }
@@ -162,17 +180,17 @@ const checkIfDisabled = computed(() => {
 
 })
 onMounted(() => {
-    console.log("PROPSSS",props.artist);
     if(props.artist){
 
             form['name'] = props.artist['name']
             form['country_id'] = props.artist['country_id']
             form['about'] = props.artist['about']
             form['phone'] = props.artist['phone']
-            form['web'] = props.artist['web']
+            form['website'] = props.artist['website']
             form['ipi_code'] = props.artist['ipi_code']
             form['isni_code'] = props.artist['isni_code']
             form['platforms'] = props.artist['platforms']
+            form['country_id'] = props.artist?.country?.id;
 
     }
 });

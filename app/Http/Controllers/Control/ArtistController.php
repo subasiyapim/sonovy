@@ -130,8 +130,11 @@ class ArtistController extends Controller
         abort_if(Gate::denies('artist_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $artist->load('artistBranches', 'platforms', 'country', 'products.songs');
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
 
-        return inertia('Control/Artists/Show', compact('artist'));
+        return inertia('Control/Artists/Show', compact('artist','countries','artistBranches','platforms'));
     }
 
     /**
@@ -170,7 +173,8 @@ class ArtistController extends Controller
             [
                 'notification' => [
                     'type' => 'success',
-                    'message' => __('control.notification_updated', ['model' => __('control.artist.title_singular')])
+                    'message' => __('control.notification_updated', ['model' => __('control.artist.title_singular')]),
+                      'data' => new ArtistResource($artist),
                 ]
             ]
         );

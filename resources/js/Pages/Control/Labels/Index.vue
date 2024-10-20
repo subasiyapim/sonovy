@@ -57,7 +57,7 @@
       </template>
     </AppTable>
 
-    <LabelDialog :label="choosenLabel" @done="onDone" v-model="isModalOn"/>
+    <LabelDialog :label="choosenLabel" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -75,12 +75,6 @@ import {LabelDialog} from '@/Components/Dialog';
 const pageTable = ref();
 
 const data = ref([
-  {
-    name: "asdasd"
-  },
-  {
-    name: "ikinci"
-  },
 ])
 const choosenLabel = ref(null);
 const isModalOn = ref(false);
@@ -91,9 +85,9 @@ const openDialog = () => {
 const deleteRow = (row) => {
   pageTable.value.removeRowDataFromRemote(row);
 }
-const editRow = (artist) => {
+const editRow = (label) => {
 
-  choosenLabel.value = artist;
+  choosenLabel.value = label;
   isModalOn.value = !isModalOn.value;
 }
 const onDone = (e) => {
