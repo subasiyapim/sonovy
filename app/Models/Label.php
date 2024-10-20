@@ -43,7 +43,6 @@ class Label extends Model implements HasMedia
     protected array $orderable = [
         'id',
         'name',
-        'country.name',
         'phone',
         'web',
         'email',
@@ -53,7 +52,6 @@ class Label extends Model implements HasMedia
     protected array $filterable = [
         'id',
         'name',
-        'country.name',
         'phone',
         'web',
         'email',
