@@ -24,7 +24,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->name();
-        $email = Str::slug($name).'-'.Str::random(2).'@'.$this->faker->safeEmailDomain();
+        $email = uniqid().'@'.$this->faker->safeEmailDomain();
 
         return [
             'name' => $name,
