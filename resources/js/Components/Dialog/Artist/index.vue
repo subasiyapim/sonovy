@@ -9,39 +9,38 @@
 
     <div class="p-5 flex flex-col gap-6">
       <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="image" label="Fotoğraf"
-                   type="upload" :config="{label:'Fotoğraf Yükle',note:'Min 400x400px, PNG or JPEG'}"></FormElement>
+                   type="upload" :config="{label:'Fotoğraf Yükle',note:'Min 400x400px, PNG or JPEG'}"/>
 
       <FormElement label-width="190px" :required="true" :error="form.errors.name" label="Ad Soyad" type="custom">
         <ArtistInput @onPlatformsChoosen="onPlatformsChoosen" v-model="form.name"
-                     placeholder="Lütfen giriniz"></ArtistInput>
+                     placeholder="Lütfen giriniz"/>
+
       </FormElement>
       <FormElement label-width="190px" :required="true" :error="form.errors.about" :config="{letter:500}"
                    v-model="form.about" label="Sanatçı Hakkında" type="textarea"
-                   placeholder="Sanatçı Hakkında"></FormElement>
+                   placeholder="Sanatçı Hakkında"/>
+
       <FormElement label-width="190px" :required="true" :error="form.errors.artist_branches"
                    v-model="form.artist_branches" :config="artistBranchesMultiSelect" label="Sanat Dalları"
-                   type="multiselect" placeholder="Lütfen giriniz"></FormElement>
+                   type="multiselect" placeholder="Lütfen giriniz"/>
+
       <FormElement label-width="190px" :required="true" :error="form.errors.country_id" v-model="form.country_id"
                    label="Ülke" :config="countryConfig" placeholder="Seçiniz" type="select">
         <template #option="scope">
           <span>{{ scope.data.iconKey }}</span>
-          <span class="paragraph-sm c-strong-950">
-                         {{ scope.data.label }}
-                    </span>
+          <span class="paragraph-sm c-strong-950">{{ scope.data.label }}</span>
         </template>
         <template #model="scope">
-
           <div v-if="scope.data" class="flex items-center gap-2">
-
             <span>{{ countryConfig.data.find((el) => el.value == scope.data)?.iconKey }}</span>
             <span>{{ countryConfig.data.find((el) => el.value == scope.data)?.label }}</span>
           </div>
         </template>
       </FormElement>
       <FormElement label-width="190px" :error="form.errors.ipi_code" v-model="form.ipi_code" label="IPI"
-                   placeholder="Lütfen giriniz"></FormElement>
+                   placeholder="Lütfen giriniz"/>
       <FormElement label-width="190px" :error="form.errors.isni_code" v-model="form.isni_code" label="ISNI"
-                   placeholder="Lütfen giriniz"></FormElement>
+                   placeholder="Lütfen giriniz"/>
     </div>
     <SectionHeader title="İLETİŞİM BİLGİLERİ"/>
     <div class="p-5 flex flex-col gap-6">
@@ -69,7 +68,7 @@
           </template>
         </FormElement>
         <FormElement class="flex-1" direction="vertical" v-model="platform.url" label-width="190px"
-                     label="Platform Link" placeholder="lütfen giriniz"></FormElement>
+                     label="Platform Link" placeholder="lütfen giriniz"/>
       </div>
       <button @click="form.platforms.push({})" class="flex items-center gap-2">
         <AddIcon color="var(--blue-500)"/>
