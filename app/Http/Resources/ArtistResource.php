@@ -20,7 +20,7 @@ class ArtistResource extends JsonResource
             'name' => $this->name,
             'about' => $this->about,
             'country' => $this->country,
-            'platforms' => $this->platforms,
+            'platforms' => $this->getPlatformData(),
             'image' => $this->image,
             'ipi_code' => $this->ipi_code,
             'isni_code' => $this->isni_code,
@@ -30,6 +30,7 @@ class ArtistResource extends JsonResource
             'tracks_count' => $this->products->count().' parça',
             'genres' => $this->getGenres(),
             'genres_count' => $this->getGenres()->count(),
+            'artist_branches' => $this->artistBranches,
         ];
     }
 
@@ -50,5 +51,17 @@ class ArtistResource extends JsonResource
         });
 
         return $genres->unique()->values();
+    }
+
+    private function getPlatformData()
+    {
+        return $this->platforms->map(function ($platform) {
+            return [
+                'id' => $platform->id,
+                'name' => $platform->name,
+                'icon' => $platform->icon,
+                'url' => $platform->pivot->url,
+            ];
+        });
     }
 }
