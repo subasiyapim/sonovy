@@ -10,7 +10,7 @@
             <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="image" label="Fotoğraf" type="upload" :config="{label:'Fotoğraf Yükle',note:'Min 400x400px, PNG or JPEG'}"></FormElement>
 
             <FormElement label-width="190px" :required="true" :error="form.errors.name"  label="Ad Soyad" type="custom">
-                <ArtistInput @onPlatformsChoosen="onPlatformsChoosen" v-model="form.name"  placeholder="Lütfen giriniz"></ArtistInput>
+                <ArtistInput @onPlatformsChoosen="onPlatformsChoosen" v-model="form.name"   placeholder="Lütfen giriniz"></ArtistInput>
             </FormElement>
             <FormElement label-width="190px" :required="true" :error="form.errors.about" :config="{letter:500}" v-model="form.about" label="Sanatçı Hakkında" type="textarea" placeholder="Sanatçı Hakkında" ></FormElement>
             <FormElement label-width="190px" :required="true" :error="form.errors.artist_branches" v-model="form.artist_branches" :config="artistBranchesMultiSelect" label="Sanat Dalları" type="multiselect" placeholder="Lütfen giriniz"></FormElement>
@@ -115,7 +115,7 @@ const onPlatformsChoosen = (e) => {
     if(findedIndex <0)
         form.platforms.push(finded);
     else form.platforms[findedIndex] = finded;
-    // form.platforms.push()
+
 }
 const emits = defineEmits(['update:modelValue','done']);
 const isDialogOn = computed({
@@ -183,13 +183,17 @@ onMounted(() => {
     if(props.artist){
 
             form['name'] = props.artist['name']
-            form['country_id'] = props.artist['country_id']
+
             form['about'] = props.artist['about']
             form['phone'] = props.artist['phone']
             form['website'] = props.artist['website']
             form['ipi_code'] = props.artist['ipi_code']
             form['isni_code'] = props.artist['isni_code']
+            form['artist_branches'] = props.artist['artist_branches'].map((e) => e.id);
             form['platforms'] = props.artist['platforms']
+            form['platforms'].map((e) => {
+                e.value = e.id;
+            })
             form['country_id'] = props.artist?.country?.id;
 
     }

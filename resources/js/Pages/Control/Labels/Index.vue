@@ -1,7 +1,7 @@
 <template>
-  <AdminLayout title="Tüm Plak Şirketleri" parentTitle="Katalog">
+  <AdminLayout :showDatePicker="false" title="Tüm Plak Şirketleri" parentTitle="Katalog">
 
-    <AppTable buttonLabel="Platform Ekle" ref="pageTable" v-model="usePage().props.labels" @addNewClicked="openDialog">
+    <AppTable :hasSelect="true" buttonLabel="Platform Ekle" ref="pageTable"   :config="appTableConfig" v-model="usePage().props.labels" @addNewClicked="openDialog">
       <AppTableColumn label="Plak Şirketi" align="left" sortable="name">
         <template #default="scope">
 
@@ -64,7 +64,7 @@
 <script setup>
 import {usePage} from '@inertiajs/vue3';
 
-import {ref} from 'vue';
+import {ref,computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
@@ -73,6 +73,15 @@ import {AddIcon, LabelsIcon, ArtistsIcon, TrashIcon, EditIcon} from '@/Component
 import {AppCard} from '@/Components/Cards'
 import {LabelDialog} from '@/Components/Dialog';
 const pageTable = ref();
+
+const props = defineProps({
+  filters: {
+    type: Array,
+    default: () => [],
+    required: true
+  }
+})
+
 
 const data = ref([
 ])
@@ -93,6 +102,12 @@ const editRow = (label) => {
 const onDone = (e) => {
     pageTable.value.addRow(e);
 }
+
+const appTableConfig = computed(() => {
+  return {
+    filters: props.filters,
+  }
+})
 </script>
 
 <style lang="scss" scoped>

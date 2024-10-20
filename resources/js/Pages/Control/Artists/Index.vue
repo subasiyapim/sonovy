@@ -67,7 +67,7 @@
           <span v-if="scope.row.genres_count > 0">+{{ scope.row.genres_count }}</span>
         </template>
       </AppTableColumn>
-      <AppTableColumn :label="__('control.general.actions')">
+      <AppTableColumn :label="__('control.general.actions')" align="right">
         <template #default="scope">
           <div class="flex gap-3">
             <IconButton @click="deleteRow(scope.row)">

@@ -18,37 +18,47 @@
       </div>
 
       <div v-if="(showAddButton || hasSearch)" class="flex items-center gap-2">
-        <AppTextInput v-if="hasSearch"  @change="onSearch" @input="onInput" v-model="term" placeholder="Ara...">
-          <template #icon>
-            <SearchIcon color="var(--sub-600)"/>
-          </template>
-        </AppTextInput>
-        <PrimaryButton class="w-full" v-if="showAddButton" @click="$emit('addNewClicked',$event)">
-           <template #icon>
-                 <AddIcon color="var(--dark-green-500)" />
-           </template>
-            <p class="">{{buttonLabel ?? 'Ekle'}}</p>
-        </PrimaryButton>
+        <div class="w-64">
+            <AppTextInput v-if="hasSearch"  @change="onSearch" @input="onInput" v-model="term" placeholder="Ara...">
+                <template #icon>
+                    <SearchIcon color="var(--sub-600)"/>
+                </template>
+            </AppTextInput>
+        </div>
+        <div class="w-48">
+            <PrimaryButton class="w-full" v-if="showAddButton" @click="$emit('addNewClicked',$event)">
+            <template #icon>
+                    <AddIcon color="var(--dark-green-500)" />
+            </template>
+                <p class="">{{buttonLabel ?? 'Ekle'}}</p>
+            </PrimaryButton>
+        </div>
       </div>
     </div>
   </div>
   <table class="w-full appTable">
     <thead>
     <tr class="border border-white-600">
-      <th @click="onClickHeader(column)" :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns" :key="index">
+        <th v-if="hasSelect" class="bg-white-500" >
+            <button class="appCheckBox " @click="selectAll" :class="selectedRowIndexes.length == data.length  ? 'checked' : (selectedRowIndexes.length == 0 ? '' : 'half') "></button>
+        </th>
+        <th @click="onClickHeader(column)" :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns" :key="index">
 
-        <div class="flex items-center gap-2 paragraph-xs c-sub-600" :class="column.props.align == 'center' ? 'justify-center' : (column.props.align == 'right' ? 'justify-end' : 'justify-start' )">
-          {{ column.props.label }}
-          <TableOrderIcon v-if="column.props.sortable" color="var(--sub-600)"/>
-        </div>
-      </th>
+            <div class="flex items-center gap-2 paragraph-xs c-sub-600" :class="column.props.align == 'center' ? 'justify-center' : (column.props.align == 'right' ? 'justify-end' : 'justify-start' )">
+            {{ column.props.label }}
+            <TableOrderIcon v-if="column.props.sortable" color="var(--sub-600)"/>
+            </div>
+        </th>
     </tr>
     </thead>
     <tbody>
     <tr v-for="(row, rowIndex) in data" :key="rowIndex">
-      <td v-for="(column, colIndex) in columns" :key="colIndex">
-        <render :rowIndex="rowIndex" :colIndex="colIndex"  :row="row"></render>
-      </td>
+        <td v-if="hasSelect">
+              <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''" @click="onSelectRow(row)"></button>
+        </td>
+        <td v-for="(column, colIndex) in columns" :key="colIndex">
+            <render :rowIndex="rowIndex" :colIndex="colIndex"  :row="row"></render>
+        </td>
     </tr>
     </tbody>
   </table>
@@ -179,6 +189,9 @@ const props = defineProps({
   },
   buttonLabel:{
     default:null,
+  },
+  hasSelect:{
+    default:false,
   }
 })
 const emits = defineEmits(['update:modelValue', 'addNewClicked']);
@@ -261,6 +274,26 @@ const onClickHeader = (column) => {
 
 
 }
+const onSelectRow = (row,index) => {
+    const findedIndex = selectedRowIndexes.value.findIndex((el) => el == row);
+    if(findedIndex >= 0){
+        selectedRowIndexes.value.splice(findedIndex,1);
+    }else {
+        selectedRowIndexes.value.push(row)
+
+    }
+}
+const selectAll = () => {
+    if(data.value.length == selectedRowIndexes.value.length){
+        selectedRowIndexes.value = [];
+    }else {
+        data.value.forEach(element => {
+            const findedIndex = selectedRowIndexes.value.findIndex((el) => el == element);
+            if(findedIndex < 0)   selectedRowIndexes.value.push(element);
+        });
+    }
+
+}
 
 const onSearch = (e) => {
 
@@ -300,6 +333,8 @@ const removeRowData = (row) => {
     const findedIndex = data.value.findIndex((el) => row == el);
     if(findedIndex >= 0) data.value.splice(findedIndex,1);
 }
+
+const selectedRowIndexes = ref([]);
 const removeRowDataFromRemote = async (row) => {
     const path = props.slug ?? route(route().current());
     if(row.id){
@@ -331,4 +366,36 @@ defineExpose({
     removeRowDataFromRemote
 })
 </script>
+<style>
+.appCheckBox{
+    width:14px;
+    height:14px;
+    border-radius:2.6px;
+    background:white;
+    box-shadow: 0px 2px 2px 0px #1B1C1D1F;
+    border:1px solid var(--soft-200);
+    position:relative;
+
+}
+.appCheckBox.checked:after{
+    content:"";
+    inset:0;
+    margin:auto;
+    position:absolute;
+    width:8px;
+    height:8px;
+     border-radius:2.6px;
+    background:var(--dark-green-500);
+}
+.appCheckBox.half:after{
+    content:"";
+    inset:0;
+    margin:auto;
+    position:absolute;
+    width:8px;
+    height:3px;
+    border-radius:2.6px;
+    background:var(--dark-green-500);
+}
+</style>
 

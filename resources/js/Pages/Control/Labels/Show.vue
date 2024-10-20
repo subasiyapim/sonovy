@@ -1,6 +1,6 @@
 <template>
 
-  <AdminLayout :title="__('control.label.show_header')" :parentTitle="__('control.label.title_singular')"
+  <AdminLayout :showDatePicker="false"  :title="__('control.label.show_header')" :parentTitle="__('control.label.title_singular')"
                :hasPadding="false">
 
     <div class="bg-white-400 h-44 p-5 relative">
