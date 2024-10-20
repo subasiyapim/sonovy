@@ -55,6 +55,7 @@ import SongFileIcon from './SongFileIcon.vue';
 import MinusIcon from './MinusIcon.vue';
 import PlayFilledIcon from './PlayFilledIcon.vue';
 import PersonCardIcon from './PersonCardIcon.vue';
+import AppLoadingIcon from './AppLoadingIcon.vue';
 import TidalIcon from './TidalIcon.vue';
 import YoutubeIcon from "./YoutubeIcon.vue";
 import Icon from './Icon.vue';
@@ -72,6 +73,7 @@ export {
     ArrowLeftIcon,
     SearchIcon,
     NotificationIcon,
+    AppLoadingIcon,
     CheckIcon,
     MessageIcon,
     MessageIcon2,

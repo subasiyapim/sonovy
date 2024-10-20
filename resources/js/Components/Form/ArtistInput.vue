@@ -12,23 +12,28 @@
                 <ItunesIcon  class="w-full h-full" color="var(--sub-600)" />
             </button>
         </div>
-         <div v-if="openSearchPlatform" class="absolute max-h-[300px] top-10 bg-white z-10 border rounded-lg overflow-scroll w-full py-2 px-1">
-            <div v-for="item in artists" @click="chooseValue(item)"  :class="checkIfChecked(item) ? 'active' :  ''" class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
+         <div v-if="openSearchPlatform" class="absolute  top-10 bg-white z-10 border rounded-lg overflow-hidden w-full py-2 px-1">
+           <div v-if="!searchingPlatformArtists" class="max-h-[300px] overflow-scroll">
+                 <div v-for="item in artists" @click="chooseValue(item)"  :class="checkIfChecked(item) ? 'active' :  ''" class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
 
-                <div class="w-4 h-4 flex items-center justify-center border border-soft-200 rounded-full bg-white shadow">
-                    <div class="bg-dark-green-600 w-3 h-3 rounded-full border-dark-green-600 green-dot">
+                    <div class="w-4 h-4 flex items-center justify-center border border-soft-200 rounded-full bg-white shadow">
+                        <div class="bg-dark-green-600 w-3 h-3 rounded-full border-dark-green-600 green-dot">
+                        </div>
                     </div>
+                    <div class="w-10 h-10 rounded-full bg-blue-300 flex items-center justify-center overflow-hidden">
+                        <img :src="item?.image">
+                    </div>
+                    <div class="flex flex-col flex-1">
+                        <span class="label-sm c-strong-950">{{item.name}}</span>
+                        <span class="paragraph-xs c-sub-600">{{item.artistId}}</span>
+                    </div>
+                    <ItunesIcon v-if="choosenPlatform == 'itunes'" class="w-5 h-5" color="var(--sub-600)" />
+                    <SpotifyIcon v-if="choosenPlatform == 'spotify'" class="w-5 h-5" color="var(--sub-600)" />
                 </div>
-                <div class="w-10 h-10 rounded-full bg-blue-300 flex items-center justify-center overflow-hidden">
-                     <img :src="item?.image?.thumb">
-                </div>
-                <div class="flex flex-col flex-1">
-                    <span class="label-sm c-strong-950">{{item.name}}</span>
-                    <span class="paragraph-xs c-sub-600">123123123</span>
-                </div>
-                <ItunesIcon v-if="choosenPlatform == 'itunes'" class="w-5 h-5" color="var(--sub-600)" />
-                <SpotifyIcon v-if="choosenPlatform == 'spotify'" class="w-5 h-5" color="var(--sub-600)" />
-            </div>
+           </div>
+           <div v-else class="flex items-center justify-center h-12">
+                <AppLoadingIcon color="var(--dark-green-500)" />
+           </div>
              <AppDivider title="VEYA" />
            <div class="px-3 flex flex-col gap-2">
                 <FormElement label="Link" @input="onInputLink"  direction="verital"  :placeholder=" (choosenPlatform == 'itunes' ?  'Apple' : 'Spotify')+' linkini ekleyebilirsiniz'">
@@ -53,7 +58,7 @@
 
 <script setup>
     import { useSlots,ref,computed } from 'vue'
-    import {SpotifyIcon,ItunesIcon,AddIcon} from '@/Components/Icons'
+    import {SpotifyIcon,ItunesIcon,AddIcon,AppLoadingIcon} from '@/Components/Icons'
     import {IconButton} from '@/Components/Buttons'
     import {useQueryStore} from '@/Stores/useQueryStore';
     import {AppDivider} from '@/Components/Widgets';
@@ -65,7 +70,7 @@
     const choosenSpotify = ref();
     const choosenItunes = ref();
     const queryStore = useQueryStore();
-
+    const searchingPlatformArtists = ref(false);
     const slots = useSlots()
     const props = defineProps({
         type:{type:String},
@@ -88,8 +93,8 @@
     const checkIfChecked = computed(() => {
         return (row) => {
             if(choosenPlatform.value){
-                if(choosenPlatform.value == 'spotify') return choosenSpotify.value == row;
-                else return choosenItunes.value == row;
+                if(choosenPlatform.value == 'spotify') return choosenSpotify.value?.artistId == row?.artistId;
+                else return choosenItunes.value?.artistId == row?.artistId;
             }
             return false;
         }
@@ -101,10 +106,15 @@
         submit();
     }
     const onClicked = (platform) => {
-        openSearchPlatform.value = false;
+        if(element.value){
+             openSearchPlatform.value = false;
 
-        choosenPlatform.value = platform;
-        openSearchPlatform.value = true;
+            choosenPlatform.value = platform;
+            openSearchPlatform.value = true;
+
+            searchPlatformData();
+        }
+
     }
     const onInput = (e) => {
 
@@ -114,8 +124,7 @@
 
         emits('change',e.target.value);
 
-        const artistRepsonse = await queryStore.search(e.target.value, route('control.search.artists'));
-        artists.value = artistRepsonse;
+
     }
     const handleClickOutside = () => {
         openSearchPlatform.value = false;
@@ -135,6 +144,40 @@
         openSearchPlatform.value = false;
 
     }
+
+const searchPlatformData = async () => {
+    searchingPlatformArtists.value = true;
+        artists.value = [];
+        const response =  await queryStore.search(element.value,route('control.search.artists-platform-search'));
+        if(choosenPlatform.value == 'spotify'){
+            // platforms.value = response.spotify.artists.items;
+            response?.spotify?.artists?.items?.forEach((ar) => {
+                artists.value.push({
+                    name: ar.name,
+                    url:ar.external_urls.spotify,
+                    image:ar.images?.slice(-1)?.pop()?.url,
+                    artistId:ar.id,
+                });
+            })
+
+        }else {
+            if(response.itunes != 'No results found.'){
+                response.itunes.results.forEach((ar) => {
+                    artists.value.push({
+                        name: ar.artistName,
+                        url:ar.artistLinkUrl,
+                        image:null,
+                        artistId:ar.artistId,
+                    });
+                })
+            }
+
+
+        }
+
+         searchingPlatformArtists.value = false;
+
+}
 </script>
 
 <style scoped>
