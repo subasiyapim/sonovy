@@ -170,6 +170,7 @@ class ArtistController extends Controller
 
         $artist->artistBranches()->sync($request->input('artist_branches', []));
 
+        dd($request->image);
         if ($request->hasFile('image')) {
             MediaServices::upload($artist, $request->file('image'), 'artists');
         }

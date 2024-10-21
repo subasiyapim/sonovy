@@ -156,11 +156,12 @@ const props = defineProps({
   }
 })
 const isUpdating = computed(() => {
-    return props.artist ? true :false;
+  return props.artist ? true : false;
 });
 const adding = ref(false)
 const image = ref();
 const form = useForm({
+  id: "",
   name: '',
   country_id: "",
   about: "",
@@ -203,45 +204,42 @@ const countryConfig = computed(() => {
   };
 })
 const onSubmit = (e) => {
-    console.log("SUBMİT ÇALIŞTI");
-    adding.value = true;
-    if(isUpdating.value){
-        form
+  adding.value = true;
+  if (image.value) {
+    form.image = image.value?.file;
+  }
+  if (isUpdating.value) {
+    form
         .transform((data) => ({
           ...data,
-          _method: 'PUT'
-        }))
-        .post(route('control.catalog.artists.update', props.artist.id), {
-            preserveScroll: true,
-            onSuccess: (e) => {
-                location.reload();
-            },
-            onError: (e) => {
-              console.log("HATAAA",e);
-            }
-        });
-        return;
-    }
-    else {
-        console.log("BURAYAAA");
-        if(image.value){
-            form.image = image.value?.file;
-        }
-        form.post(route('control.catalog.artists.store'), {
-            onFinish: () => {
-                adding.value = false;
-            },
-            onSuccess: async (e) => {
-                toast.success(e.props.notification.message);
-                emits('done',e.props.notification.data)
-                isDialogOn.value = false;
-            },
-            onError: (e) => {
-                console.log("HATAAAA",e);
-            },
-        });
-    }
+          _method: 'PUT',
 
+        }))
+        .post(route('control.catalog.artists.update', form.id), {
+          preserveScroll: true,
+          onSuccess: (e) => {
+            location.reload();
+          },
+          onError: (e) => {
+            console.log("HATAAA", e);
+          }
+        });
+  } else {
+
+    form.post(route('control.catalog.artists.store'), {
+      onFinish: () => {
+        adding.value = false;
+      },
+      onSuccess: async (e) => {
+        toast.success(e.props.notification.message);
+        emits('done', e.props.notification.data)
+        isDialogOn.value = false;
+      },
+      onError: (e) => {
+        console.log("HATAAAA", e);
+      },
+    });
+  }
 
 
 }
@@ -253,7 +251,7 @@ const checkIfDisabled = computed(() => {
 })
 onMounted(() => {
   if (props.artist) {
-
+    form['id'] = props.artist['id']
     form['name'] = props.artist['name']
     form['about'] = props.artist['about']
     form['phone'] = props.artist['phone']
