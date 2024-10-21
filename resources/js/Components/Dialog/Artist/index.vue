@@ -8,24 +8,53 @@
     <SectionHeader title="SANATÇI HAKKINDA"/>
 
     <div class="p-5 flex flex-col gap-6">
-      <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="image" label="Fotoğraf"
-                   type="upload" :config="{label:'Fotoğraf Yükle',note:'Min 400x400px, PNG or JPEG'}"/>
+      <FormElement label-width="190px"
+                   :required="true"
+                   :error="form.errors.image"
+                   v-model="image"
+                   label="Fotoğraf"
+                   type="upload"
+                   :config="{label:'Fotoğraf Yükle',note:'Min 400x400px, PNG or JPEG'}"/>
 
-      <FormElement label-width="190px" :required="true" :error="form.errors.name" label="Ad Soyad" type="custom">
-        <ArtistInput @onPlatformsChoosen="onPlatformsChoosen" v-model="form.name"
+      <FormElement label-width="190px"
+                   :required="true"
+                   :error="form.errors.name"
+                   label="Ad Soyad"
+                   type="custom">
+
+        <ArtistInput @onPlatformsChoosen="onPlatformsChoosen"
+                     v-model="form.name"
                      placeholder="Lütfen giriniz"/>
 
       </FormElement>
-      <FormElement label-width="190px" :required="true" :error="form.errors.about" :config="{letter:500}"
-                   v-model="form.about" label="Sanatçı Hakkında" type="textarea"
+
+      <FormElement label-width="190px"
+                   :required="true"
+                   :error="form.errors.about"
+                   :config="{letter:500}"
+                   v-model="form.about"
+                   label="Sanatçı Hakkında"
+                   type="textarea"
                    placeholder="Sanatçı Hakkında"/>
 
-      <FormElement label-width="190px" :required="true" :error="form.errors.artist_branches"
-                   v-model="form.artist_branches" :config="artistBranchesMultiSelect" label="Sanat Dalları"
-                   type="multiselect" placeholder="Lütfen giriniz"/>
+      <FormElement label-width="190px"
+                   :required="true"
+                   :error="form.errors.artist_branches"
+                   v-model="form.artist_branches"
+                   :config="artistBranchesMultiSelect"
+                   label="Sanat Dalları"
+                   type="multiselect"
+                   placeholder="Lütfen giriniz"/>
 
-      <FormElement label-width="190px" :required="true" :error="form.errors.country_id" v-model="form.country_id"
-                   label="Ülke" :config="countryConfig" placeholder="Seçiniz" type="select">
+      <FormElement label-width="190px"
+                   :required="true"
+                   :error="form.errors.country_id"
+                   v-model="form.country_id"
+                   label="Ülke"
+                   :config="countryConfig"
+                   placeholder="Seçiniz"
+                   type="select">
+
         <template #option="scope">
           <span>{{ scope.data.iconKey }}</span>
           <span class="paragraph-sm c-strong-950">{{ scope.data.label }}</span>
@@ -37,32 +66,52 @@
           </div>
         </template>
       </FormElement>
-      <FormElement label-width="190px" :error="form.errors.ipi_code" v-model="form.ipi_code" label="IPI"
+      <FormElement label-width="190px"
+                   :error="form.errors.ipi_code"
+                   v-model="form.ipi_code"
+                   label="IPI"
                    placeholder="Lütfen giriniz"/>
-      <FormElement label-width="190px" :error="form.errors.isni_code" v-model="form.isni_code" label="ISNI"
+
+      <FormElement label-width="190px" :error="form.errors.isni_code"
+                   v-model="form.isni_code"
+                   label="ISNI"
                    placeholder="Lütfen giriniz"/>
     </div>
     <SectionHeader title="İLETİŞİM BİLGİLERİ"/>
     <div class="p-5 flex flex-col gap-6">
-      <FormElement label-width="190px" v-model="form.phone" label="Telefon Numarası" type="phone"
+
+      <FormElement label-width="190px"
+                   v-model="form.phone"
+                   :error="form.phone"
+                   label="Telefon Numarası"
+                   type="phone"
                    placeholder="(555) 000-0000"></FormElement>
-      <FormElement label-width="190px" v-model="form.website" label="Websitesi" placeholder="www.example.com"
-                   type="web"></FormElement>
+
+      <FormElement label-width="190px"
+                   v-model="form.website"
+                   :error="form.website"
+                   label="Websitesi"
+                   placeholder="www.example.com"
+                   type="web"/>
     </div>
     <SectionHeader title="PLATFORMLAR"/>
     <div class="p-5 flex flex-col">
       <div v-for="platform in form.platforms" class="flex gap-4">
-        <FormElement class="flex-1" direction="vertical" v-model="platform.value" label-width="190px" label="Platform"
-                     type="select" :config="{data:usePage().props.platforms}" placeholder="Platform Seç">
+        <FormElement class="flex-1"
+                     direction="vertical"
+                     v-model="platform.value"
+                     label-width="190px"
+                     label="Platform"
+                     type="select"
+                     :config="{data:usePage().props.platforms}"
+                     placeholder="Platform Seç">
           <template #option="scope">
-            <!-- <span>{{scope.data.iconKey}}</span> -->
             <span class="paragraph-sm c-strong-950">
-                            {{ scope.data.label }}
-                        </span>
+              {{ scope.data.label }}
+            </span>
           </template>
           <template #model="scope">
             <div v-if="scope.data" class="flex items-center gap-2">
-              <!-- <span>{{countryConfig.data.find((el) => el.value == scope.data)?.iconKey}}</span> -->
               <span>{{ usePage().props.platforms.find((el) => el.value == scope.data)?.label }}</span>
             </div>
           </template>
@@ -199,7 +248,6 @@ onMounted(() => {
   if (props.artist) {
 
     form['name'] = props.artist['name']
-
     form['about'] = props.artist['about']
     form['phone'] = props.artist['phone']
     form['website'] = props.artist['website']
