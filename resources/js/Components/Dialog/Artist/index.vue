@@ -155,13 +155,9 @@ const props = defineProps({
     default: null,
   }
 })
-<<<<<<< HEAD
 const isUpdating = computed(() => {
     return props.artist ? true :false;
 });
-=======
-const isUpdating = ref(props.artist ? true : false);
->>>>>>> 861e9a7fa3ea483976809b6317e468aafd27ade9
 const adding = ref(false)
 const image = ref();
 const form = useForm({
