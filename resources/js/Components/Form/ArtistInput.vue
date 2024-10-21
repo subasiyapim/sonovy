@@ -5,12 +5,30 @@
 
         <input v-model="element" @input="onInput" @change="onChange" v-debounce="400" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent label-sm c-strong-950" :type="type" :placeholder="placeholder">
         <div class="flex gap-1 pe-3">
-            <button :class="choosenSpotify ? '' : 'grayscale'" class="w-5 h-5" @click="onClicked('spotify')">
-                <SpotifyIcon class="w-full h-full" color="var(--sub-600)" />
-            </button>
-            <button :class="choosenItunes ? '' : 'grayscale'" class="w-5 h-5" @click="onClicked('itunes')">
-                <ItunesIcon  class="w-full h-full" color="var(--sub-600)" />
-            </button>
+
+             <tippy :allowHtml="true" :sticky="true" :interactive="true">
+                <button :class="choosenSpotify ? '' : 'grayscale'" class="w-5 h-5" @click="onClicked('spotify')">
+                    <SpotifyIcon class="w-full h-full" color="var(--sub-600)" />
+                </button>
+                <template #content>
+                      <a :href="choosenSpotify?.url" target="_blank" class="hover:underline "  v-if="choosenSpotify?.artistId">{{choosenSpotify?.artistId}}</a>
+                       <p v-else>Lütfen seçim yapın</p>
+                </template>
+            </tippy>
+
+             <tippy interactive>
+                <button :class="choosenItunes ? '' : 'grayscale'" class="w-5 h-5" @click="onClicked('itunes')">
+                    <ItunesIcon  class="w-full h-full" color="var(--sub-600)" />
+                </button>
+
+                <template #content>
+                      <a :href="choosenItunes?.url" target="_blank" class="underline "  v-if="choosenItunes?.artistId">{{choosenItunes?.artistId}}</a>
+
+                    <p v-else>Lütfen seçim yapın</p>
+                </template>
+            </tippy>
+
+
         </div>
          <div v-if="openSearchPlatform" class="absolute  top-10 bg-white z-10 border rounded-lg overflow-hidden w-full py-2 px-1">
            <div v-if="!searchingPlatformArtists" class="max-h-[300px] overflow-scroll">
@@ -57,7 +75,7 @@
 </template>
 
 <script setup>
-    import { useSlots,ref,computed } from 'vue'
+    import { useSlots,ref,computed ,onMounted,nextTick} from 'vue'
     import {SpotifyIcon,ItunesIcon,AddIcon,AppLoadingIcon} from '@/Components/Icons'
     import {IconButton} from '@/Components/Buttons'
     import {useQueryStore} from '@/Stores/useQueryStore';
@@ -75,7 +93,13 @@
     const props = defineProps({
         type:{type:String},
         placeholder: { type: String},
-        modelValue:{}
+        modelValue:{},
+        choosenSpotifyField:{
+            default:null,
+        },
+        choosenItunesField:{
+            default:null,
+        },
 
     })
     const emits = defineEmits(['update:modelValue','change','input','onPlatformsChoosen']);
@@ -178,6 +202,29 @@ const searchPlatformData = async () => {
          searchingPlatformArtists.value = false;
 
 }
+
+onMounted(() => {
+    nextTick(() => {
+        if(props.choosenSpotifyField){
+            choosenSpotify.value = {
+                 artistId:props.choosenSpotifyField.split("/").pop(),
+                url:props.choosenSpotifyField,
+            }
+        }
+        if(props.choosenItunesField){
+            let finalString = props.choosenItunesField.split("/").pop();
+            if(finalString.includes('?')){
+                finalString = finalString.split('?')[0];
+            }
+            choosenItunes.value = {
+                artistId:finalString,
+                url:props.choosenItunesField,
+            }
+        }
+    })
+
+
+});
 </script>
 
 <style scoped>

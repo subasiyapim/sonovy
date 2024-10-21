@@ -6,7 +6,7 @@
         <SectionHeader title="PLAK ŞİRKETİ HAKKINDA" />
 
        <div class="p-5 flex flex-col gap-6">
-            <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="form.image" label="Logo" type="upload" :config="{label:'Logo Yükle',note:'Min 400x400px, PNG or JPEG'}"></FormElement>
+            <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="form.image" label="Logo" type="upload" :config="{label:'Logo Yükle',note:'Min 400x400px, PNG or JPEG',image:label?.image?.thumb}"></FormElement>
             <FormElement label-width="190px" :required="true" :error="form.errors.name" v-model="form.name" label="Plak Şirketi Adı" placeholder="Lütfen giriniz"></FormElement>
             <FormElement label-width="190px" :required="true" :error="form.errors.address" v-model="form.address" :config="{letter:500}"   label="Adres" type="textarea" placeholder="Firma adresi" ></FormElement>
             <FormElement label-width="190px" :required="true" :error="form.errors.country_id" v-model="form.country_id" label="Ülke" type="select" :config="countryConfig" placeholder="Seçiniz">

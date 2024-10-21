@@ -14,7 +14,7 @@
                    v-model="image"
                    label="Fotoğraf"
                    type="upload"
-                   :config="{label:'Fotoğraf Yükle',note:'Min 400x400px, PNG or JPEG'}"/>
+                   :config="{label:'Fotoğraf Yükle',note:'Min 400x400px, PNG or JPEG',image:artist?.image?.thumb}"/>
 
       <FormElement label-width="190px"
                    :required="true"
@@ -23,8 +23,10 @@
                    type="custom">
 
         <ArtistInput @onPlatformsChoosen="onPlatformsChoosen"
-                     v-model="form.name"
-                     placeholder="Lütfen giriniz"/>
+                    :choosenItunesField="choosenItunesField"
+                    :choosenSpotifyField="choosenSpotifyField"
+                    v-model="form.name"
+                    placeholder="Lütfen giriniz"/>
 
       </FormElement>
 
@@ -82,14 +84,14 @@
 
       <FormElement label-width="190px"
                    v-model="form.phone"
-                   :error="form.phone"
+                   :error="form.errors.phone"
                    label="Telefon Numarası"
                    type="phone"
                    placeholder="(555) 000-0000"></FormElement>
 
       <FormElement label-width="190px"
                    v-model="form.website"
-                   :error="form.website"
+                   :error="form.errors.website"
                    label="Websitesi"
                    placeholder="www.example.com"
                    type="web"/>
@@ -158,6 +160,9 @@ const props = defineProps({
 const isUpdating = computed(() => {
     return props.artist ? true :false;
 });
+
+const choosenItunesField = ref(null);
+const choosenSpotifyField = ref(null);
 const adding = ref(false)
 const image = ref();
 const form = useForm({
@@ -203,7 +208,6 @@ const countryConfig = computed(() => {
   };
 })
 const onSubmit = (e) => {
-    console.log("SUBMİT ÇALIŞTI");
     adding.value = true;
     if(isUpdating.value){
         form
@@ -263,7 +267,15 @@ onMounted(() => {
     form['artist_branches'] = props.artist['artist_branches'].map((e) => e.id);
     form['platforms'] = props.artist['platforms']
     form['platforms'].map((e) => {
-      e.value = e.id;
+        console.log("GELDİİİİ",e);
+        e.value = e.id;
+        if(e.id == 4){
+            choosenItunesField.value = e.url;
+        }if(e.id == 2){
+            choosenSpotifyField.value = e.url;
+        }
+
+
     })
     form['country_id'] = props.artist?.country?.id;
 
@@ -271,6 +283,6 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 
 </style>
