@@ -90,7 +90,9 @@ const props = defineProps({
         default:null,
     }
 })
-const isUpdating = ref(props.artist ? true :false);
+const isUpdating = computed(() => {
+    return props.artist ? true :false;
+});
 const adding = ref(false)
 const image = ref();
 const form = useForm({
@@ -136,6 +138,7 @@ const countryConfig = computed(() => {
     };
 })
 const onSubmit = (e) => {
+    console.log("SUBMİT ÇALIŞTI");
     adding.value = true;
     if(isUpdating.value){
         form
@@ -146,7 +149,7 @@ const onSubmit = (e) => {
         .post(route('control.catalog.artists.update', props.artist.id), {
             preserveScroll: true,
             onSuccess: (e) => {
-
+                location.reload();
             },
             onError: (e) => {
               console.log("HATAAA",e);
@@ -154,23 +157,27 @@ const onSubmit = (e) => {
         });
         return;
     }
-
-    if(image.value){
-        form.image = image.value?.file;
+    else {
+        console.log("BURAYAAA");
+        if(image.value){
+            form.image = image.value?.file;
+        }
+        form.post(route('control.catalog.artists.store'), {
+            onFinish: () => {
+                adding.value = false;
+            },
+            onSuccess: async (e) => {
+                toast.success(e.props.notification.message);
+                emits('done',e.props.notification.data)
+                isDialogOn.value = false;
+            },
+            onError: (e) => {
+                console.log("HATAAAA",e);
+            },
+        });
     }
-    form.post(route('control.catalog.artists.store'), {
-        onFinish: () => {
-            adding.value = false;
-        },
-        onSuccess: async (e) => {
-            toast.success(e.props.notification.message);
-            emits('done',e.props.notification.data)
-            isDialogOn.value = false;
-        },
-        onError: (e) => {
-            console.log("HATAAAA",e);
-        },
-    });
+
+
 
 }
 

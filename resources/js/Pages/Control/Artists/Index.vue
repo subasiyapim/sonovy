@@ -152,6 +152,7 @@ const onDateChoosen = (e) => {
 }
 
 const onDone = (e) => {
+    console.log("DONEE KISMINA GELDİ");
     artistTable.value.addRow(e);
 }
 </script>

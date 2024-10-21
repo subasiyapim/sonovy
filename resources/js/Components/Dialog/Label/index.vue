@@ -59,7 +59,9 @@ const props = defineProps({
         default:null
     }
 })
-const isUpdating = ref(props.label ? true :false);
+const isUpdating = computed(() => {
+    return props.label ? true :false;
+});
 const adding = ref(false)
 const image = ref();
 const form = useForm({
