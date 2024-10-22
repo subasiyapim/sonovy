@@ -1,18 +1,25 @@
 <script setup>
-import {computed} from 'vue';
+import {computed,ref} from 'vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import {PrimaryButton} from '@/Components/Buttons';
 import {Head, Link, useForm} from '@inertiajs/vue3';
 import PinputField from '@/Components/Pinput/PinputField.vue';
-import {MessageIcon2,ChevronLeftIcon,CheckIcon,CheckFilledIcon} from '@/Components/Icons'
+import {MessageIcon2,ChevronLeftIcon,CheckIcon,CheckFilledIcon,ChevronRightIcon} from '@/Components/Icons'
 const props = defineProps({
   status: Object
 });
 
-const form = useForm({});
-
+const form = useForm({
+    code:"",
+});
+const panelState = ref(null);
 const submit = () => {
-  form.post(route('verification.send'));
+    panelState.value = 'loading';
+
+    form.post(route('verification.send'));
+    setTimeout(() => {
+        panelState.value = 'completed';
+    }, 1000);
 };
 
 const verificationLinkSent = computed(
@@ -21,17 +28,31 @@ const verificationLinkSent = computed(
 </script>
 
 <template>
-  <AuthLayout>
+  <AuthLayout :state="panelState">
 
      <template #icon>
       <MessageIcon2 color="var(--strong-950)"/>
     </template>
+    <template #loading>
+        <p class="c-strong-950 label-xl">Doğrulanıyor...</p>
+        <p class="label-sm c-sub-600 !text-center">Telefon numaranız doğrulanıyor, <br>
+                lütfen bekleyiniz.</p>
+    </template>
+    <template #completed>
+        <p class="c-strong-950 label-xl">Tebrikler, aramıza hoşgeldiniz.</p>
+        <p class="paragraph-sm c-sub-600 !text-center">
+        Hesabınız başarılı bir şekilde oluşturuldu.<br>
+        Hemen ilk yayınızı oluşturabilirsiniz.</p>
+        <PrimaryButton class="mt-6">
+            Hemen Başla
+            <template #suffix>
+                <ChevronRightIcon color="var(--dark-green-500)" />
+            </template>
+        </PrimaryButton>
+    </template>
     <Head title="Email Verification"/>
        <h1 class="label-xl c-strong-950 !text-center" v-text="__('client.verify_email.title')"/>
         <p class="paragraph-sm c-sub-600 !text-center mb-6" v-text=" __('client.verify_email.description',{email:'asdsd'})"/>
-
-
-
 
 
     <div
@@ -40,13 +61,15 @@ const verificationLinkSent = computed(
     >
       {{ __('client.verify_email.check_email') }}
     </div>
-     <PinputField v-model="form.code" @onCompleted="submit"></PinputField>
+
+     <PinputField v-model="form.code" ></PinputField>
 
       <div class="mt-4 flex flex-col items-center justify-between">
         <PrimaryButton
+            @click="submit"
             class="w-full"
             :class="{ 'opacity-25': form.processing }"
-            :disabled="form.processing">
+            :disabled="form.code.length != 6">
             <template #suffix>
                 <CheckIcon color="var(--dark-green-500)" />
             </template>
