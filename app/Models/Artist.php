@@ -69,9 +69,6 @@ class Artist extends Model implements HasMedia
     {
         $this->addMediaCollection('artists')
             ->singleFile()
-            ->useFallbackUrl(asset(''))
-            ->useFallbackPath(public_path('/'))
-            ->useDisk('tenant_'.tenant('id'))
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('thumb')
                     ->width(100)
