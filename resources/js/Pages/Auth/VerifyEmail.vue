@@ -21,7 +21,9 @@ const submit = () => {
         panelState.value = 'completed';
     }, 1000);
 };
-
+const onContinueClicked = () => {
+    router.visit(route('control.catalog.products.index'));
+}
 const verificationLinkSent = computed(
     () => props.status === 'verification-link-sent',
 );
@@ -43,7 +45,7 @@ const verificationLinkSent = computed(
         <p class="paragraph-sm c-sub-600 !text-center">
         Hesabınız başarılı bir şekilde oluşturuldu.<br>
         Hemen ilk yayınızı oluşturabilirsiniz.</p>
-        <PrimaryButton class="mt-6">
+        <PrimaryButton class="mt-6" @click="onContinueClicked">
             Hemen Başla
             <template #suffix>
                 <ChevronRightIcon color="var(--dark-green-500)" />
