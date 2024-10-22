@@ -1,6 +1,7 @@
 <template>
 
-  <AdminLayout :showDatePicker="false" @dateChoosen="onDateChoosen" :title="__('control.artist.header')" parentTitle="Katalog">
+  <AdminLayout :showDatePicker="false" @dateChoosen="onDateChoosen" :title="__('control.artist.header')"
+               parentTitle="Katalog">
 
 
     <AppTable
@@ -110,9 +111,7 @@ import {PrimaryButton, IconButton} from '@/Components/Buttons'
 import {AddIcon, TrashIcon, EditIcon, AppleMusicIcon, SpotifyIcon} from '@/Components/Icons'
 import {ArtistDialog} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
-import {Link} from "@inertiajs/vue3";
 import {StatusBadge, BasicBadge} from '@/Components/Badges'
-import {toast} from 'vue3-toastify';
 
 const defaultStore = useDefaultStore();
 const artistTable = ref();
@@ -152,8 +151,8 @@ const onDateChoosen = (e) => {
 }
 
 const onDone = (e) => {
-    console.log("DONEE KISMINA GELDİ");
-    artistTable.value.addRow(e);
+  console.log("DONEE KISMINA GELDİ");
+  artistTable.value.addRow(e);
 }
 </script>
 

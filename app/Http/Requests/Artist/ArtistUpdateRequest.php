@@ -31,7 +31,7 @@ class ArtistUpdateRequest extends FormRequest
             'ipi_code' => ['nullable'],
             'isni_code' => ['nullable'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg'],
-            'website' => ['nullable', 'url'],
+            'website' => ['nullable'],
             'phone' => ['nullable', 'string'],
             'platforms' => ['nullable', 'array'],
             'artist_branches' => ['required', 'array'],
