@@ -50,7 +50,7 @@ const submit = () => {
           v-model="form.phone"
           direction="vertical"
           :error="form.errors.phone"
-          :label="Telefon"
+          :label="__('client.register.fields.phone')"
           :placeholder="(__('client.register.fields.phone_placeholder'))"
           type="phone"/>
       <FormElement
