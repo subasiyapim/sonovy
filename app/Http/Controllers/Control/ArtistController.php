@@ -41,7 +41,7 @@ class ArtistController extends Controller
             ->advancedFilter();
 
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
-
+        $countryCodes = CountryServices::getCountryPhoneCodes();
         $usedGenres = ArtistServices::usedGenres($artists);
 
         $filters = [
@@ -66,7 +66,7 @@ class ArtistController extends Controller
             ]
         ];
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
-        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon',);
 
         return inertia('Control/Artists/Index', [
             'artists' => ArtistResource::collection($artists)->resource,
@@ -74,8 +74,8 @@ class ArtistController extends Controller
             'filters' => $filters,
             "artistBranches" => $artistBranches,
             "platforms" => $platforms,
+            'countryCodes' => $countryCodes,
         ]);
-
     }
 
     /**
@@ -215,8 +215,6 @@ class ArtistController extends Controller
                 ]
             );
         }
-
-
     }
 
     public function search(Request $request)
@@ -252,6 +250,5 @@ class ArtistController extends Controller
 
 
         return response()->json($data, Response::HTTP_OK);
-
     }
 }

@@ -15,7 +15,7 @@
     <div class="w-full" :class="error ? 'hasError' : ''">
 
 
-        <AppTextInput v-if="type=='text' || type=='web' || type=='phone'|| type=='password'" :type="type" v-model="element" :placeholder="placeholder"></AppTextInput>
+        <AppTextInput v-if="type=='text' || type=='web' || type=='phone'|| type=='password'" :config="config" :type="type" v-model="element" :placeholder="placeholder"></AppTextInput>
         <AppFancyCheckInput v-if="type=='fancyCheck'" :type="type" :config="config" v-model="element" :placeholder="placeholder"></AppFancyCheckInput>
         <AppTextareaInput v-else-if="type=='textarea'" v-model="element" :placeholder="placeholder" :config="config"></AppTextareaInput>
         <AppRadioInput v-else-if="type=='radio'" v-model="element" :placeholder="placeholder" :config="config"></AppRadioInput>

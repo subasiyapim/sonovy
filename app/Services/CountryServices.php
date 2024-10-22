@@ -51,7 +51,6 @@ class CountryServices
         ]);
 
         $country->update($request->all());
-
     }
 
     public static function get()
@@ -74,4 +73,19 @@ class CountryServices
         return $result;
     }
 
+
+    public static function getCountryPhoneCodes()
+    {
+        $countries = self::get();
+
+        $result = [];
+        foreach ($countries as $country) {
+            $result[] = [
+                'value' => $country['phone_code'],
+                'label' => $country['name'],
+                'iconKey' => $country['emoji']
+            ];
+        }
+        return $result;
+    }
 }
