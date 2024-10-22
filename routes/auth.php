@@ -52,7 +52,6 @@ Route::middleware('auth')->group(function () {
         ->name('verification.phone');
 
 
-
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
@@ -63,8 +62,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('phone/verification-notification', [PhoneVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
-        ->name('verification.phone');
-
+        ->name('verification.phonePost');
 
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
