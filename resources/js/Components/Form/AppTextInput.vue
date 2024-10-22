@@ -12,7 +12,7 @@
          <div v-if="type == 'phone'" class="border-r border-soft-200 c-soft-400 pe-2 me-2 paragraph-sm">
             <div class="w-12 max-w-xs mx-auto">
 
-                    <select id="options" name="options" class="block w-full phoneSelect paragraph-xs border-none focus:border-none focus:ring-0 focus:outline-none  radius-8">
+                    <select id="options" v-model="phoneCode" name="options" class="block w-full phoneSelect paragraph-xs border-none focus:border-none focus:ring-0 focus:outline-none  radius-8">
                         <option>+90</option>
                         <option>+91</option>
                         <option>+93</option>
@@ -44,8 +44,27 @@
     const emits = defineEmits(['update:modelValue','change','input']);
 
     const element = computed({
-        get:() => props.modelValue,
-        set:(value) => emits('update:modelValue',value)
+        get:() => {
+
+            if(props.type == 'phone'){
+                const splitted = props.modelValue.split(" ");
+                if(splitted.length > 1){
+                    phoneCode.value = splitted[0];
+
+                }
+                    return splitted[1];
+
+            }else {
+                return props.modelValue;
+
+            }
+        },
+        set:(value) => {
+            if(props.type == 'phone'){
+                value = `${phoneCode.value} ${value}`;
+            }
+            return emits('update:modelValue',value);
+        }
     })
 
     const isPasswordHidden = ref(true);
@@ -64,7 +83,7 @@
             isPasswordHidden.value = true;
         }
     }
-
+    const phoneCode = ref('+90');
 
     const onInput = (e) => {
         emits('input',e.target.value);

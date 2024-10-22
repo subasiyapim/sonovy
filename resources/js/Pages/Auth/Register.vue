@@ -46,11 +46,12 @@ const submit = () => {
           :label="__('client.register.fields.email')"
           :placeholder="__('client.register.fields.email_placeholder')"
           type="text"/>
+
       <FormElement
           v-model="form.phone"
           direction="vertical"
           :error="form.errors.phone"
-          :label="Telefon"
+          label="Telefon"
           :placeholder="(__('client.register.fields.phone_placeholder'))"
           type="phone"/>
       <FormElement
