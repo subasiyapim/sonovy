@@ -1,5 +1,4 @@
 <template>
-
    <div class="w-full flex h-9 border-text-input flex items-center radius-8 c-white-500" :class="hasSlot('icon') || type == 'web' || type == 'phone' ? 'px-2.5' :''">
         <div v-if="hasSlot('icon')">
             <slot  name="icon" />
@@ -12,11 +11,11 @@
          <div v-if="type == 'phone'" class="border-r border-soft-200 c-soft-400 pe-2 me-2 paragraph-sm">
             <div class="w-12 max-w-xs mx-auto">
 
-                    <select id="options" v-model="phoneCode" name="options" class="block w-full phoneSelect paragraph-xs border-none focus:border-none focus:ring-0 focus:outline-none  radius-8">
-                        <option>+90</option>
-                        <option>+91</option>
-                        <option>+93</option>
-                        <option>+92</option>
+                    <select id="options" v-model="phoneCode" @change="onChangedCode"  name="options" class="block  phoneSelect paragraph-xs border-none focus:border-none focus:ring-0 focus:outline-none  radius-8">
+                        <option v-for="code in config?.codes" :value="`+${code.value}`">
+                        {{code.iconKey}} +{{code.value}}
+                        </option>
+
                     </select>
                 </div>
         </div>
@@ -38,7 +37,8 @@
     const props = defineProps({
         type:{type:String},
         placeholder: { type: String},
-        modelValue:{}
+        modelValue:{},
+        config:{}
 
     })
     const emits = defineEmits(['update:modelValue','change','input']);
@@ -47,12 +47,16 @@
         get:() => {
 
             if(props.type == 'phone'){
-                const splitted = props.modelValue.split(" ");
-                if(splitted.length > 1){
-                    phoneCode.value = splitted[0];
+                if(props.modelValue){
+                    const splitted = props.modelValue.split(" ");
+                    if(splitted.length > 1){
+                        phoneCode.value = splitted[0];
 
+                    }
+                        return splitted[1];
                 }
-                    return splitted[1];
+                return props.modelValue;
+
 
             }else {
                 return props.modelValue;
@@ -91,6 +95,12 @@
     const onChange = (e) => {
         emits('change',e.target.value);
     }
+    const onChangedCode  = () => {
+        console.log("ELEÖENT",element.value);
+
+        emits('update:modelValue',`${phoneCode.value} ${element.value}` )
+    }
+
 </script>
 
 <style scoped>

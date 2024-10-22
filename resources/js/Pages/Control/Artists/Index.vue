@@ -5,6 +5,7 @@
 
 
     <AppTable
+    :hasSelect="true"
         buttonLabel="Sanatçı Ekle"
         ref="artistTable"
         v-model="usePage().props.artists"
@@ -21,22 +22,27 @@
             </div>
             <div>
               <a :href="route('control.catalog.artists.show',scope.row.id)"
-                 class="c-sub-600 text-sm leading-4 font-bold">{{ scope.row.name }}</a>
+                 class="font-poppins table-name-text c-sub-600">{{ scope.row.name }}</a>
               <div class="flex flex-row gap-x-2 items-center" v-if="scope.row.platforms">
+
                 <template v-for="platform in scope.row.platforms" :key="platform.id">
-                  <a v-if="platform.code === 'spotify'"
-                     :href="platform.pivot.url"
+
+                  <div class="flex items-center" v-if="platform.id == 2">
+                    <a
+                        :href="platform.url"
+                        target="_blank"
+                        class="flex items-center gap-2 paragraph-xs c-sub-600">
+                        <SpotifyIcon/>
+                        {{ platform?.url?.split("/").pop() }}
+                    </a>
+                    <span class="paragraph-xs c-sub-600 ms-3">·</span>
+                  </div>
+                  <a v-if="platform.id == 4"
+                     :href="platform.url"
                      target="_blank"
-                     class="flex items-center gap-x-1">
-                    <SpotifyIcon/>
-                    {{ platform.pivot.url }}
-                  </a>
-                  <a v-if="platform.code === 'apple'"
-                     :href="platform.pivot.url"
-                     target="_blank"
-                     class="flex items-center gap-x-1">
+                     class="flex items-center ms-3 gap-2 paragraph-xs c-sub-600">
                     <AppleMusicIcon/>
-                    {{ platform.pivot.url }}
+                    {{ platform?.url?.split("/").pop().split("?")[0] }}
                   </a>
                 </template>
 
@@ -49,19 +55,20 @@
         <template #default="scope">
 
           <StatusBadge>
-            {{ scope.row.status }}
+            <p class="label-xs">{{ scope.row.status }}</p>
           </StatusBadge>
         </template>
       </AppTableColumn>
 
       <AppTableColumn :label="__('control.artist.fields.tracks_count')">
         <template #default="scope">
-          {{ scope.row.tracks_count }}
+            <p class="paragraph-xs c-sub-600">  {{ scope.row.tracks_count }}</p>
         </template>
       </AppTableColumn>
 
       <AppTableColumn :label="__('control.artist.fields.genres')">
         <template #default="scope">
+
           <BasicBadge class="mx-1" v-for="(genre, index) in scope.row.genres" :key="index">
             {{ genre }}
           </BasicBadge>

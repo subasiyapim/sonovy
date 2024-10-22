@@ -86,6 +86,7 @@
                    v-model="form.phone"
                    :error="form.errors.phone"
                    label="Telefon Numarası"
+                   :config="{codes:usePage().props.countryCodes}"
                    type="phone"
                    placeholder="(555) 000-0000"></FormElement>
 

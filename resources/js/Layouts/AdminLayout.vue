@@ -106,7 +106,10 @@ const onDateCleared = (e) => {
 }
 
 
+onMounted(() => {
+   console.log(usePage().props.notification);
 
+});
 
 </script>
 

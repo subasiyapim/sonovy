@@ -4,14 +4,14 @@
 
     <div class="flex items-center mb-4">
       <div class="flex-1 flex items-center gap-7">
-        <div v-for="(filter,index) in config?.filters">
+        <div v-for="(filter,index) in config?.filters" class="flex items-end">
           <span class="label-xs c-sub-600"> {{filter.title}}:</span>
 
           <select
                 @change="onFilterSelected($event,filter)"
 
-              class="smallSelect mt-1 inline !appearance-none  iconless paragraph-xs !font-semibold border-none focus:outline-none focus:ring-0 c-blue-500">
-                <option :selected="!query[filter.param]">Seçiniz</option>
+              class="smallSelect pb-0 mt-1 inline !appearance-none  iconless paragraph-xs !font-semibold border-none focus:outline-none focus:ring-0 c-blue-500">
+                <option :selected="!query[filter.param]">Tümü</option>
                 <option v-for="option in filter.options" :selected="query[filter.param] == option.value" :value="option.value">{{option.label}}</option>
           </select>
         </div>
@@ -25,8 +25,8 @@
                 </template>
             </AppTextInput>
         </div>
-        <div class="w-48">
-            <PrimaryButton class="w-full" v-if="showAddButton" @click="$emit('addNewClicked',$event)">
+        <div>
+            <PrimaryButton class="w-auto" v-if="showAddButton" @click="$emit('addNewClicked',$event)">
             <template #icon>
                     <AddIcon color="var(--dark-green-500)" />
             </template>
@@ -39,7 +39,7 @@
   <table class="w-full appTable">
     <thead>
     <tr class="border border-white-600">
-        <th v-if="hasSelect" class="bg-white-500" >
+        <th v-if="hasSelect" class="bg-white-500 w-6" >
             <button class="appCheckBox " @click="selectAll" :class="selectedRowIndexes.length == data.length  ? 'checked' : (selectedRowIndexes.length == 0 ? '' : 'half') "></button>
         </th>
         <th @click="onClickHeader(column)" :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns" :key="index">

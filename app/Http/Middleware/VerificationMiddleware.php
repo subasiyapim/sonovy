@@ -16,17 +16,17 @@ class VerificationMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Setting::where(
-            'key',
-            'email_verification'
-        )->first()->value == 1 && auth()->user()->email_verified_at == null) {
-            return redirect()->route('verification.notice');
-        } elseif (Setting::where(
-            'key',
-            'otp_verification'
-        )->first()->value == 1 && auth()->user()->is_verified == 0) {
-            return redirect()->route('verification.phone');
-        }
+        // if (Setting::where(
+        //     'key',
+        //     'email_verification'
+        // )->first()->value == 1 && auth()->user()->email_verified_at == null) {
+        //     return redirect()->route('verification.notice');
+        // } elseif (Setting::where(
+        //     'key',
+        //     'otp_verification'
+        // )->first()->value == 1 && auth()->user()->is_verified == 0) {
+        //     return redirect()->route('verification.phone');
+        // }
 
         return $next($request);
     }
