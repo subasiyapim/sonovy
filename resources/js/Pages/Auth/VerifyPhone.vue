@@ -16,7 +16,7 @@ const panelState = ref(null);
 const submit = () => {
     panelState.value = 'loading';
 
-    form.post(route('phone.verification'));
+    form.post(route('verification.phone'));
     setTimeout(() => {
         panelState.value = 'completed';
     }, 1000);
@@ -53,15 +53,15 @@ const verificationLinkSent = computed(
         </PrimaryButton>
     </template>
     <Head title="Email Verification"/>
-       <h1 class="label-xl c-strong-950 !text-center" v-text="__('client.verify_email.title')"/>
-        <p class="paragraph-sm c-sub-600 !text-center mb-6" v-text=" __('client.verify_email.description',{email:'asdsd'})"/>
+       <h1 class="label-xl c-strong-950 !text-center" v-text="__('client.verify_phone.title')"/>
+        <p class="paragraph-sm c-sub-600 !text-center mb-6" v-text=" __('client.verify_phone.description',{email:'asdsd'})"/>
 
 
     <div
         class="mb-4 text-sm font-medium text-green-600 dark:text-green-400"
         v-if="verificationLinkSent"
     >
-      {{ __('client.verify_email.check_email') }}
+      {{ __('client.verify_phone.check_email') }}
     </div>
 
      <PinputField v-model="form.code" ></PinputField>
@@ -75,7 +75,7 @@ const verificationLinkSent = computed(
             <template #suffix>
                 <CheckIcon color="var(--dark-green-500)" />
             </template>
-          {{ __('client.verify_email.submit') }}
+          {{ __('client.verify_phone.submit') }}
         </PrimaryButton>
 
         <div class="text-end">

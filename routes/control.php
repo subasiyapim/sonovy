@@ -19,6 +19,8 @@ use App\Http\Controllers\Control\SiteController;
 use App\Http\Controllers\Control\UpcController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PubController;
+use App\Http\Middleware\VerificationMiddleware;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Control\RoleController;
 use App\Http\Controllers\Control\UserController;
@@ -58,7 +60,10 @@ use App\Http\Controllers\Control\EarningReportController;
 
 
 Route::group(
-    ['middleware' => ['auth', 'verified'], 'prefix' => 'control', 'as' => 'control.',], function () {
+    [
+        'middleware' => ['auth', VerificationMiddleware::class], 'prefix' => 'control',
+        'as' => 'control.',
+    ], function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -119,7 +124,7 @@ Route::group(
     Route::post('preferred-plan/{plan}', [PlanController::class, 'preferredPlan'])->name('preferred-plan');
     Route::apiResource('plan-items', PlanItemController::class)->names('plan-items');
 
-    Route::resource('countries', CountryController::class)->names('countries');
+    //Route::resource('countries', CountryController::class)->names('countries');
     Route::resource('announcements', AnnouncementController::class)->names('announcements');
     Route::post('announcements/destroy-all',
         [AnnouncementController::class, 'destroyAll'])->name('announcements.destroy-all');
@@ -239,9 +244,8 @@ Route::group(
             ->name('artists-platform-search');
 
         Route::get('labels', [LabelController::class, 'search'])->name('labels');
-        Route::get('countries', [CountryController::class, 'search'])
-            ->name('countries')->withoutMiddleware('auth:sanctum');
-        Route::get('states', [CountryController::class, 'search'])->name('states')->withoutMiddleware('auth:sanctum');
+        //Route::get('countries', [CountryController::class, 'search'])->name('countries')->withoutMiddleware('auth:sanctum');
+        //Route::get('states', [CountryController::class, 'search'])->name('states')->withoutMiddleware('auth:sanctum');
         Route::get('cities', [
             CityController::class, 'search'
         ])->name('cities')->withoutMiddleware('auth:sanctum');

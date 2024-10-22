@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\Setting;
 use App\Models\User;
+use App\Services\SMSService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,6 +23,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
+        $verified_method = Setting::whereIn('key', ['sms_message_twilio', 'sms_message_netgsm'])->get();
         return Inertia::render('Auth/Register');
     }
 
@@ -39,7 +42,10 @@ class RegisteredUserController extends Controller
             'phone' => $request->validated()['phone'],
         ]);
 
+
         event(new Registered($user));
+
+        SMSService::sendSMS($user->phone, __('auth.phone_confirm_sms_message'));
 
         Auth::login($user);
 

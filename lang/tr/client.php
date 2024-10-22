@@ -92,6 +92,13 @@ return [
         'logout' => 'Çıkış yap',
         'check_email' => 'Kayıt sırasında verdiğiniz e-posta adresine yeni bir doğrulama bağlantısı gönderilmiştir.',
     ],
+    'verify_phone' => [
+        'title' => 'GSM No Doğrualama',
+        'description' => ':phone nolu telefonunuza 6 haneli doğrulama kodu gönderdik. Lütfen kodu girniz',
+        'submit' => 'Kodu Doğrula',
+        'logout' => 'Çıkış yap',
+
+    ],
     'forgot_password' => [
         'title' => 'Şifremi Sıfırla',
         'subtitle' => 'Şifrenizi sıfırlamak için e-posta adresinize 6 haneli sıfırlama kodu göndereceğiz.',
