@@ -21,13 +21,13 @@ class UserVerifyService
      * @param  User  $user
      * @return void
      */
-    public static function generate(User $user): void
+    public static function sendVerifyEmail(User $user)
     {
+
         $settings = Cache::remember('verification_settings', 60, function () {
             return Setting::whereIn('key', ['email_verification', 'otp_verification'])
                 ->pluck('value', 'key');
         });
-
         if (self::isEmailVerificationEnabled($settings) && !$user->hasVerifiedEmail()) {
             try {
                 $verificationCodeEmail = self::makeCode($user, 'email');
@@ -37,11 +37,19 @@ class UserVerifyService
                 Log::error("Email gönderimi başarısız: {$e->getMessage()} for user ID {$user->id}");
             }
         }
+    }
 
+    public static function sendVerifySms(User $user)
+    {
+
+        $settings = Cache::remember('verification_settings', 60, function () {
+            return Setting::whereIn('key', ['email_verification', 'otp_verification'])
+                ->pluck('value', 'key');
+        });
         if (self::isOtpVerificationEnabled($settings) && !$user->is_verified) {
             try {
                 $verificationCodePhone = self::makeCode($user, 'phone');
-                $smsMessage = __('auth.phone_confirm_sms_message').': '.$verificationCodePhone;
+                $smsMessage = __('auth.phone_confirm_sms_message') . ': ' . $verificationCodePhone;
                 SMSService::sendSMS($user->phone, $smsMessage);
                 Log::info("SMS verification code sent to user ID {$user->id}");
             } catch (\Exception $e) {
@@ -50,6 +58,7 @@ class UserVerifyService
         }
     }
 
+
     /**
      * Create or update a verification code for the user.
      *
@@ -57,7 +66,7 @@ class UserVerifyService
      * @param  string  $type  ('email' or 'phone')
      * @return string
      */
-    protected static function makeCode(User $user, string $type): string
+    protected static function makeCode(User $user,  $type): string
     {
         $code = random_int(100000, 999999);
 

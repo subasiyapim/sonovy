@@ -2,7 +2,7 @@
 import {computed, ref} from 'vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import {PrimaryButton} from '@/Components/Buttons';
-import {Head, Link, useForm,usePage} from '@inertiajs/vue3';
+import {Head, Link, useForm,usePage,router} from '@inertiajs/vue3';
 import PinputField from '@/Components/Pinput/PinputField.vue';
 import InputError from "@/Components/InputError.vue";
 import {MessageIcon2, ChevronLeftIcon, CheckIcon, CheckFilledIcon, ChevronRightIcon} from '@/Components/Icons'
@@ -36,7 +36,7 @@ const submit = async () => {
     }
 };
 const onContinueClicked = () => {
-  router.visit(route('control.catalog.products.index'));
+  router.visit(route('control.dashboard'));
 }
 const verificationLinkSent = computed(
     () => props.status === 'verification-link-sent',

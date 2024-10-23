@@ -43,7 +43,7 @@ const submit = async () => {
 
 };
 const onContinueClicked = () => {
-  router.visit(route('control.catalog.products.index'));
+  router.visit(route('control.dashboard'));
 }
 const verificationLinkSent = computed(
     () => props.status === 'verification-link-sent',

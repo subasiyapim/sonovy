@@ -27,7 +27,7 @@
 
 
       <div class="flex-1 overflow-scroll hideScroll">
-        <MenuItem title="Dashboard" :icon="DashboardIcon">
+        <MenuItem title="Dashboard" :path="route('control.dashboard')" :icon="DashboardIcon">
 
         </MenuItem>
         <MenuItem title="Katalog" :icon="DashboardIcon">

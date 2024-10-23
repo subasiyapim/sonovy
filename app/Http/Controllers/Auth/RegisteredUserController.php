@@ -42,7 +42,7 @@ class RegisteredUserController extends Controller
         ]);
 
 
-        UserVerifyService::generate($user);
+
 
         Auth::login($user);
 

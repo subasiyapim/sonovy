@@ -55,18 +55,6 @@ class EmailVerificationNotificationController extends Controller
 
             $user->update(['email_verified_at' => now()]);
 
-            $settings = Setting::whereIn('key', ['email_verification', 'otp_verification'])
-                ->pluck('value', 'key');
-
-            if (
-                isset($settings['otp_verification']) &&
-                $settings['otp_verification'] == 1 &&
-                $user->is_verified == 0
-            ) {
-                DB::commit();
-                return redirect()->route('verification.phone');
-            }
-
             DB::commit();
             return response()->json([
                 "success" => true,

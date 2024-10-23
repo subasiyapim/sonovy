@@ -17,7 +17,12 @@ class PhoneVerificationPromptController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse|Response
     {
-        return $request->user()->is_verified
+
+        $hasVerifiedEmail = $request->user()->is_verified;
+        if (!$hasVerifiedEmail) {
+            UserVerifyService::sendVerifySms($request->user());
+        }
+        return $hasVerifiedEmail
             ? redirect()->intended(route('control.dashboard', absolute: false))
             : Inertia::render('Auth/VerifyPhone', ['status' => session('status')]);
     }

@@ -24,10 +24,10 @@ class VerifyEmailController extends Controller
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
+
         return response()->json([
             "message" =>
             __('auth.phone_verified_successfully'),
         ], Response::HTTP_OK);
-        // return redirect()->intended(route('control.dashboard', absolute: false) . '?verified=1');
     }
 }
