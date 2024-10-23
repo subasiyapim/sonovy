@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Label\LabelStoreRequest;
 use App\Http\Requests\Label\LabelUpdateRequest;
 use App\Models\Label;
+use App\Services\CountryServices;
 use App\Services\LabelServices;
 use App\Services\MediaServices;
 use Illuminate\Support\Facades\Gate;
@@ -24,9 +25,10 @@ class LabelController extends Controller
         $labels = Label::with('country')->advancedFilter();
 
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        // getActiveCountriesFromInputFormat
+        $countryCodes = CountryServices::getCountryPhoneCodes();
 
-        return inertia('Control/Labels/Index', compact('labels', 'countries'));
-
+        return inertia('Control/Labels/Index', compact('labels', 'countries', 'countryCodes'));
     }
 
 
@@ -73,9 +75,7 @@ class LabelController extends Controller
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
         $label->load('country', 'products.songs', 'user');
-        return inertia('Control/Labels/Show', compact('label','countries'));
-
-
+        return inertia('Control/Labels/Show', compact('label', 'countries'));
     }
 
     public function edit(Label $label)
@@ -85,7 +85,6 @@ class LabelController extends Controller
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'name', 'id', 'emoji');
 
         return inertia('Control/Labels/Edit', compact('label', 'countries'));
-
     }
 
     /**
@@ -148,6 +147,5 @@ class LabelController extends Controller
                 ]
             );
         }
-
     }
 }

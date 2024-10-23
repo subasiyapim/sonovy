@@ -118,7 +118,7 @@ return [
         'album_notfound' => 'Henüz ekli bir albüm bulunmamaktadır.',
         'fields' => [
             'id' => 'ID',
-            'name' => 'Sanatçı Ad Soyad',
+            'name' => 'Sanatçı Adı',
             'name_placeholder' => 'Örn: Şebnem Ferah, Tarkan vb.',
             'platforms' => 'Platformdan Gelen Sonuçlar',
             'country' => 'Ülke',
@@ -153,7 +153,7 @@ return [
             'status_inactive' => 'Pasif sanatçı',
             'genre' => 'Tarz',
             'genres' => 'Tarzlar',
-            'tracks_count' => 'Toplam Parça Sayısı',
+            'tracks_count' => 'Top. Parça Sayısı',
         ],
         'artist_info' => 'Sanatçının Bilgileri',
         'artist_albums' => 'Sanatçının Albümleri',

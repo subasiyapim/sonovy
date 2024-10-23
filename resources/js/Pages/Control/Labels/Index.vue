@@ -1,7 +1,7 @@
 <template>
   <AdminLayout :showDatePicker="false" title="Tüm Plak Şirketleri" parentTitle="Katalog">
 
-    <AppTable :hasSelect="true" buttonLabel="Platform Ekle" ref="pageTable"   :config="appTableConfig" v-model="usePage().props.labels" @addNewClicked="openDialog">
+    <AppTable :hasSelect="true" buttonLabel="Plak Şirketi Ekle" ref="pageTable"   :config="appTableConfig" v-model="usePage().props.labels" @addNewClicked="openDialog">
       <AppTableColumn label="Plak Şirketi" align="left" sortable="name">
         <template #default="scope">
 
@@ -9,25 +9,54 @@
             <div class="w-12 h-12 rounded-full overflow-hidden">
               <img v-if="scope.row.image" :src="scope.row.image.thumb">
             </div>
-             <a :href="route('control.catalog.labels.show',scope.row.id)" class="c-sub-600 text-sm leading-4 font-bold">{{ scope.row.name }}</a>
+             <a :href="route('control.catalog.labels.show',scope.row.id)" class="c-sub-600 table-name-text">{{ scope.row.name }}</a>
 
 
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Ülke" >
-        <template #default="scope">{{ scope.row.name }}</template>
+      <AppTableColumn label="Ülke"  sortable="name">
+        <template #default="scope">
+
+       <div class="flex items-center gap-4">
+             <span class="text-xl">
+                {{ scope.row?.country?.emoji }}
+             </span>
+            <p class="paragraph-xs c-sub-600">
+                    {{ scope.row?.country?.name }}
+            </p>
+       </div>
+
+        </template>
       </AppTableColumn>
 
-      <AppTableColumn label="Telefon">
-        <template #default="scope">{{ scope.row.phone }}</template>
+      <AppTableColumn label="Telefon" sortable="name">
+        <template #default="scope">
+            <div class="flex gap-4">
+                <PhoneIcon color="var(--neutral-500)" />
+                <p class="paragraph-xs c-sub-600 w-max">
+                    {{ scope.row.phone }}
+                </p>
+            </div>
+        </template>
       </AppTableColumn>
 
-      <AppTableColumn label="E-mail">
-        <template #default="scope">{{ scope.row.email }}</template>
+      <AppTableColumn label="E-mail" sortable="name">
+        <template #default="scope">
+            <div class="flex gap-4">
+                <LabelEmailIcon color="var(--neutral-500)" />
+                <p class="paragraph-xs c-sub-600">
+                    {{ scope.row.email }}
+                </p>
+            </div>
+        </template>
       </AppTableColumn>
-      <AppTableColumn label="Hakediş Durum">
-        <template #default="scope">-</template>
+      <AppTableColumn label="Durum" sortable="name">
+        <template #default="scope">
+         <StatusBadge class="w-max">
+            <p class="label-xs">{{ scope.row.status ?? 'Aktif Şirket' }}</p>
+          </StatusBadge>
+        </template>
       </AppTableColumn>
       <AppTableColumn label="Aksiyonlar" align="right">
         <template #default="scope">
@@ -69,7 +98,8 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton, IconButton} from '@/Components/Buttons'
-import {AddIcon, LabelsIcon, ArtistsIcon, TrashIcon, EditIcon} from '@/Components/Icons'
+import {StatusBadge} from '@/Components/Badges'
+import {AddIcon, LabelsIcon, ArtistsIcon, TrashIcon, EditIcon,PhoneIcon,LabelEmailIcon} from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {LabelDialog} from '@/Components/Dialog';
 const pageTable = ref();

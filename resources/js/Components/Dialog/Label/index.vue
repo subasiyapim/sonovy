@@ -28,7 +28,7 @@
        </div>
         <SectionHeader title="İLETİŞİM BİLGİLERİ" />
         <div class="p-5 flex flex-col gap-6">
-            <FormElement label-width="190px"  :error="form.errors.phone" v-model="form.phone" label="Telefon Numarası" type="phone"  placeholder="(555) 000-0000" ></FormElement>
+            <FormElement label-width="190px"  :error="form.errors.phone" v-model="form.phone" :config="{codes:usePage().props.countryCodes}" label="Telefon Numarası" type="phone"  placeholder="(555) 000-0000" ></FormElement>
             <FormElement label-width="190px"  :error="form.errors.email" v-model="form.email" label="E-mail" type="text"  placeholder="examp@example.com" ></FormElement>
             <FormElement label-width="190px"  :error="form.errors.website" v-model="form.website" label="Websitesi" placeholder="www.example.com" type="web"> </FormElement>
        </div>
@@ -101,7 +101,7 @@ const onSubmit = (e) => {
         .post(route('control.catalog.labels.update', props.label.id), {
             preserveScroll: true,
             onSuccess: (e) => {
-                location.reload();
+                // location.reload();
             },
             onError: (e) => {
               console.log("HATAAA",e);

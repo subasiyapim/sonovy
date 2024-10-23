@@ -56,6 +56,7 @@ import MinusIcon from './MinusIcon.vue';
 import PlayFilledIcon from './PlayFilledIcon.vue';
 import PersonCardIcon from './PersonCardIcon.vue';
 import AppLoadingIcon from './AppLoadingIcon.vue';
+import LabelEmailIcon from './LabelEmailIcon.vue';
 import TidalIcon from './TidalIcon.vue';
 import YoutubeIcon from "./YoutubeIcon.vue";
 import Icon from './Icon.vue';
@@ -122,4 +123,5 @@ export {
     LinkIcon,
     PercantageIcon,
     PhoneIcon,
+    LabelEmailIcon,
 }
