@@ -168,7 +168,7 @@ class ArtistController extends Controller
     {
         $artist->update($request->validated());
 
-        $artist->artistBranches()->sync($request->input('artist_branches', []));
+        $artist->artistBranches()->syncWithoutDetaching($request->input('artist_branches', []));
 
         if ($request->hasFile('image')) {
             MediaServices::upload($artist, $request->file('image'), 'artists');
