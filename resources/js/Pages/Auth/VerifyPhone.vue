@@ -2,7 +2,7 @@
 import {computed, ref} from 'vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import {PrimaryButton} from '@/Components/Buttons';
-import {Head, Link, useForm} from '@inertiajs/vue3';
+import {Head, Link, useForm,usePage} from '@inertiajs/vue3';
 import PinputField from '@/Components/Pinput/PinputField.vue';
 import {MessageIcon2, ChevronLeftIcon, CheckIcon, CheckFilledIcon, ChevronRightIcon} from '@/Components/Icons'
 
@@ -56,7 +56,7 @@ const verificationLinkSent = computed(
     <Head title="Email Verification"/>
     <h1 class="label-xl c-strong-950 !text-center" v-text="__('client.verify_phone.title')"/>
     <p class="paragraph-sm c-sub-600 !text-center mb-6"
-       v-text=" __('client.verify_phone.description',{email:'asdsd'})"/>
+       v-text=" __('client.verify_phone.description',{phone:usePage().props?.auth?.user?.phone})"/>
 
 
     <div
