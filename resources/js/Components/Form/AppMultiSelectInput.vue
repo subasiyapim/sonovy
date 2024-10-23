@@ -5,7 +5,7 @@
             <slot name="icon" />
         </div>
        <input @click="open" class="absolute inset-0 radius-8 border-none focus:ring-0 appSelectInput c-strong-950" :value="getShowLabel" :placeholder="placeholder">
-        <div class="selectButton bg-blue-300 flex items-center border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm cursor-pointer">
+        <div class="selectButton bg-blue-300 flex items-center border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm !font-normal cursor-pointer">
             <div class="flex-1 pointer-events-none c-soft-400">
                 {{placeholder}}
             </div>

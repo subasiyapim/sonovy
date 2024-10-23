@@ -1,32 +1,32 @@
 <template>
-  <BaseDialog v-model="isDialogOn" align="right" :title="artist ? 'Sanatçı Düzenle' : 'Sanatçı Ekle'"
-              description="Temel bilgileri girerek sanatçı oluşturabilirsiniz. ">
+  <BaseDialog v-model="isDialogOn" align="right" :title="artist ? __('control.artist.edit') : __('control.artist.add')"
+              :description="__('control.artist.dialog.description')">
     <template #icon>
       <AddIcon color="var(--dark-green-950)"/>
     </template>
 
-    <SectionHeader title="SANATÇI HAKKINDA"/>
+    <SectionHeader :title="__('control.artist.dialog.header_1')"/>
 
     <div class="p-5 flex flex-col gap-6">
       <FormElement label-width="190px"
                    :required="true"
                    :error="form.errors.image"
                    v-model="image"
-                   label="Fotoğraf"
+                   :label="__('control.artist.fields.image')"
                    type="upload"
-                   :config="{label:'Fotoğraf Yükle',note:'Min 400x400px, PNG or JPEG',image:artist?.image?.thumb}"/>
+                   :config="{label:__('control.artist.fields.image_desc'),note:'Min 400x400px, PNG or JPEG',image:artist?.image?.thumb}"/>
 
       <FormElement label-width="190px"
                    :required="true"
                    :error="form.errors.name"
-                   label="Ad Soyad"
+                   :label="__('control.artist.fields.name')"
                    type="custom">
 
         <ArtistInput @onPlatformsChoosen="onPlatformsChoosen"
                     :choosenItunesField="choosenItunesField"
                     :choosenSpotifyField="choosenSpotifyField"
                     v-model="form.name"
-                    placeholder="Lütfen giriniz"/>
+                    :placeholder="__('control.artist.fields.name_placeholder')"/>
 
       </FormElement>
 
@@ -35,26 +35,26 @@
                    :error="form.errors.about"
                    :config="{letter:500}"
                    v-model="form.about"
-                   label="Sanatçı Hakkında"
+                   :label="__('control.artist.fields.about')"
                    type="textarea"
-                   placeholder="Sanatçı Hakkında"/>
+                   :placeholder="__('control.artist.fields.about_placeholder')"/>
 
       <FormElement label-width="190px"
                    :required="true"
                    :error="form.errors.artist_branches"
                    v-model="form.artist_branches"
                    :config="artistBranchesMultiSelect"
-                   label="Sanat Dalları"
+                    :label="__('control.artist.fields.artist_branches')"
                    type="multiselect"
-                   placeholder="Lütfen giriniz"/>
+                   :placeholder="__('control.artist.fields.artist_branches_placeholder')"/>
 
       <FormElement label-width="190px"
                    :required="true"
                    :error="form.errors.country_id"
                    v-model="form.country_id"
-                   label="Ülke"
+                    :label="__('control.artist.fields.country')"
                    :config="countryConfig"
-                   placeholder="Seçiniz"
+                    :placeholder="__('control.artist.fields.country_placeholder')"
                    type="select">
 
         <template #option="scope">
@@ -71,21 +71,21 @@
       <FormElement label-width="190px"
                    :error="form.errors.ipi_code"
                    v-model="form.ipi_code"
-                   label="IPI"
-                   placeholder="Lütfen giriniz"/>
+                   :label="__('control.artist.fields.ipi_code')"
+                   :placeholder="__('control.artist.fields.ipi_code_placeholder')"/>
 
       <FormElement label-width="190px" :error="form.errors.isni_code"
                    v-model="form.isni_code"
-                   label="ISNI"
-                   placeholder="Lütfen giriniz"/>
+                    :label="__('control.artist.fields.isni_code')"
+                   :placeholder="__('control.artist.fields.isni_code_placeholder')"/>
     </div>
-    <SectionHeader title="İLETİŞİM BİLGİLERİ"/>
+    <SectionHeader :title="__('control.artist.dialog.header_2')"/>
     <div class="p-5 flex flex-col gap-6">
 
       <FormElement label-width="190px"
                    v-model="form.phone"
                    :error="form.errors.phone"
-                   label="Telefon Numarası"
+                   :label="__('control.artist.fields.phone')"
                    :config="{codes:usePage().props.countryCodes}"
                    type="phone"
                    placeholder="(555) 000-0000"></FormElement>
@@ -93,21 +93,21 @@
       <FormElement label-width="190px"
                    v-model="form.website"
                    :error="form.errors.website"
-                   label="Websitesi"
-                   placeholder="www.example.com"
+                   :label="__('control.artist.fields.website')"
+                   :placeholder="__('control.artist.fields.website_placeholder')"
                    type="web"/>
     </div>
-    <SectionHeader title="PLATFORMLAR"/>
+    <SectionHeader :title="__('control.artist.dialog.header_3')"/>
     <div class="p-5 flex flex-col">
       <div v-for="platform in form.platforms" class="flex gap-4">
         <FormElement class="flex-1"
                      direction="vertical"
                      v-model="platform.value"
                      label-width="190px"
-                     label="Platform"
+                     :label="__('control.artist.fields.platform_id')"
                      type="select"
                      :config="{data:usePage().props.platforms}"
-                     placeholder="Platform Seç">
+                     :placeholder="__('control.artist.fields.platform_id_placeholder')">
           <template #option="scope">
             <span class="paragraph-sm c-strong-950">
               {{ scope.data.label }}
@@ -120,20 +120,24 @@
           </template>
         </FormElement>
         <FormElement class="flex-1" direction="vertical" v-model="platform.url" label-width="190px"
-                     label="Platform Link" placeholder="lütfen giriniz"/>
+                     :label="__('control.artist.fields.platform_link')" :placeholder="__('control.artist.fields.platform_link_placeholder')"/>
       </div>
       <button @click="form.platforms.push({})" class="flex items-center gap-2">
         <AddIcon color="var(--blue-500)"/>
-        <p class="label-xs c-blue-500">Platform Ekle</p>
+        <p class="label-xs c-blue-500">
+            {{__('control.artist.fields.platform_link_button')}}
+        </p>
       </button>
     </div>
     <div class="flex p-5 border-t border-soft-200 gap-4">
-      <RegularButton @click="isDialogOn = false" class="flex-1">İptal</RegularButton>
+      <RegularButton @click="isDialogOn = false" class="flex-1">
+      {{__('control.general.cancel')}}
+      </RegularButton>
       <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
         <template #icon>
           <AddIcon/>
         </template>
-        Kaydet
+           {{__('control.general.save')}}
       </PrimaryButton>
     </div>
   </BaseDialog>

@@ -1,8 +1,8 @@
 <template>
   <div class="flex items-start" :class="direction == 'horizontal' ? 'flex-row' : 'flex-col mb-2'">
-    <div class="flex items-center gap-1" :style="`width:${labelWidth}`">
+    <div class="flex items-start gap-1" :style="`width:${labelWidth}`">
       <label class="label-sm c-strong-950">{{ label }}</label>
-      <span v-if="required" class="c-blue-500 label-sm">*</span>
+      <span v-if="required" class="c-blue-500 label-sm flex items-start">*</span>
       <tippy v-if="hasSlot('tooltip')">
         <InfoFilledIcon color="var(--soft-300)"/>
 

@@ -168,6 +168,7 @@
 .appSelectInput::placeholder{
     color: var(--soft-400);
     @extend .label-sm;
+    font-weight: 400 !important;
 }
 
 

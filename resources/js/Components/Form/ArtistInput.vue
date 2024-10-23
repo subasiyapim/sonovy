@@ -3,7 +3,7 @@
    <div v-click-outside="handleClickOutside" class="w-full flex h-9 border-text-input flex items-center radius-8 c-white-500 relative">
 
 
-        <input v-model="element" @input="onInput" @change="onChange" v-debounce="400" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent label-sm c-strong-950" :type="type" :placeholder="placeholder">
+        <input v-model="element" @input="onInput" @change="onChange" v-debounce="400" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent label-sm !font-normal c-strong-950" :type="type" :placeholder="placeholder">
         <div class="flex gap-1 pe-3">
 
              <tippy :allowHtml="true" :sticky="true" :interactive="true">

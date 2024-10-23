@@ -1,8 +1,8 @@
 <template>
-  <AdminLayout :showDatePicker="false" title="Tüm Plak Şirketleri" parentTitle="Katalog">
+  <AdminLayout :showDatePicker="false" :title="__('control.label.header')" parentTitle="Katalog">
 
-    <AppTable :hasSelect="true" buttonLabel="Plak Şirketi Ekle" ref="pageTable"   :config="appTableConfig" v-model="usePage().props.labels" @addNewClicked="openDialog">
-      <AppTableColumn label="Plak Şirketi" align="left" sortable="name">
+    <AppTable :hasSelect="true" :buttonLabel="__('control.label.add_new')" ref="pageTable"   :config="appTableConfig" v-model="usePage().props.labels" @addNewClicked="openDialog">
+      <AppTableColumn :label="__('control.label.title_singular')" align="left" sortable="name">
         <template #default="scope">
 
           <div class="flex items-center gap-2 ">
@@ -15,7 +15,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Ülke"  sortable="name">
+      <AppTableColumn :label="__('control.label.fields.country_id')"  sortable="name">
         <template #default="scope">
 
        <div class="flex items-center gap-4">
@@ -30,7 +30,7 @@
         </template>
       </AppTableColumn>
 
-      <AppTableColumn label="Telefon" sortable="name">
+      <AppTableColumn :label="__('control.label.fields.phone')" sortable="name">
         <template #default="scope">
             <div class="flex gap-4">
                 <PhoneIcon color="var(--neutral-500)" />
@@ -41,7 +41,7 @@
         </template>
       </AppTableColumn>
 
-      <AppTableColumn label="E-mail" sortable="name">
+      <AppTableColumn :label="__('control.label.fields.email')" sortable="name">
         <template #default="scope">
             <div class="flex gap-4">
                 <LabelEmailIcon color="var(--neutral-500)" />
@@ -51,14 +51,14 @@
             </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Durum" sortable="name">
+      <AppTableColumn :label="__('control.label.fields.status')" sortable="name">
         <template #default="scope">
          <StatusBadge class="w-max">
             <p class="label-xs">{{ scope.row.status ?? 'Aktif Şirket' }}</p>
           </StatusBadge>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Aksiyonlar" align="right">
+      <AppTableColumn :label="__('control.general.actions')" align="right">
         <template #default="scope">
           <div class="flex gap-3">
             <IconButton @click="deleteRow(scope.row)">
@@ -73,14 +73,14 @@
       <template #empty>
         <div class="flex flex-col items-center justify-center gap-8">
           <div>
-            <h2 class="label-medium c-strong-950">Henüz yayınız bulunmamaktadır.</h2>
-            <h3 class="paragraph-medium c-neutral-500">Oluşturucağınız tüm yayınlar burada listelenecektir.</h3>
+            <h2 class="label-medium c-strong-950">{{__('control.label.table.empty_header')}}</h2>
+            <h3 class="paragraph-medium c-neutral-500">{{__('control.label.table.empty_description')}}</h3>
           </div>
           <PrimaryButton>
             <template #icon>
               <AddIcon/>
             </template>
-            İlk Yayını Oluştur
+            {{__('control.label.table.empty_button')}}
           </PrimaryButton>
         </div>
       </template>
