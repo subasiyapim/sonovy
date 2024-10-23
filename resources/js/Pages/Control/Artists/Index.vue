@@ -51,7 +51,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Durum" sortable="status">
+      <AppTableColumn :label="__('control.artist.fields.status')" sortable="status">
         <template #default="scope">
 
           <StatusBadge>

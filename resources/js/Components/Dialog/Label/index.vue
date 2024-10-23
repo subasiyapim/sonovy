@@ -3,13 +3,13 @@
         <template #icon>
             <AddIcon color="var(--dark-green-950)" />
         </template>
-        <SectionHeader title="PLAK ŞİRKETİ HAKKINDA" />
+        <SectionHeader :title="__('control.label.dialog.header_1')" />
 
        <div class="p-5 flex flex-col gap-6">
-            <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="form.image" label="Logo" type="upload" :config="{label:'Logo Yükle',note:'Min 400x400px, PNG or JPEG',image:label?.image?.thumb}"></FormElement>
-            <FormElement label-width="190px" :required="true" :error="form.errors.name" v-model="form.name" label="Plak Şirketi Adı" placeholder="Lütfen giriniz"></FormElement>
-            <FormElement label-width="190px" :required="true" :error="form.errors.address" v-model="form.address" :config="{letter:500}"   label="Adres" type="textarea" placeholder="Firma adresi" ></FormElement>
-            <FormElement label-width="190px" :required="true" :error="form.errors.country_id" v-model="form.country_id" label="Ülke" type="select" :config="countryConfig" placeholder="Seçiniz">
+            <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="form.image" :label="__('control.label.fields.image')" type="upload" :config="{label:__('control.label.fields.image_description'),note:'Min 400x400px, PNG or JPEG',image:label?.image?.thumb}"></FormElement>
+            <FormElement label-width="190px" :required="true" :error="form.errors.name" v-model="form.name" :label="__('control.label.fields.name')" :placeholder="__('control.label.fields.name_placeholder')"></FormElement>
+            <FormElement label-width="190px" :required="true" :error="form.errors.address" v-model="form.address" :config="{letter:500}"   :label="__('control.label.fields.address')" type="textarea" :placeholder="__('control.label.fields.address_placeholder')" ></FormElement>
+            <FormElement label-width="190px" :required="true" :error="form.errors.country_id" v-model="form.country_id" :label="__('control.label.fields.country_id')" type="select" :config="countryConfig" :placeholder="__('control.label.fields.country_placeholder')">
                  <template #option="scope">
                     <span>{{scope.data.iconKey}}</span>
                     <span class="paragraph-sm c-strong-950">
@@ -26,18 +26,21 @@
                 </template>
             </FormElement>
        </div>
-        <SectionHeader title="İLETİŞİM BİLGİLERİ" />
+        <SectionHeader :title="__('control.label.dialog.header_2')" />
         <div class="p-5 flex flex-col gap-6">
-            <FormElement label-width="190px"  :error="form.errors.phone" v-model="form.phone" :config="{codes:usePage().props.countryCodes}" label="Telefon Numarası" type="phone"  placeholder="(555) 000-0000" ></FormElement>
-            <FormElement label-width="190px"  :error="form.errors.email" v-model="form.email" label="E-mail" type="text"  placeholder="examp@example.com" ></FormElement>
-            <FormElement label-width="190px"  :error="form.errors.website" v-model="form.website" label="Websitesi" placeholder="www.example.com" type="web"> </FormElement>
+            <FormElement label-width="190px"  :error="form.errors.phone" v-model="form.phone" :config="{codes:usePage().props.countryCodes}" :label="__('control.label.fields.phone')" type="phone"  placeholder="(555) 000-0000" ></FormElement>
+            <FormElement label-width="190px"  :error="form.errors.email" v-model="form.email" :label="__('control.label.fields.email')" type="text"  placeholder="examp@example.com" ></FormElement>
+            <FormElement label-width="190px"  :error="form.errors.website" v-model="form.website" :label="__('control.label.fields.web')" placeholder="www.example.com" type="web"> </FormElement>
        </div>
 
        <div class="flex p-5 border-t border-soft-200 gap-4">
-        <RegularButton @click="isDialogOn = false"  class="flex-1">İptal</RegularButton>
+        <RegularButton @click="isDialogOn = false"  class="flex-1">
+              {{__('control.general.cancel')}}
+        </RegularButton>
         <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled"  class="flex-1">
             <template #icon><AddIcon /></template>
-            Kaydet</PrimaryButton>
+             {{__('control.general.save')}}
+        </PrimaryButton>
        </div>
     </BaseDialog>
 </template>

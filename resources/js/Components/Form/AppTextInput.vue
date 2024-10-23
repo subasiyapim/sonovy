@@ -20,7 +20,7 @@
                 </div>
         </div>
 
-        <input v-model="element" @input="onInput" @change="onChange" v-debounce="400" ref="inputEl" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent label-sm" :type="type" :placeholder="placeholder">
+        <input v-model="element" @input="onInput" @change="onChange" v-debounce="400" ref="inputEl" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent label-sm !font-normal" :type="type" :placeholder="placeholder">
         <IconButton v-if="type == 'password'" @click="onEyeClicked">
            <EyeOnIcon  v-if="isPasswordHidden" color="var(--sub-600)" />
            <EyeOffIcon v-else color="var(--sub-600)" />
