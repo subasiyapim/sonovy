@@ -66,7 +66,7 @@ class ArtistController extends Controller
             ]
         ];
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
-        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon',);
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
 
         return inertia('Control/Artists/Index', [
             'artists' => ArtistResource::collection($artists)->resource,
@@ -173,7 +173,7 @@ class ArtistController extends Controller
         if ($request->hasFile('image')) {
             MediaServices::upload($artist, $request->file('image'), 'artists');
         } elseif ($artist->platforms && $artist->platforms->contains('code', 'spotify')) {
-            SpotifyImageUploadJob::dispatch($artist);
+            // SpotifyImageUploadJob::dispatch($artist);
         }
 
         return redirect()->route('control.catalog.artists.index')->with(
