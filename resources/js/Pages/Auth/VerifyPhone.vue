@@ -4,6 +4,7 @@ import AuthLayout from '@/Layouts/AuthLayout.vue';
 import {PrimaryButton} from '@/Components/Buttons';
 import {Head, Link, useForm,usePage} from '@inertiajs/vue3';
 import PinputField from '@/Components/Pinput/PinputField.vue';
+import InputError from "@/Components/InputError.vue";
 import {MessageIcon2, ChevronLeftIcon, CheckIcon, CheckFilledIcon, ChevronRightIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore'
 const props = defineProps({
@@ -16,14 +17,23 @@ const form = ref({
 
 const crudStore = useCrudStore();
 const panelState = ref(null);
-const submit = () => {
+const error = ref(null);
+const submit = async () => {
     panelState.value = 'loading';
 
-    crudStore.post(route('verification.phonePost'),form.value)
+    const response = await crudStore.post(route('verification.phonePost'),form.value)
 
-    setTimeout(() => {
-        panelState.value = 'completed';
-    }, 1000);
+    if(!response['success']){
+        setTimeout(() => {
+            panelState.value = null;
+            error.value = response['message'];
+        }, 1000);
+
+    }else {
+          setTimeout(() => {
+            panelState.value = 'completed';
+        }, 1000);
+    }
 };
 const onContinueClicked = () => {
   router.visit(route('control.catalog.products.index'));
@@ -70,13 +80,12 @@ const verificationLinkSent = computed(
     </div>
 
     <PinputField v-model="form.code"></PinputField>
-
+    <input-error :message="error" v-if="error"/>
     <div class="mt-4 flex flex-col items-center justify-between">
       <PrimaryButton
           @click="submit"
           class="w-full"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.code.length != 6">
+          :disabled="form?.code?.length != 6">
         <template #suffix>
           <CheckIcon color="var(--dark-green-500)"/>
         </template>

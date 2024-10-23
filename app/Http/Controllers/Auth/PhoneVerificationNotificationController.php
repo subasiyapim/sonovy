@@ -28,7 +28,11 @@ class PhoneVerificationNotificationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            return response()->json([
+                "success" => false,
+                "message" =>
+                __('auth.invalid_code')
+            ]);
         }
 
         $user = Auth::user();
@@ -43,7 +47,11 @@ class PhoneVerificationNotificationController extends Controller
             ->first();
 
         if (!$code) {
-            return back()->withErrors(['code' => __('auth.invalid_code')])->withInput();
+            return response()->json([
+                "success" => false,
+                "message" =>
+                __('auth.invalid_code')
+            ]);
         }
 
         DB::beginTransaction();
@@ -55,14 +63,19 @@ class PhoneVerificationNotificationController extends Controller
 
             DB::commit();
             return response()->json([
+                "success" => true,
                 "message" =>
-                    __('auth.phone_verified_successfully'),
+                __('auth.phone_verified_successfully'),
             ], Response::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Phone verification failed for user ID '.$user->id.': '.$e->getMessage());
 
-            return back()->withErrors(['error' => __('auth.verification_failed')])->withInput();
+
+            return response()->json([
+                "success" => false,
+                "message" =>
+                __('auth.phone_verification_failed')
+            ]);
         }
     }
 }

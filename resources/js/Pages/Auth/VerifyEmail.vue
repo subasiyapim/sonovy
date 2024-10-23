@@ -6,30 +6,39 @@ import {Head, Link, useForm, router,usePage} from '@inertiajs/vue3';
 import PinputField from '@/Components/Pinput/PinputField.vue';
 import {MessageIcon2, ChevronLeftIcon, CheckIcon, CheckFilledIcon, ChevronRightIcon} from '@/Components/Icons'
 import InputError from "@/Components/InputError.vue";
+import {useCrudStore} from '@/Stores/useCrudStore'
 
+const crudStore = useCrudStore();
 const props = defineProps({
   status: Object
 });
 
-const form = useForm({
-  code: "",
+const form = ref({
+  code: null,
 });
 const panelState = ref(null);
-const submit = () => {
-  panelState.value = 'loading';
+const error = ref(null)
+const submit = async () => {
+    panelState.value = 'loading';
 
-  form.post(route('verification.send'), {
-    preserveState: true,
-    onSuccess: () => {
-        panelState.value = 'completed';
-    },
-    onError: () => {
-      panelState.value = null;
-    },
-    onFinish: () => {
-      form.reset();
+
+
+    const response = await crudStore.post(route('verification.send'),form.value)
+
+
+    console.log("RESPONNSE",response);
+    if(!response['success']){
+        setTimeout(() => {
+            panelState.value = null;
+            error.value = response['message'];
+        }, 1000);
+
+    }else {
+          setTimeout(() => {
+            panelState.value = 'completed';
+        }, 1000);
     }
-  });
+
 
 
 };
@@ -49,7 +58,7 @@ const verificationLinkSent = computed(
     </template>
     <template #loading>
       <p class="c-strong-950 label-xl">Doğrulanıyor...</p>
-      <p class="label-sm c-sub-600 !text-center">Telefon numaranız doğrulanıyor, <br>
+      <p class="label-sm c-sub-600 !text-center">E-Posta adresiniz doğrulanıyor, <br>
         lütfen bekleyiniz.</p>
     </template>
     <template #completed>
@@ -78,13 +87,12 @@ const verificationLinkSent = computed(
     </div>
 
     <PinputField v-model="form.code"></PinputField>
-    <input-error :message="form.errors.code" v-if="form.errors.code"/>
+    <input-error :message="error" v-if="error"/>
     <div class="mt-4 flex flex-col items-center justify-between">
       <PrimaryButton
           @click="submit"
           class="w-full"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.code.length != 6">
+          :disabled="form?.code?.length != 6">
         <template #suffix>
           <CheckIcon color="var(--dark-green-500)"/>
         </template>

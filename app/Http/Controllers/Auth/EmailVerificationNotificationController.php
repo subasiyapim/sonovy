@@ -16,20 +16,20 @@ use App\Models\Setting;
 
 class EmailVerificationNotificationController extends Controller
 {
-    /**
-     * Verify the user's email using the provided code.
-     *
-     * @param  Request  $request
-     * @return RedirectResponse
-     */
-    public function store(Request $request): RedirectResponse
+
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'code' => 'required|string|size:6', // Kod uzunluğunu ihtiyacınıza göre ayarlayın
         ]);
 
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            return response()->json([
+                "success" => false,
+                "message" =>
+                __('auth.invalid_code'),
+            ]);
+            // return back()->withErrors($validator)->withInput();
         }
 
         $user = $request->user();
@@ -40,7 +40,12 @@ class EmailVerificationNotificationController extends Controller
             ->first();
 
         if (!$code) {
-            return back()->withErrors(['code' => __('auth.invalid_code')])->withInput();
+            return response()->json([
+                "success" => false,
+                "message" =>
+                __('auth.invalid_code'),
+            ]);
+            // return back()->withErrors(['code' => __('auth.invalid_code')])->withInput();
         }
 
         DB::beginTransaction();
@@ -63,13 +68,22 @@ class EmailVerificationNotificationController extends Controller
             }
 
             DB::commit();
-
-            return redirect()->intended(route('control.dashboard', ['absolute' => false]));
+            return response()->json([
+                "success" => true,
+                "message" =>
+                __('auth.email_verified_succesfully')
+            ]);
+            // return redirect()->intended(route('control.dashboard', ['absolute' => false]));
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Email verification failed for user ID '.$user->id.': '.$e->getMessage());
+            Log::error('Email verification failed for user ID ' . $user->id . ': ' . $e->getMessage());
 
-            return back()->withErrors(['error' => __('auth.verification_failed')])->withInput();
+            return response()->json([
+                "success" => false,
+                "message" =>
+                __('auth.email_verified_succesfully')
+            ]);
+            // return back()->withErrors(['error' => __('auth.verification_failed')])->withInput();
         }
     }
 }
