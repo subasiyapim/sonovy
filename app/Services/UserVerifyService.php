@@ -46,10 +46,12 @@ class UserVerifyService
             return Setting::whereIn('key', ['email_verification', 'otp_verification'])
                 ->pluck('value', 'key');
         });
+
         if (self::isOtpVerificationEnabled($settings) && !$user->is_verified) {
             try {
                 $verificationCodePhone = self::makeCode($user, 'phone');
-                $smsMessage = __('auth.phone_confirm_sms_message') . ': ' . $verificationCodePhone;
+
+                $smsMessage = __('auth.phone_confirm_sms_message').': '.$verificationCodePhone;
                 SMSService::sendSMS($user->phone, $smsMessage);
                 Log::info("SMS verification code sent to user ID {$user->id}");
             } catch (\Exception $e) {
@@ -66,7 +68,7 @@ class UserVerifyService
      * @param  string  $type  ('email' or 'phone')
      * @return string
      */
-    protected static function makeCode(User $user,  $type): string
+    protected static function makeCode(User $user, $type): string
     {
         $code = random_int(100000, 999999);
 

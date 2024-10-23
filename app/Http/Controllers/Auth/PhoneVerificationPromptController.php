@@ -17,7 +17,6 @@ class PhoneVerificationPromptController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse|Response
     {
-
         $hasVerifiedEmail = $request->user()->is_verified;
         if (!$hasVerifiedEmail) {
             UserVerifyService::sendVerifySms($request->user());
