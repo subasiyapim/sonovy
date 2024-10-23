@@ -196,6 +196,8 @@ return [
             'web' => 'Web sitesi',
             'commission_rate' => 'Hakediş Oranı',
             'status' => "Durum",
+            'status_inactive' => 'Pasif',
+            'status_active' => 'Aktif'
         ],
         'table' => [
             'empty_header' => "Henüz yayınız bulunmamaktadır",
