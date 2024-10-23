@@ -19,9 +19,9 @@ class PhoneVerificationNotificationController extends Controller
      * Verify the user's phone using the provided code.
      *
      * @param  Request  $request
-     * @return RedirectResponse
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'code' => 'required|string|size:6', // Kodun 6 haneli olduğunu varsayıyoruz
@@ -56,11 +56,11 @@ class PhoneVerificationNotificationController extends Controller
             DB::commit();
             return response()->json([
                 "message" =>
-                __('auth.phone_verified_successfully'),
+                    __('auth.phone_verified_successfully'),
             ], Response::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Phone verification failed for user ID ' . $user->id . ': ' . $e->getMessage());
+            Log::error('Phone verification failed for user ID '.$user->id.': '.$e->getMessage());
 
             return back()->withErrors(['error' => __('auth.verification_failed')])->withInput();
         }
