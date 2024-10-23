@@ -60,5 +60,6 @@ return [
     'phone_confirm_didnot_receive' => 'Kod Gelmediyse',
     'phone_confirm_resend' => 'Tekrar gönder',
     'phone_confirm_button' => 'Onayla',
-    'phone_confirm_sms_message' => 'SMS Doğrulama Kodunuz'
+    'phone_confirm_sms_message' => 'Telefon Doğrulama Kodunuz',
+    'invalid_code' => 'Geçersiz Kod',
 ];

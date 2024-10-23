@@ -18,6 +18,7 @@ class UserCode extends Model
     protected $fillable = [
         'code',
         'user_id',
+        'type'
     ];
 
     public $timestamps = false;

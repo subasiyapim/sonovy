@@ -74,7 +74,8 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'credit_cards',
         'commission_rate',
         'uuid',
-        'last_login_at'
+        'last_login_at',
+        'email_verified_at'
     ];
 
     protected array $filterable = [

@@ -3,9 +3,12 @@
 namespace App\Http\Middleware;
 
 use App\Models\Setting;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use App\Services\UserVerifyService;
 
 class VerificationMiddleware
 {
@@ -16,15 +19,26 @@ class VerificationMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Setting::where(
-            'key',
-            'email_verification'
-        )->first()->value == 1 && auth()->user()->email_verified_at == null) {
+        $settings = Setting::whereIn('key', ['email_verification', 'otp_verification'])
+            ->pluck('value', 'key');
+
+        $user = auth()->user();
+
+        // Email doğrulama kontrolü
+        if (
+            isset($settings['email_verification']) &&
+            $settings['email_verification'] == 1 &&
+            $user->email_verified_at === null
+        ) {
             return redirect()->route('verification.notice');
-        } elseif (Setting::where(
-            'key',
-            'otp_verification'
-        )->first()->value == 1 && auth()->user()->is_verified == 0) {
+        }
+
+        // OTP (SMS) doğrulama kontrolü
+        if (
+            isset($settings['otp_verification']) &&
+            $settings['otp_verification'] == 1 &&
+            $user->is_verified == 0
+        ) {
             return redirect()->route('verification.phone');
         }
 
