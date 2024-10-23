@@ -5,22 +5,25 @@ import {PrimaryButton} from '@/Components/Buttons';
 import {Head, Link, useForm,usePage} from '@inertiajs/vue3';
 import PinputField from '@/Components/Pinput/PinputField.vue';
 import {MessageIcon2, ChevronLeftIcon, CheckIcon, CheckFilledIcon, ChevronRightIcon} from '@/Components/Icons'
-
+import {useCrudStore} from '@/Stores/useCrudStore'
 const props = defineProps({
   status: Object
 });
 
-const form = useForm({
-  code: "",
-});
+const form = ref({
+    code:null
+})
+
+const crudStore = useCrudStore();
 const panelState = ref(null);
 const submit = () => {
-  panelState.value = 'loading';
+    panelState.value = 'loading';
 
-  form.post(route('verification.phonePost'));
-  setTimeout(() => {
-    panelState.value = 'completed';
-  }, 1000);
+    crudStore.post(route('verification.phonePost'),form.value)
+
+    setTimeout(() => {
+        panelState.value = 'completed';
+    }, 1000);
 };
 const onContinueClicked = () => {
   router.visit(route('control.catalog.products.index'));
