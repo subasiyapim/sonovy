@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserCode;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -53,12 +54,13 @@ class PhoneVerificationNotificationController extends Controller
             $user->update(['is_verified' => true]);
 
             DB::commit();
-
-            return redirect()->intended(route('control.dashboard'))->with('success',
-                __('auth.phone_verified_successfully'));
+            return response()->json([
+                "message" =>
+                __('auth.phone_verified_successfully'),
+            ], Response::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Phone verification failed for user ID '.$user->id.': '.$e->getMessage());
+            Log::error('Phone verification failed for user ID ' . $user->id . ': ' . $e->getMessage());
 
             return back()->withErrors(['error' => __('auth.verification_failed')])->withInput();
         }

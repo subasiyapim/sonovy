@@ -26,7 +26,7 @@
       </SecondaryButton>
 
 
-      <div class="flex-1 overflow-scroll">
+      <div class="flex-1 overflow-scroll hideScroll">
         <MenuItem title="Dashboard" :icon="DashboardIcon">
 
         </MenuItem>

@@ -4,7 +4,7 @@
         <a :href="path" class="flex items-center gap-2 menuItem" :class="checkIsActive ? 'active' : ''"  @click.prevet="onClick">
             <component :is="icon" />
             <div class="flex-1">
-                <p>{{title}}</p>
+                <p class="label-sm">{{title}}</p>
             </div>
             <div v-if="hasSlot('sub')">
                  <ChevronRightIcon

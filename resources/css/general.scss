@@ -213,3 +213,8 @@
 .font-poppins{
     font-family: 'Poppins', sans-serif !important;
 }
+
+
+.hideScroll::-webkit-scrollbar {
+  display: none;
+}

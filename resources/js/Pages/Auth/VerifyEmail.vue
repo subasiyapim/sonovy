@@ -2,7 +2,7 @@
 import {computed, ref} from 'vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import {PrimaryButton} from '@/Components/Buttons';
-import {Head, Link, useForm, router} from '@inertiajs/vue3';
+import {Head, Link, useForm, router,usePage} from '@inertiajs/vue3';
 import PinputField from '@/Components/Pinput/PinputField.vue';
 import {MessageIcon2, ChevronLeftIcon, CheckIcon, CheckFilledIcon, ChevronRightIcon} from '@/Components/Icons'
 import InputError from "@/Components/InputError.vue";
@@ -21,21 +21,17 @@ const submit = () => {
   form.post(route('verification.send'), {
     preserveState: true,
     onSuccess: () => {
-      setTimeout(() => {
         panelState.value = 'completed';
-      }, 1000);
     },
     onError: () => {
-      panelState.value = '';
+      panelState.value = null;
     },
     onFinish: () => {
       form.reset();
     }
   });
 
-  setTimeout(() => {
-    panelState.value = 'completed';
-  }, 1000);
+
 };
 const onContinueClicked = () => {
   router.visit(route('control.catalog.products.index'));
@@ -71,7 +67,7 @@ const verificationLinkSent = computed(
     <Head title="Email Verification"/>
     <h1 class="label-xl c-strong-950 !text-center" v-text="__('client.verify_email.title')"/>
     <p class="paragraph-sm c-sub-600 !text-center mb-6"
-       v-text=" __('client.verify_email.description',{email:'asdsd'})"/>
+       v-text=" __('client.verify_email.description',{email:usePage().props?.auth?.user?.email})"/>
 
 
     <div
