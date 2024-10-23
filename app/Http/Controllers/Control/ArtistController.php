@@ -115,7 +115,7 @@ class ArtistController extends Controller
         if ($request->hasFile('image')) {
             MediaServices::upload($artist, $request->file('image'));
         } elseif ($artist->platforms && $artist->platforms->contains('code', 'spotify')) {
-            SpotifyImageUploadJob::dispatch($artist);
+            // SpotifyImageUploadJob::dispatch($artist);
         }
 
 
