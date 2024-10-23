@@ -93,7 +93,7 @@ return [
         'check_email' => 'Kayıt sırasında verdiğiniz e-posta adresine yeni bir doğrulama bağlantısı gönderilmiştir.',
     ],
     'verify_phone' => [
-        'title' => 'GSM No Doğrualama',
+        'title' => 'GSM No Doğrulama',
         'description' => ':phone nolu telefonunuza 6 haneli doğrulama kodu gönderdik. Lütfen kodu girniz',
         'submit' => 'Kodu Doğrula',
         'logout' => 'Çıkış yap',

@@ -5,35 +5,36 @@ import {PrimaryButton} from '@/Components/Buttons';
 import {Head, Link, useForm,usePage,router} from '@inertiajs/vue3';
 import PinputField from '@/Components/Pinput/PinputField.vue';
 import InputError from "@/Components/InputError.vue";
-import {MessageIcon2, ChevronLeftIcon, CheckIcon, CheckFilledIcon, ChevronRightIcon} from '@/Components/Icons'
+import {MessageIcon2, ChevronLeftIcon, CheckIcon, ChevronRightIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore'
+
 const props = defineProps({
   status: Object
 });
 
 const form = ref({
-    code:null
+  code: null
 })
 
 const crudStore = useCrudStore();
 const panelState = ref(null);
 const error = ref(null);
 const submit = async () => {
-    panelState.value = 'loading';
+  panelState.value = 'loading';
 
-    const response = await crudStore.post(route('verification.phonePost'),form.value)
+  const response = await crudStore.post(route('verification.phonePost'), form.value)
 
-    if(!response['success']){
-        setTimeout(() => {
-            panelState.value = null;
-            error.value = response['message'];
-        }, 1000);
+  if (!response['success']) {
+    setTimeout(() => {
+      panelState.value = null;
+      error.value = response['message'];
+    }, 1000);
 
-    }else {
-          setTimeout(() => {
-            panelState.value = 'completed';
-        }, 1000);
-    }
+  } else {
+    setTimeout(() => {
+      panelState.value = 'completed';
+    }, 1000);
+  }
 };
 const onContinueClicked = () => {
   router.visit(route('control.dashboard'));
