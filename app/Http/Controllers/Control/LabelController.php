@@ -22,13 +22,45 @@ class LabelController extends Controller
     {
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $labels = Label::with('country')->advancedFilter();
+        $labels = Label::with('country', 'products')
+            ->when(request('status') == 1, function ($query) {
+                $query->whereDoesntHave('products');
+            })
+            ->when(request('status') == 2, function ($query) {
+                $query->whereHas('products');
+            })
+            ->when(request()->country, function ($query) {
+                if (request()->country != 'Tümü') {
+                    $query->where('country_id', request()->country);
+                }
+            })
+            ->advancedFilter();
 
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
-        // getActiveCountriesFromInputFormat
         $countryCodes = CountryServices::getCountryPhoneCodes();
-
-        return inertia('Control/Labels/Index', compact('labels', 'countries', 'countryCodes'));
+        $filters = [
+            [
+                'title' => __('control.artist.fields.status'),
+                'param' => 'status',
+                'options' => [
+                    [
+                        'value' => 1,
+                        'label' => __('control.label.fields.status_inactive')
+                    ],
+                    [
+                        'value' => 2,
+                        'label' => __('control.label.fields.status_active')
+                    ],
+                ],
+            ],
+            [
+                'title' => __('control.label.fields.country_id'),
+                'param' => 'country',
+                'options' => getDataFromInputFormat(\App\Models\System\Country::get(['id', 'name', 'emoji']), 'id',
+                    'name', 'emoji')
+            ]
+        ];
+        return inertia('Control/Labels/Index', compact('labels', 'countries', 'countryCodes', 'filters'));
     }
 
 
