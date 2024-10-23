@@ -17,19 +17,6 @@ class TwilioServices extends Facade
 
     public function __construct()
     {
-
-        /*Cache::forget('settings');
-
-        $settings = Cache::rememberForever('settings', function () {
-            return Setting::pluck('value', 'key')->all();
-        });
-
-        config()->set('settings', $settings);
-
-        $this->sid = config('settings.twilio_sid');
-        $this->token = config('settings.twilio_token');
-        $this->number = config('settings.twilio_number');*/
-
         $integrasion = Integration::where('id', 5)->first();
         $this->sid = $integrasion->key;
         $this->token = $integrasion->secret;

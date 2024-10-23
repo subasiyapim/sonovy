@@ -4,6 +4,11 @@ import AppSelectInput from './AppSelectInput.vue';
 import AppUploadInput from './AppUploadInput.vue';
 import DragUploadInput from './DragUploadInput.vue';
 import AppTextareaInput from './AppTextareaInput.vue';
+import TusUploadInput from './TusUploadInput.vue';
+import AppFancyCheckInput from './AppFancyCheckInput.vue';
+import AppRadioInput from './AppRadioInput.vue';
+import AppIncrementer from './AppIncrementer.vue';
+import ArtistInput from './ArtistInput.vue';
 export  {
     AppTextInput,
     AppSelectInput,
@@ -11,4 +16,10 @@ export  {
     AppUploadInput,
     DragUploadInput,
     AppTextareaInput,
+    TusUploadInput,
+    AppFancyCheckInput,
+    AppRadioInput,
+    AppIncrementer,
+    ArtistInput,
 }
+

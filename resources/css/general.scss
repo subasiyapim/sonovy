@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import './border.scss';
 @import './colors.scss';
 @import './background.scss';
@@ -12,6 +14,9 @@
    --dp-border-radius: 10px !important;
    --dp-font-size: 14px !important;
    --dp-text-color:var(--sub-600) !important;
+}
+*{
+    font-family: "Poppins", sans-serif;
 }
 .sub-menu-item{
      padding: 8px 12px;
@@ -110,17 +115,18 @@
     background-repeat: no-repeat;
     background-size: 8px 8px;
     padding-right: 1.3rem;
-    padding-top: 5px;
+    padding-top: 0px;
+    width: 95px;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
 .phoneSelect  {
 
-     background-image: url("data:image/svg+xml,%3Csvg%20width%3D%228%22%20height%3D%226%22%20viewBox%3D%220%200%208%206%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M4.00004%203.7034L6.97004%200.733398L7.81844%201.5818L4.00004%205.4002L0.181641%201.5818L1.03004%200.733398L4.00004%203.7034Z%22%20fill%3D%22%23335CFF%22%2F%3E%3C%2Fsvg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg%20width%3D%228%22%20height%3D%226%22%20viewBox%3D%220%200%208%206%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M4.00004%203.7034L6.97004%200.733398L7.81844%201.5818L4.00004%205.4002L0.181641%201.5818L1.03004%200.733398L4.00004%203.7034Z%22%20fill%3D%22%23525866%22%2F%3E%3C%2Fsvg%3E");
     padding: 0px;
     background-repeat: no-repeat;
     background-size: 8px 8px;
-
+    width: 65px;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
@@ -162,6 +168,7 @@
 .appSelectInput::placeholder{
     color: var(--soft-400);
     @extend .label-sm;
+    font-weight: 400 !important;
 }
 
 
@@ -179,4 +186,35 @@
 .Toastify__toast{
     min-height: auto !important;
     max-height: auto !important;
+}
+
+
+
+.pinField{
+    @extend .border-soft-200;
+    @extend .c-strong-950;
+    text-align: center;
+    font-size: 28px;
+    line-height: 32px;
+    width: 56px;
+    height: 64px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+}
+.pinField:focus{
+    @extend .bg-dark-green-25;
+    @extend .border-dark-green-600;
+    box-shadow: 0px 0px 0px 4px #99A0AE29;
+
+
+}
+
+.font-poppins{
+    font-family: 'Poppins', sans-serif !important;
+}
+
+
+.hideScroll::-webkit-scrollbar {
+  display: none;
 }

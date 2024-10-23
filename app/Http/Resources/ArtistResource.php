@@ -16,23 +16,52 @@ class ArtistResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection,
             'id' => $this->id,
             'name' => $this->name,
             'about' => $this->about,
             'country' => $this->country,
-            'platforms' => $this->platforms,
+            'platforms' => $this->getPlatformData(),
             'image' => $this->image,
+            'ipi_code' => $this->ipi_code,
+            'isni_code' => $this->isni_code,
+            'phone' => $this->phone,
+            'website' => $this->website,
             'status' => $this->products->count() > 0 ? 'Aktif sanatçı' : 'Pasif sanatçı',
             'tracks_count' => $this->products->count().' parça',
-            'artist_branches' => $this->artistBranches->pluck('name')->take(4),
-            'artist_branches_count' => $this->artistBranches->count() > 4 ? $this->artistBranches->count() - 4 : 0,
+            'genres' => $this->getGenres(),
+            'genres_count' => $this->getGenres()->count(),
+            'artist_branches' => $this->artistBranches,
         ];
     }
 
-    private function artistStatus(mixed $id)
+    private function getGenres()
     {
+        $genres = $this->products->flatMap(function ($product) {
+            $names = [];
 
+            if ($product->genre) {
+                $names[] = $product->genre->name;
+            }
 
+            if ($product->subGenre) {
+                $names[] = $product->subGenre->name;
+            }
+
+            return $names;
+        });
+
+        return $genres->unique()->values();
+    }
+
+    private function getPlatformData()
+    {
+        return $this->platforms->map(function ($platform) {
+            return [
+                'id' => $platform->id,
+                'name' => $platform->name,
+                'icon' => $platform->icon,
+                'url' => $platform->pivot->url,
+            ];
+        });
     }
 }

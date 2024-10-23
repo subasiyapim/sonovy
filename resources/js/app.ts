@@ -42,8 +42,9 @@ createInertiaApp({
                     component: 'tippy', // => <tippy/>
                     componentSingleton: 'tippy-singleton', // => <tippy-singleton/>,
                     defaultProps: {
-                        placement: 'auto-end',
+                        placement: 'top',
                         allowHTML: true,
+
                     }, // => Global default options * see all props
                 }
             )

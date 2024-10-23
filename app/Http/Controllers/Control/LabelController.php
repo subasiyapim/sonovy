@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Label\LabelStoreRequest;
 use App\Http\Requests\Label\LabelUpdateRequest;
 use App\Models\Label;
+use App\Services\CountryServices;
 use App\Services\LabelServices;
 use App\Services\MediaServices;
 use Illuminate\Support\Facades\Gate;
@@ -22,10 +23,12 @@ class LabelController extends Controller
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $labels = Label::with('country')->advancedFilter();
+
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        // getActiveCountriesFromInputFormat
+        $countryCodes = CountryServices::getCountryPhoneCodes();
 
-        return inertia('Control/Labels/Index', compact('labels','countries'));
-
+        return inertia('Control/Labels/Index', compact('labels', 'countries', 'countryCodes'));
     }
 
 
@@ -69,10 +72,10 @@ class LabelController extends Controller
     public function show(Label $label)
     {
         abort_if(Gate::denies('label_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
-        $label->load('country');
-
-        return response()->json($label->load('media'), Response::HTTP_OK);
+        $label->load('country', 'products.songs', 'user');
+        return inertia('Control/Labels/Show', compact('label', 'countries'));
     }
 
     public function edit(Label $label)
@@ -82,7 +85,6 @@ class LabelController extends Controller
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'name', 'id', 'emoji');
 
         return inertia('Control/Labels/Edit', compact('label', 'countries'));
-
     }
 
     /**
@@ -122,12 +124,28 @@ class LabelController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Label $label)
+    public function destroy(Label $label, Request $request)
     {
         abort_if(Gate::denies('label_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
+        $accept = $request->header('Accept');
         $label->delete();
 
-        return redirect()->back();
+
+        //TODO Code Refactor
+        $notification = [
+            'type' => 'success',
+            'message' => __('control.notification_deleted', ['model' => __('control.labels.title_singular')])
+        ];
+
+
+        if ($accept === 'application/json') {
+            return response()->json($notification, Response::HTTP_OK);
+        } else {
+            return redirect()->route('control.catalog.labels.index')->with(
+                [
+                    $notification
+                ]
+            );
+        }
     }
 }

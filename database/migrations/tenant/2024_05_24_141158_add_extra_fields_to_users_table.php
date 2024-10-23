@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::table('users', function (Blueprint $table) {
             $table->foreignIdFor(\App\Models\User::class, 'parent_id')->nullable()->after('id');
             $table->integer('commission_rate')->nullable()->after('credit_cards');
-            $table->foreignIdFor(\App\Models\State::class, 'state_id')->nullable()->after('country_id');
-            $table->foreignIdFor(\App\Models\City::class, 'city_id')->nullable()->after('state_id');
+            $table->foreignIdFor(\App\Models\System\District::class, 'district_id')->nullable()->after('country_id');
+            $table->foreignIdFor(\App\Models\System\City::class, 'city_id')->nullable()->after('district_id');
         });
     }
 

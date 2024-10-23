@@ -7,6 +7,9 @@ return [
         'privacy_policy' => 'Privacy Policy',
         'terms_of_service' => 'Terms of Service',
     ],
+    'notification' => [
+        'deleted_success' => ':model Başarıyla silindi.',
+    ],
     'home' => [
         'header_title' => 'Beautiful analytics to grow smarter',
         'header_description' => 'Powerful, self-serve product and growth analytics to help you convert, engage, and
@@ -83,11 +86,39 @@ return [
     ],
     'verify_email' => [
         'title' => 'Email Adresinizi Doğrulayın',
-        'description' => 'Kaydolduğunuz için teşekkürler! Başlamadan önce, size az önce e-posta ile gönderdiğimiz bağlantıya tıklayarak e-posta adresinizi doğrulayabilir misiniz? E-postayı almadıysanız, size memnuniyetle bir tane daha göndereceğiz.',
+        'description' => ':email eposta adresinize 6 haneli doğrulama kodu gönderdik. Lütfen kodu giriniz.',
         'resend_verification_email' => 'Doğrulama e-postasını tekrar gönder',
+        'submit' => 'Kodu Doğrula',
         'logout' => 'Çıkış yap',
         'check_email' => 'Kayıt sırasında verdiğiniz e-posta adresine yeni bir doğrulama bağlantısı gönderilmiştir.',
     ],
+    'verify_phone' => [
+        'title' => 'GSM No Doğrualama',
+        'description' => ':phone nolu telefonunuza 6 haneli doğrulama kodu gönderdik. Lütfen kodu girniz',
+        'submit' => 'Kodu Doğrula',
+        'logout' => 'Çıkış yap',
 
+    ],
+    'forgot_password' => [
+        'title' => 'Şifremi Sıfırla',
+        'subtitle' => 'Şifrenizi sıfırlamak için e-posta adresinize 6 haneli sıfırlama kodu göndereceğiz.',
+        'send_reset_link' => 'Kod gönder',
+        'back_btn' => 'Geri dön',
+        'email_sent' => 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.',
+        'email' => 'Email adresiniz',
+        'email_placeholder' => 'hello@sonovy.com',
+    ],
+    'forgot_password_pin' => [
+        'title' => 'Sıfırlama Kodunu Giriniz',
+        'subtitle' => ':email mail adresinize 6 haneli doğrulama kodu gönderdik. Lütfen kodu giriniz.',
+        'time' => ':time saniye içinde ',
+        'resend_code' => 'Kodu tekrar gönder',
+        'verify_code' => 'Kodu doğrula',
+        'back_btn' => 'Geri dön',
+        'validating_code' => 'Kod doğrulanıyor...',
+        'code' => 'Kod',
+        'code_incorrect' => 'Girdiğiniz kod yanlış. Lütfen tekrar deneyin.',
+        'code_expired' => 'Kodun süresi doldu. Lütfen tekrar deneyin.',
+    ]
 
 ];

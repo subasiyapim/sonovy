@@ -21,6 +21,9 @@ class LabelFactory extends Factory
         return [
             'name' => $this->faker->company,
             'country_id' => \App\Models\System\Country::inRandomOrder()->first()->id,
+            'phone' => $this->faker->phoneNumber,
+            'web' => $this->faker->url,
+            'email' => $this->faker->email,
             'address' => $this->faker->address,
             'added_by' => User::inRandomOrder()->first()->id,
         ];

@@ -1,6 +1,6 @@
 <template>
 
-  <a :href="path" :class="path == route(route().current()) ? 'active' :''" class="radius-8 sub-menu-item"><slot /></a>
+  <a :href="path !='#' ? route(path) : path" :class="path == route().current() ? 'active' :''" class="radius-8 sub-menu-item label-sm"><slot /></a>
 </template>
 
 <script setup>

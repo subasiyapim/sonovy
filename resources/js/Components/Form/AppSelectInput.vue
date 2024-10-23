@@ -4,12 +4,18 @@
         <div v-if="hasSlot('icon')">
             <slot name="icon" />
         </div>
-       <input @click="open" class="absolute inset-0 radius-8 border-none focus:ring-0 appSelectInput c-strong-950" :value="getShowLabel" :placeholder="placeholder">
-        <div class="selectButton bg-blue-300 flex items-center border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm cursor-pointer">
-            <div class="flex-1 pointer-events-none c-soft-400">
-                {{placeholder}}
-            </div>
+        <!-- <input v-if="!hasSlot('model')" @click="open" class="absolute inset-0 radius-8 border-none focus:ring-0 appSelectInput c-strong-950" :value="getShowLabel" :placeholder="placeholder"> -->
+        <div   @click="open"  class="absolute inset-0 flex items-center px-3 radius-8 border-none focus:ring-0 appSelectInput c-strong-950">
+             <span class="label-sm !font-normal c-soft-400" v-if="!element">{{placeholder}}</span>
+            <slot v-else-if="hasSlot('model')" name="model" :scope="element" />
+            <span  v-else>{{getShowLabel}}</span>
+        </div>
+        <div class="selectButton bg-blue-300 flex items-center justify-end border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm !font-normal cursor-pointer">
+            <!-- <div  class="flex-1 pointer-events-none c-soft-400">
+                <span v-if="!element">{{placeholder}}</span>
+            </div> -->
             <ChevronRightIcon
+
                 color="var(--soft-400)"
                 :class="{
                     'transform rotate-90 transition-transform duration-300': isOpen,
@@ -38,7 +44,8 @@
                             <div v-if="checkIfChecked(el[config.value ?? 'value'])" class="bg-dark-green-600 w-3 h-3 rounded-full border-dark-green-600">
                             </div>
                         </div>
-                        <span class="paragraph-sm c-strong-950"> {{el[config.label ?? 'label']}}</span>
+                        <slot v-if="hasSlot('option')" name="option" :scope="el" />
+                        <span v-else class="paragraph-sm c-strong-950"> {{el[config.label ?? 'label']}}</span>
                     </div>
                 </div>
                 <div v-else class="flex flex-col gap-5 items-center justify-center min-h-[224px] ">

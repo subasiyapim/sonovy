@@ -1,52 +1,68 @@
 <template>
 
-  <div>
+  <div  v-if="hasSearch || config?.filters" >
 
     <div class="flex items-center mb-4">
       <div class="flex-1 flex items-center gap-7">
-        <div v-for="(filter,index) in config?.filters">
+        <div v-for="(filter,index) in config?.filters" class="flex items-end">
           <span class="label-xs c-sub-600"> {{filter.title}}:</span>
 
           <select
                 @change="onFilterSelected($event,filter)"
 
-              class="smallSelect mt-1 inline !appearance-none  iconless paragraph-xs !font-semibold border-none focus:outline-none focus:ring-0 c-blue-500">
-                <option :selected="!query[filter.param]">Seçiniz</option>
+              class="smallSelect pb-0 mt-1 inline !appearance-none  iconless paragraph-xs !font-semibold border-none focus:outline-none focus:ring-0 c-blue-500">
+                <option :selected="!query[filter.param]">Tümü</option>
                 <option v-for="option in filter.options" :selected="query[filter.param] == option.value" :value="option.value">{{option.label}}</option>
           </select>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <AppTextInput @change="onSearch" @input="onInput" v-model="term" placeholder="Ara...">
-          <template #icon>
-            <SearchIcon color="var(--sub-600)"/>
-          </template>
-        </AppTextInput>
-        <PrimaryButton @click="$emit('addNewClicked',$event)" v-if="showAddButton"> Ekle</PrimaryButton>
+      <div v-if="(showAddButton || hasSearch)" class="flex items-center gap-2">
+        <div class="w-64">
+            <AppTextInput v-if="hasSearch"  @change="onSearch" @input="onInput" v-model="term" placeholder="Ara...">
+                <template #icon>
+                    <SearchIcon color="var(--sub-600)"/>
+                </template>
+            </AppTextInput>
+        </div>
+        <div>
+            <PrimaryButton class="w-auto" v-if="showAddButton" @click="$emit('addNewClicked',$event)">
+            <template #icon>
+                    <AddIcon color="var(--dark-green-500)" />
+            </template>
+                <p class="">{{buttonLabel ?? 'Ekle'}}</p>
+            </PrimaryButton>
+        </div>
       </div>
     </div>
   </div>
   <table class="w-full appTable">
     <thead>
     <tr class="border border-white-600">
-      <th @click="onClickHeader(column)" :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns" :key="index">
-        <div class="flex items-center gap-2 justify-start">
-          {{ column.props.label }}
-          <TableOrderIcon v-if="column.props.sortable" color="var(--sub-600)"/>
-        </div>
-      </th>
+        <th v-if="hasSelect" class="bg-white-500 w-6" >
+            <button class="appCheckBox " @click="selectAll" :class="selectedRowIndexes.length == data.length  ? 'checked' : (selectedRowIndexes.length == 0 ? '' : 'half') "></button>
+        </th>
+        <th @click="onClickHeader(column)" :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns" :key="index">
+
+            <div class="flex items-center gap-2 paragraph-xs c-sub-600" :class="column.props.align == 'center' ? 'justify-center' : (column.props.align == 'right' ? 'justify-end' : 'justify-start' )">
+            {{ column.props.label }}
+            <TableOrderIcon v-if="column.props.sortable" color="var(--sub-600)"/>
+            </div>
+        </th>
     </tr>
     </thead>
     <tbody>
     <tr v-for="(row, rowIndex) in data" :key="rowIndex">
-      <td v-for="(column, colIndex) in columns" :key="colIndex">
-        <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
-      </td>
+        <td v-if="hasSelect">
+              <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''" @click="onSelectRow(row)"></button>
+        </td>
+        <td v-for="(column, colIndex) in columns" :key="colIndex">
+            <render :rowIndex="rowIndex" :colIndex="colIndex"  :row="row"></render>
+        </td>
     </tr>
     </tbody>
   </table>
-   <div v-if="searching" class="h-[400px] flex flex-col items-center justify-center">
+   <div v-if="searching" class="h-[300px] flex flex-col items-center justify-center">
        <div class="w-12 h-12">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><radialGradient id="a12" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)"><stop offset="0" stop-color="#43FF0D"></stop><stop offset=".3" stop-color="#43FF0D" stop-opacity=".9"></stop><stop offset=".6" stop-color="#43FF0D" stop-opacity=".6"></stop><stop offset=".8" stop-color="#43FF0D" stop-opacity=".3"></stop><stop offset="1" stop-color="#43FF0D" stop-opacity="0"></stop></radialGradient><circle transform-origin="center" fill="none" stroke="url(#a12)" stroke-width="8" stroke-linecap="round" stroke-dasharray="200 1000" stroke-dashoffset="0" cx="100" cy="100" r="70"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="360;0" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"></animateTransform></circle><circle transform-origin="center" fill="none" opacity=".2" stroke="#43FF0D" stroke-width="8" stroke-linecap="round" cx="100" cy="100" r="70"></circle></svg>
        </div>
@@ -55,7 +71,7 @@
         <template v-if="!(data == null || data.length <= 0)">
             <div v-if="!isClient" class="flex items-center  c-sub-600">
             <p class="w-28">
-                Sayfa 1 of {{ Math.ceil((tableData.total / tableData.per_page)) }}
+                Sayfa {{query.page}} of {{ Math.ceil((tableData.total / tableData.per_page)) }}
             </p>
             <div class="flex flex-1 justify-center  gap-3">
 
@@ -71,10 +87,11 @@
                 </a>
 
 
-                <Link :href="route('control.artists.index',{page:p})"
+                <Link :href="route('control.catalog.artists.index',{page:p})"
                     v-for="p in Math.ceil((tableData.total / tableData.per_page)) >= 7 ? 6 : Math.ceil((tableData.total / tableData.per_page))"
-                    class="p-2 radius-8 w-10 h-10 border border-soft-200-500 flex items-center justify-center">
-                {{ p }}
+                    :class="query.page == p ? 'bg-weak-50' : 'bg-white border border-soft-200'"
+                    class="p-2 radius-8 w-10 h-10  flex items-center justify-center">
+                    {{ p }}
                 </Link>
 
 
@@ -101,8 +118,8 @@
             </div>
         </template>
 
-        <div v-if="data == null || data.length <= 0" class="h-[400px] flex flex-col items-center justify-center gap-8">
-            <img src="@/assets/images/empty_state.png" class="w-32 h-32">
+        <div v-if="data == null || data.length <= 0" class="h-[300px] flex flex-col items-center justify-center gap-8">
+            <img v-if="showEmptyImage" src="@/assets/images/empty_state.png" class="w-32 h-32">
             <slot name="empty"/>
         </div>
  </div>
@@ -112,18 +129,25 @@
 <script setup>
 
 import {computed, useSlots, ref, onMounted, h} from 'vue';
+import {useCrudStore} from '@/Stores/useCrudStore';
+
+
 import {
   TableOrderIcon,
   SearchIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ArrowDoubleLeftIcon,
-  ArrowDoubleRightIcon
+  ArrowDoubleRightIcon,
+  AddIcon
 } from '@/Components/Icons';
 import {AppTextInput} from '@/Components/Form';
 import {router, Link} from '@inertiajs/vue3';
 import {PrimaryButton} from '@/Components/Buttons'
+import {toast} from 'vue3-toastify';
 
+
+const crudStore = useCrudStore();
 let params = new URLSearchParams(window.location.search)
 const searching = ref(false);
 const query = ref({
@@ -156,6 +180,18 @@ const props = defineProps({
   },
   config:{
     type:Object,
+  },
+  hasSearch:{
+    default:true,
+  },
+  showEmptyImage:{
+    default:true
+  },
+  buttonLabel:{
+    default:null,
+  },
+  hasSelect:{
+    default:false,
   }
 })
 const emits = defineEmits(['update:modelValue', 'addNewClicked']);
@@ -183,10 +219,10 @@ onMounted(() => {
 });
 
 const render = (e) => {
-
   return h(slots.default()[e.colIndex], {
     row: data.value[e.rowIndex],
-    index: e.rowIndex
+    index: e.rowIndex,
+   ...slots.default()[e.colIndex].props
   }, slots.default()[e.colIndex].children);
 };
 
@@ -220,7 +256,6 @@ const search = (key, value) => {
 const getTableData = () => {
 
     const path = props.slug ?? route(route().current());
-    console.log("QUERY VALUE",query.value);
     deleteNullProperties(query.value);
     router.visit(path , {
         data: query.value,
@@ -237,6 +272,26 @@ const onClickHeader = (column) => {
         getTableData();
     }
 
+
+}
+const onSelectRow = (row,index) => {
+    const findedIndex = selectedRowIndexes.value.findIndex((el) => el == row);
+    if(findedIndex >= 0){
+        selectedRowIndexes.value.splice(findedIndex,1);
+    }else {
+        selectedRowIndexes.value.push(row)
+
+    }
+}
+const selectAll = () => {
+    if(data.value.length == selectedRowIndexes.value.length){
+        selectedRowIndexes.value = [];
+    }else {
+        data.value.forEach(element => {
+            const findedIndex = selectedRowIndexes.value.findIndex((el) => el == element);
+            if(findedIndex < 0)   selectedRowIndexes.value.push(element);
+        });
+    }
 
 }
 
@@ -269,9 +324,35 @@ const onFilterSelected = (event,filter) => {
 const removeRowByIndex = (index) => {
     data.value.splice(index,1);
 }
+const addRow = (row, direction = 'start') => {
+    if(direction == 'end')  data.value.push(row);
+    else if(direction == 'start')  data.value.unshift(row);
+
+}
 const removeRowData = (row) => {
     const findedIndex = data.value.findIndex((el) => row == el);
     if(findedIndex >= 0) data.value.splice(findedIndex,1);
+}
+
+const selectedRowIndexes = ref([]);
+const removeRowDataFromRemote = async (row) => {
+    const path = props.slug ?? route(route().current());
+    if(row.id){
+        try {
+            const response = await crudStore.del(`${path}/${row.id}`);
+            console.log("REPSONSE",response);
+            const findedIndex = data.value.findIndex((el) => row.id == el.id);
+            if(findedIndex >= 0) data.value.splice(findedIndex,1);
+
+            toast.success(response.message);
+        } catch (error) {
+                 toast.error("HATAA");
+        }
+
+    }else {
+        toast.error("Id sağlanmalı");
+    }
+
 }
 
 onMounted(() => {
@@ -280,7 +361,41 @@ onMounted(() => {
 defineExpose({
     removeRowByIndex,
     removeRowData,
-    search
+    search,
+    addRow,
+    removeRowDataFromRemote
 })
 </script>
+<style>
+.appCheckBox{
+    width:14px;
+    height:14px;
+    border-radius:2.6px;
+    background:white;
+    box-shadow: 0px 2px 2px 0px #1B1C1D1F;
+    border:1px solid var(--soft-200);
+    position:relative;
+
+}
+.appCheckBox.checked:after{
+    content:"";
+    inset:0;
+    margin:auto;
+    position:absolute;
+    width:8px;
+    height:8px;
+     border-radius:2.6px;
+    background:var(--dark-green-500);
+}
+.appCheckBox.half:after{
+    content:"";
+    inset:0;
+    margin:auto;
+    position:absolute;
+    width:8px;
+    height:3px;
+    border-radius:2.6px;
+    background:var(--dark-green-500);
+}
+</style>
 

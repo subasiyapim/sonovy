@@ -1,31 +1,74 @@
 <script setup>
-import {computed} from 'vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import {Head, Link, useForm} from '@inertiajs/vue3';
+import {computed, ref} from 'vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
+import {PrimaryButton} from '@/Components/Buttons';
+import {Head, Link, useForm, router,usePage} from '@inertiajs/vue3';
+import PinputField from '@/Components/Pinput/PinputField.vue';
+import {MessageIcon2, ChevronLeftIcon, CheckIcon, CheckFilledIcon, ChevronRightIcon} from '@/Components/Icons'
+import InputError from "@/Components/InputError.vue";
 
 const props = defineProps({
   status: Object
 });
 
-const form = useForm({});
-
+const form = useForm({
+  code: "",
+});
+const panelState = ref(null);
 const submit = () => {
-  form.post(route('verification.send'));
-};
+  panelState.value = 'loading';
 
+  form.post(route('verification.send'), {
+    preserveState: true,
+    onSuccess: () => {
+        panelState.value = 'completed';
+    },
+    onError: () => {
+      panelState.value = null;
+    },
+    onFinish: () => {
+      form.reset();
+    }
+  });
+
+
+};
+const onContinueClicked = () => {
+  router.visit(route('control.catalog.products.index'));
+}
 const verificationLinkSent = computed(
     () => props.status === 'verification-link-sent',
 );
 </script>
 
 <template>
-  <GuestLayout>
+  <AuthLayout :state="panelState">
+
+    <template #icon>
+      <MessageIcon2 color="var(--strong-950)"/>
+    </template>
+    <template #loading>
+      <p class="c-strong-950 label-xl">Doğrulanıyor...</p>
+      <p class="label-sm c-sub-600 !text-center">Telefon numaranız doğrulanıyor, <br>
+        lütfen bekleyiniz.</p>
+    </template>
+    <template #completed>
+      <p class="c-strong-950 label-xl">Tebrikler, aramıza hoşgeldiniz.</p>
+      <p class="paragraph-sm c-sub-600 !text-center">
+        Hesabınız başarılı bir şekilde oluşturuldu.<br>
+        Hemen ilk yayınızı oluşturabilirsiniz.</p>
+      <PrimaryButton class="mt-6" @click="onContinueClicked">
+        Hemen Başla
+        <template #suffix>
+          <ChevronRightIcon color="var(--dark-green-500)"/>
+        </template>
+      </PrimaryButton>
+    </template>
     <Head title="Email Verification"/>
-    <h2 class="text-lg font-bold text-white py-2">{{ __('client.verify_email.title') }}</h2>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-      {{ __('client.verify_email.description') }}
-    </div>
+    <h1 class="label-xl c-strong-950 !text-center" v-text="__('client.verify_email.title')"/>
+    <p class="paragraph-sm c-sub-600 !text-center mb-6"
+       v-text=" __('client.verify_email.description',{email:usePage().props?.auth?.user?.email})"/>
+
 
     <div
         class="mb-4 text-sm font-medium text-green-600 dark:text-green-400"
@@ -34,24 +77,25 @@ const verificationLinkSent = computed(
       {{ __('client.verify_email.check_email') }}
     </div>
 
-    <form @submit.prevent="submit">
-      <div class="mt-4 flex items-center justify-between">
-        <PrimaryButton
-            :class="{ 'opacity-25': form.processing }"
-            :disabled="form.processing"
-        >
-          {{ __('client.verify_email.resend_verification_email') }}
-        </PrimaryButton>
+    <PinputField v-model="form.code"></PinputField>
+    <input-error :message="form.errors.code" v-if="form.errors.code"/>
+    <div class="mt-4 flex flex-col items-center justify-between">
+      <PrimaryButton
+          @click="submit"
+          class="w-full"
+          :class="{ 'opacity-25': form.processing }"
+          :disabled="form.code.length != 6">
+        <template #suffix>
+          <CheckIcon color="var(--dark-green-500)"/>
+        </template>
+        {{ __('client.verify_email.submit') }}
+      </PrimaryButton>
 
-        <Link
-            :href="route('logout')"
-            method="post"
-            as="button"
-            class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-        >{{ __('client.verify_email.logout') }}
-        </Link
-        >
+      <div class="text-end">
+        <a :href="route('login')" class="label-xs c-neutral-500 flex items-center gap-1 justify-center mt-2">
+          <ChevronLeftIcon color="var(--neutral-500)"/>
+          {{ __('client.forgot_password.back_btn') }}</a>
       </div>
-    </form>
-  </GuestLayout>
+    </div>
+  </AuthLayout>
 </template>

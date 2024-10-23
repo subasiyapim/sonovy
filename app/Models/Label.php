@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -35,13 +36,13 @@ class Label extends Model implements HasMedia
         'phone',
         'web',
         'email',
-        'address'
+        'address',
+        'added_by'
     ];
 
     protected array $orderable = [
         'id',
         'name',
-        'country.name',
         'phone',
         'web',
         'email',
@@ -51,7 +52,6 @@ class Label extends Model implements HasMedia
     protected array $filterable = [
         'id',
         'name',
-        'country.name',
         'phone',
         'web',
         'email',
@@ -107,6 +107,11 @@ class Label extends Model implements HasMedia
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'added_by');
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
     }
 
     public function serializeDate(DateTimeInterface $date): string

@@ -1,6 +1,7 @@
 <template>
 
-  <div class="bg-white-500 flex flex-col w-full md:h-screen md:w-[272px]  sideBar overflow-y-hidden">
+
+  <div class="bg-white-500 flex flex-col w-full md:h-screen md:w-[272px]  sideBar overflow-y-hidden border border-white-600">
     <div class=" p-3">
       <div class="p-3 flex  gap-3 items-center ">
         <img class="cursor-pointer w-10 h-10 " alt="" src="@/assets/images/logo.png">
@@ -17,7 +18,7 @@
           <SearchIcon color="var(--soft-400)"/>
         </template>
       </AppTextInput>
-      <SecondaryButton @click="router.visit(route('control.products.create'))" class="w-full">
+      <SecondaryButton @click="router.visit(route('control.catalog.products.create'))" class="w-full">
         <template #icon>
           <AddIcon/>
         </template>
@@ -25,16 +26,16 @@
       </SecondaryButton>
 
 
-      <div class="flex-1 overflow-scroll">
+      <div class="flex-1 overflow-scroll hideScroll">
         <MenuItem title="Dashboard" :icon="DashboardIcon">
 
         </MenuItem>
         <MenuItem title="Katalog" :icon="DashboardIcon">
           <template #sub>
-            <sub-menu-item :path="route('control.catalog.products.index')">Yayınlar</sub-menu-item>
-            <sub-menu-item :path="route('control.catalog.songs.index')">Parçalar</sub-menu-item>
-            <sub-menu-item :path="route('control.catalog.artists.index')">Sanatçılar</sub-menu-item>
-            <sub-menu-item :path="route('control.catalog.labels.index')">Plak Şirketleri</sub-menu-item>
+            <sub-menu-item :path="'control.catalog.products.index'">Yayınlar</sub-menu-item>
+            <sub-menu-item :path="'control.catalog.songs.index'">Parçalar</sub-menu-item>
+            <sub-menu-item :path="'control.catalog.artists.index'">Sanatçılar</sub-menu-item>
+            <sub-menu-item :path="'control.catalog.labels.index'">Plak Şirketleri</sub-menu-item>
             <sub-menu-item :path="'#'">Tarzlar</sub-menu-item>
           </template>
         </MenuItem>
@@ -69,6 +70,7 @@
       </div>
 
     </div>
+
 
   </div>
 </template>

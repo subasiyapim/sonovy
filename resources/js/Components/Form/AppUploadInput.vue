@@ -2,17 +2,17 @@
   <div class="singleUpload" >
 
     <div class="flex items-start gap-5 ">
-        <div class="w-16 h-16 rounded-full overflow-hidden">
-            <img v-if="!image" src="@/assets/images/avatar.png">
-            <img v-else :src="image.url">
+        <div class="w-16 h-16 bg-weak-50 rounded-full overflow-hidden">
+            <img v-if="(!image?.url || !config?.image) && !isImageExist" src="@/assets/images/avatar.png">
+            <img v-else :src="getImageView">
         </div>
         <div class="flex flex-col items-start justify-start gap-3">
 
                <div class="text-start">
-                    <p class="c-strong-950 label-sm ">{{label}}</p>
-                    <p class="paragraph-xs c-sub-400 ">{{note}}</p>
+                    <p class="c-strong-950 label-sm ">{{config?.label}}</p>
+                    <p class="paragraph-xs c-sub-400 ">{{config?.note}}</p>
                </div>
-                <div v-if="!image">
+                <div v-if="!isImageExist">
                     <RegularButton @click="triggerFileInput">
                         Göz At
                     </RegularButton>
@@ -28,10 +28,10 @@
 
         </div>
       <input
+        v-if="rendered"
         ref="fileInput"
         type="file"
         accept="image/*"
-        multiple
         @change="handleFileInput"
         hidden
       />
@@ -43,14 +43,15 @@
 </template>
 
 <script setup>
-import { ref, reactive ,computed} from 'vue';
+import { ref, reactive ,computed,nextTick,onMounted} from 'vue';
 import {RegularButton} from '@/Components/Buttons'
 
 const props = defineProps({
     modelValue:{},
-    label:{},
-    note:{}
+    config:{}
+
 })
+const rendered = ref(true);
 const emits = defineEmits(['update:modelValue']);
 const fileInput = ref(null);
 const isDragging = ref(false);
@@ -61,14 +62,16 @@ const image = computed({
 
 
 const triggerFileInput = () => {
-
   fileInput.value.click();
 };
 
 const handleFileInput = (event) => {
-  const files = Array.from(event.target.files);
-  handleFiles(files);
+    isImageExist.value = true;
+    const files = Array.from(event.target.files);
+    handleFiles(files);
 };
+
+const isImageExist = ref(false);
 
 const handleFiles = (files) => {
   files.forEach((file) => {
@@ -85,8 +88,33 @@ const handleFiles = (files) => {
 };
 
 const removeImage = () => {
-  image.value = null;
+   isImageExist.value = false;
+    rendered.value = false;
+
+
+  image.value = {};
+  console.log(fileInput.value.target);
+  nextTick(() => {
+    rendered.value = true;
+  })
 };
+
+const getImageView = computed(() => {
+    if(image?.url){
+        return image?.url;
+    }else {
+         return props?.config?.image
+    }
+
+})
+onMounted(() => {
+    nextTick(() => {
+        if(props.config?.image){
+            console.log("GELDİİİ");
+            isImageExist.value = true;
+        }
+    })
+});
 </script>
 
 <style scoped>

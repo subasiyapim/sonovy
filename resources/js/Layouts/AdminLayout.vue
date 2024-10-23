@@ -7,14 +7,17 @@
         <div class="flex-1 relative overflow-scroll">
             <div class="flex items-center staticTopInfo">
                 <div class="flex items-center gap-3.5 flex-1">
-                       <IconButton hasBorder size="medium">
+                       <IconButton @click="goBack" hasBorder size="medium">
                             <ArrowLeftIcon color="var(--sub-600)" />
                        </IconButton>
                        <div class="flex flex-col flex-1">
                             <p class="label-lg c-strong-950">{{title}}</p>
                             <div class="flex items-center gap-2">
                                 <span v-if="parentTitle" class="label-xs c-soft-400">{{parentTitle}}</span>
-                                <span v-if="parentTitle" class="label-xs c-soft-400">.</span>
+                                <span v-if="parentTitle" class="label-xs c-soft-400">•</span>
+
+                                <span v-if="subParent" class="label-xs c-soft-400">{{subParent}}</span>
+                                <span v-if="subParent" class="label-xs c-soft-400">•</span>
                                 <span class="label-xs c-soft-400">{{title}}</span>
                             </div>
                        </div>
@@ -24,24 +27,22 @@
                         <IconButton>
                             <NotificationIcon color="var(--sub-600)" />
                         </IconButton>
-                        <div class="w-[229px]">
-                         <!-- <AppTextInput  placeholder="Tarih seçiniz...">
-                            <template #icon><CalendarIcon color="var(--sub-600)"/></template>
-                        </AppTextInput> -->
+                        <div class="w-[229px]" v-if="showDatePicker">
 
-                        <VueDatePicker @cleared="onDateCleared" @range-end="onDateChaned"  range v-model="choosenDate" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
-                            <template #input-icon>
-                              <div class="p-3">
-                                    <CalendarIcon color="var(--sub-600)"/>
-                              </div>
-                            </template>
-                        </VueDatePicker>
+
+                            <VueDatePicker  @cleared="onDateCleared" @range-end="onDateChaned"  range v-model="choosenDate" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+                                <template #input-icon>
+                                <div class="p-3">
+                                        <CalendarIcon color="var(--sub-600)"/>
+                                </div>
+                                </template>
+                            </VueDatePicker>
                        </div>
 
                 </div>
 
             </div>
-           <div class="px-8 pt-6 pb-10">
+           <div class="" :class="hasPadding ? 'px-8 pt-6 pb-10' :'' ">
                  <slot />
            </div>
 
@@ -76,6 +77,15 @@ const emits = defineEmits(['dateChoosen'])
 const props = defineProps({
     title:{type:String},
     parentTitle:{type:String},
+    hasPadding:{
+        default:true,
+    },
+    showDatePicker:{
+        default:true
+    },
+    subParent:{
+        default:null
+    }
 })
 let params = new URLSearchParams(window.location.search)
 
@@ -87,14 +97,19 @@ const onDateChaned = (e) => {
     emits('dateChoosen',choosenDate.value);
   })
 }
-
+const goBack = () => {
+    window.history.back();
+}
 const onDateCleared = (e) => {
 
    emits('dateChoosen',null);
 }
 
 
+onMounted(() => {
+   console.log(usePage().props.notification);
 
+});
 
 </script>
 

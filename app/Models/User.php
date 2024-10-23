@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserStatusEnum;
+use App\Models\System\District;
 use App\Services\EarningService;
 use App\Traits\DataTables\HasAdvancedFilter;
 use Carbon\Carbon;
@@ -73,7 +74,8 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'credit_cards',
         'commission_rate',
         'uuid',
-        'last_login_at'
+        'last_login_at',
+        'email_verified_at'
     ];
 
     protected array $filterable = [
@@ -271,17 +273,17 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function country(): BelongsTo
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(\App\Models\System\Country::class);
     }
 
-    public function state(): BelongsTo
+    public function district(): BelongsTo
     {
-        return $this->belongsTo(State::class, 'state_id');
+        return $this->belongsTo(\App\Models\System\District::class);
     }
 
     public function city(): BelongsTo
     {
-        return $this->belongsTo(City::class, 'city_id');
+        return $this->belongsTo(\App\Models\System\City::class);
     }
 
     public function bankAccounts(): HasMany

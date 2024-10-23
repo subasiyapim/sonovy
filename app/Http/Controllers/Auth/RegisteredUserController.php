@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use App\Services\CountryServices;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Services\UserVerifyService;
 
 class RegisteredUserController extends Controller
 {
@@ -21,7 +20,10 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+
+        $countryCodes = CountryServices::getCountryPhoneCodes();
+
+        return Inertia::render('Auth/Register', ['countryCodes' => $countryCodes]);
     }
 
     /**
@@ -39,7 +41,8 @@ class RegisteredUserController extends Controller
             'phone' => $request->validated()['phone'],
         ]);
 
-        event(new Registered($user));
+
+        UserVerifyService::generate($user);
 
         Auth::login($user);
 

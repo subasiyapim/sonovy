@@ -5,7 +5,7 @@
             <slot name="icon" />
         </div>
        <input @click="open" class="absolute inset-0 radius-8 border-none focus:ring-0 appSelectInput c-strong-950" :value="getShowLabel" :placeholder="placeholder">
-        <div class="selectButton bg-blue-300 flex items-center border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm cursor-pointer">
+        <div class="selectButton bg-blue-300 flex items-center border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm !font-normal cursor-pointer">
             <div class="flex-1 pointer-events-none c-soft-400">
                 {{placeholder}}
             </div>
@@ -31,7 +31,7 @@
                     </div>
                 </template>
 
-                <div v-if="config.data != null && config.data.length > 0">
+                <div v-if="config.data != null && config.data.length > 0" class="max-h-[250px] overflow-scroll">
                     <div @click="chooseValue(el)" v-for="el in config.data" :data-id="el[config.value ?? 'value']" :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'" class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
                        <div v-if="type == 'multiselect'" :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-dark-green-600 border-dark-green-600' : 'bg-white  border-soft-200'" class="w-3 h-3 border  rounded-sm shadow"></div>
                         <div v-else class="border border-soft-200 rounded-sm shadow"></div>
@@ -82,12 +82,11 @@ const onClose = () => {
 
 }
 const getShowLabel = computed(() => {
-    const filteredData = props.config?.data?.filter((e) => {
-
-       return element.value.find((checkValue) => checkValue == e[props.config.value ?? 'value']);
-    });
 
     let finalStr = '';
+    const filteredData = props.config?.data?.filter((e) => {
+       return element.value.find((checkValue) => checkValue == e[props.config.value ?? 'value']);
+    });
     filteredData.forEach((e,index) => {
 
             finalStr += `${index != 0 ? ' , ' : ''}${e[props.config.label ?? 'label']}`

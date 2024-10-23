@@ -165,7 +165,7 @@ class ProductController extends Controller
 
             DB::commit();
 
-            return redirect()->route('control.products.index')
+            return redirect()->route('control.catalog.products.index')
                 ->with([
                     'notification' => __('control.notification_created',
                         ['model' => __('control.product.title_singular')])
@@ -295,7 +295,7 @@ class ProductController extends Controller
             event(new NewProductEvent($product));
         }
 
-        return to_route('control.products.index')
+        return to_route('control.catalog.products.index')
             ->with([
                 'notification' => __('control.notification_updated', ['model' => __('control.product.title_singular')])
             ]);

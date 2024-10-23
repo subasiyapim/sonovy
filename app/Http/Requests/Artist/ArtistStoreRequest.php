@@ -31,7 +31,7 @@ class ArtistStoreRequest extends FormRequest
             'ipi_code' => ['nullable'],
             'isni_code' => ['nullable'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg'],
-            'website' => ['nullable', 'url'],
+            'website' => ['nullable'],
             'phone' => ['nullable', 'string'],
             'platforms' => ['nullable', 'array'],
             'artist_branches' => ['required', 'array'],
@@ -46,15 +46,15 @@ class ArtistStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('control.artist.form.name'),
-            'country_id' => __('control.artist.form.country'),
-            'ipi_code' => __('control.artist.form.ipi_code'),
-            'isni_code' => __('control.artist.form.isni_code'),
-            'image' => __('control.artist.form.image'),
-            'artist_branches' => __('control.artist.form.artist_branches'),
-            'platforms' => __('control.artist.form.platforms'),
-            'about' => __('control.artist.form.about'),
-            'phone' => __('control.artist.form.phone'),
+            'name' => __('control.artist.fields.name'),
+            'country_id' => __('control.artist.fields.country'),
+            'ipi_code' => __('control.artist.fields.ipi_code'),
+            'isni_code' => __('control.artist.fields.isni_code'),
+            'image' => __('control.artist.fields.image'),
+            'artist_branches' => __('control.artist.fields.artist_branches'),
+            'platforms' => __('control.artist.fields.platforms'),
+            'about' => __('control.artist.fields.about'),
+            'phone' => __('control.artist.fields.phone'),
         ];
     }
 }

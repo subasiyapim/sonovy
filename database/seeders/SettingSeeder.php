@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Setting;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 class SettingSeeder extends Seeder
 {
@@ -192,16 +193,35 @@ class SettingSeeder extends Seeder
 </defs>
 </svg>
 '
+            ],
+
+            //Otp verified
+            [
+                'key' => 'otp_verification',
+                'value' => 1,
+                'name' => 'Sms doğrulama aktif mi?',
+                'description' => 'SMS doğrulama aktif olmasını istiyorsanız bu özelliği açın.',
+                'input_type' => $input_types->filter(fn($input_type
+                ) => $input_type === 'checkbox')->keys()->implode(',')
+            ],
+            //Email verified
+            [
+                'key' => 'email_verification',
+                'value' => 1,
+                'name' => 'Email doğrulama aktif mi?',
+                'description' => 'Müşteri email adresi doğrulaması',
+                'input_type' => $input_types->filter(fn($input_type
+                ) => $input_type === 'checkbox')->keys()->implode(',')
             ]
+
         ];
 
+        DB::table('settings')->truncate();
         foreach ($settings as $setting) {
-            Setting::updateOrCreate(
+            Setting::create(
                 [
                     'key' => $setting['key'],
-                    'value' => $setting['value']
-                ],
-                [
+                    'value' => $setting['value'],
                     'name' => $setting['name'],
                     'description' => $setting['description'],
                     'input_type' => $setting['input_type'],

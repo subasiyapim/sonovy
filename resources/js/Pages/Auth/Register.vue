@@ -5,7 +5,9 @@ import {PrimaryButton} from '@/Components/Buttons'
 import {Head, Link, useForm} from '@inertiajs/vue3';
 import {AddIcon} from '@/Components/Icons';
 import InputError from "@/Components/InputError.vue";
-
+const props = defineProps({
+    countryCodes:{}
+})
 const form = useForm({
   name: '',
   surname: '',
@@ -21,6 +23,7 @@ const submit = () => {
 
 <template>
   <AuthLayout>
+
     <h1 class="label-xl c-strong-950 !text-center" v-text="__('client.register.title')"/>
     <p class="paragraph-sm c-sub-600 !text-center mb-6" v-text="__('client.register.subtitle')"/>
     <form @submit.prevent="submit" class="flex flex-col gap-3">
@@ -46,11 +49,13 @@ const submit = () => {
           :label="__('client.register.fields.email')"
           :placeholder="__('client.register.fields.email_placeholder')"
           type="text"/>
+
       <FormElement
           v-model="form.phone"
           direction="vertical"
           :error="form.errors.phone"
-          :label="Telefon"
+          :config="{codes:countryCodes}"
+          :label="__('client.register.fields.phone')"
           :placeholder="(__('client.register.fields.phone_placeholder'))"
           type="phone"/>
       <FormElement
