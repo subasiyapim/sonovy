@@ -27,7 +27,7 @@ jobs:
           extensions: mbstring, ctype, pdo, curl, json, xml, fileinfo, pdo_pgsql, pdo_mysql, tokenizer, session, bcmath, gd, exif, iconv, intl, openssl, pgsql, simplexml
 
       - name: Install Composer Dependencies
-        run: php -d memory_limit=2048M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist -vvv
+        run: php -d memory_limit=2048M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist --no-scripts -vvv
 
       - name: Install Node.js
         uses: actions/setup-node@v3
