@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @method static create(array $array)
  * @method static find(mixed $id)
+ * @method static updateOrCreate(array $array, array $array1)
  */
 class UserCode extends Model
 {
@@ -18,9 +19,8 @@ class UserCode extends Model
     protected $fillable = [
         'code',
         'user_id',
-        'type'
+        'type',
+        'expire_at',
     ];
-
-    public $timestamps = false;
 
 }

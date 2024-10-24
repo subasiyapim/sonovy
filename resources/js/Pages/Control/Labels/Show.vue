@@ -1,6 +1,7 @@
 <template>
 
-  <AdminLayout :showDatePicker="false"  :title="__('control.label.show_header')" :parentTitle="__('control.label.title_singular')"
+  <AdminLayout :showDatePicker="false" :title="__('control.label.show_header')"
+               :parentTitle="__('control.label.title_singular')"
                :hasPadding="false">
 
     <div class="bg-white-400 h-44 p-5 relative">
@@ -26,9 +27,6 @@
             <EditIcon color="var(--dark-green-500)"/>
           </template>
         </PrimaryButton>
-      </div>
-      <div class="flex items-center gap-4 absolute bottom-12 right-5">
-        <AppIncrementer :config="appIncrementerConfig" v-model="commission_rate"/>
       </div>
     </div>
 
@@ -63,15 +61,6 @@
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.label.fields.address')"/>
                   <span class="label-sm c-strong-950" v-text="label.address"/>
-                </div>
-              </div>
-              <div class="flex gap-3.5 items-center">
-                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                  <PercantageIcon color="var(--sub-600)"/>
-                </div>
-                <div>
-                  <p class="paragraph-xs c-sub-600" v-text="__('control.label.fields.commission_rate')"/>
-                  <span class="label-sm c-strong-950" v-text="label.commission_rate ?? 0"/>
                 </div>
               </div>
 
@@ -109,13 +98,6 @@
           </div>
         </div>
 
-        <div>
-          <h1 class="mb-6 subheading-regular text-start" v-text="__('control.label.fields.commission_rate')"/>
-          <p class="c-sub-600 text-sm mb-5" v-text="__('control.label.commission_rate_description')"/>
-          <div>
-            <AppIncrementer :config="appIncrementerConfig" v-model="commission_rate"/>
-          </div>
-        </div>
       </div>
       <div class="h-full bg-soft-200" style="width:1px;">
       </div>
@@ -146,7 +128,7 @@
         </template>
       </div>
     </div>
-     <LabelDialog :label="label" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
+    <LabelDialog :label="label" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -173,6 +155,7 @@ import {AppIncrementer} from '@/Components/Form'
 import {ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";
 import {LabelDialog} from '@/Components/Dialog';
+
 const props = defineProps({
   label: {
     type: Object,
@@ -180,9 +163,11 @@ const props = defineProps({
   },
 })
 
-const defaultStore = useDefaultStore();
+const onDone = () => {
+  isModalOn.value = false;
+}
 
-const commission_rate = ref(props.label.user.commission_rate ?? 0);
+const defaultStore = useDefaultStore();
 
 const appIncrementerConfig = {
   formatter: (value) => {
@@ -191,7 +176,7 @@ const appIncrementerConfig = {
 };
 
 const remove = () => {
-    router.delete(route('control.catalog.labels.destroy', props.label.id), {});
+  router.delete(route('control.catalog.labels.destroy', props.label.id), {});
 }
 </script>
 

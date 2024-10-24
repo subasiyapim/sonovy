@@ -66,7 +66,7 @@ class ArtistController extends Controller
             ]
         ];
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
-        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon',);
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
 
         return inertia('Control/Artists/Index', [
             'artists' => ArtistResource::collection($artists)->resource,
@@ -168,11 +168,20 @@ class ArtistController extends Controller
     {
         $artist->update($request->validated());
 
-        $artist->artistBranches()->sync($request->input('artist_branches', []));
+        if (isset($request->validated()['platforms']) && $request->validated()['platforms']) {
+            foreach ($request->validated()['platforms'] as $platform) {
+                $artist->platforms()->syncWithoutDetaching([$platform['value'] => ['url' => $platform['url']]]);
+            }
+        } else {
+            $artist->platforms()->detach();
+        }
+
+        $artist->artistBranches()->syncWithoutDetaching($request->validated()['artist_branches'], []);
+
 
         if ($request->hasFile('image')) {
             MediaServices::upload($artist, $request->file('image'), 'artists');
-        } elseif ($artist->platforms && $artist->platforms->contains('code', 'spotify')) {
+        } elseif ($artist->image == null && $artist->platforms && $artist->platforms->contains('code', 'spotify')) {
             SpotifyImageUploadJob::dispatch($artist);
         }
 

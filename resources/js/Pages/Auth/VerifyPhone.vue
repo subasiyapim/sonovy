@@ -2,7 +2,7 @@
 import {computed, ref} from 'vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import {PrimaryButton} from '@/Components/Buttons';
-import {Head, Link, useForm,usePage,router} from '@inertiajs/vue3';
+import {Head, Link, useForm, usePage, router} from '@inertiajs/vue3';
 import PinputField from '@/Components/Pinput/PinputField.vue';
 import InputError from "@/Components/InputError.vue";
 import {MessageIcon2, ChevronLeftIcon, CheckIcon, ChevronRightIcon} from '@/Components/Icons'
@@ -19,6 +19,14 @@ const form = ref({
 const crudStore = useCrudStore();
 const panelState = ref(null);
 const error = ref(null);
+const time = ref(usePage().props.verification_code_expire * 60);
+
+setInterval(() => {
+  if (time.value > 0) {
+    time.value--;
+  }
+}, 1000);
+
 const submit = async () => {
   panelState.value = 'loading';
 
@@ -42,6 +50,17 @@ const onContinueClicked = () => {
 const verificationLinkSent = computed(
     () => props.status === 'verification-link-sent',
 );
+
+const resetCode = () => {
+  axios.get(route('verification.phone'), {email: usePage().props?.auth?.user?.email})
+      .then((response) => {
+        time.value = usePage().props.verification_code_expire * 60;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+}
+
 </script>
 
 <template>
@@ -82,6 +101,16 @@ const verificationLinkSent = computed(
 
     <PinputField v-model="form.code"></PinputField>
     <input-error :message="error" v-if="error"/>
+
+    <div class="flex flex-row justify-center items-center gap-x-1">
+      <p v-text="__('client.forgot_password_pin.time', {time: `${String(Math.floor(time / 60)).padStart(2, '0')}:${String(time % 60).padStart(2, '0')}`})"/>
+      <button @click="resetCode"
+              :disabled="time >0"
+              :class="[time > 0 ? 'text-gray-400' : 'text-gray-600 font-bold']"
+              v-text="__('client.forgot_password_pin.resend_code')"
+              type="button"/>
+    </div>
+
     <div class="mt-4 flex flex-col items-center justify-between">
       <PrimaryButton
           @click="submit"

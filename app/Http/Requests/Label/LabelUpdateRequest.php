@@ -28,7 +28,7 @@ class LabelUpdateRequest extends FormRequest
             'name' => ['required', 'string'],
             'country_id' => ['required', Rule::exists(Country::class, 'id')],
             'address' => ['nullable', 'string'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg'],
+            'image' => ['nullable', 'max:2048'],
             'phone' => ['nullable'],
             'web' => ['nullable'],
             'email' => ['nullable', 'email'],

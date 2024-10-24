@@ -12,11 +12,12 @@ class SMSService
 {
     public static function sendSMS($number, $message)
     {
-        $will_twilio_be_used = Setting::where('key', 'sms_message_twilio')->first();
-        $will_netgsm_be_used = Setting::where('key', 'sms_message_netgsm')->first();
+        $twilioSetting = Setting::where('key', 'sms_message_twilio')->first()->value;
+        $netgsmSetting = Setting::where('key', 'sms_message_netgsm')->first()->value;
 
-        $user_code = UserCode::where('user_id', Auth::id())->where('type', 'phone')->count();
-        $phoneArr = explode(" ", $number);
+        $userCodeCount = UserCode::where('user_id', Auth::id())->where('type', 'phone')->count();
+        $phoneArr = preg_split('/\s+/', $number);
+
 
 
         if ($will_twilio_be_used->value == 1 && $phoneArr[0] != '+90') {
@@ -25,4 +26,4 @@ class SMSService
             NetGsmServices::sendSms(count($phoneArr) >= 2 ? $phoneArr[1] : $number, $message);
         }
     }
-}
+

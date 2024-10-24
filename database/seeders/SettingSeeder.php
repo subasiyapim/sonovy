@@ -212,6 +212,16 @@ class SettingSeeder extends Seeder
                 'description' => 'Müşteri email adresi doğrulaması',
                 'input_type' => $input_types->filter(fn($input_type
                 ) => $input_type === 'checkbox')->keys()->implode(',')
+            ],
+
+            //Code expire minute
+            [
+                'key' => 'verification_code_expire',
+                'value' => 1,
+                'name' => 'Doğrulama kodu geçerlilik süresi',
+                'description' => 'Dakika cinsinden yazılması gerekmektedir.',
+                'input_type' => $input_types->filter(fn($input_type
+                ) => $input_type === 'text')->keys()->implode(',')
             ]
 
         ];
@@ -229,22 +239,5 @@ class SettingSeeder extends Seeder
             );
         }
 
-        //$settings = Setting::pluck('value', 'key')->all();
-
-        // $this->updateSettingsConfigFile($settings);
-
-        //config()->set('settings', $settings);
-    }
-
-    protected function updateSettingsConfigFile(array $settings): void
-    {
-        $path = config_path('settings.php');
-
-        $content = "<?php\n\nreturn ".var_export($settings, true).";\n";
-
-        file_put_contents($path, $content);
-
-        Artisan::call('optimize');
-        Artisan::call('config:cache');
     }
 }

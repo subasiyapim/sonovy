@@ -51,7 +51,6 @@ Route::middleware('auth')->group(function () {
     Route::get('verify-phone', PhoneVerificationPromptController::class)
         ->name('verification.phone');
 
-
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');

@@ -100,7 +100,7 @@ class Setting extends Model
             'key' => 12,
             'name' => 'MultiSelect',
             'value' => 'multiselect'
-        ]
+        ],
     ];
 
     protected array $dates = [
