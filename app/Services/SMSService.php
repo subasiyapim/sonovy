@@ -19,11 +19,11 @@ class SMSService
         $phoneArr = preg_split('/\s+/', $number);
 
 
-
-        if ($will_twilio_be_used->value == 1 && $phoneArr[0] != '+90') {
+        if ($twilioSetting->value == 1 && $phoneArr[0] != '+90') {
             // TwilioServices::send(count($phoneArr) >= 2 ? $phoneArr[1] : $number, $message);
-        } elseif ($will_netgsm_be_used->value == 1) {
+        } elseif ($netgsmSetting->value == 1) {
             NetGsmServices::sendSms(count($phoneArr) >= 2 ? $phoneArr[1] : $number, $message);
         }
     }
+}
 
