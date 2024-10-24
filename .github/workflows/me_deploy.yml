@@ -21,7 +21,7 @@ jobs:
         run: chmod -R 777 storage bootstrap/cache
 
       - name: Set up PHP
-        uses: shivammathur/setup-php@master
+        uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
           extensions: mbstring, ctype, pdo, curl, json, xml, fileinfo, pdo_pgsql, pdo_mysql, tokenizer, session, bcmath, gd, exif, iconv, intl, openssl, pgsql, simplexml
@@ -58,7 +58,7 @@ jobs:
           name: deploy
 
       - name: Upload to server
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.DEV_DEMO_HOST }}
           username: ${{ secrets.DEV_DEMO_USER }}
@@ -66,10 +66,10 @@ jobs:
           source: deploy.tar.gz
           target: /var/www/Sonovy/
           port: 22
-          tar: false
+          tar_enable: false  # Tar işlemini devre dışı bırakıyoruz
 
       - name: Deploy to server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.12
         with:
           host: ${{ secrets.DEV_DEMO_HOST }}
           username: ${{ secrets.DEV_DEMO_USER }}
