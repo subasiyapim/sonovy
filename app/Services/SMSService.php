@@ -18,9 +18,10 @@ class SMSService
         $user_code = UserCode::where('user_id', Auth::id())->where('type', 'phone')->count();
         $phoneArr = explode(" ", $number);
 
+
         if ($will_twilio_be_used->value == 1 && $phoneArr[0] != '+90') {
             // TwilioServices::send(count($phoneArr) >= 2 ? $phoneArr[1] : $number, $message);
-        } elseif ($will_netgsm_be_used->value == 1 && $user_code == 0) {
+        } elseif ($will_netgsm_be_used->value == 1) {
             NetGsmServices::sendSms(count($phoneArr) >= 2 ? $phoneArr[1] : $number, $message);
         }
     }

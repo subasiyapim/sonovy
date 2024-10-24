@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import {PrimaryButton} from '@/Components/Buttons';
 import TextInput from '@/Components/TextInput.vue';
 import {Head, useForm} from '@inertiajs/vue3';
-
+import {FormElement} from '@/Components/Form'
+import {LockIcon,ChevronLeftIcon} from '@/Components/Icons'
+import {Link} from '@inertiajs/vue3';
 const props = defineProps<{
   email: string;
   token: string;
@@ -28,70 +30,63 @@ const submit = () => {
 </script>
 
 <template>
-  <GuestLayout>
-    <Head title="Reset Password"/>
-
+  <AuthLayout>
+     <template #icon>
+      <LockIcon color="var(--strong-950)"/>
+    </template>
+    <h1 class="label-xl c-strong-950 !text-center" v-text="__('client.forgot_password.title')"/>
+    <p class="paragraph-sm c-sub-600 !text-center mb-6" v-text="__('client.forgot_password.subtitle')"/>
     <form @submit.prevent="submit">
       <div>
-        <InputLabel for="email" value="Email"/>
+        <FormElement
+          v-model="form.email"
+          :error="form.errors.email"
+          direction="vertical"
+          :label="__('client.login.fields.email')"
+          :placeholder="__('client.login.fields.email_placeholder')"/>
 
-        <TextInput
-            id="email"
-            type="email"
-            class="mt-1 block w-full"
-            v-model="form.email"
-            required
-            autofocus
-            autocomplete="username"
-        />
-
-        <InputError class="mt-2" :message="form.errors.email"/>
       </div>
 
       <div class="mt-4">
-        <InputLabel for="password" value="Password"/>
-
-        <TextInput
-            id="password"
+        <FormElement
             type="password"
-            class="mt-1 block w-full"
             v-model="form.password"
-            required
-            autocomplete="new-password"
-        />
+            :error="form.errors.password"
+            direction="vertical"
+            :label="__('client.login.fields.password')"
+            :placeholder="__('client.login.fields.password_placeholder')"/>
 
-        <InputError class="mt-2" :message="form.errors.password"/>
       </div>
 
       <div class="mt-4">
-        <InputLabel
-            for="password_confirmation"
-            value="Confirm Password"
-        />
 
-        <TextInput
-            id="password_confirmation"
+        <FormElement
             type="password"
-            class="mt-1 block w-full"
             v-model="form.password_confirmation"
-            required
-            autocomplete="new-password"
-        />
+            :error="form.errors.password_confirmation"
+            direction="vertical"
+            :label="__('client.login.fields.password')"
+            :placeholder="__('client.login.fields.password_placeholder')"/>
 
-        <InputError
-            class="mt-2"
-            :message="form.errors.password_confirmation"
-        />
+
       </div>
 
-      <div class="mt-4 flex items-center justify-end">
+      <div class="mt-4 flex flex-col gap-2 items-center justify-end">
         <PrimaryButton
+            class="w-full"
             :class="{ 'opacity-25': form.processing }"
             :disabled="form.processing"
         >
           Reset Password
         </PrimaryButton>
+       <div class="text-end">
+        <Link :href="route('login')" class="label-xs c-neutral-500 flex items-center gap-1 justify-center mt-2">
+          <ChevronLeftIcon color="var(--neutral-500)"/>
+          Ana Sayfaya Dön
+        </Link>
+      </div>
+
       </div>
     </form>
-  </GuestLayout>
+  </AuthLayout>
 </template>
