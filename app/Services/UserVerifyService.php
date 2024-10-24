@@ -6,12 +6,14 @@ use App\Models\Setting;
 use App\Models\UserCode;
 use App\Models\User;
 use App\Notifications\CustomVerifyEmailNotification;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Services\SMSService;
 
 // SMSService sınıfınızın doğru namespace'ini kullanın
 use Illuminate\Support\Facades\DB;
+use Random\RandomException;
 
 class UserVerifyService
 {
@@ -67,15 +69,18 @@ class UserVerifyService
      * @param  User  $user
      * @param  string  $type  ('email' or 'phone')
      * @return string
+     * @throws RandomException
      */
-    protected static function makeCode(User $user, $type): string
+    protected static function makeCode(User $user, string $type)
     {
         $code = random_int(100000, 999999);
 
-        DB::transaction(function () use ($user, $type, $code) {
+        $verification_code_expire = Setting::where('key', 'verification_code_expire')->first()->value ?? 1;
+
+        DB::transaction(function () use ($user, $type, $code, $verification_code_expire) {
             UserCode::updateOrCreate(
                 ['user_id' => $user->id, 'type' => $type],
-                ['code' => $code]
+                ['code' => $code, 'expire_at' => Carbon::now()->addMinutes(intval($verification_code_expire))]
             );
         });
 

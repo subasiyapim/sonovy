@@ -13,7 +13,7 @@ const crudStore = useCrudStore();
 
 // Props tanımlaması
 const props = defineProps({
-  status: String
+  status: String,
 });
 
 // Reactive değişkenler
@@ -49,6 +49,24 @@ const submit = async () => {
     }, 1000);
   }
 };
+
+const time = ref(usePage().props.verification_code_expire * 60);
+
+setInterval(() => {
+  if (time.value > 0) {
+    time.value--;
+  }
+}, 1000);
+
+const resetCode = () => {
+  axios.get(route('verification.notice'), {email: usePage().props?.auth?.user?.email})
+      .then((response) => {
+        time.value = usePage().props.verification_code_expire * 60;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+}
 
 // Devam et butonuna tıklandığında yönlendirme
 const onContinueClicked = () => {
@@ -103,9 +121,17 @@ const verificationLinkSent = computed(
     >
       {{ __('client.verify_email.check_email') }}
     </div>
-
     <PinputField v-model="form.code"></PinputField>
     <InputError :message="error" v-if="error"/>
+
+    <div class="flex flex-row justify-center items-center gap-x-1">
+      <p v-text="__('client.forgot_password_pin.time', {time: `${String(Math.floor(time / 60)).padStart(2, '0')}:${String(time % 60).padStart(2, '0')}`})"/>
+      <button @click="resetCode"
+              :disabled="time >0"
+              :class="[time > 0 ? 'text-gray-400' : 'text-gray-600 font-bold']"
+              v-text="__('client.forgot_password_pin.resend_code')"
+              type="button"/>
+    </div>
 
     <div class="mt-4 flex flex-col items-center justify-between">
       <PrimaryButton

@@ -51,6 +51,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'verification_code_expire' => intval(Setting::where('key',
+                'verification_code_expire')->first()->value ?? 1),
             'notification' => fn() => $request->session()->get('notification', []),
             'intent' => fn() => $request->session()->get('intent', []),
             'production' => config('app.env') === 'production',

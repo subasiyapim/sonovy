@@ -16,11 +16,13 @@ class SMSService
         $netgsmSetting = Setting::where('key', 'sms_message_netgsm')->first()->value;
 
         $userCodeCount = UserCode::where('user_id', Auth::id())->where('type', 'phone')->count();
-        $phoneArr = preg_split('/\s+/', $number); // Tüm boşluklara göre böl
+        $phoneArr = preg_split('/\s+/', $number);
 
         if ($twilioSetting == 1 && $phoneArr[0] != '+90') {
+            //Todo Twilio services test edilecek.
+            
             // TwilioServices::send(count($phoneArr) >= 2 ? $phoneArr[1] : $number, $message);
-        } elseif ($netgsmSetting == 1 && $userCodeCount !== 0) {
+        } elseif ($netgsmSetting == 1 && $userCodeCount > 0) {
             NetGsmServices::sendSms(count($phoneArr) >= 2 ? $phoneArr[1] : $number, $message);
         }
     }

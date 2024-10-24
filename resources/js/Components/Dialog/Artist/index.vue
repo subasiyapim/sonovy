@@ -23,10 +23,10 @@
                    type="custom">
 
         <ArtistInput @onPlatformsChoosen="onPlatformsChoosen"
-                    :choosenItunesField="choosenItunesField"
-                    :choosenSpotifyField="choosenSpotifyField"
-                    v-model="form.name"
-                    :placeholder="__('control.artist.fields.name_placeholder')"/>
+                     :choosenItunesField="choosenItunesField"
+                     :choosenSpotifyField="choosenSpotifyField"
+                     v-model="form.name"
+                     :placeholder="__('control.artist.fields.name_placeholder')"/>
 
       </FormElement>
 
@@ -44,7 +44,7 @@
                    :error="form.errors.artist_branches"
                    v-model="form.artist_branches"
                    :config="artistBranchesMultiSelect"
-                    :label="__('control.artist.fields.artist_branches')"
+                   :label="__('control.artist.fields.artist_branches')"
                    type="multiselect"
                    :placeholder="__('control.artist.fields.artist_branches_placeholder')"/>
 
@@ -52,9 +52,9 @@
                    :required="true"
                    :error="form.errors.country_id"
                    v-model="form.country_id"
-                    :label="__('control.artist.fields.country')"
+                   :label="__('control.artist.fields.country')"
                    :config="countryConfig"
-                    :placeholder="__('control.artist.fields.country_placeholder')"
+                   :placeholder="__('control.artist.fields.country_placeholder')"
                    type="select">
 
         <template #option="scope">
@@ -76,7 +76,7 @@
 
       <FormElement label-width="190px" :error="form.errors.isni_code"
                    v-model="form.isni_code"
-                    :label="__('control.artist.fields.isni_code')"
+                   :label="__('control.artist.fields.isni_code')"
                    :placeholder="__('control.artist.fields.isni_code_placeholder')"/>
     </div>
     <SectionHeader :title="__('control.artist.dialog.header_2')"/>
@@ -120,24 +120,25 @@
           </template>
         </FormElement>
         <FormElement class="flex-1" direction="vertical" v-model="platform.url" label-width="190px"
-                     :label="__('control.artist.fields.platform_link')" :placeholder="__('control.artist.fields.platform_link_placeholder')"/>
+                     :label="__('control.artist.fields.platform_link')"
+                     :placeholder="__('control.artist.fields.platform_link_placeholder')"/>
       </div>
       <button @click="form.platforms.push({})" class="flex items-center gap-2">
         <AddIcon color="var(--blue-500)"/>
         <p class="label-xs c-blue-500">
-            {{__('control.artist.fields.platform_link_button')}}
+          {{ __('control.artist.fields.platform_link_button') }}
         </p>
       </button>
     </div>
     <div class="flex p-5 border-t border-soft-200 gap-4">
       <RegularButton @click="isDialogOn = false" class="flex-1">
-      {{__('control.general.cancel')}}
+        {{ __('control.general.cancel') }}
       </RegularButton>
       <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
         <template #icon>
           <AddIcon/>
         </template>
-           {{__('control.general.save')}}
+        {{ __('control.general.save') }}
       </PrimaryButton>
     </div>
   </BaseDialog>
@@ -228,7 +229,9 @@ const onSubmit = (e) => {
         .post(route('control.catalog.artists.update', form.id), {
           preserveScroll: true,
           onSuccess: (e) => {
-            location.reload();
+            toast.success(e.props.notification.message);
+            emits('done', e.props.notification.data)
+            isDialogOn.value = false;
           },
           onError: (e) => {
             console.log("HATAAA", e);
@@ -271,13 +274,13 @@ onMounted(() => {
     form['artist_branches'] = props.artist['artist_branches'].map((e) => e.id);
     form['platforms'] = props.artist['platforms']
     form['platforms'].map((e) => {
-        console.log("GELDİİİİ",e);
-        e.value = e.id;
-        if(e.id == 4){
-            choosenItunesField.value = e.url;
-        }if(e.id == 2){
-            choosenSpotifyField.value = e.url;
-        }
+      e.value = e.id;
+      if (e.id == 4) {
+        choosenItunesField.value = e.url;
+      }
+      if (e.id == 2) {
+        choosenSpotifyField.value = e.url;
+      }
 
 
     })

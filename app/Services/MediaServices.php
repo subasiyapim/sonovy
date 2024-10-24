@@ -24,11 +24,12 @@ class MediaServices
 
         $name = uniqid().'-'.time();
         $file_name = uniqid().'-'.time().'-'.$media->getClientOriginalName();
+        $disk = 'tenant_'.tenant('id');
 
         $model->addMedia($media)
             ->usingFileName($file_name)
             ->usingName($name)
-            ->toMediaCollection($collection_name, 'tenant_'.tenant('id'));
+            ->toMediaCollection($collection_name, $disk);
     }
 
     public static function mediaUpload(mixed $media, $type = 1)

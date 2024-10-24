@@ -86,9 +86,9 @@ class LabelController extends Controller
         $label = Label::create($data);
 
         if ($request->hasFile('image')) {
-            MediaServices::upload($label, $request->file('image'), 'labels');
+            MediaServices::upload($label, $request->image['file'], 'labels');
         }
-
+        
         return redirect()->back()->with([
             'notification' => [
                 'title' => 'Success',
@@ -127,7 +127,7 @@ class LabelController extends Controller
         $label->update($request->validated());
 
         if ($request->hasFile('image')) {
-            MediaServices::upload($label, $request->file('image'), 'labels');
+            MediaServices::upload($label, $request->image['file'], 'labels');
         }
 
         return redirect()->back()->with([
@@ -166,7 +166,7 @@ class LabelController extends Controller
         //TODO Code Refactor
         $notification = [
             'type' => 'success',
-            'message' => __('control.notification_deleted', ['model' => __('control.labels.title_singular')])
+            'message' => __('control.notification_deleted', ['model' => __('control.label.title_singular')])
         ];
 
 
