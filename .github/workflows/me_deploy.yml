@@ -69,7 +69,7 @@ jobs:
           tar_enable: false  # Tar işlemini devre dışı bırakıyoruz
 
       - name: Deploy to server
-        uses: appleboy/ssh-action@v0.1.12
+        uses: appleboy/ssh-action@v0.1.5  # Mevcut bir sürüm kullanıyoruz
         with:
           host: ${{ secrets.DEV_DEMO_HOST }}
           username: ${{ secrets.DEV_DEMO_USER }}
