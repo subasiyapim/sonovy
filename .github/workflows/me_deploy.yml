@@ -27,7 +27,7 @@ jobs:
           extensions: mbstring, ctype, pdo, curl, json, xml, fileinfo, pdo_pgsql, pdo_mysql, tokenizer, session, bcmath, gd, exif, iconv, intl, openssl, pgsql, simplexml
 
       - name: Install Composer Dependencies
-        run: php -d memory_limit=2048M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist --no-scripts -vvv
+        run: php -d memory_limit=2048M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist --no-scripts
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -66,7 +66,7 @@ jobs:
           source: deploy.tar.gz
           target: /var/www/Sonovy/
           port: 22
-          tar: false  # tar işlemini devre dışı bırakıyoruz
+          tar: false
 
       - name: Deploy to server
         uses: appleboy/ssh-action@master
@@ -97,7 +97,8 @@ jobs:
             # Laravel komutlarını çalıştır
             sudo php artisan migrate --force
             sudo php artisan tenants:migrate --force
-            sudo php artisan db:seed --class=AdminSeeder
+            sudo php artisan tenants:seed --class="Database\\Seeders\\AdminSeeder"
+            sudo php artisan tenants:seed --class="Database\\Seeders\\SettingSeeder"
             sudo php artisan storage:link || true
             sudo php artisan config:cache
             sudo php artisan route:cache
