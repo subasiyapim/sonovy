@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Copy .env from secrets
-        run: echo "${{ secrets.DEV_DEMO_ENV }}" | base64 --decode | sudo tee .env
+        run: echo "${{ secrets.DEV_DEMO_ENV }}" | base64 --decode | sudo tee .env > /dev/null
 
       - name: Directory Permissions
         run: sudo chmod -R 777 storage bootstrap/cache
@@ -27,7 +27,10 @@ jobs:
           extensions: mbstring, ctype, pdo, curl, json, xml, fileinfo, pdo_pgsql, pdo_mysql, tokenizer, session, bcmath, gd, exif, iconv, intl, openssl, pgsql, simplexml
 
       - name: Install Composer Dependencies
-        run: sudo php -d memory_limit=2048M /usr/local/bin/composer install -q --no-dev --no-interaction --prefer-dist
+        run: |
+          sudo COMPOSER_ALLOW_SUPERUSER=1 php -d memory_limit=2048M /usr/local/bin/composer install -q --no-dev --no-interaction --prefer-dist
+        env:
+          COMPOSER_ALLOW_SUPERUSER: 1
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -35,7 +38,9 @@ jobs:
           node-version: '18'
 
       - name: Compile Frontend Assets
-        run: sudo npm install && sudo npm run build
+        run: |
+          sudo npm install
+          sudo npm run build
 
       - name: Create Deployment Archive
         env:
@@ -122,7 +127,7 @@ jobs:
             echo ${{ secrets.DEV_DEMO_PASS }} | sudo -S chmod -R 775 /var/www/Sonovy/storage /var/www/Sonovy/bootstrap/cache /var/www/Sonovy/public /var/www/Sonovy/app
 
             # Laravel komutlarını çalıştır
-            sudo php -d memory_limit=512M /usr/local/bin/composer install -q --no-dev --no-interaction --prefer-dist
+            sudo COMPOSER_ALLOW_SUPERUSER=1 php -d memory_limit=512M /usr/local/bin/composer install -q --no-dev --no-interaction --prefer-dist
             sudo php artisan migrate --force
             sudo php artisan tenants:migrate --force
             sudo php artisan db:seed AdminSeeder
@@ -138,4 +143,3 @@ jobs:
             # Supervisor için Laravel Echo Server
             echo ${{ secrets.DEV_DEMO_PASS }} | sudo -S apt-get update
             echo ${{ secrets.DEV_DEMO_PASS }} | sudo -S apt-get install -y supervisor npm
-            sudo npm install -g laravel-echo
