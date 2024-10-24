@@ -1,0 +1,141 @@
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  laravel-prepare:
+    if: github.repository == 'subasi/sonovy' && github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy .env from secrets
+        run: echo "${{ secrets.DEV_DEMO_ENV }}" | base64 --decode > .env
+
+      - name: Directory Permissions
+        run: chmod -R 777 storage bootstrap/cache
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: 8.2
+          extensions: mbstring, ctype, pdo, curl, json, xml, fileinfo, pdo_pgsql, pdo_mysql, tokenizer, session, bcmath, gd, exif, iconv, intl, openssl, pgsql, simplexml
+
+      - name: Install Composer Dependencies
+        run: php -d memory_limit=512M /usr/local/bin/composer install -q --no-dev --no-interaction --prefer-dist
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Compile Frontend Assets
+        run: npm install && npm run build
+
+      - name: Create Deployment Archive
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          touch deploy.tar.gz
+          tar -czf deploy.tar.gz --exclude=*.git --exclude=deploy.tar.gz --exclude=vendor --exclude=node_modules --exclude=.env --exclude=storage/logs --exclude=storage/framework *
+
+      - name: upload-deploy-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy
+          path: deploy.tar.gz
+
+  laravel-deploy:
+    runs-on: ubuntu-latest
+    needs: laravel-prepare
+
+    steps:
+      - name: Download Deployment Archive
+        uses: actions/download-artifact@v4
+        with:
+          name: deploy
+
+      - name: Check if deployment directory exists
+        run: |
+          if [ ! -d "/var/www/Sonovy" ]; then
+            echo "Directory does not exist. Creating directory."
+            sudo mkdir -p /var/www/Sonovy
+          else
+            echo "Directory exists."
+          fi
+        shell: bash
+
+      - name: Set directory permissions
+        run: |
+          sudo chown -R www-data:www-data /var/www/Sonovy
+          sudo chmod -R 775 /var/www/Sonovy
+
+      - name: Install Supervisor
+        run: sudo apt-get update && sudo apt-get install -y supervisor
+
+      - name: Start Supervisor
+        run: sudo systemctl start supervisor
+
+      - name: Restart Supervisor
+        run: sudo supervisorctl restart all
+
+      - name: upload to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEV_DEMO_HOST }}
+          username: ${{ secrets.DEV_DEMO_USER }}
+          password: ${{ secrets.DEV_DEMO_PASS }}
+          source: deploy.tar.gz
+          target: /var/www/Sonovy
+          port: 22
+
+      - name: Set directory permissions
+        run: |
+          sudo chown -R $USER:www-data /var/www/Sonovy
+          sudo chmod -R 775 /var/www/Sonovy
+
+      - name: deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_DEMO_HOST }}
+          username: ${{ secrets.DEV_DEMO_USER }}
+          password: ${{ secrets.DEV_DEMO_PASS }}
+          script: |
+            cd /var/www/Sonovy
+            # Eski public dosyalarını sil
+            echo ${{ secrets.DEV_DEMO_PASS }} | sudo -S rm -rf public/assets/build public/assets public/robots.txt public/index.php public/.htaccess
+            echo ${{ secrets.DEV_DEMO_PASS }} | sudo -S rm -rf public/assets/countries.json public/assets/cities.json public/assets/states.json public/assets/timezones.json
+
+            # Yeni dosyaları çıkar ve var olanların üzerine yaz (sudo ile)
+            echo ${{ secrets.DEV_DEMO_PASS }} | sudo -S tar --overwrite -xzf deploy.tar.gz
+
+            # Deploy dosyasını kaldır
+            rm -rf deploy.tar.gz
+
+            # Tüm dizin ve dosyaların sahiplik ve izinlerini ayarla
+            echo ${{ secrets.DEV_DEMO_PASS }} | sudo -S chown -R www-data:www-data /var/www/Sonovy
+            echo ${{ secrets.DEV_DEMO_PASS }} | sudo -S chmod -R 775 /var/www/Sonovy/storage /var/www/Sonovy/bootstrap/cache /var/www/Sonovy/public /var/www/Sonovy/app
+
+            # Laravel komutlarını çalıştır
+            php -d memory_limit=512M /usr/local/bin/composer install -q --no-dev --no-interaction --prefer-dist
+            php artisan migrate --force
+            php artisan tenants:migrate --force
+            php artisan db:seed AdminSeeder
+            php artisan storage:link || true # Link zaten varsa hatayı bastır
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan up
+
+            # Node.js bağımlılıklarını yükle
+            npm install
+
+            # Supervisor için Laravel Echo Server
+            echo ${{ secrets.DEV_DEMO_PASS }} | sudo -S apt-get update
+            echo ${{ secrets.DEV_DEMO_PASS }} | sudo -S apt-get install -y supervisor npm
