@@ -27,7 +27,7 @@ jobs:
           extensions: mbstring, ctype, pdo, curl, json, xml, fileinfo, pdo_pgsql, pdo_mysql, tokenizer, session, bcmath, gd, exif, iconv, intl, openssl, pgsql, simplexml
 
       - name: Install Composer Dependencies
-        run: php -d memory_limit=2048M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist --no-scripts -vvv
+        run: php -d memory_limit=2048M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -38,13 +38,10 @@ jobs:
         run: npm install && npm run build
 
       - name: Create Deployment Archive
-        env:
-          GITHUB_SHA: ${{ github.sha }}
         run: |
-          touch deploy.tar.gz
-          tar -czf deploy.tar.gz --exclude=*.git --exclude=deploy.tar.gz --exclude=vendor --exclude=node_modules --exclude=.env --exclude=storage/logs --exclude=storage/framework *
+          tar -czf deploy.tar.gz --exclude=*.git --exclude=deploy.tar.gz --exclude=node_modules --exclude=.env --exclude=storage/logs --exclude=storage/framework *
 
-      - name: upload-deploy-artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: deploy
@@ -67,8 +64,9 @@ jobs:
           username: ${{ secrets.DEV_DEMO_USER }}
           password: ${{ secrets.DEV_DEMO_PASS }}
           source: deploy.tar.gz
-          target: /var/www/Sonovy
+          target: /var/www/Sonovy/
           port: 22
+          tar: false  # tar işlemini devre dışı bırakıyoruz
 
       - name: Deploy to server
         uses: appleboy/ssh-action@master
@@ -92,21 +90,22 @@ jobs:
             sudo chown -R www-data:www-data /var/www/Sonovy
             sudo chmod -R 775 /var/www/Sonovy/storage /var/www/Sonovy/bootstrap/cache /var/www/Sonovy/public /var/www/Sonovy/app
 
-            # Composer bağımlılıklarını yükle (sudo olmadan)
-            php -d memory_limit=512M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist
+            # Composer bağımlılıklarını yükle
+            cd /var/www/Sonovy
+            sudo php -d memory_limit=512M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist
 
             # Laravel komutlarını çalıştır
-            php artisan migrate --force
-            php artisan tenants:migrate --force
-            php artisan db:seed AdminSeeder
-            php artisan storage:link || true
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            php artisan up
+            sudo php artisan migrate --force
+            sudo php artisan tenants:migrate --force
+            sudo php artisan db:seed --class=AdminSeeder
+            sudo php artisan storage:link || true
+            sudo php artisan config:cache
+            sudo php artisan route:cache
+            sudo php artisan view:cache
+            sudo php artisan up
 
             # Node.js bağımlılıklarını yükle
-            npm install
+            sudo npm install
 
             # Supervisor ve Laravel Echo Server kurulumu
             sudo apt-get update
