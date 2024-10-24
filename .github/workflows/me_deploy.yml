@@ -2,8 +2,7 @@ name: Deploy App
 
 on:
   push:
-    branches:
-      - 'dev'
+    branches: [ 'dev' ]
   workflow_dispatch:
 
 jobs:
