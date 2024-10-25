@@ -309,7 +309,7 @@ return [
                 'promotions' => 'Promosyonlar',
             ]
         ],
-        'form' => [
+        'fields' => [
             'page_title' => 'Yeni Yayın Oluştur',
             'steps' => [
                 'step1' => [
@@ -332,7 +332,7 @@ return [
             'label' => 'Label',
             'type' => 'Yayın tipi',
             'image' => 'Yayın kapak fotoğrafı',
-            'name' => 'Yayın adı',
+            'album_name' => 'Albüm adı',
             'type_audio' => 'Ses',
             'type_video' => 'Video',
             'publish_type_single' => 'Single',

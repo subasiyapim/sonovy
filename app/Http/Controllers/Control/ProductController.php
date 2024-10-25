@@ -48,6 +48,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 use Inertia\ResponseFactory;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -83,46 +84,10 @@ class ProductController extends Controller
     {
         abort_if(Gate::denies('product_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $genres = getDataFromInputFormat(Genre::get(['name', 'id']), 'id', 'name');
-        $artists = getDataFromInputFormat(Artist::get(['name', 'id']), 'id', 'name');
-        $labels = getDataFromInputFormat(Label::get(['name', 'id']), 'id', 'name');
-        $counties = getDataFromInputFormat(\App\Models\System\Country::get(['name', 'id']), 'id', 'name', 'emoji');
-        $languages = getDataFromInputFormat(\App\Models\System\Country::get(['name', 'id']), 'id', 'name', 'emoji');
-        $users = getDataFromInputFormat(User::get(['name', 'id']), 'id', 'name');
-        $platform_types = getDataFromInputFormat(Platform::get(['name', 'id', 'type']), 'id', 'name');
-        $product_types = getDataFromInputFormat(ProductTypeEnum::getTitles(), 'id', 'name', null, true);
-        $platforms = Platform::all()->groupBy('type')->map(function ($platforms) {
-            return getDataFromInputFormat($platforms, 'id', 'name', 'image');
-        })->toArray();
-        $all_platforms = getDataFromInputFormat(Platform::all(['name', 'id']), 'id', 'name', 'image');
-        $publish_country_types = getDataFromInputFormat(ProductPublishedCountryTypeEnum::getTitles(), 'id', 'name',
-            null, true);
-        $platform_download_price = getDataFromInputFormat(Platform::$PLATFORM_DOWNLOAD_PRICE, 'id', 'name', null, true);
+        $album_types = enumToSelectInputFormat(ProductTypeEnum::getTitles());
 
-        $artistBranches = getDataFromInputFormat(ArtistBranch::with('translations')
-            ->whereHas('translations', function ($query) {
-                $query->where('locale', app()->getLocale());
-            })->get(), 'id', 'name');
-        $availablePlanItems = Auth::user()->availablePlanItemsCount();
+        return inertia('Control/Products/Create', compact('album_types'));
 
-        return inertia('Control/Products/Create',
-            compact(
-                'genres',
-                'artists',
-                'labels',
-                'counties',
-                'languages',
-                'product_types',
-                'platform_types',
-                'platforms',
-                'all_platforms',
-                'platform_download_price',
-                'publish_country_types',
-                'artistBranches',
-                'availablePlanItems',
-                'users'
-            )
-        );
     }
 
     /**
@@ -130,53 +95,12 @@ class ProductController extends Controller
      */
     public function store(ProductStoreRequest $request): RedirectResponse
     {
-        DB::beginTransaction();
-        try {
-            $data = $request->except([
-                'image', 'songs', 'main_artists', 'featuring_artists', 'catalog_number', 'promotion_info', 'platforms',
-                'counties', 'hashtags'
+        $product = Product::create($request->validated());
+
+        return redirect()->route('control.catalog.products.edit', $product->id)
+            ->with([
+                'notification' => __('control.notification_created', ['model' => __('control.product.title_singular')])
             ]);
-
-            if (empty($request->validated()['catalog_number'])) {
-                $data['catalog_number'] = CatalogNumberService::make();
-            }
-
-            $data['added_by'] = auth()->id();
-
-            $product = Product::create($data);
-
-            self::imageUpload($request, $product);
-
-            self::attachSongs($request, $product);
-
-            self::attachArtistFromProduct($product, $request);
-
-            self::publishedCountries($request, $product);
-
-            self::createHashtags($request, $product);
-
-            self::createPromotions($request, $product);
-
-            self::createDownloadPlatforms($request, $product);
-
-            if ($product->status != ProductStatusEnum::DRAFT) {
-                event(new NewProductEvent($product));
-            }
-
-            DB::commit();
-
-            return redirect()->route('control.catalog.products.index')
-                ->with([
-                    'notification' => __('control.notification_created',
-                        ['model' => __('control.product.title_singular')])
-                ]);
-
-        } catch (Exception $exception) {
-            DB::rollBack();
-            Log::info('Product exception error: '.$exception->getMessage());
-            return redirect()->back()->with(['error' => $exception->getMessage()]);
-        }
-
     }
 
     /**

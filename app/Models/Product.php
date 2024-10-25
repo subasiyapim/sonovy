@@ -32,37 +32,51 @@ class Product extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
     use HasAdvancedFilter;
-    use SoftDeletes;
 
     protected $table = 'products';
 
     protected $fillable = [
+        //common
         'type',
-        'copyright_for_publication_image',
+        'album_name',
+        //step 1
+        'version',
+        'genre_id',
+        'sub_genre_id',
+        'format',
         'label_id',
+        'p_line',
+        'c_line',
+        'upc_code',
+        'ean_code',
+        'catalog_number',
+        'language_id',
+        'main_price',
+        //step 2
+        //step 3
+        //step 4
+        'copyright_for_publication_image',
+
         'right_to_perform_work',
         'has_audiovisual_rights',
-        'name',
         'publisher_name',
         'is_for_children',
         'copyright_owner',
         'description',
         'youtube_channel',
         'youtube_channel_theme',
-        'genre_id',
-        'sub_genre_id',
+
         'is_compilation_publication',
         'barcode_type',
-        'upc_code',
-        'ean_code',
+
         'jan_code',
-        'catalog_number',
-        'language_id',
+
+
         'release_date',
         'original_release_date',
         'remaster_release_date',
         'has_been_released',
-        'p_line',
+
         'publish_country_type',
         'is_publication_date_the_same',
         'publication_date',
@@ -71,7 +85,6 @@ class Product extends Model implements HasMedia
         'correction',
         'added_by',
         'album_type',
-        'version',
         'xml_path'
     ];
 

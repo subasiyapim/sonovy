@@ -16,6 +16,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class EarningJob implements ShouldQueue
 {
@@ -36,8 +37,10 @@ class EarningJob implements ShouldQueue
      */
     public function __construct()
     {
-        $this->earningReports = EarningReport::where('status', EarningReportStatusEnum::PENDING->value)
-            ->orWhereNull('status')->get();
+        if (Schema::hasTable('earning_reports')) {
+            $this->earningReports = EarningReport::where('status', EarningReportStatusEnum::PENDING->value)
+                ->orWhereNull('status')->get();
+        }
 
         $setting = Setting::where('key', 'general_system_commission_rate')->first();
         $this->general_system_commission_rate = $setting ? $setting->value : 0;

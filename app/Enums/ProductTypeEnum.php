@@ -20,7 +20,7 @@ enum ProductTypeEnum: int
 
     public static function getKeys(): array
     {
-        return array_keys(self::cases());
+        return array_column(self::cases(), 'name');
     }
 
     public function title()
