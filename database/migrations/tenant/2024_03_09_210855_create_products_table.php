@@ -21,8 +21,9 @@ return new class extends Migration {
 
             //Type 1: Sound
             $table->string('version')->nullable();
+            $table->boolean('mixed_album')->default(1);
             $table->foreignIdFor(Genre::class, 'genre_id')->nullable()->constrained('genres');
-            $table->foreignIdFor(Genre::class, 'sub_genre')->nullable()->constrained('genres');
+            $table->foreignIdFor(Genre::class, 'sub_genre_id')->nullable()->constrained('genres');
             $table->string('format')->nullable();
             $table->foreignIdFor(Label::class, 'label_id')->nullable()->constrained('labels');
             $table->string('p_line')->nullable();

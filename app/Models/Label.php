@@ -37,7 +37,7 @@ class Label extends Model implements HasMedia
         'web',
         'email',
         'address',
-        'added_by'
+        'created_by'
     ];
 
     protected array $orderable = [
@@ -106,7 +106,7 @@ class Label extends Model implements HasMedia
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'added_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function products(): HasMany
@@ -117,10 +117,5 @@ class Label extends Model implements HasMedia
     public function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
-    }
-
-    public function addedBy()
-    {
-        return $this->belongsTo(User::class, 'added_by');
     }
 }

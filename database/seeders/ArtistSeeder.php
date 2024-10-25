@@ -22,7 +22,7 @@ class ArtistSeeder extends Seeder
         DB::table('artist_artist_branch')->truncate();
 
         Artist::factory(26)->create([
-            'added_by' => \App\Models\User::inRandomOrder()->first()->id,
+            'created_by' => \App\Models\User::inRandomOrder()->first()->id,
         ])->each(function (Artist $artist) {
             $randomArtistBranchIds = [];
             $usedIds = [];

@@ -39,6 +39,8 @@ class Product extends Model implements HasMedia
         //common
         'type',
         'album_name',
+        'created_by',
+
         //step 1
         'version',
         'genre_id',
@@ -55,37 +57,6 @@ class Product extends Model implements HasMedia
         //step 2
         //step 3
         //step 4
-        'copyright_for_publication_image',
-
-        'right_to_perform_work',
-        'has_audiovisual_rights',
-        'publisher_name',
-        'is_for_children',
-        'copyright_owner',
-        'description',
-        'youtube_channel',
-        'youtube_channel_theme',
-
-        'is_compilation_publication',
-        'barcode_type',
-
-        'jan_code',
-
-
-        'release_date',
-        'original_release_date',
-        'remaster_release_date',
-        'has_been_released',
-
-        'publish_country_type',
-        'is_publication_date_the_same',
-        'publication_date',
-        'add_new_to_streaming_platforms',
-        'status',
-        'correction',
-        'added_by',
-        'album_type',
-        'xml_path'
     ];
 
     protected $casts = [
@@ -242,9 +213,9 @@ class Product extends Model implements HasMedia
         return $this->belongsToMany(Song::class, 'product_song', 'product_id', 'song_id');
     }
 
-    public function addedBy(): BelongsTo
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'added_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function participants(): HasMany

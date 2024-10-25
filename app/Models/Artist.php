@@ -37,7 +37,7 @@ class Artist extends Model implements HasMedia
         'ipi_code',
         'isni_code',
         'website',
-        'added_by'
+        'created_by'
     ];
 
     protected array $filterable = [
@@ -114,7 +114,7 @@ class Artist extends Model implements HasMedia
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'added_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function products(): BelongsToMany

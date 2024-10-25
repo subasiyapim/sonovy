@@ -95,7 +95,10 @@ class ProductController extends Controller
      */
     public function store(ProductStoreRequest $request): RedirectResponse
     {
-        $product = Product::create($request->validated());
+        $validated = $request->validated();
+        $validated['created_by'] = Auth::id();
+
+        $product = Product::create($validated);
 
         return redirect()->route('control.catalog.products.edit', $product->id)
             ->with([
@@ -134,94 +137,36 @@ class ProductController extends Controller
                 'statuses'));
     }
 
-    public function edit(Product $product): \Inertia\Response|ResponseFactory
+    public function step1(Product $product): \Inertia\Response|ResponseFactory
     {
         abort_if(Gate::denies('product_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $genres = Genre::pluck('name', 'id');
-        $artists = Artist::pluck('name', 'id');
-        $labels = Label::pluck('name', 'id');
-        $counties = CountryServices::get();
-        $languages = LanguageServices::get();
-        $users = User::pluck('name', 'id');
-        $platform_types = PlatformTypeEnum::getTitles();
-        $product_types = ProductTypeEnum::getTitles();
+        $artists = getDataFromInputFormat(Artist::pluck('name', 'id'), 'id', 'name', 'image');
+        $genres = getDataFromInputFormat(Genre::pluck('name', 'id'));
+        $formats = enumToSelectInputFormat(AlbumTypeEnum::getTitles());
+        $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image');
+        $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
 
-        //TODO veritabanına eklenecek settingslere olabilir
-        $barcode_type = 1;
-        $platforms = Platform::get()->groupBy('type')->map(function ($platforms) {
-            return $platforms->pluck('name', 'id');
-        });
-
-        $all_platforms = Platform::all();
-        $publish_country_types = ProductPublishedCountryTypeEnum::getTitles();
-
-        $platform_download_price = Platform::$PLATFORM_DOWNLOAD_PRICE;
-
-        $artistBranches = ArtistBranchServices::getBranchesFromInputFormat();
-
-        $availablePlanItems = Auth::user()->availablePlanItemsCount();
-        $product = $product->load('artists', 'mainArtists', 'featuredArtists', 'label', 'publishedCountries',
-            'genre', 'subGenre', 'language', 'label', 'hashtags', 'downloadPlatforms', 'songs', 'addedBy',
-            'promotions', 'introductions');
-
-        return inertia('Control/Products/Edit',
+        return inertia('Control/Products/Form/Step1',
             compact(
                 'product',
                 'genres',
                 'artists',
                 'labels',
-                'counties',
                 'languages',
-                'product_types',
-                'platform_types',
-                'platforms',
-                'all_platforms',
-                'platform_download_price',
-                'publish_country_types',
-                'barcode_type',
-                'artistBranches',
-                'availablePlanItems',
-                'users'
+                'formats',
             )
         );
-
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(ProductUpdateRequest $request, Product $product): RedirectResponse
+    public function step1Store(Request $request, Product $product): RedirectResponse
     {
+        $product->update($request->all());
 
-        $data = $request->except([
-            'image', 'songs', 'main_artists', 'featuring_artists', 'catalog_number', 'promotion_info', 'platforms',
-            'counties', 'hashtags'
-        ]);
-
-        $product->update($data);
-
-        self::imageUpload($request, $product);
-
-        self::attachSongs($request, $product);
-
-        self::attachArtistFromProduct($product, $request);
-
-        self::publishedCountries($request, $product);
-
-        self::createHashtags($request, $product);
-
-        self::createPromotions($request, $product);
-
-        self::createDownloadPlatforms($request, $product);
-
-        if ($product->status != ProductStatusEnum::DRAFT) {
-            event(new NewProductEvent($product));
-        }
-
-        return to_route('control.catalog.products.index')
+        return redirect()->route('control.catalog.products.step2', $product->id)
             ->with([
-                'notification' => __('control.notification_updated', ['model' => __('control.product.title_singular')])
+                'notification' => __('control.notification_updated',
+                    ['model' => __('control.product.title_singular')])
             ]);
     }
 
@@ -323,47 +268,6 @@ class ProductController extends Controller
                 'notification' => __('control.notification_created',
                     ['model' => __('control.convert_audio.title_singular')])
             ]);
-    }
-
-    public function addParticipant(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'product_id' => 'required|integer',
-            'song_id' => 'required|integer',
-            'user_id' => 'required|integer',
-            'tasks' => 'required|array',
-            'rate' => 'required|integer',
-        ]);
-
-        Participant::create(
-            [
-                'product_id' => $request->product_id,
-                'song_id' => $request->song_id,
-                'user_id' => $request->user_id,
-                'tasks' => json_encode($request->tasks, JSON_UNESCAPED_UNICODE, JSON_UNESCAPED_SLASHES),
-                'rate' => $request->rate,
-            ]
-        );
-
-        return redirect()->back()
-            ->with([
-                'notification' => __('control.notification_created',
-                    ['model' => __('control.participant.title_singular')])
-            ]);
-    }
-
-    public function deleteParticipants(Request $request): RedirectResponse
-    {
-        $request->validate(['participant_id' => 'required|integer']);
-
-        Participant::find($request->participant_id)->delete();
-
-        return redirect()->back()
-            ->with([
-                'notification' => __('control.notification_deleted',
-                    ['model' => __('control.participant.title_singular')])
-            ]);
-
     }
 
     /**
