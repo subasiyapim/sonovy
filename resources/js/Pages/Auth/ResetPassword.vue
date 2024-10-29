@@ -39,35 +39,35 @@ const submit = () => {
     <p class="paragraph-sm c-sub-600 !text-center mb-6" v-text="__('client.forgot_password.subtitle')"/>
     <form @submit.prevent="submit">
       <div>
-        <FormElement
-            v-model="form.email"
-            :error="form.errors.email"
-            direction="vertical"
-            :label="__('client.login.fields.email')"
-            :placeholder="__('client.login.fields.email_placeholder')"/>
+        <FormElement :required="true"
+                     v-model="form.email"
+                     :error="form.errors.email"
+                     direction="vertical"
+                     :label="__('client.login.fields.email')"
+                     :placeholder="__('client.login.fields.email_placeholder')"/>
 
       </div>
 
       <div class="mt-4">
-        <FormElement
-            type="password"
-            v-model="form.password"
-            :error="form.errors.password"
-            direction="vertical"
-            :label="__('client.login.fields.password')"
-            :placeholder="__('client.login.fields.password_placeholder')"/>
+        <FormElement :required="true"
+                     type="password"
+                     v-model="form.password"
+                     :error="form.errors.password"
+                     direction="vertical"
+                     :label="__('client.login.fields.password')"
+                     :placeholder="__('client.login.fields.password_placeholder')"/>
 
       </div>
 
       <div class="mt-4">
 
-        <FormElement
-            type="password"
-            v-model="form.password_confirmation"
-            :error="form.errors.password_confirmation"
-            direction="vertical"
-            :label="__('client.login.fields.password')"
-            :placeholder="__('client.login.fields.password_placeholder')"/>
+        <FormElement :required="true"
+                     type="password"
+                     v-model="form.password_confirmation"
+                     :error="form.errors.password_confirmation"
+                     direction="vertical"
+                     :label="__('client.login.fields.password')"
+                     :placeholder="__('client.login.fields.password_placeholder')"/>
 
 
       </div>

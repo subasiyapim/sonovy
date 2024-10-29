@@ -70,7 +70,9 @@ const submit = () => {
                 type="button"/>
       </div>
       <PrimaryButton>
-        {{ __('client.forgot_password.send_reset_link') }}
+        {{
+          form.processing ? __('client.forgot_password.send_reset_link_loading') : __('client.forgot_password.send_reset_link')
+        }}
         <template #suffix>
           <ProgressIcon v-if="form.processing" class="ms-1" color="var(--dark-green-500)"/>
           <SendIcon v-else class="ms-1" color="var(--dark-green-500)"/>

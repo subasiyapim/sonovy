@@ -103,6 +103,7 @@ return [
         'title' => 'Şifremi Sıfırla',
         'subtitle' => 'Şifrenizi sıfırlamak için e-posta adresinize 6 haneli sıfırlama kodu göndereceğiz.',
         'send_reset_link' => 'Kod gönder',
+        'send_reset_link_loading' => 'Kod doğrulanıyor...',
         'back_btn' => 'Geri dön',
         'email_sent' => 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.',
         'email' => 'Email adresiniz',

@@ -42,7 +42,9 @@ class EarningJob implements ShouldQueue
                 ->orWhereNull('status')->get();
         }
 
-        $setting = Setting::where('key', 'general_system_commission_rate')->first();
+        $setting = Schema::hasTable('settings')
+            ? Setting::where('key', 'general_system_commission_rate')->first()
+            : null;
         $this->general_system_commission_rate = $setting ? $setting->value : 0;
 
     }
