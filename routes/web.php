@@ -11,6 +11,7 @@ Route::group(
     ], function () {
 
     Route::get('new-tenant', function (Request $request) {
+
         $domainName = $request->get('name');
         $uniqId = uniqid();
         $dbName = 'tenant_'.$domainName.'_'.$uniqId;
