@@ -41,7 +41,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $translations = LocaleService::getLanguageFile(session('appLocale',
-            Auth::user()->interface_language ?? config('app.locale')), ['client', 'control', 'sidebar', 'auth']);
+            $request->user()->interface_language ?? config('app.locale')), ['client', 'control', 'sidebar', 'auth']);
 
         $data = [
             'ziggy' => fn() => [
