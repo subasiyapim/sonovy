@@ -290,7 +290,8 @@ Route::group(
 
         Route::get('hashtags', fn() => HashtagServices::getHashtags())->name('hashtags');
 
-        Route::post('media-upload', [MediaController::class, 'upload'])->name('media.upload');
+        Route::post('song-upload', [MediaController::class, 'songUpload'])->name('song.upload');
+        Route::post('image-upload', [MediaController::class, 'mediaUpload'])->name('image.upload');
         Route::post(
             'artists-platform-match',
             [ArtistController::class, 'artistPlatformMatch']

@@ -180,6 +180,7 @@ class ProductController extends Controller
         $formats = enumToSelectInputFormat(AlbumTypeEnum::getTitles());
         $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
         $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
+        $progress = ProductServices::progress($product);
 
         return inertia(
             'Control/Products/Edit',
@@ -190,6 +191,7 @@ class ProductController extends Controller
                 'labels',
                 'languages',
                 'formats',
+                'progress'
             )
         );
     }
@@ -198,13 +200,17 @@ class ProductController extends Controller
     {
         $product->update($request->validated());
 
+        $progress = ProductServices::progress($product);
+
+
         return redirect()->route('control.catalog.products.form.edit',
             [$request->validated()['step'] + 1, $product->id])
             ->with([
                 'notification' => __(
                     'control.notification_updated',
-                    ['model' => __('control.product.title_singular')]
-                )
+                    ['model' => __('control.product.title_singular')],
+                ),
+                'progress' => $progress,
             ]);
     }
 

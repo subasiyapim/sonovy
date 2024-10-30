@@ -59,7 +59,13 @@ class Product extends Model implements HasMedia
         //step 3
         //step 4
     ];
-
+    public static array $excludedFields = [
+        'id',
+        'created_by',
+        'updated_at',
+        'created_at',
+        'deleted_at',
+    ];
     protected $casts = [
         'type' => ProductTypeEnum::class,
         'is_for_children' => 'boolean',
