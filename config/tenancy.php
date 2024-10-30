@@ -49,11 +49,11 @@ $data = [
          * TenantDatabaseManagers are classes that handle the creation & deletion of tenant databases.
          */
         'managers' => [
-            'sqlite' => Stancl\Tenancy\TenantDatabaseManagers\SQLiteDatabaseManager::class,
-            'mysql' => env('APP_ENV') == 'local'
-                ? Stancl\Tenancy\TenantDatabaseManagers\MySQLDatabaseManager::class
-                : Stancl\Tenancy\TenantDatabaseManagers\PermissionControlledMySQLDatabaseManager::class,
-            'pgsql' => Stancl\Tenancy\TenantDatabaseManagers\PostgreSQLDatabaseManager::class,
+            //'sqlite' => Stancl\Tenancy\TenantDatabaseManagers\SQLiteDatabaseManager::class,
+            'mysql' => config('app.env') == 'production'
+                ? Stancl\Tenancy\TenantDatabaseManagers\PermissionControlledMySQLDatabaseManager::class
+                : Stancl\Tenancy\TenantDatabaseManagers\MySQLDatabaseManager::class,
+            //'pgsql' => Stancl\Tenancy\TenantDatabaseManagers\PostgreSQLDatabaseManager::class,
 
             /**
              * Use this database manager for MySQL to have a DB user created for each tenant database.
