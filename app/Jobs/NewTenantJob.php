@@ -2,20 +2,25 @@
 
 namespace App\Jobs;
 
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use Laravel\Reverb\Loggers\Log;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class NewTenantJob implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public string $domain;
 
     /**
      * Create a new job instance.
+     *
+     * @param  string  $domain
      */
-    public function __construct($domain)
+    public function __construct(string $domain)
     {
         $this->domain = $domain;
     }
@@ -29,30 +34,28 @@ class NewTenantJob implements ShouldQueue
         $dbName = 'tenant_'.$this->domain.'_'.$uniqId;
 
         // Check if the domain already exists
-        $domainExists = \Stancl\Tenancy\Database\Models\Domain::where('domain', $this->domain)->exists();
-
-        if ($domainExists) {
-            Log::error($this->domain.' domain already exists');
+        if (\Stancl\Tenancy\Database\Models\Domain::where('domain', $this->domain)->exists()) {
+            Log::error("Domain '{$this->domain}' already exists");
+            return; // Exit to avoid duplicate creation
         }
 
-        // Create tenant
+        // Prepare tenant data
         $data = [
             'id' => $uniqId,
             'tenancy_db_name' => $dbName,
             'name' => $this->domain,
         ];
 
+        // Production environment database user and password
         if (config('app.env') == 'production') {
-            $dbUser = 'tenant_'.$this->domain;
-            $dbPassword = uniqid();
-
-            $data['tenancy_db_username'] = $dbUser;
-            $data['tenancy_db_password'] = $dbPassword;
+            $data['tenancy_db_username'] = 'tenant_'.$this->domain;
+            $data['tenancy_db_password'] = uniqid();
         }
 
+        // Create the tenant and associate the domain
         $tenant = \App\Models\System\Tenant::create($data);
         $tenant->domains()->create(['domain' => $this->domain]);
 
-        Log::info('Tenant created successfully domain: '.$this->domain);
+        Log::info("Tenant created successfully with domain: {$this->domain}");
     }
 }
