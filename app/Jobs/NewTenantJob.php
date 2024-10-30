@@ -47,7 +47,7 @@ class NewTenantJob implements ShouldQueue
         ];
 
         // Production environment database user and password
-        if (config('app.env') === 'production') {
+        if (config('app.env') == 'production') {
             $data['tenancy_db_username'] = 'tenant_'.$this->domain;
             $data['tenancy_db_password'] = uniqid();
         }
