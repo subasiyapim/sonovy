@@ -25,7 +25,7 @@ class LabelFactory extends Factory
             'web' => $this->faker->url,
             'email' => $this->faker->email,
             'address' => $this->faker->address,
-            'added_by' => User::inRandomOrder()->first()->id,
+            'created_by' => User::inRandomOrder()->first()->id,
         ];
     }
 }

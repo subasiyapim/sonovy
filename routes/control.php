@@ -20,7 +20,6 @@ use App\Http\Controllers\Control\UpcController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PubController;
 use App\Http\Middleware\VerificationMiddleware;
-use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Control\RoleController;
 use App\Http\Controllers\Control\UserController;
@@ -79,11 +78,29 @@ Route::group(
         Route::get('songs/{song}/get-lyrics', [SongController::class, 'getLyrics'])->name('songs.get-lyrics');
         Route::post('songs/{song}/store-lyrics', [SongController::class, 'storeLyrics'])->name('songs.store-lyrics');
 
-        Route::resource('products', ProductController::class)->names('products');
-        Route::post('products/add-participant',
-            [ProductController::class, 'addParticipant'])->name('products.add-participant');
-        Route::post('products/delete-participant',
-            [ProductController::class, 'deleteParticipants'])->name('products.delete-participant');
+        Route::resource('products', ProductController::class)->only(['index', 'show', 'create'])->names('products');
+
+        Route::group(
+            ['prefix' => 'products', 'as' => 'products.'], function () {
+            Route::get('/', [ProductController::class, 'index'])->name('index');
+            Route::get('create', [ProductController::class, 'create'])->name('create');
+            Route::post('store', [ProductController::class, 'store'])->name('store');
+
+            Route::group(['prefix' => 'form', 'as' => 'form.'], function () {
+                Route::get('step1/{product}', [ProductController::class, 'step1'])->name('step1');
+                Route::get('step2/{product}', [ProductController::class, 'step2'])->name('step2');
+                Route::get('step3/{product}', [ProductController::class, 'step3'])->name('step3');
+                Route::get('step4/{product}', [ProductController::class, 'step4'])->name('step4');
+                Route::get('step5/{product}', [ProductController::class, 'step5'])->name('step5');
+
+                Route::post('step1/{product}', [ProductController::class, 'step1Store'])->name('step1.store');
+                Route::post('step2/{product}', [ProductController::class, 'step2Store'])->name('step2.store');
+                Route::post('step3/{product}', [ProductController::class, 'step3Store'])->name('step3.store');
+                Route::post('step4/{product}', [ProductController::class, 'step4Store'])->name('step4.store');
+                Route::post('step5/{product}', [ProductController::class, 'step5Store'])->name('step5.store');
+            });
+        });
+
         // Get ISRC
         Route::get('getISRC', [ProductController::class, 'getISRC'])->name('products.get-isrc');
         // Check ISRC

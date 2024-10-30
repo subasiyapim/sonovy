@@ -6,6 +6,7 @@ use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
 use App\Models\Scopes\FilterByUserRoleScope;
+
 use App\Traits\DataTables\HasAdvancedFilter;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -32,47 +33,31 @@ class Product extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
     use HasAdvancedFilter;
-    use SoftDeletes;
 
     protected $table = 'products';
 
     protected $fillable = [
+        //common
         'type',
-        'copyright_for_publication_image',
-        'label_id',
-        'right_to_perform_work',
-        'has_audiovisual_rights',
-        'name',
-        'publisher_name',
-        'is_for_children',
-        'copyright_owner',
-        'description',
-        'youtube_channel',
-        'youtube_channel_theme',
+        'album_name',
+        'created_by',
+
+        //step 1
+        'version',
         'genre_id',
         'sub_genre_id',
-        'is_compilation_publication',
-        'barcode_type',
+        'format',
+        'label_id',
+        'p_line',
+        'c_line',
         'upc_code',
         'ean_code',
-        'jan_code',
         'catalog_number',
         'language_id',
-        'release_date',
-        'original_release_date',
-        'remaster_release_date',
-        'has_been_released',
-        'p_line',
-        'publish_country_type',
-        'is_publication_date_the_same',
-        'publication_date',
-        'add_new_to_streaming_platforms',
-        'status',
-        'correction',
-        'added_by',
-        'album_type',
-        'version',
-        'xml_path'
+        'main_price',
+        //step 2
+        //step 3
+        //step 4
     ];
 
     protected $casts = [
@@ -140,7 +125,9 @@ class Product extends Model implements HasMedia
     protected function statusText(): Attribute
     {
         return Attribute::make(
-            get: fn() => ProductStatusEnum::getTitles()[$this->status]
+            get: fn(): mixed => $this->status !== null
+                ? ProductStatusEnum::getTitles()[$this->status]
+                : 'Default Status Text'
         );
     }
 
@@ -203,20 +190,20 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Label::class, 'label_id');
     }
 
-    public function language(): BelongsTo
-    {
-        return $this->belongsTo(Country::class);
-    }
+    // public function language(): BelongsTo
+    // {
+    //     return $this->belongsTo(Country::class);
+    // }
 
     public function hashtags(): MorphMany
     {
         return $this->morphMany(Hashtag::class, 'model');
     }
 
-    public function publishedCountries(): BelongsToMany
-    {
-        return $this->belongsToMany(Country::class, 'product_published_country', 'product_id', 'country_id');
-    }
+    // public function publishedCountries(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Countr, 'product_published_country', 'product_id', 'country_id');
+    // }
 
     public function downloadPlatforms(): BelongsToMany
     {
@@ -229,9 +216,9 @@ class Product extends Model implements HasMedia
         return $this->belongsToMany(Song::class, 'product_song', 'product_id', 'song_id');
     }
 
-    public function addedBy(): BelongsTo
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'added_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function participants(): HasMany

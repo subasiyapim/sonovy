@@ -43,7 +43,6 @@ class UserVerifyService
 
     public static function sendVerifySms(User $user)
     {
-
         $settings = Cache::remember('verification_settings', 60, function () {
             return Setting::whereIn('key', ['email_verification', 'otp_verification'])
                 ->pluck('value', 'key');

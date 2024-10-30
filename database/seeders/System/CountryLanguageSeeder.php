@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\System;
 
-use App\Models\Country;
+use App\Models\System\Country;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 

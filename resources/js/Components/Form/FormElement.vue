@@ -40,11 +40,18 @@
 
       <AppMultiSelectInput v-else-if="type=='multiselect'" :config="config" :type="type" v-model="element"
                            :placeholder="placeholder">
-        <template v-if="hasSlot('first_child')" #first_child>
-          <slot name="first_child"/>
+         <template v-if="hasSlot('first_child')" #first_child>
+                <slot  name="first_child" />
         </template>
         <template v-if="hasSlot('empty')" #empty>
-          <slot name="empty"/>
+                <slot name="empty" />
+        </template>
+        <template v-if="hasSlot('option')" #option="scope">
+
+                <slot name="option" :data="scope.scope" />
+        </template>
+        <template v-if="hasSlot('model')" #model="scope">
+                <slot name="model" :data="scope.scope" />
         </template>
       </AppMultiSelectInput>
 

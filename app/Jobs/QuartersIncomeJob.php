@@ -14,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class QuartersIncomeJob implements ShouldQueue
 {
@@ -30,9 +31,12 @@ class QuartersIncomeJob implements ShouldQueue
 
     public function __construct()
     {
-        $this->users = User::with('earnings')
-            ->whereHas('earnings')
-            ->get();
+        //  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tenant_app_17_10_2024_15_21_17.earnings' doesn't exist (Connection: tenant, SQL: select * from `users` where exists (select * from `earnings` where `users`.`id` = `earnings`.`user_id`) and `users`.`deleted_at` is null)
+        if (Schema::hasTable('earnings')) {
+            $this->users = User::with('earnings')
+                ->whereHas('earnings')
+                ->get();
+        }
     }
 
     public function handle(): void

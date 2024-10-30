@@ -15,6 +15,10 @@ return new class extends Migration {
             $table->string('name');
             $table->foreignIdFor(\App\Models\System\Country::class);
             $table->text('address')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+            $table->string('web')->nullable();
+            $table->foreignIdFor(\App\Models\User::class, 'created_by');
             $table->timestamps();
             $table->softDeletes();
         });

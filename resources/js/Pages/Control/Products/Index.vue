@@ -59,13 +59,56 @@
             </AppCard>
         </div>
         <AppTable v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
-            <AppTableColumn label="1. Sütun">
-                <template #default="scope"> asds{{ scope.row.name }}</template>
+            <AppTableColumn label="Tür" sortable="type">
+                <template #default="scope">
+                    {{scope.row.type}}
+                </template>
             </AppTableColumn>
-            <AppTableColumn label="2. Sütun">
-                <template #default="scope">{{scope.row.name}}</template>
+            <AppTableColumn label="Durum">
+                <template #default="scope">
+                    {{scope.row.status}}
+                </template>
             </AppTableColumn>
 
+            <AppTableColumn label="Yayın Bilgisi">
+                <template #default="scope">
+                    <a :href="route('control.catalog.products.form.step1',scope.row.id)"  class="paragraph-xs c-blue-500">
+                        {{scope.row.album_name}}
+                    </a>
+                </template>
+            </AppTableColumn>
+
+            <AppTableColumn label="Sanatçı">
+                <template #default="scope">
+                    -
+                </template>
+            </AppTableColumn>
+
+            <AppTableColumn label="Plak Şirketi">
+                <template #default="scope">
+
+                </template>
+            </AppTableColumn>
+            <AppTableColumn label="Yayın Tarih">
+                <template #default="scope">
+
+                </template>
+            </AppTableColumn>
+            <AppTableColumn label="Parçalar">
+                <template #default="scope">
+
+                </template>
+            </AppTableColumn>
+             <AppTableColumn label="UPC/Katalog">
+                <template #default="scope">
+
+                </template>
+            </AppTableColumn>
+             <AppTableColumn label="Mağazalar">
+                <template #default="scope">
+
+                </template>
+            </AppTableColumn>
             <template #empty>
                 <div class="flex flex-col items-center justify-center gap-8">
                     <div>

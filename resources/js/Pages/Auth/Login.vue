@@ -26,19 +26,19 @@ const submit = () => {
     <h1 class="label-xl c-strong-950 !text-center" v-text="__('client.login.title')"/>
     <p class="paragraph-sm c-sub-600 !text-center mb-6" v-text="__('client.login.subtitle')"/>
     <form @submit.prevent="submit" class="flex flex-col gap-3">
-      <FormElement
-          v-model="form.email"
-          :error="form.errors.email"
-          direction="vertical"
-          :label="__('client.login.fields.email')"
-          :placeholder="__('client.login.fields.email_placeholder')"/>
-      <FormElement
-          v-model="form.password"
-          :error="form.errors.password"
-          direction="vertical"
-          :label="__('client.login.fields.password')"
-          type="password"
-          :placeholder="__('client.login.fields.password_placeholder')"/>
+      <FormElement :required="true"
+                   v-model="form.email"
+                   :error="form.errors.email"
+                   direction="vertical"
+                   :label="__('client.login.fields.email')"
+                   :placeholder="__('client.login.fields.email_placeholder')"/>
+      <FormElement :required="true"
+                   v-model="form.password"
+                   :error="form.errors.password"
+                   direction="vertical"
+                   :label="__('client.login.fields.password')"
+                   type="password"
+                   :placeholder="__('client.login.fields.password_placeholder')"/>
       <div class="text-end">
         <a :href="route('password.request')" class="label-xs c-neutral-500"
            v-text="__('client.login.forgot_password')"/>

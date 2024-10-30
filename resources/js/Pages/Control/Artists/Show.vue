@@ -1,6 +1,7 @@
 <template>
 
-  <AdminLayout :showDatePicker="false" :title="__('control.artist.show_header')" parentTitle="Katalog" subParent="Tüm Şarkılar" :hasPadding="false">
+  <AdminLayout :showDatePicker="false" :title="__('control.artist.show_header')" parentTitle="Katalog"
+               subParent="Tüm Şarkılar" :hasPadding="false">
 
     <div class="bg-white-400 h-44 p-5 relative">
       <div class="">
@@ -12,7 +13,7 @@
           class="absolute rounded-full w-32 h-32 bg-blue-300 left-8 -bottom-16 flex items-center justify-center overflow-hidden">
         <img class="w-full h-full object-cover"
              :alt="artist.name"
-             :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
+             :src="artist.image ? artist.image.small : defaultStore.profileImage(artist.name)">
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
         <PrimaryButton @click="remove">
@@ -27,15 +28,18 @@
         </PrimaryButton>
       </div>
       <div class="flex items-center gap-4 absolute bottom-5 right-5">
-        <template v-for="(platform, index) in filteredPlatforms" :key="platform.id">
-          <div class="flex items-center gap-2">
-            <SpotifyIcon v-if="platform.code === 'spotify'"/>
-            <TidalIcon v-else-if="platform.code === 'tidal'"/>
-            <YoutubeIcon v-else-if="platform.code === 'youtube'"/>
-            <span class="c-strong-950 label-sm">{{ platform.name }}</span>
-          </div>
+        <a v-for="(platform, index) in filteredPlatforms"
+           class="flex items-center gap-2"
+           :href="platform.pivot.url"
+           :key="platform.id"
+           target="_blank"
+        >
+          <Icon :icon="platform.icon"/>
+          <span class="c-strong-950 label-sm">{{ platform.name }}</span>
           <span class="label-sm c-soft-300" v-if="index < filteredPlatforms.length - 1">•</span>
-        </template>
+        </a>
+
+
       </div>
     </div>
 
@@ -132,7 +136,7 @@
             <div v-for="platform in artist.platforms" class="flex gap-2 items-center w-48" :key="platform.id">
               <Icon :icon="platform.icon"></Icon>
               <span class="c-strong-950 label-sm" v-text="platform.name"/>
-              <a :href="platform.url" target="_blank">
+              <a :href="platform.pivot.url" target="_blank">
                 <LinkIcon color="var(--soft-400)"/>
               </a>
             </div>
@@ -197,7 +201,7 @@ import {
 import {PrimaryButton} from '@/Components/Buttons'
 import {useDefaultStore} from "@/Stores/default";
 import {TidalIcon, YoutubeIcon} from "@/Components/Icons/index.js";
-import {computed,ref} from "vue";
+import {computed, ref} from "vue";
 import {router} from '@inertiajs/vue3';
 
 const isModalOn = ref(false);
@@ -214,14 +218,14 @@ const defaultStore = useDefaultStore();
 
 const filteredPlatforms = computed(() => {
   return props.artist.platforms.filter(platform =>
-      ['spotify', 'tidal', 'youtube'].includes(platform.code)
+      ['spotify', 'apple', 'youtube'].includes(platform.code)
   );
 });
 const onArtistProcessDone = () => {
-    location.reload();
+  location.reload();
 }
 const remove = () => {
-    router.delete(route('control.catalog.artists.destroy', props.artist.id), {});
+  router.delete(route('control.catalog.artists.destroy', props.artist.id), {});
 }
 </script>
 

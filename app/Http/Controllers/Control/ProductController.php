@@ -48,6 +48,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 use Inertia\ResponseFactory;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -64,7 +65,16 @@ class ProductController extends Controller
         abort_if(Gate::denies('product_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
 
-        $products = Product::with('artists', 'label', 'publishedCountries', 'songs')
+        // $products = Product::with('artists', 'label', 'publishedCountries', 'songs')
+        //     ->when($request->input('status'), function ($query) use ($request) {
+        //         $query->where('status', $request->input('status'));
+        //     })
+        //     ->when($request->input('type'), function ($query) use ($request) {
+        //         $query->where('type', $request->input('type'));
+        //     })
+        //     ->advancedFilter();
+
+        $products = Product::with('artists', 'label', 'songs')
             ->when($request->input('status'), function ($query) use ($request) {
                 $query->where('status', $request->input('status'));
             })
@@ -83,46 +93,9 @@ class ProductController extends Controller
     {
         abort_if(Gate::denies('product_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $genres = getDataFromInputFormat(Genre::get(['name', 'id']), 'id', 'name');
-        $artists = getDataFromInputFormat(Artist::get(['name', 'id']), 'id', 'name');
-        $labels = getDataFromInputFormat(Label::get(['name', 'id']), 'id', 'name');
-        $counties = getDataFromInputFormat(\App\Models\System\Country::get(['name', 'id']), 'id', 'name', 'emoji');
-        $languages = getDataFromInputFormat(\App\Models\System\Country::get(['name', 'id']), 'id', 'name', 'emoji');
-        $users = getDataFromInputFormat(User::get(['name', 'id']), 'id', 'name');
-        $platform_types = getDataFromInputFormat(Platform::get(['name', 'id', 'type']), 'id', 'name');
-        $product_types = getDataFromInputFormat(ProductTypeEnum::getTitles(), 'id', 'name', null, true);
-        $platforms = Platform::all()->groupBy('type')->map(function ($platforms) {
-            return getDataFromInputFormat($platforms, 'id', 'name', 'image');
-        })->toArray();
-        $all_platforms = getDataFromInputFormat(Platform::all(['name', 'id']), 'id', 'name', 'image');
-        $publish_country_types = getDataFromInputFormat(ProductPublishedCountryTypeEnum::getTitles(), 'id', 'name',
-            null, true);
-        $platform_download_price = getDataFromInputFormat(Platform::$PLATFORM_DOWNLOAD_PRICE, 'id', 'name', null, true);
+        $album_types = enumToSelectInputFormat(ProductTypeEnum::getTitles());
 
-        $artistBranches = getDataFromInputFormat(ArtistBranch::with('translations')
-            ->whereHas('translations', function ($query) {
-                $query->where('locale', app()->getLocale());
-            })->get(), 'id', 'name');
-        $availablePlanItems = Auth::user()->availablePlanItemsCount();
-
-        return inertia('Control/Products/Create',
-            compact(
-                'genres',
-                'artists',
-                'labels',
-                'counties',
-                'languages',
-                'product_types',
-                'platform_types',
-                'platforms',
-                'all_platforms',
-                'platform_download_price',
-                'publish_country_types',
-                'artistBranches',
-                'availablePlanItems',
-                'users'
-            )
-        );
+        return inertia('Control/Products/Create', compact('album_types'));
     }
 
     /**
@@ -130,53 +103,15 @@ class ProductController extends Controller
      */
     public function store(ProductStoreRequest $request): RedirectResponse
     {
-        DB::beginTransaction();
-        try {
-            $data = $request->except([
-                'image', 'songs', 'main_artists', 'featuring_artists', 'catalog_number', 'promotion_info', 'platforms',
-                'counties', 'hashtags'
+        $validated = $request->validated();
+        $validated['created_by'] = Auth::id();
+
+        $product = Product::create($validated);
+
+        return redirect()->route('control.catalog.products.form.step1', $product->id)
+            ->with([
+                'notification' => __('control.notification_created', ['model' => __('control.product.title_singular')])
             ]);
-
-            if (empty($request->validated()['catalog_number'])) {
-                $data['catalog_number'] = CatalogNumberService::make();
-            }
-
-            $data['added_by'] = auth()->id();
-
-            $product = Product::create($data);
-
-            self::imageUpload($request, $product);
-
-            self::attachSongs($request, $product);
-
-            self::attachArtistFromProduct($product, $request);
-
-            self::publishedCountries($request, $product);
-
-            self::createHashtags($request, $product);
-
-            self::createPromotions($request, $product);
-
-            self::createDownloadPlatforms($request, $product);
-
-            if ($product->status != ProductStatusEnum::DRAFT) {
-                event(new NewProductEvent($product));
-            }
-
-            DB::commit();
-
-            return redirect()->route('control.catalog.products.index')
-                ->with([
-                    'notification' => __('control.notification_created',
-                        ['model' => __('control.product.title_singular')])
-                ]);
-
-        } catch (Exception $exception) {
-            DB::rollBack();
-            Log::info('Product exception error: '.$exception->getMessage());
-            return redirect()->back()->with(['error' => $exception->getMessage()]);
-        }
-
     }
 
     /**
@@ -186,8 +121,20 @@ class ProductController extends Controller
     {
         abort_if(Gate::denies('product_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $product->load('artists', 'label', 'publishedCountries', 'genre', 'subGenre', 'language', 'label',
-            'hashtags', 'downloadPlatforms', 'songs.participants.user.roles', 'addedBy', 'promotions');
+        $product->load(
+            'artists',
+            'label',
+            'publishedCountries',
+            'genre',
+            'subGenre',
+            'language',
+            'label',
+            'hashtags',
+            'downloadPlatforms',
+            'songs.participants.user.roles',
+            'addedBy',
+            'promotions'
+        );
 
         $genres = Genre::pluck('name', 'id');
         $artists = Artist::pluck('name', 'id');
@@ -204,100 +151,80 @@ class ProductController extends Controller
         $youtube_channel_themes = YoutubeChannelThemeEnum::getTitles();
         $statuses = ProductStatusEnum::getTitles();
 
-        return inertia('Control/Products/Show',
-            compact('product', 'genres', 'artists', 'labels', 'countries', 'languages', 'platform_types',
-                'product_types', 'platforms', 'publish_country_types', 'time_zones', 'youtube_channel_themes',
-                'statuses'));
-    }
-
-    public function edit(Product $product): \Inertia\Response|ResponseFactory
-    {
-        abort_if(Gate::denies('product_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $genres = Genre::pluck('name', 'id');
-        $artists = Artist::pluck('name', 'id');
-        $labels = Label::pluck('name', 'id');
-        $counties = CountryServices::get();
-        $languages = LanguageServices::get();
-        $users = User::pluck('name', 'id');
-        $platform_types = PlatformTypeEnum::getTitles();
-        $product_types = ProductTypeEnum::getTitles();
-
-        //TODO veritabanına eklenecek settingslere olabilir
-        $barcode_type = 1;
-        $platforms = Platform::get()->groupBy('type')->map(function ($platforms) {
-            return $platforms->pluck('name', 'id');
-        });
-
-        $all_platforms = Platform::all();
-        $publish_country_types = ProductPublishedCountryTypeEnum::getTitles();
-
-        $platform_download_price = Platform::$PLATFORM_DOWNLOAD_PRICE;
-
-        $artistBranches = ArtistBranchServices::getBranchesFromInputFormat();
-
-        $availablePlanItems = Auth::user()->availablePlanItemsCount();
-        $product = $product->load('artists', 'mainArtists', 'featuredArtists', 'label', 'publishedCountries',
-            'genre', 'subGenre', 'language', 'label', 'hashtags', 'downloadPlatforms', 'songs', 'addedBy',
-            'promotions', 'introductions');
-
-        return inertia('Control/Products/Edit',
+        return inertia(
+            'Control/Products/Show',
             compact(
                 'product',
                 'genres',
                 'artists',
                 'labels',
-                'counties',
+                'countries',
                 'languages',
-                'product_types',
                 'platform_types',
+                'product_types',
                 'platforms',
-                'all_platforms',
-                'platform_download_price',
                 'publish_country_types',
-                'barcode_type',
-                'artistBranches',
-                'availablePlanItems',
-                'users'
+                'time_zones',
+                'youtube_channel_themes',
+                'statuses'
             )
         );
-
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(ProductUpdateRequest $request, Product $product): RedirectResponse
+    public function step1(Product $product): \Inertia\Response|ResponseFactory
     {
+        abort_if(Gate::denies('product_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $data = $request->except([
-            'image', 'songs', 'main_artists', 'featuring_artists', 'catalog_number', 'promotion_info', 'platforms',
-            'counties', 'hashtags'
-        ]);
 
-        $product->update($data);
+        $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
+        $formats = enumToSelectInputFormat(AlbumTypeEnum::getTitles());
+        $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
+        $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
 
-        self::imageUpload($request, $product);
+        return inertia(
+            'Control/Products/Edit',
+            compact(
+                'product',
+                'genres',
+                'labels',
+                'languages',
+                'formats',
+            )
+        );
+    }
 
-        self::attachSongs($request, $product);
+    public function step2(Product $product): \Inertia\Response|ResponseFactory
+    {
+        abort_if(Gate::denies('product_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        self::attachArtistFromProduct($product, $request);
 
-        self::publishedCountries($request, $product);
+        $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
+        $formats = enumToSelectInputFormat(AlbumTypeEnum::getTitles());
+        $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
+        $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
 
-        self::createHashtags($request, $product);
+        return inertia(
+            'Control/Products/Edit',
+            compact(
+                'product',
+                'genres',
+                'labels',
+                'languages',
+                'formats',
+            )
+        );
+    }
 
-        self::createPromotions($request, $product);
+    public function step1Store(Request $request, Product $product): RedirectResponse
+    {
+        $product->update($request->all());
 
-        self::createDownloadPlatforms($request, $product);
-
-        if ($product->status != ProductStatusEnum::DRAFT) {
-            event(new NewProductEvent($product));
-        }
-
-        return to_route('control.catalog.products.index')
+        return redirect()->route('control.catalog.products.step2', $product->id)
             ->with([
-                'notification' => __('control.notification_updated', ['model' => __('control.product.title_singular')])
+                'notification' => __(
+                    'control.notification_updated',
+                    ['model' => __('control.product.title_singular')]
+                )
             ]);
     }
 
@@ -330,13 +257,12 @@ class ProductController extends Controller
         return response()->json($labels, Response::HTTP_OK);
     }
 
-    public function export(): BinaryFileResponse
-    {
-        abort_if(Gate::denies('excel_export_products'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+    // public function export(): BinaryFileResponse
+    // {
+    //     abort_if(Gate::denies('excel_export_products'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return Excel::download(new ProductExport, 'products.xlsx');
-
-    }
+    //     return Excel::download(new ProductExport, 'products.xlsx');
+    // }
 
     public function checkUPC(Request $request): JsonResponse
     {
@@ -390,56 +316,17 @@ class ProductController extends Controller
     public function convertAudio(ConvertAudioRequest $request): RedirectResponse
     {
         $product = Product::find($request->product_id);
-        $song = Song::find($request->song_id);
-
+        // $song = Song::find($request->song_id);
+        $song = [];
         ConvertAudioJob::dispatch($product, $song, $request->all());
 
         return redirect()->back()
             ->with([
-                'notification' => __('control.notification_created',
-                    ['model' => __('control.convert_audio.title_singular')])
+                'notification' => __(
+                    'control.notification_created',
+                    ['model' => __('control.convert_audio.title_singular')]
+                )
             ]);
-    }
-
-    public function addParticipant(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'product_id' => 'required|integer',
-            'song_id' => 'required|integer',
-            'user_id' => 'required|integer',
-            'tasks' => 'required|array',
-            'rate' => 'required|integer',
-        ]);
-
-        Participant::create(
-            [
-                'product_id' => $request->product_id,
-                'song_id' => $request->song_id,
-                'user_id' => $request->user_id,
-                'tasks' => json_encode($request->tasks, JSON_UNESCAPED_UNICODE, JSON_UNESCAPED_SLASHES),
-                'rate' => $request->rate,
-            ]
-        );
-
-        return redirect()->back()
-            ->with([
-                'notification' => __('control.notification_created',
-                    ['model' => __('control.participant.title_singular')])
-            ]);
-    }
-
-    public function deleteParticipants(Request $request): RedirectResponse
-    {
-        $request->validate(['participant_id' => 'required|integer']);
-
-        Participant::find($request->participant_id)->delete();
-
-        return redirect()->back()
-            ->with([
-                'notification' => __('control.notification_deleted',
-                    ['model' => __('control.participant.title_singular')])
-            ]);
-
     }
 
     /**
@@ -455,7 +342,7 @@ class ProductController extends Controller
                 $song['isrc'] = ISRCServices::make($product->type->value);
             }
 
-            Song::find($song['id'])->update($song);
+            // Song::find($song['id'])->update($song);
 
             //Participants
             self::createParticipants($song, $product);
@@ -498,7 +385,6 @@ class ProductController extends Controller
                     ]
                 );
             }
-
         }
 
         return $song;

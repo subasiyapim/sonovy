@@ -14,9 +14,13 @@ return new class extends Migration {
         Schema::create('artists', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->tinyText('about')->nullable();
             $table->foreignIdFor(Country::class);
             $table->string('ipi_code')->nullable();
             $table->string('isni_code')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('website')->nullable();
+            $table->foreignIdFor(\App\Models\User::class, 'created_by');
             $table->timestamps();
             $table->softDeletes();
         });
