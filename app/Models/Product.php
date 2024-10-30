@@ -46,7 +46,7 @@ class Product extends Model implements HasMedia
         'version',
         'genre_id',
         'sub_genre_id',
-        'format',
+        'format_id',
         'label_id',
         'p_line',
         'c_line',
