@@ -41,7 +41,10 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $translations = LocaleService::getLanguageFile(session('appLocale',
-            Auth::user()->interface_language ?? config('app.locale')), ['client', 'control', 'sidebar', 'auth']);
+            $request->user()
+                ? $request->user()->interface_language
+                : config('app.locale')),
+            ['client', 'control', 'sidebar', 'auth']);
 
         $data = [
             'ziggy' => fn() => [
@@ -51,12 +54,28 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'verification_code_expire' => intval(Setting::where('key',
-                'verification_code_expire')->first()->value ?? 1),
-            'notification' => fn() => $request->session()->get('notification', []),
             'intent' => fn() => $request->session()->get('intent', []),
+            'notification' => fn() => $request->session()->get('notification', []),
             'production' => config('app.env') === 'production',
-            'site_settings' => function () {
+            'default_barcode_type' => 1, //UPC
+            'editable_catalogues' => [
+                'product' => true,
+                'song' => true,
+                'artist' => false,
+                'label' => false,
+            ],
+            'currentLocale' => session('appLocale', $request->user()->interface_language ?? config('app.locale')),
+            'defaultLocale' => config('project.default_locale'),
+            'supportedLocales' => LocaleService::getLocalizationList(),
+            'translations' => $translations,
+            'notifications' => [],
+            'maintenance' => null,
+        ];
+        if (tenant()) {
+            $data['verification_code_expire'] = intval(Setting::where('key',
+                'verification_code_expire')->first()->value ?? 1);
+
+            $data['site_settings'] = function () {
                 $settings_arr = [];
                 $settings = \App\Models\Setting::get(['value', 'key', 'value']);
 
@@ -65,21 +84,8 @@ class HandleInertiaRequests extends Middleware
                 }
 
                 return $settings_arr;
-            },
-            'default_barcode_type' => 1, //UPC
-            'editable_catalogues' => [
-                'product' => true,
-                'song' => true,
-                'artist' => false,
-                'label' => false,
-            ],
-            'currentLocale' => session('appLocale', Auth::user()->interface_language ?? config('app.locale')),
-            'defaultLocale' => config('project.default_locale'),
-            'supportedLocales' => LocaleService::getLocalizationList(),
-            'translations' => $translations,
-            'notifications' => [],
-            'maintenance' => null,
-        ];
+            };
+        }
         if (Auth::check()) {
             $data['auth.user.roles'] = Auth::user()->roles;
             $data['auth.user.permissions'] = function () {
