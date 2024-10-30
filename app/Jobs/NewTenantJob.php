@@ -61,6 +61,8 @@ class NewTenantJob implements ShouldQueue
 
         $tenantKey = $tenant->getTenantKey();
 
+        TenantDiskInitialize::dispatch($tenant);
+
         Log::info("Tenant key: {$tenantKey}");
         Log::info("Tenant created successfully with domain: {$this->domain}");
     }
