@@ -3,16 +3,21 @@
 namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class TenantDiskInitialize implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue;
 
     public $tenant;
 
     /**
-     * Create a new job instance.
+     * Yeni bir job instance oluşturun.
+     *
+     * @param  \App\Models\System\Tenant  $tenant
      */
     public function __construct($tenant)
     {
@@ -20,19 +25,26 @@ class TenantDiskInitialize implements ShouldQueue
     }
 
     /**
-     * Execute the job.
+     * Job'u çalıştır.
      */
     public function handle(): void
     {
-        $disks = config('filesystems.disks');
+        $diskName = 'tenant_'.$this->tenant->id;
+        $diskPath = storage_path('app/public/'.$diskName);
 
-        $disks['tenant_'.$this->tenant->id] = [
+        // Disk dizinini oluştur
+        if (!file_exists($diskPath)) {
+            mkdir($diskPath, 0755, true);
+        }
+
+        // Disk yapılandırmasını dinamik olarak oluştur
+        Storage::build([
             'driver' => 'local',
-            'root' => storage_path('app/public/tenant_'.$this->tenant->id),
-            'url' => env('APP_URL').'/storage/tenant_'.$this->tenant->id,
+            'root' => $diskPath,
+            'url' => env('APP_URL').'/storage/'.$diskName,
             'visibility' => 'public',
-        ];
+        ]);
 
-        config(['filesystems.disks' => $disks]);
+        Log::info("Tenant için disk başarıyla oluşturuldu: ".$diskName);
     }
 }
