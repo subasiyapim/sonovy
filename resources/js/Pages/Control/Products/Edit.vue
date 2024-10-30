@@ -99,6 +99,7 @@ const crudStore = useCrudStore();
 const props = defineProps({
     product:{},
     genres:{},
+    step:{}
 })
 
 const onChangeTab = (e) => {
@@ -123,6 +124,10 @@ const step1Element = useForm({
     main_price:props.product.main_price,
 });
 
+const step2Element = useForm({
+
+});
+
 const percent = computed(() => {
     let percent_value = 0;
     if(currentTab.value == 0){
@@ -136,7 +141,7 @@ const percent = computed(() => {
     }
     return percent_value;
 });
-const currentTab = ref(0);
+const currentTab = ref(props.step-1);
 const selectConfig = computed(() => {
     return {
         hasSearch:true,
@@ -149,7 +154,7 @@ const selectConfig = computed(() => {
 
 const submitStep = async () => {
     if(currentTab.value == 0){
-        step1Element.post(route('control.catalog.products.form.step1',props.product.id));
+        step1Element.post(route('control.catalog.products.form.step1.store',props.product.id));
 
     }
 

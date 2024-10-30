@@ -97,13 +97,13 @@ const handleFileInput = (event) => {
 
 const handleFiles = (files) => {
   files.forEach((file) => {
-    if (file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        images.push({ file, url: e.target.result });
-      };
-      reader.readAsDataURL(file);
-    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+    images.push({ file, url: e.target.result });
+    };
+    reader.readAsDataURL(file);
+
   });
 };
 

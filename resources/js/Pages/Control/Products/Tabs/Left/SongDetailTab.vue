@@ -28,7 +28,7 @@
                 </AppTableColumn>
 
                 <template #empty>
-                    <TusUploadInput ></TusUploadInput>
+                    <TusUploadInput></TusUploadInput>
                 </template>
             </AppTable>
         </div>

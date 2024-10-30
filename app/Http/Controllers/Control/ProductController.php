@@ -108,7 +108,7 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
-        return redirect()->route('control.catalog.products.form.step1', $product->id)
+        return redirect()->route('control.catalog.products.form.edit', [1, $product->id])
             ->with([
                 'notification' => __('control.notification_created', ['model' => __('control.product.title_singular')])
             ]);
@@ -171,7 +171,7 @@ class ProductController extends Controller
         );
     }
 
-    public function step1(Product $product): \Inertia\Response|ResponseFactory
+    public function edit($step, Product $product): \Inertia\Response|ResponseFactory
     {
         abort_if(Gate::denies('product_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -185,28 +185,7 @@ class ProductController extends Controller
             'Control/Products/Edit',
             compact(
                 'product',
-                'genres',
-                'labels',
-                'languages',
-                'formats',
-            )
-        );
-    }
-
-    public function step2(Product $product): \Inertia\Response|ResponseFactory
-    {
-        abort_if(Gate::denies('product_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-
-        $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
-        $formats = enumToSelectInputFormat(AlbumTypeEnum::getTitles());
-        $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
-        $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
-
-        return inertia(
-            'Control/Products/Edit',
-            compact(
-                'product',
+                'step',
                 'genres',
                 'labels',
                 'languages',
@@ -219,7 +198,7 @@ class ProductController extends Controller
     {
         $product->update($request->all());
 
-        return redirect()->route('control.catalog.products.step2', $product->id)
+        return redirect()->route('control.catalog.products.form.edit', [2, $product->id])
             ->with([
                 'notification' => __(
                     'control.notification_updated',

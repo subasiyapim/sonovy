@@ -14,10 +14,17 @@
    --dp-border-radius: 10px !important;
    --dp-font-size: 14px !important;
    --dp-text-color:var(--sub-600) !important;
+   -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 *{
     font-family: "Poppins", sans-serif;
 }
+::-webkit-scrollbar {
+  display: none;
+}
+
+
 .sub-menu-item{
      padding: 8px 12px;
      color: var(--sub-600);
