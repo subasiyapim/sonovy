@@ -270,6 +270,7 @@ return [
     'product' => [
         'product_type' => 'Yayın Türü',
         'page_title' => 'Yayın Listesi',
+        'modal_description' => 'Yayın Listesi',
         'artist_catalog_name' => 'Sanatçı & Katalog Adı',
         'status_published_regions' => 'Durum / Yayınlanan bölgeler',
         'label_company' => 'Plak Şirketi',
@@ -331,8 +332,10 @@ return [
             ],
             'label' => 'Label',
             'type' => 'Yayın tipi',
+
             'image' => 'Yayın kapak fotoğrafı',
             'album_name' => 'Albüm adı',
+            'album_name_placeholder' => 'Lütfen giriniz',
             'type_audio' => 'Ses',
             'type_video' => 'Video',
             'publish_type_single' => 'Single',

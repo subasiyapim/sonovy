@@ -62,6 +62,10 @@ import YoutubeIcon from "./YoutubeIcon.vue";
 import Icon from './Icon.vue';
 import ItunesIcon from './ItunesIcon.vue';
 
+import MusicVideoIcon from './MusicVideoIcon.vue';
+import RingtoneIcon from './RingtoneIcon.vue';
+import AudioIcon from './AudioIcon.vue';
+
 export {
     Icon,
     TidalIcon,
@@ -124,4 +128,7 @@ export {
     PercantageIcon,
     PhoneIcon,
     LabelEmailIcon,
+    MusicVideoIcon,
+    RingtoneIcon,
+    AudioIcon
 }

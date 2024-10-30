@@ -9,6 +9,7 @@ import AppFancyCheckInput from './AppFancyCheckInput.vue';
 import AppRadioInput from './AppRadioInput.vue';
 import AppIncrementer from './AppIncrementer.vue';
 import ArtistInput from './ArtistInput.vue';
+import AppFancyRadio from './AppFancyRadio.vue';
 export  {
     AppTextInput,
     AppSelectInput,
@@ -21,5 +22,6 @@ export  {
     AppRadioInput,
     AppIncrementer,
     ArtistInput,
+    AppFancyRadio,
 }
 

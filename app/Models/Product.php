@@ -6,6 +6,7 @@ use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
 use App\Models\Scopes\FilterByUserRoleScope;
+
 use App\Traits\DataTables\HasAdvancedFilter;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -124,7 +125,9 @@ class Product extends Model implements HasMedia
     protected function statusText(): Attribute
     {
         return Attribute::make(
-            get: fn() => ProductStatusEnum::getTitles()[$this->status]
+            get: fn(): mixed => $this->status !== null
+                ? ProductStatusEnum::getTitles()[$this->status]
+                : 'Default Status Text'
         );
     }
 
@@ -187,20 +190,20 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Label::class, 'label_id');
     }
 
-    public function language(): BelongsTo
-    {
-        return $this->belongsTo(Country::class);
-    }
+    // public function language(): BelongsTo
+    // {
+    //     return $this->belongsTo(Country::class);
+    // }
 
     public function hashtags(): MorphMany
     {
         return $this->morphMany(Hashtag::class, 'model');
     }
 
-    public function publishedCountries(): BelongsToMany
-    {
-        return $this->belongsToMany(Country::class, 'product_published_country', 'product_id', 'country_id');
-    }
+    // public function publishedCountries(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Countr, 'product_published_country', 'product_id', 'country_id');
+    // }
 
     public function downloadPlatforms(): BelongsToMany
     {

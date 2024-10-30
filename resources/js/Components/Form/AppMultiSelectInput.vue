@@ -4,50 +4,62 @@
         <div v-if="hasSlot('icon')">
             <slot name="icon" />
         </div>
-       <input @click="open" class="absolute inset-0 radius-8 border-none focus:ring-0 appSelectInput c-strong-950" :value="getShowLabel" :placeholder="placeholder">
-        <div class="selectButton bg-blue-300 flex items-center border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm !font-normal cursor-pointer">
-            <div class="flex-1 pointer-events-none c-soft-400">
-                {{placeholder}}
-            </div>
-            <ChevronRightIcon
-                color="var(--soft-400)"
-                :class="{
-                    'transform rotate-90 transition-transform duration-300': isOpen,
-                    'transform rotate-0 transition-transform duration-300': !isOpen
-                }" />
+        <div @click="open"
+            class="absolute inset-0 flex items-center px-3 radius-8 border-none focus:ring-0 appSelectInput c-strong-950">
+            <span class="label-sm !font-normal c-soft-400" v-if="!element">{{ placeholder }}</span>
+            <slot v-else-if="hasSlot('model')" name="model" :scope="choosenAll"/>
+            <span v-else>{{ getShowLabel }}</span>
+        </div>
+     <div
+            class="selectButton bg-blue-300 flex items-center justify-end border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm !font-normal cursor-pointer">
+        <!-- <div  class="flex-1 pointer-events-none c-soft-400">
+            <span v-if="!element">{{placeholder}}</span>
+        </div> -->
+        <ChevronRightIcon
+
+            color="var(--soft-400)"
+            :class="{
+                        'transform rotate-90 transition-transform duration-300': isOpen,
+                        'transform rotate-0 transition-transform duration-300': !isOpen
+                    }"/>
         </div>
 
         <transition name="dropdown">
-            <div v-if="isOpen"
-                :class="dropdownDirection"
-                class="absolute selectButton left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-10"
-                :style="dropdownStyle">
-                <AppTextInput v-if="config.hasSearch" class="w-full mb-2" placeholder="Yayın, Artist ara...">
-                    <template #icon><SearchIcon color="var(--soft-400)" /></template>
-                </AppTextInput>
-                <template v-if="config.data != null && config.data.length > 0">
-                     <div v-if="hasSlot('first_child')" class="mb-2">
-                        <slot name="first_child" />
-                    </div>
-                </template>
+            <teleport to="body">
+                <div v-if="isOpen"
+                    :class="dropdownDirection"
+                    class="absolute dropdownWrapper left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-10"
+                    :style="dropdownStyle">
+                    <AppTextInput v-if="config.hasSearch" v-model="searchTerm" @change="onSearchChange"  class="w-full mb-2" placeholder="Yayın, Artist ara...">
+                        <template #icon><SearchIcon color="var(--soft-400)" /></template>
+                    </AppTextInput>
+                    <template v-if="config.data != null && config.data.length > 0">
+                        <div v-if="hasSlot('first_child')" class="mb-2">
+                            <slot name="first_child" />
+                        </div>
+                    </template>
 
-                <div v-if="config.data != null && config.data.length > 0" class="max-h-[250px] overflow-scroll">
-                    <div @click="chooseValue(el)" v-for="el in config.data" :data-id="el[config.value ?? 'value']" :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'" class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
-                       <div v-if="type == 'multiselect'" :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-dark-green-600 border-dark-green-600' : 'bg-white  border-soft-200'" class="w-3 h-3 border  rounded-sm shadow"></div>
-                        <div v-else class="border border-soft-200 rounded-sm shadow"></div>
-                        <span class="paragraph-sm c-strong-950"> {{el[config.label ?? 'label']}}</span>
+                    <div  class="max-h-[250px] overflow-scroll">
+
+                        <div @click="chooseValue(el)" v-for="el in getFilteredData" :data-id="el[config.value ?? 'value']" :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'" class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
+                            <div :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-dark-green-600 border-dark-green-600' : 'bg-white  border-soft-200'" class="w-3 h-3 border flex items-center justify-center  rounded-sm shadow">
+                                <CheckIcon v-if="checkIfChecked(el[config.value ?? 'value'])" color="#fff" />
+                            </div>
+                                <slot v-if="hasSlot('option')" name="option" :scope="el"/>
+                                <span v-else class="paragraph-sm c-strong-950"> {{ el[config.label ?? 'label'] }}</span>
+                            </div>
+                        </div>
+                    <div v-if="getFilteredData?.length <= 0" class="flex flex-col gap-5 items-center justify-center min-h-[224px]">
+                        <img src="@/assets/images/empty_state.png" class="w-16 h-16">
+                        <p class="label-medium c-strong-950">Maalesef sonuç bulunamadı:(</p>
+                        <slot name="empty" />
                     </div>
                 </div>
-                <div v-else class="flex flex-col gap-5 items-center justify-center min-h-[224px]">
-                    <img src="@/assets/images/empty_state.png" class="w-16 h-16">
-                    <p class="label-medium c-strong-950">Maalesef sonuç bulunamadı:(</p>
-                    <slot name="empty" />
-                </div>
-            </div>
+             </teleport>
         </transition>
    </div>
 
-      <div class="flex items-center gap-2 mt-2">
+      <div v-if="showTags" class="flex items-center gap-2 mt-2">
             <StatusBadge v-for="(el,index) in element" :showClose="true" @close="element.splice(index,1)" :showIcon="false" >
                 <span class="label-xs c-sub-600">{{config.data.find((option) => option[config.value ?? 'value'] == el)[config.label ?? 'label']}}</span>
             </StatusBadge>
@@ -57,13 +69,15 @@
 
 <script setup>
 import { useSlots, ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { ChevronRightIcon, SearchIcon } from '@/Components/Icons'
+import { ChevronRightIcon, SearchIcon,CheckIcon } from '@/Components/Icons'
 import AppTextInput from './AppTextInput.vue';
 import {StatusBadge} from '@/Components/Badges'
 const slots = useSlots()
 const props = defineProps({
     config: {
-        default: {}
+        default: {
+
+        }
     },
     modelValue: {},
     placeholder: { type: String },
@@ -74,6 +88,8 @@ const element = computed({
     get: () => props.modelValue ?? [],
     set: (value) => emits('update:modelValue',value),
 })
+
+const showTags = ref(props.config?.showTags != null ? props.config?.showTags : true)
 const isOpen = ref(false);
 const dropdownDirection = ref('bottom');  // Direction for dropdown
 const dropdownStyle = ref({});  // Inline style for dropdown (e.g., top or bottom)
@@ -81,10 +97,35 @@ const selectContainer = ref(null);  // Reference to the select container element
 const onClose = () => {
 
 }
+
+const choosenAll = ref([]);
+const onChangeForSearch = (e) => {
+
+    searchTerm.value = e;
+}
+const searchTerm = ref();
+const remoteDatas = ref(null)
+const getFilteredData = computed(() => {
+
+    if(searchTerm.value){
+        if(remoteDatas.value){
+            return remoteDatas.value;
+        }else {
+             if(props.config?.remote == null){
+                return  props.config?.data?.filter((el) => el[props.config.label ?? 'label'].toLocaleLowerCase('tr-TR').includes(searchTerm.value.toLocaleLowerCase('tr-TR')))
+            }
+        }
+
+    }else {
+         console.log("SERACH TERM YOK");
+        return props.config?.data
+    }
+})
 const getShowLabel = computed(() => {
 
     let finalStr = '';
-    const filteredData = props.config?.data?.filter((e) => {
+  const listOfOptions = (remoteDatas.value ?? props.config?.data) ?? [];
+    const filteredData = listOfOptions.filter((e) => {
        return element.value.find((checkValue) => checkValue == e[props.config.value ?? 'value']);
     });
     filteredData.forEach((e,index) => {
@@ -103,9 +144,24 @@ const open = async () => {
     }
 }
 
-const checkIfChecked = computed(() => {
-    return (rowValue) => {
+const onSearchChange = async (e) => {
 
+
+    if(props.config?.remote){
+       try {
+        remoteDatas.value = await props.config?.remote(e)
+       } catch (error) {
+        remoteDatas.value = null;
+       }
+    }
+
+}
+
+const checkIfChecked = computed(() => {
+
+
+    return (rowValue) => {
+        console.log("ÇALIŞTIIII",rowValue);
         if(rowValue)
             return element.value.find((e) => e == rowValue);
         return false;
@@ -115,25 +171,42 @@ const hasSlot = (name) => {
     return !!slots[name];
 }
 
-const handleClickOutside = () => {
-    if(isOpen.value){
-        isOpen.value = false;
+const handleClickOutside = (e) => {
+    if(e.target?.closest('.dropdownWrapper') ){
+           return;
+    }else {
+        if (isOpen.value) {
+            isOpen.value = false;
+        }
     }
 }
 
 // Function to adjust dropdown direction based on available space
 const adjustDropdownDirection = () => {
-    const dropdownHeight = 250;  // Assume dropdown max height is around 250px
-    const rect = selectContainer.value.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
+  const dropdownHeight = 300;  // Assume dropdown max height is around 250px
+  const rect = selectContainer.value.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
 
-    if (rect.bottom + dropdownHeight > viewportHeight) {
-        dropdownDirection.value = 'top';  // Set to open upwards
-        dropdownStyle.value = { bottom: '42px' };  // Adjust for your layout
-    } else {
-        dropdownDirection.value = 'bottom';  // Set to open downwards
-        dropdownStyle.value = { top: '42px' };  // Adjust for your layout
-    }
+  // Check available space below the trigger
+  const spaceBelow = viewportHeight - rect.bottom;
+
+  if (spaceBelow < dropdownHeight) {
+    // Not enough space below, open upwards
+    dropdownDirection.value = 'top';
+    dropdownStyle.value = {
+      bottom: `${viewportHeight - rect.top + window.scrollY}px`,  // Adjust for viewport and element height
+      left: `${rect.left}px`,
+      width: `${rect.width}px`
+    };
+  } else {
+    // Enough space below, open downwards
+    dropdownDirection.value = 'bottom';
+    dropdownStyle.value = {
+      top: `${rect.bottom + window.scrollY}px`,  // Position below the trigger
+      left: `${rect.left}px`,
+      width: `${rect.width}px`
+    };
+  }
 }
 
 const chooseValue = (val) => {
@@ -142,11 +215,11 @@ const chooseValue = (val) => {
 
     if(vIndex < 0){
         element.value.push(v);
+        choosenAll.value.push(val);
     }else {
         element.value.splice(vIndex,1);
+        choosenAll.value.splice(vIndex,1);
     }
-
-
 
 
 }

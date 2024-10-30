@@ -25,5 +25,4 @@ class SMSService
             NetGsmServices::sendSms(count($phoneArr) >= 2 ? $phoneArr[1] : $number, $message);
         }
     }
-
 }

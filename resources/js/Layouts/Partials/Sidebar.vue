@@ -18,7 +18,7 @@
           <SearchIcon color="var(--soft-400)"/>
         </template>
       </AppTextInput>
-      <SecondaryButton @click="router.visit(route('control.catalog.products.create'))" class="w-full">
+      <SecondaryButton @click="isProductDialogOn = true" class="w-full">
         <template #icon>
           <AddIcon/>
         </template>
@@ -73,11 +73,14 @@
 
 
   </div>
+  <ProductDialog v-model="isProductDialogOn" v-if="isProductDialogOn"></ProductDialog>
 </template>
 
 <script setup>
+import {ref} from 'vue';
 import {AppTextInput} from '@/Components/Form';
 import {SecondaryButton} from '@/Components/Buttons';
+import {ProductDialog} from '@/Components/Dialog';
 import {
   AddIcon,
   SearchIcon,
@@ -96,7 +99,7 @@ import {
 import MenuItem from '@/Components/Menu/MenuItem.vue'
 import SubMenuItem from '@/Components/Menu/SubMenuItem.vue'
 import {usePage, router} from '@inertiajs/vue3';
-
+const isProductDialogOn = ref(false);
 </script>
 
 
