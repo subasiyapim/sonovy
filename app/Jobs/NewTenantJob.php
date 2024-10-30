@@ -59,6 +59,9 @@ class NewTenantJob implements ShouldQueue
 
         Artisan::call('optimize:clear');
 
+        $tenantKey = $tenant->getTenantKey();
+
+        Log::info("Tenant key: {$tenantKey}");
         Log::info("Tenant created successfully with domain: {$this->domain}");
     }
 }
