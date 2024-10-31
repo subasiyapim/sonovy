@@ -33,24 +33,33 @@
      </div>
     <SectionHeader title="PLATFORM TERCİHLERİ"></SectionHeader>
 
-    <AppTable v-model="platforms"  :isClient="true" :hasSearch="false" :showAddButton="false">
-            <AppTableColumn label="#">
-                <template #default="scope"> {{ scope.row }}</template>
-            </AppTableColumn>
+    <AppTable v-model="platforms"  :isClient="true" :hasSelect="true"  :hasSearch="false" :showAddButton="false">
+
             <AppTableColumn label="Platform">
-                <template #default="scope">{{scope.row}}</template>
+                <template #default="scope">
+                <div class="flex items-center justify-center gap-2">
+                        <Icon :icon="scope.row.iconKey" />
+
+                        <p class="label-sm c-solid-950">
+                        {{scope.row.label}}
+                        </p>
+                </div>
+
+                </template>
             </AppTableColumn>
 
             <AppTableColumn label="İndirme Fiyatı">
-                <template #default="scope">{{scope.row}}</template>
+                <template #default="scope">
+                    <AppTextInput placeholder="0.00"> </AppTextInput>
+                </template>
             </AppTableColumn>
 
             <AppTableColumn label="Ön Sipariş Tarihi">
-                <template #default="scope">{{scope.row}}</template>
+                 <AppTextInput placeholder="0.00"> </AppTextInput>
             </AppTableColumn>
 
             <AppTableColumn label="Yayın Tarihi" align="end">
-                <template #default="scope">{{scope.row.name}}</template>
+                 <AppTextInput placeholder="0.00"> </AppTextInput>
             </AppTableColumn>
 
 
@@ -69,10 +78,12 @@ import {SectionHeader,AppAccordion} from '@/Components/Widgets';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed,ref} from 'vue';
-import {FormElement} from '@/Components/Form';
-import {AddIcon} from '@/Components/Icons'
+import {FormElement,AppTextInput} from '@/Components/Form';
+import {AddIcon,Icon} from '@/Components/Icons'
+import { usePage} from '@inertiajs/vue3';
+
 const countryRadioValue = ref(2)
-const platforms = ref([])
+const platforms = ref(usePage().props.platforms)
 const selectConfig = computed(() => {
     return {
         hasSearch:true,

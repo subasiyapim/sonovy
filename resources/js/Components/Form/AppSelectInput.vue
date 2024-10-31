@@ -114,7 +114,11 @@ const open = async () => {
 const remoteDatas = ref(null)
 const getFilteredData = computed(() => {
 
+    console.log("BURAYAA GELDİK");
+
     if(searchTerm.value){
+
+
         if(remoteDatas.value){
             return remoteDatas.value;
         }else {
@@ -124,7 +128,9 @@ const getFilteredData = computed(() => {
         }
 
     }else {
-         console.log("SERACH TERM YOK");
+
+
+
         return props.config?.data
     }
 })

@@ -83,6 +83,7 @@
             </FormElement>
             <FormElement label-width="190px" v-model="form.sub_genre_id" label="Alt Tarz" placeholder="Seçiniz"  type="select" :config="genreConfig">
             </FormElement>
+
             <FormElement label-width="190px" v-model="form.format" label="Biçim" placeholder="Seçiniz"  type="select" :config="formatConfig">
 
             </FormElement>
@@ -102,8 +103,8 @@
             <FormElement type="select" label-width="190px"  v-model="form.language_id" label="Albüm Dili" :config="languageConfig" placeholder="Lütfen giriniz">
                 <template #model="scope">
                     <div v-if="scope.data" class="flex items-center gap-2">
-                        <span>{{ languageConfig.data.find((el) => el.value == scope.data)?.iconKey }}</span>
-                        <span>{{ languageConfig.data.find((el) => el.value == scope.data)?.label }}</span>
+                        <span>{{ languageConfig.data?.find((el) => el.value == scope.data)?.iconKey }}</span>
+                        <span>{{ languageConfig.data?.find((el) => el.value == scope.data)?.label }}</span>
                     </div>
                 </template>
                 <template #option="scope">
@@ -124,6 +125,7 @@ import {computed} from 'vue';
 import {FormElement} from '@/Components/Form';
 import {AddIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';
+import {usePage} from '@inertiajs/vue3';
 
 
 const crudStore = useCrudStore();
@@ -215,8 +217,6 @@ const languageConfig = computed(() => {
 })
 const formatConfig = computed(() => {
     return {
-         hasSearch:true,
-
         data: props.formats
     }
 })

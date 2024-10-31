@@ -28,14 +28,15 @@
           <AppStepperElement title="Şarkı Detay"></AppStepperElement>
           <AppStepperElement title="Yayınlama Detayları"></AppStepperElement>
           <AppStepperElement title="Pazarlama ve Onay"></AppStepperElement>
-          <AppStepperElement title="Özet"></AppStepperElement>
+
         </AppStepper>
 
         <div class="h-full bg-white w-full shadow rounded-xl px-8 py-8 overflow-scroll">
 
-          <ProductInfoTab v-model="step1Element" :genres="genres" v-if="currentTab == 0"></ProductInfoTab>
+          <ProductInfoTab v-model="step1Element" :genres="genres" :formats="formats" :languages="languages" v-if="currentTab == 0"></ProductInfoTab>
           <SongDetailTab v-if="currentTab == 1"></SongDetailTab>
           <PublishingDetailTab v-if="currentTab == 2"></PublishingDetailTab>
+          <MarketingAndSend v-if="currentTab == 3"></MarketingAndSend>
 
 
         </div>
@@ -63,9 +64,7 @@
 
       </div>
       <div class="p-6 flex flex-col h-full gap-5 overflow-scroll">
-        <ProductSummaryTab v-if="currentTab == 0"></ProductSummaryTab>
-        <ProductSummaryTab v-if="currentTab == 1"></ProductSummaryTab>
-        <ProductSummaryTab v-if="currentTab == 2"></ProductSummaryTab>
+        <ProductSummaryTab ></ProductSummaryTab>
 
       </div>
     </div>
@@ -102,6 +101,7 @@ import SongSummaryTab from './Tabs/Right/SongSummaryTab.vue'
 import {PrimaryButton} from '@/Components/Buttons'
 import {AppProgressIndicator} from '@/Components/Widgets'
 import PublishingDetailTab from './Tabs/Left/PublishingDetailTab.vue'
+import MarketingAndSend from './Tabs/Left/MarketingAndSend.vue'
 import {AppStepper, AppStepperElement} from '@/Components/Stepper';
 import {useCrudStore} from '@/Stores/useCrudStore';
 

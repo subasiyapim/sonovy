@@ -181,18 +181,28 @@ class ProductController extends Controller
         $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
         $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
         $progress = ProductServices::progress($product);
+        $platforms  = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
+
+
+        $props = [
+            "product" => $product,
+            "step" => $step,
+            'progress' => $progress,
+        ];
+        if ($step == 1) {
+            $props['genres']  = $genres;
+            $props['labels']  = $labels;
+            $props['languages']  = $languages;
+            $props['formats']  = $formats;
+        } else if ($step == 3) {
+            $props['platforms'] = $platforms;
+        } else if ($step == 4) {
+            $props['languages'] = $languages;
+        }
 
         return inertia(
             'Control/Products/Edit',
-            compact(
-                'product',
-                'step',
-                'genres',
-                'labels',
-                'languages',
-                'formats',
-                'progress'
-            )
+            $props,
         );
     }
 
@@ -203,8 +213,10 @@ class ProductController extends Controller
         $progress = ProductServices::progress($product);
 
 
-        return redirect()->route('control.catalog.products.form.edit',
-            [$request->validated()['step'] + 1, $product->id])
+        return redirect()->route(
+            'control.catalog.products.form.edit',
+            [$request->validated()['step'] + 1, $product->id]
+        )
             ->with([
                 'notification' => __(
                     'control.notification_updated',

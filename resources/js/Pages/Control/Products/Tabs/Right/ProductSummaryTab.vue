@@ -83,8 +83,8 @@ const onChange = (e) => {
   if (e) {
     console.log("GELDİİİ");
 
-    const response = crudStore.formData(route('control.image.upload'), {
-      "image": e
+    const response = crudStore.formData(route('control.image.upload','Product'), {
+      "file": e
     })
     console.log("RESPONSEE", response);
 
