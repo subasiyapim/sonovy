@@ -22,6 +22,7 @@ import LabelsIcon from './LabelsIcon.vue';
 import StickyNoteFilledIcon from './StickyNoteFilledIcon.vue';
 import EyeOnIcon from './EyeOnIcon.vue';
 import LinkIcon from './LinkIcon.vue';
+import PendingIcon from './PendingIcon.vue';
 import DocumentIcon from './DocumentIcon.vue';
 
 import PersonIcon from './PersonIcon.vue';
@@ -34,6 +35,7 @@ import VerifiedFilledIcon from './VerifiedFilledIcon.vue';
 import TrashIcon from './TrashIcon.vue';
 import EditIcon from './EditIcon.vue';
 import TeklifManagementIcon from './TeklifManagementIcon.vue';
+import DraggableIcon from './DraggableIcon.vue';
 import StatisticsIcon from './StatisticsIcon.vue';
 import IcraIcon from './IcraIcon.vue';
 import SettingsIcon from './SettingsIcon.vue';
@@ -81,6 +83,7 @@ export {
     NotificationIcon,
     StarIcon,
     AppLoadingIcon,
+    DraggableIcon,
     CheckIcon,
     MessageIcon,
     MessageIcon2,
@@ -130,6 +133,7 @@ export {
     PercantageIcon,
     PhoneIcon,
     LabelEmailIcon,
+    PendingIcon,
     MusicVideoIcon,
     RingtoneIcon,
     AudioIcon

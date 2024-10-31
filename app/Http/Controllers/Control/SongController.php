@@ -54,8 +54,19 @@ class SongController extends Controller
     {
         abort_if(Gate::denies('song_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $song->loadMissing('genre', 'subGenre', 'language', 'broadcasts', 'participants.user', 'earnings', 'musixMatch',
-            'addedBy', 'remixer', 'convertedSong', 'reports');
+        $song->loadMissing(
+            'genre',
+            'subGenre',
+            'language',
+            'broadcasts',
+            'participants.user',
+            'earnings',
+            'musixMatch',
+            'addedBy',
+            'remixer',
+            'convertedSong',
+            'reports'
+        );
 
         $earnings = $song->earnings()->advancedFilter();
         $total_earning = Earning::where('song_id', $song->id)->sum('earning');
@@ -102,12 +113,13 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                        [
-                            'type' => 'error',
-                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                            'model' => __('control.song.title_singular')
-                        ]
-                ]);
+                    [
+                        'type' => 'error',
+                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                        'model' => __('control.song.title_singular')
+                    ]
+                ]
+            );
         }
 
         File::delete(storage_path($song->path));
@@ -115,7 +127,6 @@ class SongController extends Controller
         $song->delete();
 
         return redirect()->back();
-
     }
 
     public function search(Request $request)
@@ -172,14 +183,14 @@ class SongController extends Controller
 
         $labels = ISRCServices::search($search);
 
-//        $labels->pluck('isrc')->map(function ($isrc) {
-//            return [
-//                'value' => $isrc,
-//                'label' => $isrc
-//            ];
-//        });
-//
-//        dd($labels);
+        //        $labels->pluck('isrc')->map(function ($isrc) {
+        //            return [
+        //                'value' => $isrc,
+        //                'label' => $isrc
+        //            ];
+        //        });
+        //
+        //        dd($labels);
         return response()->json($labels, Response::HTTP_OK);
     }
 
@@ -223,11 +234,9 @@ class SongController extends Controller
             return redirect()->back()->with([
                 'notification' => __('control.notification_updated', ['model' => __('control.song.title_singular')])
             ]);
-
         } catch (ValidationException $e) {
             // Doğrulama hatalarını frontend'e gönderiyoruz
             return redirect()->back()->withErrors($e->errors())->withInput();
-
         } catch (Exception $e) {
             // Diğer tüm hataları bir hata kodu ile birlikte frontend'e gönderiyoruz
             return redirect()->back()->with([

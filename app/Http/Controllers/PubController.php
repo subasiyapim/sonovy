@@ -50,11 +50,10 @@ class PubController extends Controller
     {
 
         $queryParams = [
-            "size" => $request->size,
-            "name" => $request->name,
-            "mime_type" => $request->mime_type,
-
+            "id" => $request->id,
         ];
+
+
         $song = Song::where($queryParams)->orderBy('id', 'desc')->first();
 
         return response()->json($song, Response::HTTP_OK);
@@ -171,7 +170,6 @@ class PubController extends Controller
         $feature = Feature::latest('id')->first();
 
         return response()->json($feature, Response::HTTP_OK);
-
     }
 
     public function lastPlan(Request $request)
@@ -195,5 +193,4 @@ class PubController extends Controller
 
         return response()->json($plan, Response::HTTP_OK);
     }
-
 }

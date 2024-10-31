@@ -124,7 +124,7 @@
             </div>
         </template>
 
-        <div v-if="(data == null || data.length <= 0)" v-show="!hasSlot('appends')" class="h-[300px] flex flex-col items-center justify-center gap-8">
+        <div  v-show="(data == null || data.length <= 0) && !hasSlot('appends')" class="h-[300px] flex flex-col items-center justify-center gap-8">
             <img v-if="showEmptyImage" src="@/assets/images/empty_state.png" class="w-32 h-32">
             <slot name="empty"/>
         </div>

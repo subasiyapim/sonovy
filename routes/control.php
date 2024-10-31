@@ -307,7 +307,7 @@ Route::group(
 
         Route::post('song-upload', [MediaController::class, 'songUpload'])->name('song.upload');
         Route::post('image-upload/{model}', [MediaController::class, 'mediaUpload'])->name('image.upload');
-        
+
         Route::post(
             'artists-platform-match',
             [ArtistController::class, 'artistPlatformMatch']

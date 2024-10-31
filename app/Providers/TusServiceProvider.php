@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Enums\SongTypeEnum;
 use App\Services\FFMpegServices;
 use App\Services\SongServices;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
@@ -12,6 +13,8 @@ use TusPhp\Tus\Server as TusServer;
 
 class TusServiceProvider extends ServiceProvider
 {
+
+    public $song;
     /**
      * Register services.
      *
@@ -19,6 +22,7 @@ class TusServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
         $this->app->singleton('tus-server', function ($app) {
             $server = new TusServer();
 
@@ -27,16 +31,16 @@ class TusServiceProvider extends ServiceProvider
                 File::makeDirectory(storage_path('songs'), 0775, true, true);
             }
 
-            $server->setApiPath('/tus');
+            $server->setApiPath('/control/tus');
             $server->setUploadDir(storage_path('songs'));  // Upload dizinini storage_path ile ayarla
 
             $server->event()->addListener('tus-server.upload.complete', function (\TusPhp\Events\TusEvent $event) {
                 $fileMeta = $event->getFile()->details();
-                Log::info("Upload tamamlandı: ".json_encode($fileMeta));
+                Log::info("Upload tamamlandı: " . json_encode($fileMeta));
 
                 // Dosya türüne göre işlemleri başlat
                 $details = ['status' => false];
-                $filePath = storage_path('songs/'.$fileMeta['name']);
+                $filePath = storage_path('songs/' . $fileMeta['name']);
 
                 if ($fileMeta['metadata']['type'] == SongTypeEnum::SOUND->value) {
                     $details = FFMpegServices::getAudioDetails($filePath);
@@ -45,16 +49,23 @@ class TusServiceProvider extends ServiceProvider
                 }
 
                 $data = [
+
                     "type" => $fileMeta['metadata']['type'],
                     "name" => $fileMeta['metadata']['orignalName'],
-                    "path" => 'songs/'.$fileMeta['name'],
+                    "path" => 'songs/' . $fileMeta['name'],
                     "mime_type" => $fileMeta['metadata']['mime_type'],
                     "size" => $fileMeta['metadata']['size'],
                     "details" => $details,
                     "added_by" => auth()->id()
                 ];
 
-                SongServices::create($data);
+                $file = SongServices::create($data);
+
+
+                $event->getResponse()->setHeaders(['Upload-Info' => $file->id]);
+
+                Cache::put('last_uploaded_song', $file, now()->addMinutes(10));
+                // $createdSong = SongServices::create($data);
             });
 
             return $server;
@@ -66,8 +77,5 @@ class TusServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
-    {
-
-    }
+    public function boot() {}
 }

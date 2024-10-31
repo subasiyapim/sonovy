@@ -25,6 +25,9 @@
 
     --error-500:#FB3748;
 
+    --orange-100:#FFF1EB;
+    --orange-700:#D05E25;
+
 }
 
 
@@ -112,3 +115,11 @@
     .c-red-50{
         color: var(--red-50);
     }
+    .c-orange-100{
+        color: var(--orange-100);
+    }
+    .c-orange-700{
+        color: var(--orange-700);
+    }
+
+

@@ -54,6 +54,7 @@ import { ref, reactive ,onBeforeMount} from 'vue';
 import {SongFileIcon,AddIcon} from '@/Components/Icons'
 import {RegularButton,PrimaryButton} from '@/Components/Buttons'
 import {useCrudStore} from '@/Stores/useCrudStore';
+
 const props = defineProps({
   modelValue: {
     default: {}
@@ -124,6 +125,7 @@ const handleFiles = (files) => {
 
 const handleFileInput = (e) => {
 
+
   let file = e;
   let loadingPercent = 0;
 
@@ -150,7 +152,7 @@ const handleFileInput = (e) => {
       percentage:0,
     };
 
-
+    emits('start',metaData)
   var upload = new tus.Upload(file, {
     headers: {
       'X-CSRF-TOKEN': csrf_token.value,
@@ -165,7 +167,9 @@ const handleFileInput = (e) => {
 
     uploadDataDuringCreation: true,
     onStart: function (e) {
-     emits('start',metaData)
+        metaData.percentage = 0;
+        console.log("BAŞLADIII");
+
 
     },
     // Callback for errors which cannot be fixed using retries
@@ -177,22 +181,22 @@ const handleFileInput = (e) => {
       var percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
       //console.log(bytesUploaded, bytesTotal, percentage + '%')
     //   form.value.songs[currentIndex].percent = parseInt(percentage);
+
         metaData.percentage = percentage;
         emits('progress',metaData)
     },
     // Callback for once the upload is completed
-    onSuccess: async function (e) {
-    //   form.value.songs[currentIndex].loading = false;
-    //   const response = await queryStore.find(route('dashboard.find.songs'), {
-    //     name: file.name,
-    //     mime_type: file.type,
-    //     type: props.type,
-    //     size: file.size,
-    //     details: file.details
-    //   })
-    //   form.value.songs[currentIndex] = response;
-    metaData.percentage = 100;
-    emits('complete',metaData)
+    onSuccess: async function (payload) {
+        const { lastResponse } = payload
+
+        let response = await crudStore.post(route('control.find.songs'),{
+            id:lastResponse.getHeader('Upload-Info')
+        });
+
+
+
+        response.percentage = 100;
+        emits('complete',response)
     },
   })
 
