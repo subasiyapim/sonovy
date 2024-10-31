@@ -61,6 +61,7 @@ import TidalIcon from './TidalIcon.vue';
 import YoutubeIcon from "./YoutubeIcon.vue";
 import Icon from './Icon.vue';
 import ItunesIcon from './ItunesIcon.vue';
+import StarIcon from './StarIcon.vue';
 
 import MusicVideoIcon from './MusicVideoIcon.vue';
 import RingtoneIcon from './RingtoneIcon.vue';
@@ -78,6 +79,7 @@ export {
     ArrowLeftIcon,
     SearchIcon,
     NotificationIcon,
+    StarIcon,
     AppLoadingIcon,
     CheckIcon,
     MessageIcon,
