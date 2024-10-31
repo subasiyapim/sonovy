@@ -88,4 +88,18 @@ class CountryServices
         }
         return $result;
     }
+
+    public static function getCountriesGroupedByRegion(): array
+    {
+        $countries = self::get();
+        $result = [];
+        foreach ($countries as $country) {
+            $result[$country['region']][] = [
+                'value' => $country['id'],
+                'label' => $country['name'],
+                'iconKey' => $country['emoji']
+            ];
+        }
+        return $result;
+    }
 }
