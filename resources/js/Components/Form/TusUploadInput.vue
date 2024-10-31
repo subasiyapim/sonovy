@@ -2,18 +2,7 @@
   <div class="w-full h-full" >
     <!-- Drag-and-Drop Area -->
 
-    <div v-if="images.length" class="image-preview mb-3">
-      <h3>Preview:</h3>
-      <div class="preview-grid">
-        <div v-for="(image, index) in images" :key="index" class="preview-item">
-          <img :src="image.url" :alt="'Image Preview ' + (index + 1)" />
-
-        </div>
-        <button @click="removeImage" class="label-xs c-neutral-500 text-center mx-auto">Yayın Görselini Sil</button>
-      </div>
-    </div>
     <div
-        v-else
         @click="triggerFileInput"
         class="drop-area"
         @dragover.prevent="handleDragOver"
@@ -50,7 +39,7 @@
         type="file"
         accept="image/*"
         multiple
-        @change="handleFileInput"
+        @change="onChangeInput"
         hidden
       />
     </div>
@@ -61,11 +50,25 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive ,onBeforeMount} from 'vue';
 import {SongFileIcon,AddIcon} from '@/Components/Icons'
 import {RegularButton,PrimaryButton} from '@/Components/Buttons'
 import {useCrudStore} from '@/Stores/useCrudStore';
+const props = defineProps({
+  modelValue: {
+    default: {}
+  },
+  pageData: {},
+  errorObject: {},
+  type: {
+    default: 1
+  }
+})
+const emits = defineEmits(['start','progress','complete'])
 
+const csrf_token = ref('');
+const acceptedAudioExtensions = ['mp3', 'wav', 'aac'];
+const acceptedVideoExtensions = ['mp4', 'avi', 'mkv'];
 
 const crudStore = useCrudStore();
 const fileInput = ref(null);
@@ -81,39 +84,141 @@ const handleDragLeave = () => {
 };
 
 const handleDrop = (event) => {
+
+
   isDragging.value = false;
   const files = Array.from(event.dataTransfer.files);
+
   handleFiles(files);
+
 };
 
+const onChangeInput = (e) => {
+
+
+    const files = Array.from(e.target.files);
+    handleFiles(files);
+
+}
 const triggerFileInput = () => {
 
-    console.log(fileInput.value);
+
   fileInput.value.click();
 };
 
-const handleFileInput = (event) => {
-  const files = Array.from(event.target.files);
-  handleFiles(files);
-};
+
 
 const handleFiles = (files) => {
   files.forEach((file) => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-    images.push({ file, url: e.target.result });
-    };
-    reader.readAsDataURL(file);
-    crudStore.formData(route('song-upload'),{
 
-    })
+        handleFileInput(file);
+    };
+        reader.readAsDataURL(file);
+
   });
+};
+
+
+const handleFileInput = (e) => {
+
+  let file = e;
+  let loadingPercent = 0;
+
+  // File type validation
+  const file_extension = file.name.split('.').pop().toLowerCase();
+  if ((props.type === 1 && !acceptedAudioExtensions.includes(file_extension)) ||
+      (props.type === 2 && !acceptedVideoExtensions.includes(file_extension))) {
+    // popUp('Bu yayın tipi için dosya türü desteklenmiyor', 'error', false);
+    alert("Hata")
+    return;
+  }
+
+  let currentIndex = 0;
+
+  const extension = file.name.split('.').pop();
+  const uniqueId = Date.now().toString(36);
+  const tempFileName = `${uniqueId}_${Date.now()}.${extension}`;
+    let metaData = {
+      filename: tempFileName,
+      mime_type: file.type,
+      orignalName: file.name,
+      type: props.type,
+      size: file.size,
+      percentage:0,
+    };
+
+
+  var upload = new tus.Upload(file, {
+    headers: {
+      'X-CSRF-TOKEN': csrf_token.value,
+      '_method': 'POST'
+    },
+    endpoint: route('control.tus', {
+      type: props.type,
+      name: file.name,
+      temp: tempFileName,
+    }),
+    metadata: metaData,
+
+    uploadDataDuringCreation: true,
+    onStart: function (e) {
+     emits('start',metaData)
+
+    },
+    // Callback for errors which cannot be fixed using retries
+    onError: function (error) {
+      console.log('Failed because: ' + error)
+    },
+    // Callback for reporting upload progress
+    onProgress: function (bytesUploaded, bytesTotal) {
+      var percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
+      //console.log(bytesUploaded, bytesTotal, percentage + '%')
+    //   form.value.songs[currentIndex].percent = parseInt(percentage);
+        metaData.percentage = percentage;
+        emits('progress',metaData)
+    },
+    // Callback for once the upload is completed
+    onSuccess: async function (e) {
+    //   form.value.songs[currentIndex].loading = false;
+    //   const response = await queryStore.find(route('dashboard.find.songs'), {
+    //     name: file.name,
+    //     mime_type: file.type,
+    //     type: props.type,
+    //     size: file.size,
+    //     details: file.details
+    //   })
+    //   form.value.songs[currentIndex] = response;
+    metaData.percentage = 100;
+    emits('complete',metaData)
+    },
+  })
+
+  // Check if there are any previous uploads to continue.
+  upload.findPreviousUploads().then(function (previousUploads) {
+    // Found previous uploads so we select the first one.
+    if (previousUploads.length) {
+      upload.resumeFromPreviousUpload(previousUploads[0])
+    }
+    // Start the upload
+    upload.start()
+  })
+
 };
 
 const removeImage = (index) => {
   images.splice(index, 1);
 };
+
+onBeforeMount(() => {
+  csrf_token.value = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+})
+
+defineExpose({
+    triggerFileInput,
+})
 </script>
 
 <style scoped>

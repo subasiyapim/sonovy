@@ -43,7 +43,7 @@
           <div class="flex-1 flex items-center gap-2 justify-center">
             <p class="label-medium">%{{ percent }} Tamamlandı</p>
             <div class="w-48">
-              <AppProgressIndicator :value="percent"/>
+              <AppProgressIndicator v-model="percent"/>
             </div>
           </div>
           <PrimaryButton @click="submitStep">

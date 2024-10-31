@@ -66,6 +66,8 @@ Route::group(
     ],
     function () {
 
+        Route::any('tus/{any?}', [SongController::class, 'uploadSong'])->where('any', '.*')->name('tus');
+
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         //Catalog routes
