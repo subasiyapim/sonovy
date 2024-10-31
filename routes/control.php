@@ -78,7 +78,10 @@ Route::group(
             Route::post('song/change-status', [SongController::class, 'changeStatus'])->name('song-change-status');
             Route::get('songs/{song}/search-track', [SongController::class, 'searchTrack'])->name('songs.search-track');
             Route::get('songs/{song}/get-lyrics', [SongController::class, 'getLyrics'])->name('songs.get-lyrics');
-            Route::post('songs/{song}/store-lyrics', [SongController::class, 'storeLyrics'])->name('songs.store-lyrics');
+            Route::post(
+                'songs/{song}/store-lyrics',
+                [SongController::class, 'storeLyrics']
+            )->name('songs.store-lyrics');
 
             Route::resource('products', ProductController::class)->only(['index', 'show', 'create'])->names('products');
 
@@ -91,12 +94,10 @@ Route::group(
 
                     Route::group(['prefix' => 'form', 'as' => 'form.'], function () {
                         Route::get('step/{step}/{product}', [ProductController::class, 'edit'])->name('edit');
-
-                        Route::post('step1/{product}', [ProductController::class, 'step1Store'])->name('step1.store');
-                        Route::post('step2/{product}', [ProductController::class, 'step2Store'])->name('step2.store');
-                        Route::post('step3/{product}', [ProductController::class, 'step3Store'])->name('step3.store');
-                        Route::post('step4/{product}', [ProductController::class, 'step4Store'])->name('step4.store');
-                        Route::post('step5/{product}', [ProductController::class, 'step5Store'])->name('step5.store');
+                        Route::post(
+                            'step/{step}/{product}',
+                            [ProductController::class, 'stepStore']
+                        )->name('step.store');
                     });
                 }
             );
@@ -153,7 +154,10 @@ Route::group(
             'announcements/destroy-all',
             [AnnouncementController::class, 'destroyAll']
         )->name('announcements.destroy-all');
-        Route::resource('announcement-templates', AnnouncementTemplateController::class)->names('announcement-templates');
+        Route::resource(
+            'announcement-templates',
+            AnnouncementTemplateController::class
+        )->names('announcement-templates');
         Route::resource('titles', TitleController::class)->names('titles');
         Route::resource('features', FeatureController::class)->names('features');
         Route::resource('help-center/faq', HelpCenterFAQController::class)->names('help-center.faq');
@@ -239,7 +243,10 @@ Route::group(
             'upload-earning-report-index',
             [EarningReportController::class, 'fileIndex']
         )->name('uploaded-earning-report-index');
-        Route::post('earning-report-upload', [EarningReportController::class, 'uploadFile'])->name('earning-report-upload');
+        Route::post(
+            'earning-report-upload',
+            [EarningReportController::class, 'uploadFile']
+        )->name('earning-report-upload');
         Route::delete(
             'earning-report-delete/{earningReportFile}',
             [EarningReportController::class, 'deleteFile']
@@ -260,7 +267,10 @@ Route::group(
                 Route::get('/bank-accounts', [BankController::class, 'index'])->name('bank-accounts.index');
                 Route::get('/bank-account/create', [BankController::class, 'create'])->name('bank-account.create');
                 Route::post('/bank-account/store', [BankController::class, 'store'])->name('bank-account.store');
-                Route::get('/bank-account/edit/{bankAccount}', [BankController::class, 'edit'])->name('bank-account.edit');
+                Route::get(
+                    '/bank-account/edit/{bankAccount}',
+                    [BankController::class, 'edit']
+                )->name('bank-account.edit');
                 Route::post(
                     '/bank-account/update/{bankAccount}',
                     [BankController::class, 'update']
@@ -272,12 +282,18 @@ Route::group(
 
                 Route::post('/site/store', [SiteController::class, 'store'])->name('site.store');
                 Route::post('credit-card', [ProfileController::class, 'addCreditCard'])->name('credit-card.store');
-                Route::post('credit-card/delete', [ProfileController::class, 'deleteCreditCard'])->name('credit-card.delete');
+                Route::post(
+                    'credit-card/delete',
+                    [ProfileController::class, 'deleteCreditCard']
+                )->name('credit-card.delete');
                 Route::post(
                     'credit-card/set-default',
                     [ProfileController::class, 'setDefaultCreditCard']
                 )->name('credit-card.set-default');
-                Route::post('credit-card/update', [ProfileController::class, 'updateCreditCard'])->name('credit-card.update');
+                Route::post(
+                    'credit-card/update',
+                    [ProfileController::class, 'updateCreditCard']
+                )->name('credit-card.update');
             }
         );
 
@@ -287,7 +303,8 @@ Route::group(
 
         Route::get('hashtags', fn() => HashtagServices::getHashtags())->name('hashtags');
 
-        Route::post('media-upload', [MediaController::class, 'upload'])->name('media.upload');
+        Route::post('song-upload', [MediaController::class, 'songUpload'])->name('song.upload');
+        Route::post('image-upload', [MediaController::class, 'mediaUpload'])->name('image.upload');
         Route::post(
             'artists-platform-match',
             [ArtistController::class, 'artistPlatformMatch']

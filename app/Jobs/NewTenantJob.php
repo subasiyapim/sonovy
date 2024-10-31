@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 class NewTenantJob implements ShouldQueue
@@ -56,6 +57,13 @@ class NewTenantJob implements ShouldQueue
         $tenant = \App\Models\System\Tenant::create($data);
         $tenant->domains()->create(['domain' => $this->domain]);
 
+        Artisan::call('optimize:clear');
+
+        $tenantKey = $tenant->getTenantKey();
+
+        TenantDiskInitialize::dispatch($tenant);
+
+        Log::info("Tenant key: {$tenantKey}");
         Log::info("Tenant created successfully with domain: {$this->domain}");
     }
 }

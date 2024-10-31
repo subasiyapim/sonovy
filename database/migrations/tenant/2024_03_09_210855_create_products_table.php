@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->boolean('mixed_album')->default(1);
             $table->foreignIdFor(Genre::class, 'genre_id')->nullable()->constrained('genres');
             $table->foreignIdFor(Genre::class, 'sub_genre_id')->nullable()->constrained('genres');
-            $table->string('format')->nullable();
+            $table->tinyInteger('format_id')->nullable();
             $table->foreignIdFor(Label::class, 'label_id')->nullable()->constrained('labels');
             $table->string('p_line')->nullable();
             $table->string('c_line')->nullable();
