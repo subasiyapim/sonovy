@@ -38,11 +38,11 @@ class SongController extends Controller
     {
         abort_if(Gate::denies('song_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $songs = Song::with('genre', 'subGenre', 'language', 'broadcasts.artists', 'participants', 'remixer')
+        $songs = Song::with('genre', 'subGenre', 'language', 'products.artists', 'participants', 'remixer')
             ->when($request->type, function ($query) use ($request) {
                 $query->where('type', $request->type);
             })
-            ->whereHas('broadcasts')
+            ->whereHas('products')
             ->advancedFilter();
 
         $types = array_merge([['label' => 'Tümü', 'value' => null]], SongTypeEnum::getTitlesFromInputFormat());
@@ -54,7 +54,7 @@ class SongController extends Controller
     {
         abort_if(Gate::denies('song_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $song->loadMissing('genre', 'subGenre', 'language', 'broadcasts', 'participants.user', 'earnings', 'musixMatch',
+        $song->loadMissing('genre', 'subGenre', 'language', 'products', 'participants.user', 'earnings', 'musixMatch',
             'addedBy', 'remixer', 'convertedSong', 'reports');
 
         $earnings = $song->earnings()->advancedFilter();
@@ -73,7 +73,7 @@ class SongController extends Controller
     {
         abort_if(Gate::denies('song_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $song->loadMissing('genre', 'subGenre', 'language', 'broadcasts', 'participants.user');
+        $song->loadMissing('genre', 'subGenre', 'language', 'products', 'participants.user');
         $genres = GenreService::getActiveCountriesFromInputFormat();
         $languages = LanguageServices::getActiveLanguagesFromInputFormat();
         $availablePlanItems = Auth::user()->availablePlanItemsCount();
@@ -98,7 +98,7 @@ class SongController extends Controller
         abort_if(Gate::denies('song_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         //Eğer şarkıya ait yayın varsa silinemez ve inertia ile hata mesajı döndürülür
-        if ($song->broadcasts()->where('status', ProductStatusEnum::APPROVED->value)->exists()) {
+        if ($song->products()->where('status', ProductStatusEnum::APPROVED->value)->exists()) {
             return redirect()->back()->with(
                 [
                     'notification' =>
