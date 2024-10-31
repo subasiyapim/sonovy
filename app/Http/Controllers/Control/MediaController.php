@@ -18,7 +18,7 @@ class MediaController extends Controller
         $allowed_file_types = Setting::where('key', 'allowed_song_formats')->first()->value;
         $validate = Validator::make($request->all(), [
             'type' => ['in:1,2'],
-            'file' => ['required', 'mimes:'.$allowed_file_types, 'max:'.$max_file_size, 'file'],
+            'file' => ['required', 'mimes:' . $allowed_file_types, 'max:' . $max_file_size, 'file'],
         ]);
 
         if ($validate->fails()) {
@@ -28,7 +28,6 @@ class MediaController extends Controller
         $song = MediaServices::mediaUpload($request->file('file'), $request->input('type'));
 
         return response()->json(['song' => $song]);
-
     }
 
     public function destroy($ids)
@@ -62,8 +61,5 @@ class MediaController extends Controller
                 'image' => $model->image,
             ],
         );
-
     }
-
-
 }

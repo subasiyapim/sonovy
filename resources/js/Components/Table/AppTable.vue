@@ -60,6 +60,12 @@
             <render :rowIndex="rowIndex" :colIndex="colIndex"  :row="row"></render>
         </td>
     </tr>
+    <tr  v-if="hasSlot('appends')">
+        <td :colspan="data?.length">
+             <slot name="appends" />
+        </td>
+
+    </tr>
     </tbody>
   </table>
    <div v-if="searching" class="h-[300px] flex flex-col items-center justify-center">
@@ -146,6 +152,10 @@ import {router, Link} from '@inertiajs/vue3';
 import {PrimaryButton} from '@/Components/Buttons'
 import {toast} from 'vue3-toastify';
 
+const slots = useSlots()
+const songs = ref([]);
+
+
 
 const crudStore = useCrudStore();
 let params = new URLSearchParams(window.location.search)
@@ -208,13 +218,16 @@ if (params.get('s')) {
 }
 const data = ref(props.isClient ? tableData.value : tableData.value.data)
 
-const slots = useSlots()
+
 
 const columns = ref(slots.default().map((tab) => tab));
 
 onMounted(() => {
   slots.default().forEach((element, index) => {
-    element.props['row'] = data.value[index];
+    if(data.value){
+         element.props['row'] = data.value[index];
+    }
+
   });
 });
 
@@ -353,6 +366,9 @@ const removeRowDataFromRemote = async (row) => {
         toast.error("Id sağlanmalı");
     }
 
+}
+const hasSlot = (name) => {
+    return !!slots[name];
 }
 
 onMounted(() => {

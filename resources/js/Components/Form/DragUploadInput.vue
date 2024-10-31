@@ -3,7 +3,7 @@
     <!-- Drag-and-Drop Area -->
 
     <div v-if="images.length" class="image-preview mb-3">
-      <h3>Preview:</h3>
+
       <div class="preview-grid">
         <div v-for="(image, index) in images" :key="index" class="preview-item">
           <img :src="image.url" :alt="'Image Preview ' + (index + 1)" />
@@ -52,7 +52,7 @@
 import { ref, reactive } from 'vue';
 import {CloudIcon} from '@/Components/Icons'
 import {RegularButton} from '@/Components/Buttons'
-
+const emits = defineEmits(['change'])
 defineProps({
     label:{},
     note:{}
@@ -94,6 +94,8 @@ const handleFiles = (files) => {
         images.push({ file, url: e.target.result });
       };
       reader.readAsDataURL(file);
+
+      emits('change',file)
     }
   });
 };

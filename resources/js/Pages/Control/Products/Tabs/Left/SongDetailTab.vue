@@ -9,24 +9,32 @@
         <div class="flex-1 flex flex-col overflow-scroll gap-6">
         <AppTable v-model="songs" :showEmptyImage="false" :isClient="true" :hasSearch="false" :showAddButton="false">
                 <AppTableColumn label="#">
-                    <template #default="scope"> asds{{ scope.row }}</template>
+                    <template #default="scope">
+                    </template>
                 </AppTableColumn>
                 <AppTableColumn label="Parça Adı">
-                    <template #default="scope">{{scope.row}}</template>
+                    <template #default="scope"></template>
                 </AppTableColumn>
-
                 <AppTableColumn label="Süre">
-                    <template #default="scope">{{scope.row}}</template>
+                    <template #default="scope"></template>
                 </AppTableColumn>
 
                 <AppTableColumn label="Durum">
-                    <template #default="scope">{{scope.row}}</template>
+                    <template #default="scope"></template>
                 </AppTableColumn>
 
                 <AppTableColumn label="Aksiyonlar" align="end">
-                    <template #default="scope">{{scope.row.name}}</template>
+                    <template #default="scope">
+                    </template>
                 </AppTableColumn>
-
+                <template #appends>
+                    <div class="flex flex-col gap-2">
+                        <SongLoadingCard />
+                        <SongLoadingCard />
+                        <SongLoadingCard />
+                        <SongLoadingCard />
+                    </div>
+                </template>
                 <template #empty>
                     <TusUploadInput></TusUploadInput>
                 </template>
@@ -39,11 +47,11 @@
 <script setup>
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {computed,ref} from 'vue';
+import {computed,ref,useSlots} from 'vue';
 import {FormElement} from '@/Components/Form';
 import {AddIcon} from '@/Components/Icons'
 import {TusUploadInput} from '@/Components/Form'
-const songs = ref([]);
+import {SongLoadingCard} from '@/Components/Cards';
 
 </script>
 

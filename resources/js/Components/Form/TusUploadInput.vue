@@ -64,8 +64,10 @@
 import { ref, reactive } from 'vue';
 import {SongFileIcon,AddIcon} from '@/Components/Icons'
 import {RegularButton,PrimaryButton} from '@/Components/Buttons'
+import {useCrudStore} from '@/Stores/useCrudStore';
 
 
+const crudStore = useCrudStore();
 const fileInput = ref(null);
 const isDragging = ref(false);
 const images = reactive([]);
@@ -103,7 +105,9 @@ const handleFiles = (files) => {
     images.push({ file, url: e.target.result });
     };
     reader.readAsDataURL(file);
+    crudStore.formData(route('song-upload'),{
 
+    })
   });
 };
 

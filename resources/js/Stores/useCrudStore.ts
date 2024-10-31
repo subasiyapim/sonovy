@@ -37,6 +37,21 @@ export const useCrudStore = defineStore('crud', () => {
         return response.data;
     }
 
+    const formData = async(route:string,payload:object) => {
+        const response = await axios.post(route ,{
+            ...payload
+        },{
+
+            headers:{
+                'Content-Type': 'multipart/form-data',
+              ...headers
+
+            }
+        });
+        return response.data;
+    }
+
+
 
 
 
@@ -44,7 +59,8 @@ export const useCrudStore = defineStore('crud', () => {
     return {
         get,
         del,
-        post
+        post,
+        formData
 
     };
 });
