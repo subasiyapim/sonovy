@@ -18,7 +18,7 @@ class MediaController extends Controller
         $allowed_file_types = Setting::where('key', 'allowed_song_formats')->first()->value;
         $validate = Validator::make($request->all(), [
             'type' => ['in:1,2'],
-            'file' => ['required', 'mimes:' . $allowed_file_types, 'max:' . $max_file_size, 'file'],
+            'file' => ['required', 'mimes:'.$allowed_file_types, 'max:'.$max_file_size, 'file'],
         ]);
 
         if ($validate->fails()) {
@@ -38,7 +38,7 @@ class MediaController extends Controller
     /**
      * @throws ValidationException
      */
-    public function mediaUpload(Request $request, Model $model): \Illuminate\Http\JsonResponse
+    public function mediaUpload(Request $request, $model): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'file' => 'required|file|mimes:jpeg,png,jpg|max:2048',
