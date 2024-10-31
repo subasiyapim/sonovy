@@ -1,5 +1,5 @@
 <template>
-  <BaseDialog v-model="isDialogOn" align="center" :title="__('control.product.page_title')"
+  <BaseDialog height="min-content" v-model="isDialogOn" align="center" :title="__('control.product.page_title')"
               :description="__('control.product.modal_description')">
     <template #icon>
       <AddIcon color="var(--dark-green-950)"/>

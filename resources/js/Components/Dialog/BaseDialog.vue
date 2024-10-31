@@ -5,7 +5,7 @@
        </div>
 
        <div v-if="isDialogOn" :class="dialogWrapperClass" class="absolute inset-0 flex  p-3 pointer-events-none">
-            <div  class="dialogBody pointer-events-auto overflow-hidden flex flex-col"  :class="dialogStyle" >
+            <div  class="dialogBody pointer-events-auto overflow-hidden flex flex-col"  :style="dialogStyle" >
                 <div class="p-4 flex items-center gap-3.5">
                     <div class="w-10 h-10 rounded-full flex items-center justify-center bg-white-600">
                         <slot name="icon" />
@@ -33,7 +33,7 @@ const props = defineProps({
         default:'center'
     },
     height:{
-        default:'full'
+        default:'100%'
     },
     static:{
         default:false
@@ -56,7 +56,7 @@ const closeDialog = () => {
 
 }
 const dialogStyle = computed(() => {
-    let classString = ` h-${props.height} `;
+    let classString = {'height' : props.height};
     return classString;
 })
 const dialogWrapperClass = computed(() => {

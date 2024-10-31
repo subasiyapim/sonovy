@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="w-full h-full bg-white-500 flex flex-col gap-10 p-8 overflow-hidden">
-                <AppStepper v-model="currentTab" @change="onChangeTab">
+                <AppStepper :modelValue="currentTab" @change="onChangeTab">
                     <AppStepperElement title="Yayın Bilgileri"></AppStepperElement>
                     <AppStepperElement title="Şarkı Detay"></AppStepperElement>
                     <AppStepperElement title="Yayınlama Detayları"></AppStepperElement>
@@ -33,7 +33,7 @@
 
                 <div class="h-full bg-white w-full shadow rounded-xl px-8 py-8 overflow-scroll">
 
-                        <ProductInfoTab v-model="step1Element" :genres="genres" v-if="currentTab == 0"></ProductInfoTab>
+                        <ProductInfoTab v-model="step1Element" :genres="genres" :languages="languages" :formats="formats" v-if="currentTab == 0"></ProductInfoTab>
                         <SongDetailTab v-if="currentTab == 1"></SongDetailTab>
                         <PublishingDetailTab v-if="currentTab == 2"></PublishingDetailTab>
 
@@ -99,7 +99,9 @@ const crudStore = useCrudStore();
 const props = defineProps({
     product:{},
     genres:{},
-    step:{}
+    step:{},
+    languages:{},
+    formats:{},
 })
 
 const onChangeTab = (e) => {
@@ -155,7 +157,7 @@ const selectConfig = computed(() => {
 const submitStep = async () => {
     if(currentTab.value == 0){
         step1Element.post(route('control.catalog.products.form.step1.store',props.product.id));
-
+        currentTab.value = 1;
     }
 
 }

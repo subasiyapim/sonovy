@@ -101,7 +101,16 @@
         <FormElement label-width="190px" v-model="form.upc_code" label="UPC/EAN Kodu" placeholder="Lütfen giriniz"></FormElement>
         <FormElement label-width="190px" v-model="form.catalog_number" label="Katalog No" placeholder="Lütfen giriniz"></FormElement>
         <FormElement type="select" label-width="190px"  v-model="form.language_id" label="Albüm Dili" :config="languageConfig" placeholder="Lütfen giriniz">
-
+             <template #model="scope">
+                <div v-if="scope.data" class="flex items-center gap-2">
+                    <span>{{ languageConfig.data.find((el) => el.value == scope.data)?.iconKey }}</span>
+                    <span>{{ languageConfig.data.find((el) => el.value == scope.data)?.label }}</span>
+                </div>
+            </template>
+            <template #option="scope">
+                <span>{{ scope.data.iconKey }}</span>
+                <span class="paragraph-sm c-strong-950">{{ scope.data.label }}</span>
+            </template>
         </FormElement>
 
         <FormElement type="select" label-width="190px" v-model="form.main_price" label="Ana Fiyat" placeholder="Lütfen giriniz" :config="mainPriceConfig">
@@ -123,6 +132,7 @@ const props = defineProps({
     modelValue:{},
     genres:{},
     languages:{},
+    formats:{}
 })
 
 const emits = defineEmits(['update:modelValue']);
@@ -196,16 +206,19 @@ const mainPriceConfig = computed(() => {
         data: [],
     }
 })
+console.log(props.languages);
+
 const languageConfig = computed(() => {
     return {
-        hasSearch:false,
-        data: [],
+        hasSearch:true,
+        data: props.languages
     }
 })
 const formatConfig = computed(() => {
     return {
-        hasSearch:false,
-        data: [],
+         hasSearch:true,
+
+        data: props.formats
     }
 })
 
