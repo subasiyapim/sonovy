@@ -57,6 +57,10 @@ class Product extends Model implements HasMedia
         'main_price',
         //step 2
         //step 3
+        'production_year',
+        'previously_released',
+        'previous_release_date',
+        'publishing_country_type',
         //step 4
     ];
     public static array $excludedFields = [
