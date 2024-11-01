@@ -1,4 +1,5 @@
 <template>
+
     <div class="pb-6">
         <p class="label-xl c-strong-950">
             Şimdi, yayına dahil eklemek istediğiniz parçaları yükleyin 👍🏻
@@ -92,11 +93,12 @@ import {StatusBadge} from '@/Components/Badges';
 import {SongDialog} from '@/Components/Dialog';
 import {RegularButton,PrimaryButton,IconButton}  from '@/Components/Buttons'
 import {StarIcon,TrashIcon,EditIcon,DraggableIcon,MusicVideoIcon} from '@/Components/Icons';
-const songs = ref([]);
+
 const attemps = ref([],{deep:true});
 const props = defineProps({
     product:{}
 })
+const songs = ref(props.product.songs);
 const tusUploadElement  = ref();
 const showAttempt = ref(false);
 const isSongDialogOn = ref(false);

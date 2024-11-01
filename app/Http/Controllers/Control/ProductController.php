@@ -183,6 +183,18 @@ class ProductController extends Controller
         $progress = ProductServices::progress($product);
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
 
+        $product->load(
+            'songs',
+            'label',
+            'genre',
+            'subGenre',
+            'label',
+            'hashtags',
+            'downloadPlatforms',
+            'songs',
+            'promotions'
+        );
+
         $props = [
             "product" => $product,
             "step" => $step,

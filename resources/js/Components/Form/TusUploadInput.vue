@@ -152,6 +152,7 @@ const handleFileInput = (e) => {
     type: props.type,
     size: file.size,
     percentage: 0,
+    product_id:props.product_id,
   };
 
   emits('start', metaData)
@@ -164,7 +165,7 @@ const handleFileInput = (e) => {
       type: props.type,
       name: file.name,
       temp: tempFileName,
-      product_id:props.product_id,
+
     }),
     metadata: metaData,
 

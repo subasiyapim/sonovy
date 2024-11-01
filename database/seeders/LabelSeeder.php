@@ -22,9 +22,9 @@ class LabelSeeder extends Seeder
 
         Label::factory(15)->create()->each(function (Label $label) {
             $label->addMediaFromUrl('https://picsum.photos/400/400')
-                ->usingFileName(Str::slug($label->name).'.jpg')
+                ->usingFileName(Str::slug($label->name) . '.jpg')
                 ->usingName($label->name)
-                ->toMediaCollection('labels', 'tenant_'.tenant('id'));
+                ->toMediaCollection('labels', 'tenant_' . tenant('id'));
         });
     }
 }

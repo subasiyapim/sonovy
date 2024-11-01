@@ -65,7 +65,7 @@ class TusServiceProvider extends ServiceProvider
                     //TODO Product ID BURADN GELİYOR
                     // $fileMeta['metadata']['product_id'];
                     $file = SongServices::create($data);
-
+                    $file->products()->attach([$fileMeta['metadata']['product_id']]);
 
                     $event->getResponse()->setHeaders(['Upload-Info' => $file->id]);
 
