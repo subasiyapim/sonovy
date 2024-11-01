@@ -81,11 +81,11 @@ class ProductUpdateRequest extends FormRequest
     public function rules(): array
     {
         return match ($this->step) {
-            1 => self::stepOne(),
-            2 => self::stepTwo(),
-            3 => self::stepThree(),
-            4 => self::stepFour(),
-            5 => self::stepFive(),
+            '1' => self::stepOne(),
+            '2' => self::stepTwo(),
+            '3' => self::stepThree(),
+            '4' => self::stepFour(),
+            '5' => self::stepFive(),
         };
     }
 

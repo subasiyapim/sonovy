@@ -33,7 +33,8 @@
 
         <div class="h-full bg-white w-full shadow rounded-xl px-8 py-8 overflow-scroll">
 
-          <ProductInfoTab v-model="step1Element" :genres="genres" :formats="formats" :languages="languages" v-if="currentTab == 0"></ProductInfoTab>
+          <ProductInfoTab v-model="step1Element" :genres="genres" :formats="formats" :languages="languages"
+                          v-if="currentTab == 0"></ProductInfoTab>
           <SongDetailTab v-if="currentTab == 1"></SongDetailTab>
           <PublishingDetailTab v-if="currentTab == 2"></PublishingDetailTab>
           <MarketingAndSend v-if="currentTab == 3"></MarketingAndSend>
@@ -42,9 +43,9 @@
         </div>
         <div class="flex items-center justify-center w-full">
           <div class="flex-1 flex items-center gap-2 justify-center">
-            <p class="label-medium">%{{ percent }} Tamamlandı</p>
+            <p class="label-medium">%{{ progress }} Tamamlandı</p>
             <div class="w-48">
-              <AppProgressIndicator v-model="percent"/>
+              <AppProgressIndicator v-model="progress"/>
             </div>
           </div>
           <PrimaryButton @click="submitStep">
@@ -64,7 +65,7 @@
 
       </div>
       <div class="p-6 flex flex-col h-full gap-5 overflow-scroll">
-        <ProductSummaryTab ></ProductSummaryTab>
+        <ProductSummaryTab></ProductSummaryTab>
 
       </div>
     </div>
@@ -108,18 +109,21 @@ import {useCrudStore} from '@/Stores/useCrudStore';
 
 const crudStore = useCrudStore();
 const props = defineProps({
-    product:{},
-    genres:{},
-    step:{},
-    languages:{},
-    formats:{},
+  product: {},
+  genres: {},
+  step: {},
+  languages: {},
+  formats: {},
+  progress: Number
 })
 
+const progress = ref(props.progress);
 const onChangeTab = (e) => {
   console.log("DEĞİŞTİİİİ", e);
 }
 
 const step1Element = useForm({
+  step: props.step,
   album_name: props.product.album_name,
   version: props.product.version,
   main_artists: [],
@@ -139,19 +143,6 @@ const step1Element = useForm({
 
 const step2Element = useForm({});
 
-const percent = computed(() => {
-  let percent_value = 0;
-  if (currentTab.value == 0) {
-    Object.keys(step1Element).forEach((key) => {
-
-      if (step1Element[key]) {
-
-        percent_value++;
-      }
-    })
-  }
-  return percent_value;
-});
 const currentTab = ref(props.step - 1);
 const selectConfig = computed(() => {
   return {
@@ -164,10 +155,10 @@ const selectConfig = computed(() => {
 })
 
 const submitStep = async () => {
-    if(currentTab.value == 0){
-        step1Element.post(route('control.catalog.products.form.step1.store',props.product.id));
-        currentTab.value = 1;
-    }
+  if (currentTab.value == 0) {
+    step1Element.post(route('control.catalog.products.form.step.store', props.product.id));
+    currentTab.value = 1;
+  }
 
 }
 onMounted(() => {

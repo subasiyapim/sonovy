@@ -67,7 +67,7 @@ Route::group(
     function () {
 
         Route::any('tus/{any?}', [SongController::class, 'uploadSong'])->where('any', '.*')->name('tus');
-
+        Route::redirect('/', '/control/dashboard');
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         //Catalog routes
@@ -85,8 +85,6 @@ Route::group(
                 [SongController::class, 'storeLyrics']
             )->name('songs.store-lyrics');
 
-            Route::resource('products', ProductController::class)->only(['index', 'show', 'create'])->names('products');
-
             Route::group(
                 ['prefix' => 'products', 'as' => 'products.'],
                 function () {
@@ -96,10 +94,7 @@ Route::group(
 
                     Route::group(['prefix' => 'form', 'as' => 'form.'], function () {
                         Route::get('step/{step}/{product}', [ProductController::class, 'edit'])->name('edit');
-                        Route::post(
-                            'step/{step}/{product}',
-                            [ProductController::class, 'stepStore']
-                        )->name('step.store');
+                        Route::post('/{product}', [ProductController::class, 'stepStore'])->name('step.store');
                     });
                 }
             );
@@ -306,7 +301,7 @@ Route::group(
         Route::get('hashtags', fn() => HashtagServices::getHashtags())->name('hashtags');
 
         Route::post('song-upload', [MediaController::class, 'songUpload'])->name('song.upload');
-        Route::post('image-upload/{model}', [MediaController::class, 'mediaUpload'])->name('image.upload');
+        Route::post('image-upload/{model}/{id}', [MediaController::class, 'mediaUpload'])->name('image.upload');
 
         Route::post(
             'artists-platform-match',

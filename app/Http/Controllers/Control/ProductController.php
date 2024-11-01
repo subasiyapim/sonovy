@@ -181,8 +181,7 @@ class ProductController extends Controller
         $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
         $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
         $progress = ProductServices::progress($product);
-        $platforms  = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
-
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
 
         $props = [
             "product" => $product,
@@ -190,14 +189,18 @@ class ProductController extends Controller
             'progress' => $progress,
         ];
         if ($step == 1) {
-            $props['genres']  = $genres;
-            $props['labels']  = $labels;
-            $props['languages']  = $languages;
-            $props['formats']  = $formats;
-        } else if ($step == 3) {
-            $props['platforms'] = $platforms;
-        } else if ($step == 4) {
+            $props['genres'] = $genres;
+            $props['labels'] = $labels;
             $props['languages'] = $languages;
+            $props['formats'] = $formats;
+        } else {
+            if ($step == 3) {
+                $props['platforms'] = $platforms;
+            } else {
+                if ($step == 4) {
+                    $props['languages'] = $languages;
+                }
+            }
         }
 
         return inertia(

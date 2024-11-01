@@ -77,20 +77,22 @@ import {useCrudStore} from '@/Stores/useCrudStore';
 const crudStore = useCrudStore();
 
 const onChange = (e) => {
-  console.log("EEE", e);
-  console.log(e);
+  let params = new URLSearchParams(window.location.search);
+  const productId = params.get('product');
+
+  console.log(productId);
 
   if (e) {
-    console.log("GELDİİİ");
-
-    const response = crudStore.formData(route('control.image.upload','Product'), {
+    const response = crudStore.formData(route('control.image.upload', {
+      model: "product",
+      id: productId
+    }), {
       "file": e
-    })
-    console.log("RESPONSEE", response);
-
+    });
+    if (response) {
+      console.log(response);
+    }
   }
-
-
 }
 </script>
 

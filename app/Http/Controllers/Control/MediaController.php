@@ -40,6 +40,7 @@ class MediaController extends Controller
      */
     public function mediaUpload(Request $request, $model): \Illuminate\Http\JsonResponse
     {
+        dd($model, $request->all());
         $validator = Validator::make($request->all(), [
             'file' => 'required|file|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -51,7 +52,9 @@ class MediaController extends Controller
         $validated = $validator->validated();
 
         $file = $validated['file'];
+        dd($model->getTable());
         $collection_name = $model->getTable();
+
 
         MediaServices::upload($model, $file, $collection_name);
 
