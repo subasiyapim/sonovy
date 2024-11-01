@@ -72,20 +72,16 @@
 import {DragUploadInput} from '@/Components/Form';
 import {AddIcon, BroadcastTitleIcon, PersonIcon, GenreIcon, CalendarIcon, DurationIcon} from '@/Components/Icons';
 import {useCrudStore} from '@/Stores/useCrudStore';
+import {usePage} from "@inertiajs/vue3";
 
 
 const crudStore = useCrudStore();
 
 const onChange = (e) => {
-  let params = new URLSearchParams(window.location.search);
-  const productId = params.get('product');
-
-  console.log(productId);
-
   if (e) {
     const response = crudStore.formData(route('control.image.upload', {
-      model: "product",
-      id: productId
+      model: "Product",
+      id: usePage().props.product.id
     }), {
       "file": e
     });

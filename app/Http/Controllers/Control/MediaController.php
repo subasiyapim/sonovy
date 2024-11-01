@@ -38,9 +38,8 @@ class MediaController extends Controller
     /**
      * @throws ValidationException
      */
-    public function mediaUpload(Request $request, $model): \Illuminate\Http\JsonResponse
+    public function mediaUpload(Request $request, $model, $id): \Illuminate\Http\JsonResponse
     {
-        dd($model, $request->all());
         $validator = Validator::make($request->all(), [
             'file' => 'required|file|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -51,18 +50,26 @@ class MediaController extends Controller
 
         $validated = $validator->validated();
 
+        $class = 'App\Models\\'.$model;
+        if (!class_exists($class)) {
+            return response()->json(['errors' => 'Model not found: '.$class], 422);
+        }
+
+        $modelInstance = $class::find($id);
+        if (!$modelInstance) {
+            return response()->json(['errors' => 'Record not found for the given id'], 422);
+        }
+
         $file = $validated['file'];
-        dd($model->getTable());
-        $collection_name = $model->getTable();
+        $collection_name = $modelInstance->getTable();
 
-
-        MediaServices::upload($model, $file, $collection_name);
+        MediaServices::upload($modelInstance, $file, $collection_name);
 
         return response()->json(
             [
                 'message' => 'File uploaded successfully',
-                'image' => $model->image,
-            ],
+                'image' => $modelInstance->image,
+            ]
         );
     }
 }

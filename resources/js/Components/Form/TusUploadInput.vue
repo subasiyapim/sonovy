@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full" >
+  <div class="w-full h-full">
     <!-- Drag-and-Drop Area -->
 
     <div
@@ -9,38 +9,38 @@
         @dragleave.prevent="handleDragLeave"
         @drop.prevent="handleDrop"
         :class="{ 'dragging': isDragging }"
-        >
-        <div class="flex flex-col items-center justify-center gap-5">
-                <div class="w-16 h-16 rounded-full bg-white-600 flex items-center justify-center">
-                        <SongFileIcon color="var(--dark-green-800)" />
-                </div>
-               <div class="">
-                    <p class="c-strong-950 label-medium !text-center">
-                        Yayın eklemek istediğiniz parçaları seçin veya sürükleyip bırakın.
-                    </p>
-                    <p class="paragraph-medium c-neutral-500 !text-center">
-                        Format: MP3, AAC, VMA...
-                    </p>
-               </div>
-                <div class="flex items-center gap-3">
-                    <PrimaryButton>
-                        <template #icon>
-                                <AddIcon color="var(--dark-green-500)" />
-                        </template>
-                       Parça Ekle
-                    </PrimaryButton>
-                    <RegularButton>
-                       Katalogdan Parça Seç
-                    </RegularButton>
-                </div>
+    >
+      <div class="flex flex-col items-center justify-center gap-5">
+        <div class="w-16 h-16 rounded-full bg-white-600 flex items-center justify-center">
+          <SongFileIcon color="var(--dark-green-800)"/>
         </div>
+        <div class="">
+          <p class="c-strong-950 label-medium !text-center">
+            Yayın eklemek istediğiniz parçaları seçin veya sürükleyip bırakın.
+          </p>
+          <p class="paragraph-medium c-neutral-500 !text-center">
+            Format: MP3, AAC, VMA...
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <PrimaryButton>
+            <template #icon>
+              <AddIcon color="var(--dark-green-500)"/>
+            </template>
+            Parça Ekle
+          </PrimaryButton>
+          <RegularButton>
+            Katalogdan Parça Seç
+          </RegularButton>
+        </div>
+      </div>
       <input
-        ref="fileInput"
-        type="file"
-        accept="image/*"
-        multiple
-        @change="onChangeInput"
-        hidden
+          ref="fileInput"
+          type="file"
+          accept="mp3, wav, aac, mp4, avi, mkv"
+          multiple
+          @change="onChangeInput"
+          hidden
       />
     </div>
 
@@ -50,9 +50,9 @@
 </template>
 
 <script setup>
-import { ref, reactive ,onBeforeMount} from 'vue';
-import {SongFileIcon,AddIcon} from '@/Components/Icons'
-import {RegularButton,PrimaryButton} from '@/Components/Buttons'
+import {ref, reactive, onBeforeMount} from 'vue';
+import {SongFileIcon, AddIcon} from '@/Components/Icons'
+import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {useCrudStore} from '@/Stores/useCrudStore';
 
 const props = defineProps({
@@ -65,7 +65,7 @@ const props = defineProps({
     default: 1
   }
 })
-const emits = defineEmits(['start','progress','complete'])
+const emits = defineEmits(['start', 'progress', 'complete'])
 
 const csrf_token = ref('');
 const acceptedAudioExtensions = ['mp3', 'wav', 'aac'];
@@ -97,8 +97,8 @@ const handleDrop = (event) => {
 const onChangeInput = (e) => {
 
 
-    const files = Array.from(e.target.files);
-    handleFiles(files);
+  const files = Array.from(e.target.files);
+  handleFiles(files);
 
 }
 const triggerFileInput = () => {
@@ -108,16 +108,15 @@ const triggerFileInput = () => {
 };
 
 
-
 const handleFiles = (files) => {
   files.forEach((file) => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
 
-        handleFileInput(file);
+      handleFileInput(file);
     };
-        reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
 
   });
 };
@@ -143,16 +142,16 @@ const handleFileInput = (e) => {
   const extension = file.name.split('.').pop();
   const uniqueId = Date.now().toString(36);
   const tempFileName = `${uniqueId}_${Date.now()}.${extension}`;
-    let metaData = {
-      filename: tempFileName,
-      mime_type: file.type,
-      orignalName: file.name,
-      type: props.type,
-      size: file.size,
-      percentage:0,
-    };
+  let metaData = {
+    filename: tempFileName,
+    mime_type: file.type,
+    orignalName: file.name,
+    type: props.type,
+    size: file.size,
+    percentage: 0,
+  };
 
-    emits('start',metaData)
+  emits('start', metaData)
   var upload = new tus.Upload(file, {
     headers: {
       'X-CSRF-TOKEN': csrf_token.value,
@@ -167,8 +166,8 @@ const handleFileInput = (e) => {
 
     uploadDataDuringCreation: true,
     onStart: function (e) {
-        metaData.percentage = 0;
-        console.log("BAŞLADIII");
+      metaData.percentage = 0;
+      console.log("BAŞLADIII");
 
 
     },
@@ -180,23 +179,22 @@ const handleFileInput = (e) => {
     onProgress: function (bytesUploaded, bytesTotal) {
       var percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
       //console.log(bytesUploaded, bytesTotal, percentage + '%')
-    //   form.value.songs[currentIndex].percent = parseInt(percentage);
+      //   form.value.songs[currentIndex].percent = parseInt(percentage);
 
-        metaData.percentage = percentage;
-        emits('progress',metaData)
+      metaData.percentage = percentage;
+      emits('progress', metaData)
     },
     // Callback for once the upload is completed
     onSuccess: async function (payload) {
-        const { lastResponse } = payload
+      const {lastResponse} = payload
 
-        let response = await crudStore.post(route('control.find.songs'),{
-            id:lastResponse.getHeader('Upload-Info')
-        });
+      let response = await crudStore.post(route('control.find.songs'), {
+        id: lastResponse.getHeader('Upload-Info')
+      });
 
 
-
-        response.percentage = 100;
-        emits('complete',response)
+      response.percentage = 100;
+      emits('complete', response)
     },
   })
 
@@ -221,7 +219,7 @@ onBeforeMount(() => {
 })
 
 defineExpose({
-    triggerFileInput,
+  triggerFileInput,
 })
 </script>
 
@@ -234,16 +232,16 @@ defineExpose({
 
 .drop-area {
   width: 100%;
-  height:100%;
+  height: 100%;
   padding: 40px;
   border-radius: 10px;
   text-align: center;
   margin-bottom: 20px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .drop-area.dragging {
@@ -259,7 +257,6 @@ defineExpose({
   flex-wrap: wrap;
   gap: 15px;
 }
-
 
 
 .preview-item img {
