@@ -133,7 +133,8 @@ const props = defineProps({
     modelValue:{},
     genres:{},
     languages:{},
-    formats:{}
+    formats:{},
+    product:{}
 })
 
 const emits = defineEmits(['update:modelValue']);

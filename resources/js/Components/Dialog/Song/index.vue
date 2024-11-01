@@ -9,57 +9,45 @@
     <div class="p-5 flex flex-col gap-6">
         <FormElement label-width="190px"
                    :required="true"
-                   :error="form.errors.about"
+                   :error="form.errors.name"
                    :config="{letter:500}"
-                   v-model="form.about"
+                   v-model="form.name"
                    :label="__('control.song.fields.name')"
                    type="text"
                    :placeholder="__('control.song.fields.name_placeholder')"/>
         <FormElement label-width="190px"
                 :required="true"
-                :error="form.errors.about"
+                :error="form.errors.version"
                 :config="{letter:500}"
-                v-model="form.about"
+                v-model="form.version"
                 :label="__('control.song.fields.version')"
                 type="text"
                 :placeholder="__('control.song.fields.version_placeholder')"/>
 
         <FormElement label-width="190px" v-model="form.main_artists" type="multiselect"  :label="__('control.song.fields.main_artists')" :placeholder="__('control.song.fields.main_artists_placeholder')" :config="artistSelectConfig">
-                <template #first_child>
-                    <button class="flex items-center gap-2 paragraph-sm c-sub-600 p-2"> <AddIcon color="var(--sub-600)" /> Sanatçı Oluştur</button>
-                </template>
-                <template #empty>
-                    <button class="flex items-center gap-2 label-xs c-dark-green-600 p-2"> <AddIcon color="var(--dark-green-600)" /> Sanatçı Oluştur</button>
-                </template>
-                    <template #description>
-                    <label class="flex items-center gap-2 mt-2 px-1" for="isProductDerleme">
-                    <input type="checkbox" id="isProductDerleme" class="focus:ring-0 rounded"></input>
-                    <span class="paragraph-xs c-strong-950">Derleme Albüm</span>
-                    <span class="paragraph-xs c-sub-600">(birden fazla sanatçı varsa seçin)</span>
-                    </label>
-                </template>
+
                 <template #option="scope">
-                <div class="flex items-center  gap-2">
-                        <div class="w-3 h-3 rounded-full overflow-hidden">
-                            <img :src="scope.data.image" />
-                        </div>
-                        <p>{{scope.data.label}}</p>
-                </div>
+                    <div class="flex items-center  gap-2">
+                            <div class="w-3 h-3 rounded-full overflow-hidden">
+                                <img :src="scope.data.image" />
+                            </div>
+                            <p>{{scope.data.label}}</p>
+                    </div>
                 </template>
                 <template #model="scope">
-                <div class="flex items-center relative gap-2">
-                        <div  class="flex items-center relative" :style="{'width' : scope.data.length * 20+'px'}">
-                            <div v-for="(artist,index) in scope.data" :style="{'left': 14*index+'px'}" class="absolute w-5 h-5 rounded-full border border-white flex items-center justify-center bg-blue-300">
-                            <span class="label-xs"> {{artist.label[0]}}</span>
+                    <div class="flex items-center relative gap-2">
+                            <div  class="flex items-center relative" :style="{'width' : scope.data.length * 20+'px'}">
+                                <div v-for="(artist,index) in scope.data" :style="{'left': 14*index+'px'}" class="absolute w-5 h-5 rounded-full border border-white flex items-center justify-center bg-blue-300">
+                                <span class="label-xs"> {{artist.label[0]}}</span>
+                                </div>
                             </div>
-                        </div>
-                    <p style="white-space:nowrap;">
-                            <template v-for="artist in scope.data">
-                                {{artist.label}}, &nbsp;
-                            </template>
-                    </p>
+                        <p style="white-space:nowrap;">
+                                <template v-for="artist in scope.data">
+                                    {{artist.label}}, &nbsp;
+                                </template>
+                        </p>
 
-                </div>
+                    </div>
                 </template>
         </FormElement>
         <FormElement label-width="190px" v-model="form.featuring_artists" type="multiselect" :label="__('control.song.fields.featuring_artists')" :placeholder="__('control.song.fields.featuring_artists_placeholder')"  :config="artistSelectConfig">
@@ -99,13 +87,13 @@
         <FormElement label-width="190px" v-model="form.sub_genre_id" :label="__('control.song.fields.sub_genre')" :placeholder="__('control.song.fields.genre_placeholder')"   :config="genreConfig">
         </FormElement>
 
-        <FormElement direction="vertical" type="fancyCheck" :config="{title:__('control.song.fields.is_instrumental')}" :placeholder="__('control.song.fields.is_instrumental_placeholder')">
+        <FormElement direction="vertical" v-model="form.is_instrumental" type="fancyCheck" :config="{title:__('control.song.fields.is_instrumental')}" :placeholder="__('control.song.fields.is_instrumental_placeholder')">
 
         </FormElement>
     </div>
     <SectionHeader :title="__('control.song.dialog.header_2')"/>
         <div class="p-5 flex flex-col gap-6">
-            <FormElement label-width="190px" v-model="form.lyrics_writer" :label="__('control.song.fields.lyrics_writer')" :placeholder="__('control.song.fields.lyrics_writer_placeholder')"  type="select" :config="lyricsConfig">
+            <FormElement v-for="(lyric_writer,i) in form.lyrics_writer" label-width="190px" v-model="form.lyrics_writer[i]" :label="__('control.song.fields.lyrics_writer')" :placeholder="__('control.song.fields.lyrics_writer_placeholder')"  type="select" :config="lyricsConfig">
 
             </FormElement>
 
@@ -120,26 +108,27 @@
              </div>
             <FormElement label-width="190px" v-model="form.lyrics" :label="__('control.song.fields.lyrics')" :placeholder="__('control.song.fields.lyrics_placeholder')"  type="textarea">
             </FormElement>
-
+            <FormElement label-width="190px" :config="sliderConfig" v-model="form.preview_time" :label="__('control.song.fields.preview_time')"   type="slider">
+            </FormElement>
         </div>
     <SectionHeader :title="__('control.song.dialog.header_3')"/>
         <div class="p-5 flex flex-col gap-6">
-            <div class="flex items-center justify-center gap-3">
+            <div class="flex items-center justify-center gap-3" v-for="musican in form.musicans">
                 <div style="width:134px;" class="label-sm">
                     Müzisyen & <br> Katkı Sağlayan
 
                 </div>
                 <div class="flex-1">
-                    <AppSelectInput :placeholder="__('control.song.fields.musicans_placeholder')"></AppSelectInput>
+                    <AppSelectInput v-model="musican.id" :placeholder="__('control.song.fields.musicans_placeholder')"></AppSelectInput>
                 </div>
                 <div class="flex-1">
-                    <AppSelectInput :placeholder="__('control.song.fields.roles_placeholder')"></AppSelectInput>
+                    <AppSelectInput v-model="musican.role" :placeholder="__('control.song.fields.roles_placeholder')"></AppSelectInput>
                 </div>
             </div>
             <div class="flex">
                 <div style="width:150px;"></div>
                 <div class="flex-1">
-                    <button class="flex items-center gap-2">
+                    <button @click="form.musicans.push({})" class="flex items-center gap-2">
                         <AddIcon color="var(--blue-500)" />
                         <span class="c-blue-500 label-xs">Yeni Ekle</span>
                     </button>
@@ -154,12 +143,12 @@
 
     <SectionHeader :title="__('control.song.dialog.header_4')"/>
         <div class="p-5 flex flex-col gap-6">
-                <div class="flex items-center gap-2 ">
-                    <FormElement class="flex-1" :label="__('control.song.fields.participants')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.participants_placeholder')" />
-                    <FormElement class="flex-1" :label="__('control.song.fields.roles')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.roles_placeholder')" />
+                <div class="flex items-center gap-2 " v-for="(participant,i) in form.participants">
+                    <FormElement class="flex-1" v-model="participant.id" :label="__('control.song.fields.participants')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.participants_placeholder')" />
+                    <FormElement class="flex-1" v-model="participant.role" :label="__('control.song.fields.roles')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.roles_placeholder')" />
                     <div class="flex flex-col item-start mb-0.5">
                         <label class="label-sm c-strong-950">{{__('control.song.fields.share')}}</label>
-                        <AppIncrementer class="h-9"></AppIncrementer>
+                        <AppIncrementer v-model="participant.share" class="h-9"></AppIncrementer>
                     </div>
                 </div>
 
@@ -193,9 +182,12 @@ import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {computed, ref, onMounted} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
+import {useCrudStore} from '@/Stores/useCrudStore';
+
 
 import {FormElement, ArtistInput,AppIncrementer,AppSelectInput} from '@/Components/Form'
 
+const crudStore = useCrudStore();
 const props = defineProps({
   modelValue: {
     default: false,
@@ -213,17 +205,19 @@ const choosenSpotifyField = ref(null);
 const adding = ref(false)
 const image = ref();
 const form = useForm({
-  id: "",
-  name: '',
-  country_id: "",
-  about: "",
-  artist_branches: [],
-  image: "",
-  phone: "",
-  website: "",
-  ipi_code: "",
-  isni_code: "",
-  platforms: []
+    id: props.song.id,
+    name: props.song.name,
+    version:"",
+    main_artists:[],
+    featuring_artists:[],
+    genre_id:null,
+    sub_genre_id:null,
+    is_instrumental:false,
+    isrc:null,
+    lyrics_writer:[null],
+    musicans:[{}],
+    participants:[{}],
+    preview_time:[0,20]
 });
 
 const artistSelectConfig = computed(() => {
@@ -261,6 +255,19 @@ const lyricsConfig = computed(() => {
         data: [],
     }
 })
+const sliderConfig = computed(() => {
+    return {
+        formatter:(v) => {
+            const minutes = Math.floor(v / 60);
+            const remainingSeconds = v % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')} sn`;
+
+        },
+        processStyle:{
+            'background' : 'var(--dark-green-800)'
+        }
+    }
+})
 
 
 const emits = defineEmits(['update:modelValue', 'done']);
@@ -276,46 +283,7 @@ const countryConfig = computed(() => {
   };
 })
 const onSubmit = (e) => {
-  adding.value = true;
-  if (image.value) {
-    form.image = image.value?.file;
-  }
-  if (isUpdating.value) {
-    form
-        .transform((data) => ({
-          ...data,
-          _method: 'PUT',
-
-        }))
-        .post(route('control.catalog.artists.update', form.id), {
-          preserveScroll: true,
-          onSuccess: (e) => {
-            toast.success(e.props.notification.message);
-            emits('done', e.props.notification.data)
-            isDialogOn.value = false;
-          },
-          onError: (e) => {
-            console.log("HATAAA", e);
-          }
-        });
-  } else {
-
-    form.post(route('control.catalog.artists.store'), {
-      onFinish: () => {
-        adding.value = false;
-      },
-      onSuccess: async (e) => {
-        toast.success(e.props.notification.message);
-        emits('done', e.props.notification.data)
-        isDialogOn.value = false;
-      },
-      onError: (e) => {
-        console.log("HATAAAA", e);
-      },
-    });
-  }
-
-
+  emits('done',song);
 }
 
 const checkIfDisabled = computed(() => {

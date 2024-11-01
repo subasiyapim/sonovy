@@ -7,7 +7,7 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Albüm Adı</p>
-      <span class="label-sm c-strong-950">Geleceğe Doğru</span>
+      <span class="label-sm c-strong-950">{{product.album_name ?? '-'}}</span>
     </div>
   </div>
 

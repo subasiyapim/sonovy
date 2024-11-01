@@ -71,13 +71,13 @@
                     </div>
                 </template>
                 <template #empty>
-                    <TusUploadInput ref="tusUploadElement" @start="onTusStart" @progress="onTusProgress" @complete="onTusComplete"></TusUploadInput>
+                    <TusUploadInput :product_id="product.id" ref="tusUploadElement" @start="onTusStart" @progress="onTusProgress" @complete="onTusComplete"></TusUploadInput>
                 </template>
             </AppTable>
         </div>
 
     </div>
-    <SongDialog v-if="isSongDialogOn" v-model="isSongDialogOn" :song="choosenSong"></SongDialog>
+    <SongDialog v-if="isSongDialogOn" @done="onComplete" v-model="isSongDialogOn" :song="choosenSong"></SongDialog>
 </template>
 
 <script setup>
@@ -94,7 +94,9 @@ import {RegularButton,PrimaryButton,IconButton}  from '@/Components/Buttons'
 import {StarIcon,TrashIcon,EditIcon,DraggableIcon,MusicVideoIcon} from '@/Components/Icons';
 const songs = ref([]);
 const attemps = ref([],{deep:true});
-
+const props = defineProps({
+    product:{}
+})
 const tusUploadElement  = ref();
 const showAttempt = ref(false);
 const isSongDialogOn = ref(false);
@@ -133,6 +135,13 @@ const onTusComplete = (e) => {
 const openEditDialog = (song) => {
     isSongDialogOn.value = true
     choosenSong.value = song
+}
+
+const onComplete = (e) => {
+    choosenSong.value = JSON.parse(JSON.stringify(e));
+    isSongDialogOn.value = false;
+    choosenSong.value = null;
+
 }
 </script>
 

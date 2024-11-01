@@ -10,6 +10,7 @@ import debounce from './Directives/Debounce';
 import clickOutside from './Directives/ClickOutside';
 import {createPinia} from 'pinia';
 import __ from "./libs/locale";
+import 'vue-slider-component/theme/default.css'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 import VueDatePicker from '@vuepic/vue-datepicker';
