@@ -81,7 +81,9 @@ import {computed,ref} from 'vue';
 import {FormElement,AppTextInput} from '@/Components/Form';
 import {AddIcon,Icon} from '@/Components/Icons'
 import { usePage} from '@inertiajs/vue3';
-
+const props = defineProps({
+    product:{}
+})
 const countryRadioValue = ref(2)
 const platforms = ref(usePage().props.platforms)
 const selectConfig = computed(() => {

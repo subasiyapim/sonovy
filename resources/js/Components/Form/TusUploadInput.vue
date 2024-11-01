@@ -63,6 +63,9 @@ const props = defineProps({
   errorObject: {},
   type: {
     default: 1
+  },
+  product_id:{
+
   }
 })
 const emits = defineEmits(['start', 'progress', 'complete'])
@@ -161,6 +164,7 @@ const handleFileInput = (e) => {
       type: props.type,
       name: file.name,
       temp: tempFileName,
+      product_id:props.product_id,
     }),
     metadata: metaData,
 
