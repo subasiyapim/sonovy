@@ -174,6 +174,7 @@ const artistSelectConfig = computed(() => {
     }
 })
 
+
 const labelConfig = computed(() => {
     return {
         showTags:false,

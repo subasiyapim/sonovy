@@ -1,16 +1,19 @@
 <template>
 
 
-    <div class="w-full flex h-9 border-text-input flex items-center radius-8 c-white-500 p-3 cursor-pointer" @click="isChecked = !isChecked">
-        <div class="flex-1 c-sub-600 paragraph-xs" >
+    <div class="w-full flex flex-col  p-4 border-text-input flex items-start radius-8 c-white-500 p-3 cursor-pointer" @click="isChecked = !isChecked">
+        <p class="label-sm c-strong-950" v-if="config?.title">{{config?.title}}</p>
+        <div class="flex w-full">
+            <div class="flex-1 c-sub-600 paragraph-xs" >
                  {{placeholder}}
+                </div>
+            <div class="relative flex justify-center pointer-events-none">
+                    <label class="appSwitch">
+                        <input type="checkbox" :checked="isChecked">
+                        <span class="appSwitchSlider round"></span>
+                    </label>
+            </div>
         </div>
-       <div class="relative flex justify-center pointer-events-none">
-            <label class="appSwitch">
-                <input type="checkbox" :checked="isChecked">
-                <span class="appSwitchSlider round"></span>
-            </label>
-       </div>
     </div>
 
 
@@ -23,7 +26,8 @@
     const props = defineProps({
         type:{type:String},
         placeholder: { type: String},
-        modelValue:{}
+        modelValue:{},
+        config:{},
 
     })
     const emits = defineEmits(['update:modelValue','change','input']);

@@ -61,7 +61,7 @@
                     <template #default="scope">
                         <IconButton><StarIcon color="var(--sub-600)" /></IconButton>
                         <IconButton><TrashIcon color="var(--sub-600)" /></IconButton>
-                        <IconButton><EditIcon color="var(--sub-600)" /></IconButton>
+                        <IconButton @click="openEditDialog(scope.row)"><EditIcon color="var(--sub-600)" /></IconButton>
                     </template>
                 </AppTableColumn>
                 <template #appends v-if="attemps.length > 0 && showAttempt">
@@ -77,6 +77,7 @@
         </div>
 
     </div>
+    <SongDialog v-if="isSongDialogOn" v-model="isSongDialogOn" :song="choosenSong"></SongDialog>
 </template>
 
 <script setup>
@@ -88,6 +89,7 @@ import {AddIcon} from '@/Components/Icons'
 import {TusUploadInput} from '@/Components/Form'
 import {SongLoadingCard} from '@/Components/Cards';
 import {StatusBadge} from '@/Components/Badges';
+import {SongDialog} from '@/Components/Dialog';
 import {RegularButton,PrimaryButton,IconButton}  from '@/Components/Buttons'
 import {StarIcon,TrashIcon,EditIcon,DraggableIcon,MusicVideoIcon} from '@/Components/Icons';
 const songs = ref([]);
@@ -95,11 +97,14 @@ const attemps = ref([],{deep:true});
 
 const tusUploadElement  = ref();
 const showAttempt = ref(false);
+const isSongDialogOn = ref(false);
 const onTusStart = (e) => {
     showAttempt.value = true;
     console.log("STARTT",e);
     attemps.value.push(e);
 }
+
+const choosenSong = ref();
 
 const onSongAdd = () => {
     tusUploadElement.value.triggerFileInput();
@@ -123,6 +128,11 @@ const onTusComplete = (e) => {
     }
     console.log("BİTTİİ");
 
+}
+
+const openEditDialog = (song) => {
+    isSongDialogOn.value = true
+    choosenSong.value = song
 }
 </script>
 
