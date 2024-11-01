@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Product;
 
 use App\Enums\AlbumTypeEnum;
+use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Models\System\Country;
 use Illuminate\Foundation\Http\FormRequest;
@@ -23,7 +24,20 @@ class ProductUpdateRequest extends FormRequest
 
     private static function stepThree(): array
     {
-        return [];
+        return [
+            'production_year' => ['required', 'integer', 'min:1900', 'max:'.date('Y')],
+            'published_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
+            'published_countries' => [
+                'required', 'array', function ($attribute, $value, $fail) {
+                    if ($this->published_country_type !== ProductPublishedCountryTypeEnum::ALL) {
+                        if (count($value) < 1) {
+                            $fail("The {$attribute} must have at least 1 item(s) when published_country_type is specific.");
+                        }
+                    }
+                }
+            ],
+            'published_countries.*.id' => ['required', Rule::exists(Country::class, 'id')],
+        ];
     }
 
     private static function stepTwo(): array

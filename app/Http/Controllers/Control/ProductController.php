@@ -182,31 +182,32 @@ class ProductController extends Controller
         $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
         $progress = ProductServices::progress($product);
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
+        $product_published_country_types = getDataFromInputFormat(ProductPublishedCountryTypeEnum::getTitles());
+
 
         $props = [
             "product" => $product,
             "step" => $step,
             'progress' => $progress,
         ];
-        if ($step == 1) {
-            $props['genres'] = $genres;
-            $props['labels'] = $labels;
-            $props['languages'] = $languages;
-            $props['formats'] = $formats;
-        } else {
-            if ($step == 3) {
+
+        switch ($step) {
+            case 1:
+                $props['genres'] = $genres;
+                $props['labels'] = $labels;
+                $props['languages'] = $languages;
+                $props['formats'] = $formats;
+                break;
+            case 3:
                 $props['platforms'] = $platforms;
-            } else {
-                if ($step == 4) {
-                    $props['languages'] = $languages;
-                }
-            }
+                $props['product_published_country_types'] = $product_published_country_types;
+                break;
+            case 4:
+                $props['languages'] = $languages;
+                break;
         }
 
-        return inertia(
-            'Control/Products/Edit',
-            $props,
-        );
+        return inertia('Control/Products/Edit', $props);
     }
 
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
