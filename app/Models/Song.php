@@ -51,7 +51,8 @@ class Song extends Model implements HasMedia
         'status',
         'status_changed_at',
         'status_changed_by',
-        'note'
+        'note',
+        'duration',
     ];
     protected array $filterable = [
         'name',
@@ -107,7 +108,8 @@ class Song extends Model implements HasMedia
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'product_song', 'song_id', 'product_id');
+        return $this->belongsToMany(Product::class, 'product_song', 'song_id', 'product_id')
+            ->withPivot('is_favorite');
     }
 
     public function remixer(): BelongsTo
