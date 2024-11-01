@@ -182,7 +182,7 @@ class ProductController extends Controller
         $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
         $progress = ProductServices::progress($product);
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
-        $product_published_country_types = getDataFromInputFormat(ProductPublishedCountryTypeEnum::getTitles());
+        $product_published_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());
 
 
         $props = [
