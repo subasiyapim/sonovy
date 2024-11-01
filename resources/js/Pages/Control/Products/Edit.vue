@@ -65,7 +65,7 @@
 
       </div>
       <div class="p-6 flex flex-col h-full gap-5 overflow-scroll">
-        <ProductSummaryTab></ProductSummaryTab>
+        <ProductSummaryTab :product="product"></ProductSummaryTab>
 
       </div>
     </div>

@@ -72,20 +72,22 @@
 import {DragUploadInput} from '@/Components/Form';
 import {AddIcon, BroadcastTitleIcon, PersonIcon, GenreIcon, CalendarIcon, DurationIcon} from '@/Components/Icons';
 import {useCrudStore} from '@/Stores/useCrudStore';
+const props = defineProps({
+    product: {
 
+    }
+})
 
 const crudStore = useCrudStore();
 
 const onChange = (e) => {
-  let params = new URLSearchParams(window.location.search);
-  const productId = params.get('product');
 
-  console.log(productId);
 
   if (e) {
+
     const response = crudStore.formData(route('control.image.upload', {
       model: "product",
-      id: productId
+      id: props.product.id,
     }), {
       "file": e
     });

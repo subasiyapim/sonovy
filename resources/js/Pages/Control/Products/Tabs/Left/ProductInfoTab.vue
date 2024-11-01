@@ -35,10 +35,10 @@
                 <div class="flex items-center relative gap-2">
                         <div  class="flex items-center relative" :style="{'width' : scope.data.length * 20+'px'}">
                             <div v-for="(artist,index) in scope.data" :style="{'left': 14*index+'px'}" class="absolute w-5 h-5 rounded-full border border-white flex items-center justify-center bg-blue-300">
-                            <span class="label-xs"> {{artist.label[0]}}</span>
+                            <span class="label-xs "> {{artist.label[0]}}</span>
                             </div>
                         </div>
-                    <p style="white-space:nowrap;">
+                    <p class="label-sm !font-normal" style="white-space:nowrap;">
                             <template v-for="artist in scope.data">
                                 {{artist.label}}, &nbsp;
                             </template>
@@ -69,7 +69,7 @@
                             <span class="label-xs"> {{artist.label[0]}}</span>
                             </div>
                         </div>
-                    <p style="white-space:nowrap;">
+                    <p  class="label-sm !font-normal" style="white-space:nowrap;">
                             <template v-for="artist in scope.data">
                                 {{artist.label}}, &nbsp;
                             </template>
