@@ -10,17 +10,11 @@
     <SectionHeader title="YAYIN VE TANITIM METNİ"></SectionHeader>
     <div class="flex flex-col gap-6" v-for="t in publicationTexts">
         <FormElement label-width="190px" type="select" label="Tanıtım Dil" :required="true" placeholder="Lütfen Seçiniz" :config="selectConfig">
-
         </FormElement>
         <FormElement label-width="190px" type="text" label="Vurucu Cümle" placeholder="Yapım Yılı" >
-
         </FormElement>
-
-
         <FormElement label-width="190px" type="textarea" :required="true" label="Yayın Tanıtım Metni" placeholder="Metni giriniz">
-
         </FormElement>
-
     </div>
     <div>
         <button @click="publicationTexts.push({})" class="flex items-center justify-center gap-2 w-auto">

@@ -10,7 +10,7 @@
          class="absolute inset-0 flex items-center px-3 radius-8 border-none focus:ring-0 appSelectInput c-strong-950">
       <span class="label-sm !font-normal c-soft-400" v-if="!element">{{ placeholder }}</span>
       <slot v-else-if="hasSlot('model')" name="model" :scope="element"/>
-      <span v-else>{{ getShowLabel }}</span>
+      <span v-else class="label-sm !font-normal">{{ getShowLabel }}</span>
     </div>
     <div
         class="selectButton bg-blue-300 flex items-center justify-end border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm !font-normal cursor-pointer">
