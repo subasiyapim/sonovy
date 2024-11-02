@@ -33,7 +33,8 @@
 
         <div class="h-full bg-white w-full shadow rounded-xl px-8 py-8 overflow-scroll">
 
-          <ProductInfoTab v-model="step1Element" :genres="genres" :formats="formats" :product="product" :languages="languages"
+          <ProductInfoTab v-model="step1Element" :genres="genres" :formats="formats" :product="product"
+                          :languages="languages"
                           v-if="currentTab == 0"></ProductInfoTab>
           <SongDetailTab :product="product" :genres="genres" v-if="currentTab == 1"></SongDetailTab>
           <PublishingDetailTab v-if="currentTab == 2" :product="product"></PublishingDetailTab>
@@ -123,10 +124,12 @@ const onChangeTab = (e) => {
 }
 
 const step1Element = useForm({
+  type: props.product.type,
   step: props.step,
   album_name: props.product.album_name,
   version: props.product.version,
   main_artists: [],
+  mixed_album: props.product.mixed_album,
   featuring_artists: [],
   genre_id: props.product.genre_id,
   sub_genre_id: props.product.sub_genre_id,
@@ -156,15 +159,15 @@ const selectConfig = computed(() => {
 
 const submitStep = async () => {
   if (currentTab.value == 0) {
-    step1Element.post(route('control.catalog.products.form.step.store', props.product.id),{
+    step1Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
-        onError:(e) => {
-            console.log("HTAA",e);
+      onError: (e) => {
+        console.log("HTAA", e);
 
-        },
-        onSuccess:(e) => {
-            router.push(route('control.catalog.products.form.edit',[2,props.product.id]))
-        }
+      },
+      onSuccess: (e) => {
+        router.push(route('control.catalog.products.form.edit', [2, props.product.id]))
+      }
     });
 
   }

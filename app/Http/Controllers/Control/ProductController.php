@@ -8,50 +8,33 @@ use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\YoutubeChannelThemeEnum;
 use App\Enums\PlatformTypeEnum;
-use App\Events\NewProductEvent;
 use App\Exports\ProductExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ProductStoreRequest;
 use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Http\Requests\Product\ConvertAudioRequest;
-use App\Http\Resources\Panel\CountryResource;
 use App\Jobs\ConvertAudioJob;
 use App\Models\Artist;
-use App\Models\ArtistBranch;
 use App\Models\Product;
-use App\Models\ConvertAudio;
 use App\Models\System\Country;
 use App\Models\Genre;
 use App\Models\Label;
 use App\Models\Participant;
 use App\Models\Platform;
-use App\Models\Song;
-use App\Models\User;
-use App\Services\ArtistBranchServices;
-use App\Services\ArtistServices;
-use App\Services\CatalogNumberService;
-use App\Services\FFMpegServices;
 use App\Services\ISRCServices;
 use App\Services\iTunesServices;
 use App\Services\MusicBrainzServices;
 use App\Services\TimezoneService;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Services\ProductServices;
 use App\Services\CountryServices;
-use App\Services\LanguageServices;
-use Dflydev\DotAccessData\Data;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
 use Inertia\ResponseFactory;
-use Maatwebsite\Excel\Facades\Excel;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
@@ -227,10 +210,19 @@ class ProductController extends Controller
 
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
     {
-        $product->update($request->validated());
+        dd($request->validated());
+        $data = $request->validated();
+
+        $excepted = ['step', 'main_artists', 'featuring_artists'];
+
+        $excepted_data = Arr::except($data, $excepted);
+        $product->update($excepted_data);
+
 
         $progress = ProductServices::progress($product);
+        $step = $request->validated()['step']++;
 
+        dd($step);
 
         return redirect()->route(
             'control.catalog.products.form.edit',

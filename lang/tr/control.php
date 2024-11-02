@@ -492,6 +492,7 @@ return [
             'sub_genre_id' => 'Alt Tarz',
             'format_id' => 'Format',
             'language_id' => 'Albüm Dili',
+            'mixed_album' => 'Derleme Albüm',
         ],
     ],
     'products-apply' => [
