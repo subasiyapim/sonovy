@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\ProductTypeEnum;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 
 class FFMpegServices
