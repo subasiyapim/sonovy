@@ -156,8 +156,17 @@ const selectConfig = computed(() => {
 
 const submitStep = async () => {
   if (currentTab.value == 0) {
-    step1Element.post(route('control.catalog.products.form.step.store', props.product.id));
-    currentTab.value = 1;
+    step1Element.post(route('control.catalog.products.form.step.store', props.product.id),{
+
+        onError:(e) => {
+            console.log("HTAA",e);
+
+        },
+        onSuccess:(e) => {
+            router.push(route('control.catalog.products.form.edit',[2,props.product.id]))
+        }
+    });
+
   }
 
 }
