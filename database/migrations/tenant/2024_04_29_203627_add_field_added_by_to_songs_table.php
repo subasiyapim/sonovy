@@ -12,10 +12,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('songs', function (Blueprint $table) {
-            $table->foreignId('added_by')->nullable()->after('original_release_date')->constrained('users');
+            $table->foreignId('created_by')->nullable()->after('original_release_date')->constrained('users');
         });
 
-        DB::table('songs')->update(['added_by' => 1]);
+        DB::table('songs')->update(['created_by' => 1]);
     }
 
     /**
@@ -24,8 +24,8 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('songs', function (Blueprint $table) {
-            $table->dropForeign(['added_by']);
-            $table->dropColumn('added_by');
+            $table->dropForeign(['created_by']);
+            $table->dropColumn('created_by');
         });
     }
 };

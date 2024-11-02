@@ -128,9 +128,9 @@ class UserController extends Controller
 
 
         $sub_users = User::where('parent_id', '=', $user->id)->get();
-        $labels = Label::with('country')->where('added_by', '=', $user->i)->get();
-        $artists = Artist::where('added_by', '=', $user->i)->get();
-        $products = Product::with('artists', 'label', 'publishedCountries', 'songs')->where('added_by', '=',
+        $labels = Label::with('country')->where('created_by', '=', $user->i)->get();
+        $artists = Artist::where('created_by', '=', $user->i)->get();
+        $products = Product::with('artists', 'label', 'publishedCountries', 'songs')->where('created_by', '=',
             $user->i)->get();
 
 

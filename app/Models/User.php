@@ -303,7 +303,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function broadcasts(): HasMany
     {
-        return $this->hasMany(Product::class, 'added_by');
+        return $this->hasMany(Product::class, 'created_by');
     }
 
     public function orders(): HasMany
@@ -313,17 +313,17 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function artists(): HasMany
     {
-        return $this->hasMany(Artist::class, 'added_by');
+        return $this->hasMany(Artist::class, 'created_by');
     }
 
     public function labels(): HasMany
     {
-        return $this->hasMany(Label::class, 'added_by');
+        return $this->hasMany(Label::class, 'created_by');
     }
 
     public function songs(): HasMany
     {
-        return $this->hasMany(Song::class, 'added_by');
+        return $this->hasMany(Song::class, 'created_by');
     }
 
     public function permittedArtists(): BelongsToMany

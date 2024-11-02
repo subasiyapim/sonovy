@@ -82,13 +82,13 @@ class LabelController extends Controller
     public function store(LabelStoreRequest $request)
     {
         $data = $request->validated();
-        $data['added_by'] = auth()->id();
+        $data['created_by'] = auth()->id();
         $label = Label::create($data);
 
         if ($request->hasFile('image')) {
             MediaServices::upload($label, $request->image['file'], 'labels');
         }
-        
+
         return redirect()->back()->with([
             'notification' => [
                 'title' => 'Success',

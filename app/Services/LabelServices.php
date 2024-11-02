@@ -18,12 +18,12 @@ class LabelServices
     }
 
     /**
-     * @param array $data
+     * @param  array  $data
      * @return mixed
      */
     public static function create(array $data): mixed
     {
-        $data["added_by"] = auth()->id();
+        $data["created_by"] = auth()->id();
         $label = Label::create($data);
 
         if (isset($data['image'])) {
@@ -48,6 +48,6 @@ class LabelServices
      */
     public static function search($search): mixed
     {
-        return Label::where('name', 'like', '%' . $search . '%')->get();
+        return Label::where('name', 'like', '%'.$search.'%')->get();
     }
 }

@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('songs', function (Blueprint $table) {
-            $table->tinyInteger('status')->default(1)->after('added_by');
+            $table->tinyInteger('status')->default(1)->after('created_by');
             $table->timestamp('status_changed_at')->nullable()->after('status');
             $table->foreignId('status_changed_by')->nullable()->constrained('users')->nullOnDelete()->after('status_changed_at');
             $table->tinyText('note')->nullable()->after('status_changed_by');

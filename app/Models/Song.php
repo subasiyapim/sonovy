@@ -47,7 +47,7 @@ class Song extends Model implements HasMedia
         'original_release_date',
         'details',
         'acr_response',
-        'added_by',
+        'created_by',
         'status',
         'status_changed_at',
         'status_changed_by',
@@ -139,7 +139,7 @@ class Song extends Model implements HasMedia
 
     public function addedBy()
     {
-        return $this->belongsTo(User::class, 'added_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function musixMatch(): HasOne
