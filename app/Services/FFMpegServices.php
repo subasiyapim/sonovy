@@ -10,15 +10,14 @@ use Illuminate\Support\Facades\File;
 
 class FFMpegServices
 {
-    private static function ffprobe()
+    private static function ffprobe(): FFProbe
     {
         return FFProbe::create([
             'ffmpeg.binaries' => Config::get('services.ffmpeg.binaries'),
             'ffprobe.binaries' => Config::get('services.ffmpeg.ffprobe'),
         ]);
     }
-
-    // Süreyi mm:ss formatına dönüştürür
+    
     private static function formatDuration($seconds): string
     {
         $minutes = floor($seconds / 60);

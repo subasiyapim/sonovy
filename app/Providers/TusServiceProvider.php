@@ -12,7 +12,7 @@ use TusPhp\Tus\Server as TusServer;
 
 class TusServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         $this->app->singleton('tus-server', function ($app) {
             $server = new TusServer();
@@ -36,7 +36,7 @@ class TusServiceProvider extends ServiceProvider
         });
     }
 
-    protected function handleFileUploadComplete($event, $storagePath)
+    protected function handleFileUploadComplete($event, $storagePath): void
     {
         $fileMeta = $event->getFile()->details();
         Log::info("Upload tamamlandı: ".json_encode($fileMeta));

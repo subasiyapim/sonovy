@@ -22,14 +22,14 @@ class ProductUpdateRequest extends FormRequest
         return [];
     }
 
-    private static function stepThree(): array
+    private static function stepThree($published_country_type): array
     {
         return [
             'production_year' => ['required', 'integer', 'min:1900', 'max:'.date('Y')],
             'published_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
             'published_countries' => [
-                'required', 'array', function ($attribute, $value, $fail) {
-                    if ($this->published_country_type !== ProductPublishedCountryTypeEnum::ALL) {
+                'required', 'array', function ($attribute, $value, $fail) use ($published_country_type) {
+                    if ($published_country_type !== ProductPublishedCountryTypeEnum::ALL) {
                         if (count($value) < 1) {
                             $fail("The {$attribute} must have at least 1 item(s) when published_country_type is specific.");
                         }
@@ -45,7 +45,7 @@ class ProductUpdateRequest extends FormRequest
         return [];
     }
 
-    private static function stepOne(): array
+    private static function stepOne($mixed_album): array
     {
         return [
             'type' => ['required', Rule::enum(ProductTypeEnum::class)],
@@ -56,11 +56,11 @@ class ProductUpdateRequest extends FormRequest
             'sub_genre_id' => ['required', 'integer', 'exists:genres,id'],
             'format_id' => ['required', Rule::enum(AlbumTypeEnum::class)],
             'main_artists' => [
-                'required', 'array', function ($attribute, $value, $fail) {
-                    $minCount = $this->mixed_album ? 2 : 1;
+                'required', 'array', function ($attribute, $value, $fail) use ($mixed_album) {
+                    $minCount = $mixed_album ? 2 : 1;
 
                     if (count($value) < $minCount) {
-                        $fail("The {$attribute} must have at least {$minCount} item(s) when mixed_album is ".($this->mixed_album ? 'true' : 'false').".");
+                        $fail("The {$attribute} must have at least {$minCount} item(s) when mixed_album is ".($mixed_album ? 'true' : 'false').".");
                     }
 
                 }
@@ -95,9 +95,9 @@ class ProductUpdateRequest extends FormRequest
     public function rules(): array
     {
         return match ($this->step) {
-            '1' => self::stepOne(),
+            '1' => self::stepOne($this->mixed_album),
             '2' => self::stepTwo(),
-            '3' => self::stepThree(),
+            '3' => self::stepThree($this->published_country_type),
             '4' => self::stepFour(),
             '5' => self::stepFive(),
         };
