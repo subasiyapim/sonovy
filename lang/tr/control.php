@@ -1549,7 +1549,7 @@ return [
             "version_placeholder" => "Lütfen giriniz",
             "main_artists" => "Artist Seçiniz",
             "main_artists_placeholder" => "Lütfen Seçiniz",
-            "featuring_artists" => "",
+            "featuring_artists" => "Düet Sanatçı",
             "featuring_artists_placeholder" => "Lütfen Seçiniz",
             "genre" => "Tarz",
             "genre_placeholder" => "Tarz Seçin",

@@ -167,7 +167,9 @@
 }
 
 
-
+.appSelectInput{
+    overflow: hidden;
+}
 .hasError .appSelectInput{
     background: var(--red-50);
 }

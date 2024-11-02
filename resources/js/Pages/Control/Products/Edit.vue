@@ -35,7 +35,7 @@
 
           <ProductInfoTab v-model="step1Element" :genres="genres" :formats="formats" :product="product" :languages="languages"
                           v-if="currentTab == 0"></ProductInfoTab>
-          <SongDetailTab :product="product" v-if="currentTab == 1"></SongDetailTab>
+          <SongDetailTab :product="product" :genres="genres" v-if="currentTab == 1"></SongDetailTab>
           <PublishingDetailTab v-if="currentTab == 2" :product="product"></PublishingDetailTab>
           <MarketingAndSend v-if="currentTab == 3" :product="product"></MarketingAndSend>
 

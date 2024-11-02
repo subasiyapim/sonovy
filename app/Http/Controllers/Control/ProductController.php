@@ -182,7 +182,8 @@ class ProductController extends Controller
         $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
         $progress = ProductServices::progress($product);
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
-        $product_published_country_types = getDataFromInputFormat(ProductPublishedCountryTypeEnum::getTitles());
+        // $product_published_country_types = getDataFromInputFormat(ProductPublishedCountryTypeEnum::getTitles());
+        $product_published_country_types = [];
 
 
         $product->load(
@@ -193,7 +194,7 @@ class ProductController extends Controller
             'label',
             'hashtags',
             'downloadPlatforms',
-            'songs',
+
             'promotions'
         );
 
@@ -209,6 +210,9 @@ class ProductController extends Controller
                 $props['labels'] = $labels;
                 $props['languages'] = $languages;
                 $props['formats'] = $formats;
+                break;
+            case 2:
+                $props['genres'] = $genres;
                 break;
             case 3:
                 $props['platforms'] = $platforms;

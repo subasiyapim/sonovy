@@ -78,7 +78,7 @@
         </div>
 
     </div>
-    <SongDialog v-if="isSongDialogOn" @done="onComplete" v-model="isSongDialogOn" :song="choosenSong"></SongDialog>
+    <SongDialog v-if="isSongDialogOn" @done="onComplete" v-model="isSongDialogOn" :genres="genres" :song="choosenSong"></SongDialog>
 </template>
 
 <script setup>
@@ -96,7 +96,8 @@ import {StarIcon,TrashIcon,EditIcon,DraggableIcon,MusicVideoIcon} from '@/Compon
 
 const attemps = ref([],{deep:true});
 const props = defineProps({
-    product:{}
+    product:{},
+    genres:{},
 })
 const songs = ref(props.product.songs);
 const tusUploadElement  = ref();

@@ -24,7 +24,7 @@
                 type="text"
                 :placeholder="__('control.song.fields.version_placeholder')"/>
 
-        <FormElement label-width="190px" v-model="form.main_artists" type="multiselect"  :label="__('control.song.fields.main_artists')" :placeholder="__('control.song.fields.main_artists_placeholder')" :config="artistSelectConfig">
+        <FormElement label-width="190px" v-model="form.main_artists"  :error="form.errors.main_artists" type="select"  :label="__('control.song.fields.main_artists')" :placeholder="__('control.song.fields.main_artists_placeholder')" :config="artistSelectConfig">
 
                 <template #option="scope">
                     <div class="flex items-center  gap-2">
@@ -36,21 +36,11 @@
                 </template>
                 <template #model="scope">
                     <div class="flex items-center relative gap-2">
-                            <div  class="flex items-center relative" :style="{'width' : scope.data.length * 20+'px'}">
-                                <div v-for="(artist,index) in scope.data" :style="{'left': 14*index+'px'}" class="absolute w-5 h-5 rounded-full border border-white flex items-center justify-center bg-blue-300">
-                                <span class="label-xs"> {{artist.label[0]}}</span>
-                                </div>
-                            </div>
-                        <p style="white-space:nowrap;">
-                                <template v-for="artist in scope.data">
-                                    {{artist.label}}, &nbsp;
-                                </template>
-                        </p>
-
+                        {{scope.data}}
                     </div>
                 </template>
         </FormElement>
-        <FormElement label-width="190px" v-model="form.featuring_artists" type="multiselect" :label="__('control.song.fields.featuring_artists')" :placeholder="__('control.song.fields.featuring_artists_placeholder')"  :config="artistSelectConfig">
+        <FormElement label-width="190px" v-model="form.featuring_artists"  :error="form.errors.featuring_artists" type="multiselect" :label="__('control.song.fields.featuring_artists')" :placeholder="__('control.song.fields.featuring_artists_placeholder')"  :config="artistSelectConfig">
                 <template #first_child>
                     <button class="flex items-center gap-2 paragraph-sm c-sub-600 p-2"> <AddIcon color="var(--sub-600)" /> Sanatçı Oluştur</button>
                 </template>
@@ -81,13 +71,13 @@
                 </div>
                 </template>
         </FormElement>
-        <FormElement label-width="190px" v-model="form.genre_id" :label="__('control.song.fields.genre')"   :placeholder="__('control.song.fields.genre_placeholder')"  :config="genreConfig">
+        <FormElement label-width="190px" v-model="form.genre_id"  :error="form.errors.genre_id" :label="__('control.song.fields.genre')" :required="true"  :placeholder="__('control.song.fields.genre_placeholder')" type="select" :config="genreConfig">
 
         </FormElement>
-        <FormElement label-width="190px" v-model="form.sub_genre_id" :label="__('control.song.fields.sub_genre')" :placeholder="__('control.song.fields.genre_placeholder')"   :config="genreConfig">
+        <FormElement label-width="190px" v-model="form.sub_genre_id"  :error="form.errors.sub_genre_id" :label="__('control.song.fields.sub_genre')" :required="true" :placeholder="__('control.song.fields.genre_placeholder')"  type="select" :config="genreConfig">
         </FormElement>
 
-        <FormElement direction="vertical" v-model="form.is_instrumental" type="fancyCheck" :config="{title:__('control.song.fields.is_instrumental')}" :placeholder="__('control.song.fields.is_instrumental_placeholder')">
+        <FormElement direction="vertical" v-model="form.is_instrumental" :error="form.errors.is_instrumental" type="fancyCheck" :config="{title:__('control.song.fields.is_instrumental')}" :placeholder="__('control.song.fields.is_instrumental_placeholder')">
 
         </FormElement>
     </div>
@@ -194,7 +184,8 @@ const props = defineProps({
   },
   song: {
     default: null,
-  }
+  },
+  genres:{},
 })
 const isUpdating = computed(() => {
   return props.song ? true : false;
@@ -207,13 +198,13 @@ const image = ref();
 const form = useForm({
     id: props.song.id,
     name: props.song.name,
-    version:"",
-    main_artists:[],
-    featuring_artists:[],
-    genre_id:null,
-    sub_genre_id:null,
-    is_instrumental:false,
-    isrc:null,
+    version:props.song.version,
+    main_artists:props.song.main_artists,
+    featuring_artists:props.song.main_artists,
+    genre_id:props.song.genre_id,
+    sub_genre_id:props.song.sub_genre_id,
+    is_instrumental:props.song.is_instrumental,
+    isrc:props.song.isrc,
     lyrics_writer:[null],
     musicans:[{}],
     participants:[{}],
@@ -282,8 +273,21 @@ const countryConfig = computed(() => {
     data: usePage().props.countries,
   };
 })
-const onSubmit = (e) => {
-  emits('done',song);
+const onSubmit = async (e) => {
+    form.put(route('control.catalog.songs.update',props.song.id),
+    {
+        onFinish: () => {
+
+      },
+      onSuccess: async (e) => {
+        console.log("BŞARILI",e);
+
+      },
+      onError: (e) => {
+        console.log("HATAAAA", e);
+      }
+    });
+
 }
 
 const checkIfDisabled = computed(() => {
