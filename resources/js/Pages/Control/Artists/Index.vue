@@ -103,7 +103,7 @@
       </template>
     </AppTable>
 
-    <ArtistDialog @done="onDone" :artist="chosenArtist" v-if="isModalOn" v-model="isModalOn"/>
+    <ArtistDialog @done="onDone" @update="onUpdate" :artist="chosenArtist" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -159,6 +159,11 @@ const onDateChoosen = (e) => {
 
 const onDone = (e) => {
   artistTable.value.addRow(e);
+
+
+}
+const onUpdate = (e) => {
+  artistTable.value.editRow(e);
 }
 </script>
 

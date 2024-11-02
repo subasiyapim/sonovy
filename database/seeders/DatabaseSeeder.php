@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\GenreSeeder::class,
             \Database\Seeders\IntegrationSeeder::class,
             // \Database\Seeders\LabelSeeder::class,
-            // \Database\Seeders\ArtistBranchSeeder::class,
+            \Database\Seeders\ArtistBranchSeeder::class,
             // \Database\Seeders\ArtistSeeder::class,
             \Database\Seeders\MailTemplateSeeder::class,
             \Database\Seeders\PerformingRightsOrganizationSeeder::class,

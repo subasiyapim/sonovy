@@ -342,6 +342,15 @@ const addRow = (row, direction = 'start') => {
     else if(direction == 'start')  data.value.unshift(row);
 
 }
+const editRow = (row) => {
+
+    const findedIndex = data.value.findIndex((e) => e.id == row.id)
+    if(findedIndex >= 0){
+            data.value[findedIndex] = row;
+    }
+
+
+}
 const removeRowData = (row) => {
     const findedIndex = data.value.findIndex((el) => row == el);
     if(findedIndex >= 0) data.value.splice(findedIndex,1);
@@ -379,7 +388,8 @@ defineExpose({
     removeRowData,
     search,
     addRow,
-    removeRowDataFromRemote
+    removeRowDataFromRemote,
+    editRow
 })
 </script>
 <style>

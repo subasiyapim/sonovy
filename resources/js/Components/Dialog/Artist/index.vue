@@ -196,7 +196,7 @@ const onPlatformsChoosen = (e) => {
   else form.platforms[findedIndex] = finded;
 
 }
-const emits = defineEmits(['update:modelValue', 'done']);
+const emits = defineEmits(['update:modelValue', 'done','update']);
 const isDialogOn = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value)
@@ -215,11 +215,16 @@ const countryConfig = computed(() => {
   };
 })
 const onSubmit = (e) => {
+    console.log("SUBMİTTEYİZZZ");
+
+
   adding.value = true;
   if (image.value) {
     form.image = image.value?.file;
   }
   if (isUpdating.value) {
+    console.log("GÜNCELLİYOR");
+
     form
         .transform((data) => ({
           ...data,
@@ -230,15 +235,16 @@ const onSubmit = (e) => {
           preserveScroll: true,
           onSuccess: (e) => {
             toast.success(e.props.notification.message);
-            emits('done', e.props.notification.data)
+            emits('update', e.props.notification.data)
             isDialogOn.value = false;
           },
           onError: (e) => {
             console.log("HATAAA", e);
           }
         });
+        return;
   } else {
-
+      console.log("EKLİYOR");
     form.post(route('control.catalog.artists.store'), {
       onFinish: () => {
         adding.value = false;
