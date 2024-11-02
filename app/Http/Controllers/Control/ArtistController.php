@@ -98,7 +98,7 @@ class ArtistController extends Controller
     public function store(ArtistStoreRequest $request)
     {
         $data = $request->validated();
-        $data['added_by'] = auth()->id();
+        $data['created_by'] = auth()->id();
 
         $artist = Artist::create($data);
 
