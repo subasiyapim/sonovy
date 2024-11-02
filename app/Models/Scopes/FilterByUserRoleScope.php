@@ -28,7 +28,7 @@ class FilterByUserRoleScope implements Scope
             if (in_array('admin', $roles)) {
                 return $builder;
             }
-            $builder->where('added_by', $user->id);
+            $builder->where('created_by', $user->id);
         } else {
             $builder->whereRaw('1 = 0');
         }

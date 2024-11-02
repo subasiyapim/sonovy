@@ -99,14 +99,14 @@ class ProductApplyController extends Controller
         $data = [
             'name' => 'Product Approved',
             'type' => [
-                AnnouncementTypeEnum::EMAIl->value,
+                AnnouncementTypeEnum::EMAIL->value,
                 AnnouncementTypeEnum::SMS->value,
                 AnnouncementTypeEnum::SITE->value
             ],
             'content_type' => 'success',
             'content' => $product->name.' '.__('control.product.successfully_published'),
             'receivers' => AnnouncementReceiversEnum::SELECTED->value,
-            'selected' => [$product->added_by],
+            'selected' => [$product->created_by],
             'url' => route('dashboard.broadcasts.show', $product->id)
         ];
 
@@ -137,7 +137,7 @@ class ProductApplyController extends Controller
             'content_type' => 'warning',
             'content' => $product->name.' '.$data['correction'],
             'receivers' => AnnouncementReceiversEnum::SELECTED->value,
-            'selected' => [$product->added_by],
+            'selected' => [$product->created_by],
             'url' => route('dashboard.broadcasts.show', $product->id)
         ];
 

@@ -11,7 +11,7 @@ class ServiceServices
 
     public static function create(array $data): mixed
     {
-        $data["added_by"] = auth()->id();
+        $data["created_by"] = auth()->id();
         $service = Service::create($data);
 
         return $service;
@@ -20,6 +20,6 @@ class ServiceServices
 
     public static function search($search): mixed
     {
-        return Service::where('name', 'like', '%' . $search . '%')->get();
+        return Service::where('name', 'like', '%'.$search.'%')->get();
     }
 }

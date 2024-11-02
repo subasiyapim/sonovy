@@ -41,7 +41,7 @@ class MediaServices
                 'path' => $media->store('songs', 'public'),
                 'mime_type' => $media->getMimeType(),
                 'size' => $media->getSize(),
-                'added_by' => auth()->id
+                'created_by' => auth()->id
             ]
         );
     }
