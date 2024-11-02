@@ -30,7 +30,7 @@
       <div class="flex items-center gap-4 absolute bottom-5 right-5">
         <a v-for="(platform, index) in filteredPlatforms"
            class="flex items-center gap-2"
-           :href="platform.pivot.url"
+           :href="platform.url"
            :key="platform.id"
            target="_blank"
         >
@@ -136,7 +136,7 @@
             <div v-for="platform in artist.platforms" class="flex gap-2 items-center w-48" :key="platform.id">
               <Icon :icon="platform.icon"></Icon>
               <span class="c-strong-950 label-sm" v-text="platform.name"/>
-              <a :href="platform.pivot.url" target="_blank">
+              <a :href="platform.url" target="_blank">
                 <LinkIcon color="var(--soft-400)"/>
               </a>
             </div>
