@@ -179,7 +179,7 @@ class ProductController extends Controller
         $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
         $formats = enumToSelectInputFormat(AlbumTypeEnum::getTitles());
         $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
-        $languages = getDataFromInputFormat(Country::all(), 'id', 'language', 'emoji');
+        $languages = getDataFromInputFormat(Country::whereNotNull('language')->get(), 'id', 'language', 'emoji');
         $progress = ProductServices::progress($product);
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
         $product_published_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());

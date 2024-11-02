@@ -74,7 +74,7 @@ class ProductUpdateRequest extends FormRequest
             'upc_code' => ['nullable', 'string', 'min:3', 'max:100'],
             'catalog_number' => ['nullable', 'string', 'min:3', 'max:100'],
             'language_id' => ['required', Rule::exists(Country::class, 'id')],
-            'main_price' => ['required', 'numeric', 'min:0'],
+            'main_price' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 
@@ -103,5 +103,32 @@ class ProductUpdateRequest extends FormRequest
         };
     }
 
+    public function attributes(): array
+    {
+        return [
+            'type' => __('control.product.fields.type'),
+            'album_name' => __('control.product.fields.album_name'),
+            'version' => __('control.product.fields.version'),
+            'mixed_album' => __('control.product.fields.mixed_album'),
+            'genre_id' => __('control.product.fields.genre_id'),
+            'sub_genre_id' => __('control.product.fields.sub_genre_id'),
+            'format_id' => __('control.product.fields.format_id'),
+            'main_artists' => __('control.product.fields.main_artists'),
+            'main_artists.*.id' => __('control.product.fields.main_artists'),
+            'featuring_artists' => __('control.product.fields.featuring_artists'),
+            'featuring_artists.*.id' => __('control.product.fields.featuring_artists'),
+            'label_id' => __('control.product.fields.label_id'),
+            'p_line' => __('control.product.fields.p_line'),
+            'c_line' => __('control.product.fields.c_line'),
+            'upc_code' => __('control.product.fields.upc_code'),
+            'catalog_number' => __('control.product.fields.catalog_number'),
+            'language_id' => __('control.product.fields.language_id'),
+            'main_price' => __('control.product.fields.main_price'),
+            'production_year' => __('control.product.fields.production_year'),
+            'published_country_type' => __('control.product.fields.published_country_type'),
+            'published_countries' => __('control.product.fields.published_countries'),
+            'published_countries.*.id' => __('control.product.fields.published_countries'),
+        ];
+    }
 
 }

@@ -332,7 +332,7 @@ return [
             ],
             'label' => 'Label',
             'type' => 'Yayın tipi',
-
+            'label_id' => 'Plak Şirketi',
             'image' => 'Yayın kapak fotoğrafı',
             'album_name' => 'Albüm adı',
             'album_name_placeholder' => 'Lütfen giriniz',
@@ -488,6 +488,10 @@ return [
             'promotion_date_placeholder' => 'Yayın tarihi seçin',
             'add_row' => 'Satır Ekle',
             'buy_additional_rights' => '10 Ek hak satın al',
+            'genre_id' => 'Tarz',
+            'sub_genre_id' => 'Alt Tarz',
+            'format_id' => 'Format',
+            'language_id' => 'Albüm Dili',
         ],
     ],
     'products-apply' => [
