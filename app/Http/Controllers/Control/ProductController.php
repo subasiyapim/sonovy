@@ -210,10 +210,10 @@ class ProductController extends Controller
 
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
     {
-        dd($request->validated());
+
         $data = $request->validated();
 
-        $excepted = ['step', 'main_artists', 'featuring_artists'];
+        $excepted = ['main_artists', 'featuring_artists'];
 
         $excepted_data = Arr::except($data, $excepted);
         $product->update($excepted_data);
@@ -222,11 +222,10 @@ class ProductController extends Controller
         $progress = ProductServices::progress($product);
         $step = $request->validated()['step']++;
 
-        dd($step);
 
         return redirect()->route(
             'control.catalog.products.form.edit',
-            [$request->validated()['step'] + 1, $product->id]
+            [2, $product->id]
         )
             ->with([
                 'notification' => __(
