@@ -49,7 +49,7 @@ class ProductUpdateRequest extends FormRequest
 
     private static function stepOne($mixed_album = false): array
     {
-
+        // dd(request()->all());
         $data = [
             'type' => ['required', Rule::enum(ProductTypeEnum::class)],
             'album_name' => ['required', 'string', 'min:3', 'max:100'],
@@ -58,19 +58,7 @@ class ProductUpdateRequest extends FormRequest
             'genre_id' => ['required', 'integer', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'integer', 'exists:genres,id'],
             'format_id' => ['required', Rule::enum(AlbumTypeEnum::class)],
-            'main_artists' => [
-                'required', 'array', function ($attribute, $value, $fail) use ($mixed_album) {
-
-                    $minCount = $mixed_album === false ? 1 : 2;
-
-                    if (count($value) < $minCount && $mixed_album === true) {
-                        $fail("Derleme albüm seçili olduğunda Ana Sanatçı en az 2 kişiye sahip olmalıdır.");
-                    } elseif (count($value) > 1) {
-                        $fail("Derleme albüm seçili olmadığında Ana Sanatçı en fazla 1 kişiye sahip olmalıdır.");
-                    }
-
-                }
-            ],
+            'main_artists' => ['array', 'required_if:mixed_album,false'],
             'featuring_artists' => ['array'],
             'label_id' => ['required', 'exists:labels,id'],
             'p_line' => ['nullable', 'string', 'min:3', 'max:100'],

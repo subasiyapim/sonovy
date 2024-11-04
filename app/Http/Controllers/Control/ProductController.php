@@ -163,7 +163,6 @@ class ProductController extends Controller
     {
         abort_if(Gate::denies('product_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-
         $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
         $formats = enumToSelectInputFormat(AlbumTypeEnum::getTitles());
         $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
@@ -185,7 +184,6 @@ class ProductController extends Controller
             'promotions'
         );
 
-
         $props = [
             "product" => $product,
             "step" => $step,
@@ -199,7 +197,6 @@ class ProductController extends Controller
                 $props['languages'] = $languages;
                 $props['formats'] = $formats;
                 $props['main_prices'] = $main_prices;
-
                 break;
             case 2:
                 $props['genres'] = $genres;
@@ -226,6 +223,8 @@ class ProductController extends Controller
             case 1:
                 $this->excepted = ['main_artists', 'featuring_artists'];
                 $this->excepted_data = Arr::except($data, $this->excepted);
+                self::attachArtistFromProduct($product, $data);
+
                 break;
             case 2:
                 $this->excepted = ['songs'];
@@ -374,14 +373,14 @@ class ProductController extends Controller
 
     /**
      * @param $product
-     * @param  ProductStoreRequest  $request
+     * @param  array  $data
      * @return void
      */
-    protected static function attachArtistFromProduct($product, ProductStoreRequest $request): void
+    protected static function attachArtistFromProduct($product, array $data): void
     {
         $product->artists()->detach();
-        $product->artists()->attach($request->main_artists, ['is_main' => true]);
-        $product->artists()->attach($request->featuring_artists, ['is_main' => false]);
+        $product->artists()->attach($data['main_artists'], ['is_main' => true]);
+        $product->artists()->attach($data['featuring_artists'], ['is_main' => false]);
     }
 
     /**
