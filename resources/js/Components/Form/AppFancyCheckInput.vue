@@ -1,7 +1,7 @@
 <template>
 
 
-    <div class="w-full flex flex-col  p-4 border-text-input flex items-start radius-8 c-white-500 p-3 cursor-pointer" @click="onChange">
+    <div :class="element ? 'border-green-700 bg-white-500' :'border-soft-200 bg-white'" class="w-full flex flex-col  p-4 border flex items-start radius-8 c-white-500 p-3 cursor-pointer" @click="onChange">
         <p class="label-sm c-strong-950" v-if="config?.title">{{config?.title}}</p>
         <div class="flex w-full">
             <div class="flex-1 c-sub-600 paragraph-xs" >

@@ -36,7 +36,7 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Tarz</p>
-      <span class="label-sm c-strong-950">-</span>
+      <span class="label-sm c-strong-950">{{product.genre.name}}</span>
     </div>
   </div>
 

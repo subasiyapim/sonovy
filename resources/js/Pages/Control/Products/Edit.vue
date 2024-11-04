@@ -36,7 +36,7 @@
           <ProductInfoTab v-model="step1Element" :genres="genres" :formats="formats" :product="product"
                           :languages="languages"
                           v-if="currentTab == 0"></ProductInfoTab>
-          <SongDetailTab :product="product" :genres="genres" v-if="currentTab == 1"></SongDetailTab>
+          <SongDetailTab :product="product" :genres="genres" v-model="step2Element" v-if="currentTab == 1"></SongDetailTab>
           <PublishingDetailTab v-if="currentTab == 2" v-model="step3Element" :product="product"></PublishingDetailTab>
           <MarketingAndSend v-if="currentTab == 3" v-model="step4Element" :product="product"></MarketingAndSend>
 
@@ -146,25 +146,68 @@ const step1Element = useForm({
 });
 
 
-const step3Element = useForm({});
-const step4Element = useForm({});
+const step2Element = useForm({
+     step: props.step,
+   songs:[],
+});
+const step3Element = useForm({
+    production_year:null,
+    published_country_type:1,
+     step: props.step,
+    published_countries:[],
+    is_published_before:true,
+    publish_year:null,
+    platforms:{}
+});
+const step4Element = useForm({
+     step: props.step,
+     promotion_info:[{}]
+});
 
 const currentTab = ref(props.step - 1);
 
 
 const submitStep = async () => {
-  if (currentTab.value == 0) {
-    step1Element.post(route('control.catalog.products.form.step.store', props.product.id), {
+    if (currentTab.value == 0) {
+        step1Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
-      onError: (e) => {
-        console.log("HTAA", e);
+        onError: (e) => {
+            console.log("HTAA", e);
 
-      },
-      onSuccess: (e) => {
-        router.visit(route('control.catalog.products.form.edit', [2, props.product.id]))
-      }
-    });
-  }
+        },
+        onSuccess: (e) => {
+            router.visit(route('control.catalog.products.form.edit', [2, props.product.id]))
+        }
+        });
+    }
+    if (currentTab.value == 2) {
+        step3Element.platforms = step3Element.platforms.filter((el) => el.isSelected);
+
+
+        step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
+
+        onError: (e) => {
+            console.log("HTAA", e);
+
+        },
+        onSuccess: (e) => {
+            router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))
+        }
+        });
+    }
+
+      if (currentTab.value == 3) {
+        step4Element.post(route('control.catalog.products.form.step.store', props.product.id), {
+
+            onError: (e) => {
+                console.log("HTAA", e);
+
+            },
+            onSuccess: (e) => {
+
+            }
+        });
+    }
 
 }
 onMounted(() => {

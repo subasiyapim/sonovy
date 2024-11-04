@@ -8,16 +8,16 @@
 
 <div class="flex flex-col gap-6">
     <SectionHeader title="YAYIN VE TANITIM METNİ"></SectionHeader>
-    <div class="flex flex-col gap-6" v-for="t in publicationTexts">
-        <FormElement label-width="190px" type="select" label="Tanıtım Dil" :required="true" placeholder="Lütfen Seçiniz" :config="selectConfig">
+    <div class="flex flex-col gap-6" v-for="(info,index) in form.promotion_info">
+        <FormElement label-width="190px" :error="form.errors[`promotion_info.${index}.language_id`]" type="select" label="Tanıtım Dil" v-model="info.language_id" :required="true" placeholder="Lütfen Seçiniz" :config="selectConfig">
         </FormElement>
-        <FormElement label-width="190px" type="text" label="Vurucu Cümle" placeholder="Yapım Yılı" >
+        <FormElement label-width="190px"  :error="form.errors[`promotion_info.${index}.title`]" type="text" label="Vurucu Cümle" v-model="info.title" placeholder="Yapım Yılı" >
         </FormElement>
-        <FormElement label-width="190px" type="textarea" :required="true" label="Yayın Tanıtım Metni" placeholder="Metni giriniz">
+        <FormElement label-width="190px"  :error="form.errors[`promotion_info.${index}.promotion_text`]" type="textarea" :required="true" v-model="info.promotion_text" label="Yayın Tanıtım Metni" placeholder="Metni giriniz">
         </FormElement>
     </div>
     <div>
-        <button @click="publicationTexts.push({})" class="flex items-center justify-center gap-2 w-auto">
+        <button @click="form.promotion_info.push({})" class="flex items-center justify-center gap-2 w-auto">
             <AddIcon color="var(--blue-500)" />
             <p class="label-xs c-blue-500">Farklı Dilde Tanıtım Metni Ekle</p>
         </button>

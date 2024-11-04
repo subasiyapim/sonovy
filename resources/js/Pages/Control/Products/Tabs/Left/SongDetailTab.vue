@@ -18,7 +18,7 @@
 
         <div class="flex-1 flex flex-col overflow-scroll gap-6">
 
-        <AppTable :hasSelect="true" v-model="songs" :showEmptyImage="false" :isClient="true" :hasSearch="false" :showAddButton="false">
+        <AppTable :hasSelect="true" v-model="form.songs" :showEmptyImage="false" :isClient="true" :hasSearch="false" :showAddButton="false">
                 <AppTableColumn label="#">
                     <template #default="scope">
                         <DraggableIcon color="var(--sub-600)" />
@@ -84,7 +84,7 @@
 <script setup>
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {computed,ref,useSlots,nextTick} from 'vue';
+import {computed,ref,useSlots,nextTick,onBeforeMount} from 'vue';
 import {FormElement} from '@/Components/Form';
 import {AddIcon} from '@/Components/Icons'
 import {TusUploadInput} from '@/Components/Form'
@@ -98,10 +98,15 @@ const attemps = ref([],{deep:true});
 const props = defineProps({
     product:{},
     genres:{},
+    modelValue:{},
 })
 
 
-const songs = ref(props.product.songs);
+const form = computed({
+  get: () => props.modelValue,
+  set: (value) => emits('update:modelValue', value)
+})
+
 const tusUploadElement  = ref();
 const showAttempt = ref(false);
 const isSongDialogOn = ref(false);
@@ -149,10 +154,16 @@ const openEditDialog = (song) => {
 
 const onComplete = (e) => {
     choosenSong.value = JSON.parse(JSON.stringify(e));
+    const findedIndex = form.value.song.findIndex((e) => e.id == e.id);
     isSongDialogOn.value = false;
+    if(findedIndex >= 0)
+        form.value.song[findedIndex] = e;
     choosenSong.value = null;
 
 }
+onBeforeMount(() => {
+    form.value.songs = props.product.songs;
+});
 </script>
 
 <style lang="scss" scoped>

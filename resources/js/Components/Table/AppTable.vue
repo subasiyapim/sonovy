@@ -204,7 +204,7 @@ const props = defineProps({
     default:false,
   }
 })
-const emits = defineEmits(['update:modelValue', 'addNewClicked']);
+const emits = defineEmits(['update:modelValue', 'addNewClicked','selectionChange']);
 
 const tableData = computed({
   get: () => props.modelValue,
@@ -295,6 +295,7 @@ const onSelectRow = (row,index) => {
         selectedRowIndexes.value.push(row)
 
     }
+    emits('selectionChange',selectedRowIndexes.value);
 }
 const selectAll = () => {
     if(data.value.length == selectedRowIndexes.value.length){
@@ -305,7 +306,7 @@ const selectAll = () => {
             if(findedIndex < 0)   selectedRowIndexes.value.push(element);
         });
     }
-
+    emits('selectionChange',selectedRowIndexes.value);
 }
 
 const onSearch = (e) => {
