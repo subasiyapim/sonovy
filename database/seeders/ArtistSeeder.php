@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Artist;
 use App\Models\ArtistBranch;
+use App\Models\System\Country;
 use App\Models\System\Tenant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -20,6 +21,12 @@ class ArtistSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('artists')->truncate();
         DB::table('artist_artist_branch')->truncate();
+
+        Artist::create([
+            'name' => 'Various Artists',
+            'country_id' => Country::where('iso2', 'TR')->first()->id,
+            'created_by' => 1,
+        ]);
 
         Artist::factory(26)->create([
             'created_by' => \App\Models\User::inRandomOrder()->first()->id,

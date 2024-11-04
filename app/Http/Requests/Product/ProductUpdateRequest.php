@@ -24,7 +24,7 @@ class ProductUpdateRequest extends FormRequest
 
     private static function stepThree($published_country_type): array
     {
-        return [
+        $data = [
             'production_year' => ['required', 'integer', 'min:1900', 'max:'.date('Y')],
             'published_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
             'published_countries' => [
@@ -38,6 +38,8 @@ class ProductUpdateRequest extends FormRequest
             ],
             'published_countries.*.id' => ['required', Rule::exists(Country::class, 'id')],
         ];
+
+        return array_merge($data, self::common());
     }
 
     private static function stepTwo(): array
@@ -47,8 +49,8 @@ class ProductUpdateRequest extends FormRequest
 
     private static function stepOne($mixed_album = false): array
     {
-        //dd(request()->all());
-        return [
+
+        $data = [
             'type' => ['required', Rule::enum(ProductTypeEnum::class)],
             'album_name' => ['required', 'string', 'min:3', 'max:100'],
             'version' => ['required', 'string', 'min:3', 'max:100'],
@@ -78,8 +80,14 @@ class ProductUpdateRequest extends FormRequest
             'language_id' => ['required', Rule::exists(Country::class, 'id')],
             'main_price' => ['nullable', 'numeric', 'min:0'],
         ];
+
+        return array_merge($data, self::common());
     }
 
+    private static function common(): array
+    {
+        return ['step' => ['required', 'integer', 'min:1', 'max:5']];
+    }
 
     /**
      * Determine if the user is authorized to make this request.

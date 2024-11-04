@@ -1679,5 +1679,14 @@ return [
     ],
     'permission' => [
         'title' => 'İzinler',
-    ]
+    ],
+
+    'enums' => [
+        'main_price' => [
+            'balance' => 'Bakiye',
+            'middle' => 'Orta',
+            'full' => 'Tam',
+            'prim' => 'Prim',
+        ]
+    ],
 ];

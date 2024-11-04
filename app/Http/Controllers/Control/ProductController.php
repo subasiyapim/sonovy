@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Control;
 
 use App\Enums\AlbumTypeEnum;
+use App\Enums\MainPriceEnum;
 use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
@@ -39,6 +40,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
+    protected $step = 1;
+    protected $excepted = [];
+    protected $excepted_data = [];
+
     /**
      * Display a listing of the resource.
      */
@@ -166,7 +171,7 @@ class ProductController extends Controller
         $progress = ProductServices::progress($product);
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
         $product_published_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());
-
+        $main_prices = enumToSelectInputFormat(MainPriceEnum::getTitles());
 
         $product->load(
             'songs',
@@ -176,7 +181,6 @@ class ProductController extends Controller
             'label',
             'hashtags',
             'downloadPlatforms',
-
             'promotions'
         );
 
@@ -192,6 +196,7 @@ class ProductController extends Controller
                 $props['labels'] = $labels;
                 $props['languages'] = $languages;
                 $props['formats'] = $formats;
+                $props['main_prices'] = $main_prices;
                 break;
             case 2:
                 $props['genres'] = $genres;
@@ -213,19 +218,23 @@ class ProductController extends Controller
 
         $data = $request->validated();
 
-        $excepted = ['main_artists', 'featuring_artists'];
+        switch ($data['step']) {
+            case 1:
+                $this->excepted = ['main_artists', 'featuring_artists'];
+                $this->excepted_data = Arr::except($data, $this->excepted);
+                break;
+            case 2:
+                $this->excepted = ['songs'];
+                $this->excepted_data = Arr::except($data, $this->excepted);
+                break;
+        }
 
-        $excepted_data = Arr::except($data, $excepted);
-        $product->update($excepted_data);
-
-
+        $product->update($this->excepted_data);
         $progress = ProductServices::progress($product);
-        $step = $request->validated()['step']++;
-
 
         return redirect()->route(
             'control.catalog.products.form.edit',
-            [2, $product->id]
+            [$data['step']++, $product->id]
         )
             ->with([
                 'notification' => __(
