@@ -17,7 +17,7 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Sanatçılar</p>
-      <span class="label-sm c-strong-950">-</span>
+      <span class="label-sm c-strong-950">{{product}}</span>
     </div>
   </div>
   <div class="flex gap-3.5 items-center">
@@ -36,7 +36,7 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Tarz</p>
-      <span class="label-sm c-strong-950">{{product.genre.name}}</span>
+      <span class="label-sm c-strong-950">{{product.genre?.name}}</span>
     </div>
   </div>
 
