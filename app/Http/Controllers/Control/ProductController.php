@@ -172,7 +172,8 @@ class ProductController extends Controller
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
         $product_published_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());
         $main_prices = enumToSelectInputFormat(MainPriceEnum::getTitles());
-
+        $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
+       
         $product->load(
             'songs',
             'label',
@@ -204,6 +205,7 @@ class ProductController extends Controller
             case 3:
                 $props['platforms'] = $platforms;
                 $props['product_published_country_types'] = $product_published_country_types;
+                $props['countriesGroupedByRegion'] = $countriesGroupedByRegion;
                 break;
             case 4:
                 $props['languages'] = $languages;
