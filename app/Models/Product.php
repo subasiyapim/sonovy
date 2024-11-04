@@ -51,7 +51,6 @@ class Product extends Model implements HasMedia
         'p_line',
         'c_line',
         'upc_code',
-        'ean_code',
         'catalog_number',
         'language_id',
         'main_price',
