@@ -19,16 +19,20 @@
 
         </FormElement>
 
+
     <SectionHeader title="ÜLKE VE BÖLGE TERCİHLERİ"></SectionHeader>
         <FormElement label-width="190px" type="radio" label="Tercihler" v-model="countryRadioValue" :config="countryRadioConfig">
 
         </FormElement>
         <div class="flex">
             <div class="w-[190px] label-sm c-strong-950">Yayınlanacak Ülkeler</div>
-            <div class="w-full">
-                    <AppAccordion title="Güney Amerika" description="Tüm ülkeler seçildi">
-                        sdasd
-                    </AppAccordion>
+            <div class="flex flex-col w-full gap-3">
+            {{Object.keys(usePage().props.countriesGroupedByRegion)}}
+                <div class="w-full" v-for="(key,value) in usePage().props.countriesGroupedByRegion">
+                        <AppAccordion :title="value" description="Tüm ülkeler seçildi">
+
+                        </AppAccordion>
+                </div>
             </div>
         </div>
     <SectionHeader title="PLATFORM TERCİHLERİ"></SectionHeader>
