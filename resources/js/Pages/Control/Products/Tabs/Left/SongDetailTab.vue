@@ -99,6 +99,8 @@ const props = defineProps({
     product:{},
     genres:{},
 })
+
+
 const songs = ref(props.product.songs);
 const tusUploadElement  = ref();
 const showAttempt = ref(false);
@@ -125,13 +127,18 @@ const onTusProgress = (e) => {
     })
 }
 const onTusComplete = (e) => {
+
     const findedIndex = attemps.value.findIndex((el) => el.orignalName == e.name);
+    console.log("EEE",e);
+        console.log("ATTEMPTS",attemps.value);
+
+    console.log("FINDED INDEX",findedIndex);
 
     if(findedIndex >= 0){
         attemps.value.splice(findedIndex,1);
         songs.value.push(e);
     }
-    console.log("BİTTİİ");
+
 
 }
 

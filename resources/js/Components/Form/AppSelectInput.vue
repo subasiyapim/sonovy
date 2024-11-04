@@ -5,10 +5,12 @@
     <div v-if="hasSlot('icon')">
       <slot name="icon"/>
     </div>
+
     <!-- <input v-if="!hasSlot('model')" @click="open" class="absolute inset-0 radius-8 border-none focus:ring-0 appSelectInput c-strong-950" :value="getShowLabel" :placeholder="placeholder"> -->
     <div @click="open"
+        :class="disabled ? 'bg-weak-50' : '' "
          class="absolute inset-0 flex items-center px-3 radius-8 border-none focus:ring-0 appSelectInput c-strong-950">
-      <span class="label-sm !font-normal c-soft-400" v-if="!element">{{ placeholder }}</span>
+      <span class="label-sm !font-normal " :class="disabled ? 'c-soft-300' : 'c-soft-400' " v-if="!element">{{ placeholder }}</span>
       <slot v-else-if="hasSlot('model')" name="model" :scope="element"/>
       <span v-else class="label-sm !font-normal">{{ getShowLabel }}</span>
     </div>
@@ -82,7 +84,10 @@ const props = defineProps({
   },
   modelValue: {},
   placeholder: {type: String},
-  type: {}
+  type: {},
+  disabled:{
+    default:false
+  }
 })
 const emits = defineEmits(['update:modelValue'])
 const element = computed({
@@ -101,6 +106,7 @@ const getShowLabel = computed(() => {
   return findedElement == null ? '' : findedElement[props.config.label ?? 'label'];
 })
 const open = async () => {
+    if(props.disabled) return;
   isOpen.value = true;
   if (isOpen.value) {
 

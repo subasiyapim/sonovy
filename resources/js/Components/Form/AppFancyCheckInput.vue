@@ -1,7 +1,7 @@
 <template>
 
 
-    <div class="w-full flex flex-col  p-4 border-text-input flex items-start radius-8 c-white-500 p-3 cursor-pointer" @click="isChecked = !isChecked">
+    <div class="w-full flex flex-col  p-4 border-text-input flex items-start radius-8 c-white-500 p-3 cursor-pointer" @click="onChange">
         <p class="label-sm c-strong-950" v-if="config?.title">{{config?.title}}</p>
         <div class="flex w-full">
             <div class="flex-1 c-sub-600 paragraph-xs" >
@@ -9,7 +9,7 @@
                 </div>
             <div class="relative flex justify-center pointer-events-none">
                     <label class="appSwitch">
-                        <input type="checkbox" :checked="isChecked">
+                        <input type="checkbox" :checked="element">
                         <span class="appSwitchSlider round"></span>
                     </label>
             </div>
@@ -36,6 +36,10 @@
         get:() => props.modelValue,
         set:(value) => emits('update:modelValue',value)
     })
+    const onChange = () => {
+        element.value = !element.value;
+        emits('change',element.value);
+    }
 
 
 </script>

@@ -192,11 +192,13 @@ const handleFileInput = (e) => {
     // Callback for once the upload is completed
     onSuccess: async function (payload) {
       const {lastResponse} = payload
+    console.log("UPLOAD İNFOOO",lastResponse.getHeader('Upload-Info'));
 
       let response = await crudStore.post(route('control.find.songs'), {
         id: lastResponse.getHeader('Upload-Info')
       });
 
+    console.log("RESPONSEE",response);
 
       response.percentage = 100;
       emits('complete', response)

@@ -173,6 +173,7 @@ class ProductController extends Controller
         $product_published_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());
         $main_prices = enumToSelectInputFormat(MainPriceEnum::getTitles());
 
+
         $product->load(
             'songs',
             'label',
@@ -183,6 +184,7 @@ class ProductController extends Controller
             'downloadPlatforms',
             'promotions'
         );
+
 
         $props = [
             "product" => $product,
@@ -197,6 +199,7 @@ class ProductController extends Controller
                 $props['languages'] = $languages;
                 $props['formats'] = $formats;
                 $props['main_prices'] = $main_prices;
+
                 break;
             case 2:
                 $props['genres'] = $genres;

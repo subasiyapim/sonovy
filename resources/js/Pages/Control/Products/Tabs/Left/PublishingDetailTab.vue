@@ -8,29 +8,29 @@
 <div class="">
 
 <div class="flex flex-col gap-6">
-        <SectionHeader title="YAYINLANMA TARİHLERİ"></SectionHeader>
-     <FormElement label-width="190px" type="select" label="Yapım Yılı" placeholder="Yapım Yılı" :config="selectConfig">
+    <SectionHeader title="YAYINLANMA TARİHLERİ"></SectionHeader>
+        <FormElement label-width="190px" v-model="form.production_year" type="select" label="Yapım Yılı" placeholder="Yapım Yılı" :config="selectConfig">
 
-     </FormElement>
-     <FormElement label-width="190px" type="fancyCheck" label="Daha önce Yayınlandı mı?" placeholder="Daha önce Yayınlandı mı?" :config="selectConfig">
+        </FormElement>
+        <FormElement label-width="190px" v-model="form.is_published_before" @change="onChangeIsPublishedBefore" type="fancyCheck" label="Daha önce Yayınlandı mı?" placeholder="Daha önce Yayınlandı mı?">
 
-     </FormElement>
-     <FormElement label-width="190px" type="select" label="Yayınlanma Yılı" placeholder="Yayınlanma Yılı" :config="selectConfig">
+        </FormElement>
+        <FormElement label-width="190px" :disabled="form.is_published_before" v-model="form.publish_year" type="select" label="Yayınlanma Yılı" placeholder="Yayınlanma Yılı" :config="selectConfig">
 
-     </FormElement>
+        </FormElement>
 
     <SectionHeader title="ÜLKE VE BÖLGE TERCİHLERİ"></SectionHeader>
-     <FormElement label-width="190px" type="radio" label="Tercihler" v-model="countryRadioValue" :config="countryRadioConfig">
+        <FormElement label-width="190px" type="radio" label="Tercihler" v-model="countryRadioValue" :config="countryRadioConfig">
 
-     </FormElement>
-     <div class="flex">
-        <div class="w-[190px] label-sm c-strong-950">Yayınlanacak Ülkeler</div>
-        <div class="w-full">
-                <AppAccordion title="Güney Amerika" description="Tüm ülkeler seçildi">
-                    sdasd
-                </AppAccordion>
+        </FormElement>
+        <div class="flex">
+            <div class="w-[190px] label-sm c-strong-950">Yayınlanacak Ülkeler</div>
+            <div class="w-full">
+                    <AppAccordion title="Güney Amerika" description="Tüm ülkeler seçildi">
+                        sdasd
+                    </AppAccordion>
+            </div>
         </div>
-     </div>
     <SectionHeader title="PLATFORM TERCİHLERİ"></SectionHeader>
 
     <AppTable v-model="platforms"  :isClient="true" :hasSelect="true"  :hasSearch="false" :showAddButton="false">
@@ -82,19 +82,39 @@ import {FormElement,AppTextInput} from '@/Components/Form';
 import {AddIcon,Icon} from '@/Components/Icons'
 import { usePage} from '@inertiajs/vue3';
 const props = defineProps({
-    product:{}
+    product:{},
+    modelValue:{},
+})
+const emits = defineEmits(['update:modelValue']);
+
+const form = computed({
+  get: () => props.modelValue,
+  set: (value) => emits('update:modelValue', value)
 })
 const countryRadioValue = ref(2)
 const platforms = ref(usePage().props.platforms)
+
+function getLast100Years() {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+
+  for (let i = 0; i < 100; i++) {
+    years.push({
+        "value" : currentYear - i,
+       "label": currentYear - i
+    });
+  }
+
+  return years;
+}
 const selectConfig = computed(() => {
     return {
-        hasSearch:true,
-        data: [
-            {value:1,label:"MERHABA"},
-            {value:2,label:"MERHABA"},
-        ]
+        hasSearch:false,
+        data: getLast100Years(),
     }
 })
+
+
 const countryRadioConfig = computed(() => {
     return {
         optionDirection:'vertical',
@@ -106,6 +126,11 @@ const countryRadioConfig = computed(() => {
     }
 })
 
+const onChangeIsPublishedBefore = (e) => {
+    if(!e){
+        form.value.publish_year = null;
+    }
+}
 </script>
 
 <style lang="scss" scoped>

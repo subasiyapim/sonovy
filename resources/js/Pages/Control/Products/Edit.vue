@@ -37,8 +37,8 @@
                           :languages="languages"
                           v-if="currentTab == 0"></ProductInfoTab>
           <SongDetailTab :product="product" :genres="genres" v-if="currentTab == 1"></SongDetailTab>
-          <PublishingDetailTab v-if="currentTab == 2" :product="product"></PublishingDetailTab>
-          <MarketingAndSend v-if="currentTab == 3" :product="product"></MarketingAndSend>
+          <PublishingDetailTab v-if="currentTab == 2" v-model="step3Element" :product="product"></PublishingDetailTab>
+          <MarketingAndSend v-if="currentTab == 3" v-model="step4Element" :product="product"></MarketingAndSend>
 
 
         </div>
@@ -115,7 +115,8 @@ const props = defineProps({
   step: {},
   languages: {},
   formats: {},
-  progress: Number
+  progress: Number,
+  product_published_country_types:{},
 })
 
 const progress = ref(props.progress);
@@ -144,18 +145,12 @@ const step1Element = useForm({
   main_price: props.product.main_price,
 });
 
-const step2Element = useForm({});
+
+const step3Element = useForm({});
+const step4Element = useForm({});
 
 const currentTab = ref(props.step - 1);
-const selectConfig = computed(() => {
-  return {
-    hasSearch: true,
-    data: [
-      {value: 1, label: "MERHABA"},
-      {value: 2, label: "MERHABA"},
-    ]
-  }
-})
+
 
 const submitStep = async () => {
   if (currentTab.value == 0) {
@@ -166,10 +161,9 @@ const submitStep = async () => {
 
       },
       onSuccess: (e) => {
-        router.push(route('control.catalog.products.form.edit', [2, props.product.id]))
+        router.visit(route('control.catalog.products.form.edit', [2, props.product.id]))
       }
     });
-
   }
 
 }

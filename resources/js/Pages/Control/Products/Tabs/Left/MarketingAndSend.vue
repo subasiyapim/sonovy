@@ -38,7 +38,15 @@ import {FormElement,AppTextInput} from '@/Components/Form';
 import {AddIcon,Icon} from '@/Components/Icons'
 import { usePage} from '@inertiajs/vue3';
 const props = defineProps({
-    product:{}
+    product:{},
+    modelValue:{},
+})
+
+const emits = defineEmits(['update:modelValue']);
+
+const form = computed({
+  get: () => props.modelValue,
+  set: (value) => emits('update:modelValue', value)
 })
 const countryRadioValue = ref(2)
 const selectConfig = computed(() => {

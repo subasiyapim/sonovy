@@ -9,15 +9,25 @@
   <ul>
     <li v-for="error in form.errors">{{ error }}</li>
   </ul>
+
   <div class="flex gap-10">
+
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
       <FormElement label-width="190px" :error="form.errors.album_name" v-model="form.album_name"
                    label="Albüm Adı"></FormElement>
       <FormElement label-width="190px" :error="form.errors.version" v-model="form.version" label="Sürüm"
                    placeholder="Lütfen giriniz"></FormElement>
+
       <FormElement label-width="190px" :error="form.errors.main_artists || form.errors.mixed_album"
-                   v-model="form.main_artists" type="multiselect" label="Sanatçı" placeholder="Sanatçı Seçiniz"
+                   v-model="form.main_artists" :disabled="form.mixed_album" type="multiselect" label="Sanatçı" placeholder="Sanatçı Seçiniz"
                    :config="artistSelectConfig">
+
+        <template #disabled v-if="form.mixed_album">
+        <p class="label-sm !font-normal">
+             Various Artists
+        </p>
+
+        </template>
         <template #first_child>
           <button class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
@@ -155,7 +165,7 @@
 </template>
 
 <script setup>
-import {computed} from 'vue';
+import {computed,onBeforeMount} from 'vue';
 import {FormElement} from '@/Components/Form';
 import {AddIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';
@@ -176,15 +186,6 @@ const emits = defineEmits(['update:modelValue']);
 const form = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value)
-})
-const selectConfig = computed(() => {
-  return {
-    hasSearch: true,
-    data: [
-      {value: 1, label: "MERHABA"},
-      {value: 2, label: "MERHABA"},
-    ]
-  }
 })
 const artistSelectConfig = computed(() => {
   return {
@@ -235,10 +236,12 @@ const genreConfig = computed(() => {
     data: props.genres,
   }
 })
+
+
 const mainPriceConfig = computed(() => {
   return {
     hasSearch: false,
-    data: [],
+    data: usePage().props.main_prices,
   }
 })
 
@@ -254,6 +257,14 @@ const formatConfig = computed(() => {
   }
 })
 
+onBeforeMount(() => {
+    if(props.product.label){
+        labelConfig.value.data.push({
+            "value" : props.product.label.id,
+            "label" : props.product.label.name,
+        });
+    }
+});
 
 </script>
 

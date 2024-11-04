@@ -7,6 +7,7 @@
         <div @click="open"
             class="absolute inset-0 flex items-center px-3 radius-8 border-none focus:ring-0 appSelectInput c-strong-950">
             <span class="label-sm !font-normal c-soft-400" v-if="!element">{{ placeholder }}</span>
+            <slot v-else-if="hasSlot('disabled')" name="disabled"/>
             <slot v-else-if="hasSlot('model')" name="model" :scope="choosenAll"/>
             <span v-else class="label-sm !font-normal">{{ getShowLabel }}</span>
         </div>
@@ -16,7 +17,7 @@
             <span v-if="!element">{{placeholder}}</span>
         </div> -->
         <ChevronRightIcon
-
+            v-if="!disabled"
             color="var(--soft-400)"
             :class="{
                         'transform rotate-90 transition-transform duration-300': isOpen,
@@ -81,7 +82,8 @@ const props = defineProps({
     },
     modelValue: {},
     placeholder: { type: String },
-    type: {}
+    type: {},
+    disabled:{},
 })
 const emits = defineEmits(['update:modelValue'])
 const element = computed({
@@ -135,6 +137,7 @@ const getShowLabel = computed(() => {
     return finalStr;
 })
 const open = async () => {
+    if(props.disabled) return;
       isOpen.value = !isOpen.value;
     if (isOpen.value) {
 
