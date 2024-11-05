@@ -40,9 +40,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
-    protected $step = 1;
-    protected $excepted = [];
-    protected $excepted_data = [];
+    protected int $step = 1;
+    protected array $excepted = [];
+    protected array $excepted_data = [];
 
     /**
      * Display a listing of the resource.
