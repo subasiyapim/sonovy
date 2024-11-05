@@ -181,9 +181,11 @@ class ProductController extends Controller
             'label',
             'hashtags',
             'downloadPlatforms',
-            'promotions'
+            'promotions',
+            'mainArtists',
+            'featuredArtists',
         );
-
+        
         $props = [
             "product" => $product,
             "step" => $step,
