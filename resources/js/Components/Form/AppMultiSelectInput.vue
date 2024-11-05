@@ -17,7 +17,7 @@
             <span v-if="!element">{{placeholder}}</span>
         </div> -->
         <ChevronRightIcon
-            v-if="!disabled"
+            v-if="disabled"
             color="var(--soft-400)"
             :class="{
                         'transform rotate-90 transition-transform duration-300': isOpen,
@@ -100,7 +100,7 @@ const onClose = () => {
 
 }
 
-const choosenAll = ref([]);
+const choosenAll = ref(props.config?.data.filter((e) => element.value.includes(e.value)));
 const onChangeForSearch = (e) => {
 
     searchTerm.value = e;

@@ -1,5 +1,5 @@
 <template>
-  <DragUploadInput @change="onChange" label="Albüm Kapağı"
+  <DragUploadInput @change="onChange" :image="product.image" label="Albüm Kapağı"
                    note="JPEG, PNG, PDF, and MP4 formats, up to 50 MB."></DragUploadInput>
   <div class="flex gap-3.5 items-center">
     <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
@@ -17,7 +17,11 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Sanatçılar</p>
-      <span class="label-sm c-strong-950">{{product}}</span>
+        <span class="label-sm c-strong-950">
+            <template v-for="artist in product.main_artists ">
+                {{artist.name}}
+            </template>
+        </span>
     </div>
   </div>
   <div class="flex gap-3.5 items-center">
@@ -25,8 +29,12 @@
       <PersonIcon color="var(--sub-600)"/>
     </div>
     <div>
-      <p class="paragraph-xs c-sub-600">Düet</p>
-      <span class="label-sm c-strong-950">-</span>
+        <p class="paragraph-xs c-sub-600">Düet</p>
+        <span class="label-sm c-strong-950">
+            <template v-for="artist in product.featuring_artists ">
+                {{artist.name}}
+            </template>
+        </span>
     </div>
   </div>
 

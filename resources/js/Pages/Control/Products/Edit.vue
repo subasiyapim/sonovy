@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-import {computed, ref, onMounted} from 'vue';
+import {computed, ref, onBeforeMount} from 'vue';
 import {IconButton} from '@/Components/Buttons'
 import {FormElement} from '@/Components/Form';
 
@@ -210,8 +210,9 @@ const submitStep = async () => {
     }
 
 }
-onMounted(() => {
+onBeforeMount(() => {
 
+    step1Element.main_artists = props.product.main_artists.map((e) => e.id) ?? [];
 });
 
 </script>

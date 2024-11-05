@@ -18,6 +18,8 @@
       <FormElement label-width="190px" :error="form.errors.version" v-model="form.version" label="Sürüm"
                    placeholder="Lütfen giriniz"></FormElement>
 
+
+
       <FormElement label-width="190px" :error="form.errors.main_artists || form.errors.mixed_album"
                    v-model="form.main_artists" :disabled="form.mixed_album" type="multiselect" label="Sanatçı" placeholder="Sanatçı Seçiniz"
                    :config="artistSelectConfig">
@@ -263,6 +265,19 @@ onBeforeMount(() => {
             "value" : props.product.label.id,
             "label" : props.product.label.name,
         });
+    }
+    if(props.product.main_artists){
+
+        props.product.main_artists.forEach(element => {
+            console.log("ELEENT",element);
+
+            artistSelectConfig.value.data.push({
+                "image" : element.media[0].original_url,
+                "value" : element.id,
+                "label" : element.name,
+            });
+        });
+
     }
 });
 

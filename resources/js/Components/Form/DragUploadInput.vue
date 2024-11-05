@@ -49,13 +49,14 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive,onBeforeMount } from 'vue';
 import {CloudIcon} from '@/Components/Icons'
 import {RegularButton} from '@/Components/Buttons'
 const emits = defineEmits(['change'])
-defineProps({
+const props = defineProps({
     label:{},
-    note:{}
+    note:{},
+    image:{},
 })
 const fileInput = ref(null);
 const isDragging = ref(false);
@@ -103,6 +104,13 @@ const handleFiles = (files) => {
 const removeImage = (index) => {
   images.splice(index, 1);
 };
+onBeforeMount(() => {
+    if(props.image){
+        images.value.push({
+            url:props.image,
+        })
+    }
+});
 </script>
 
 <style scoped>

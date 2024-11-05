@@ -141,7 +141,7 @@ const onTusComplete = (e) => {
 
     if(findedIndex >= 0){
         attemps.value.splice(findedIndex,1);
-        songs.value.push(e);
+        form.value.songs.value.push(e);
     }
 
 
