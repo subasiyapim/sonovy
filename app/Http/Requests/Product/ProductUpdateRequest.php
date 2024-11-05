@@ -26,7 +26,10 @@ class ProductUpdateRequest extends FormRequest
     {
         $data = [
             'production_year' => ['required', 'integer', 'min:1900', 'max:'.date('Y')],
+            'previously_released' => ['required', 'boolean'],
+            'previous_release_date' => ['required_if:previously_released,true', 'nullable', 'date'],
             'published_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
+            'physical_release_date' => ['required', 'date'],
             'published_countries' => [
                 'required', 'array', function ($attribute, $value, $fail) use ($published_country_type) {
                     if ($published_country_type !== ProductPublishedCountryTypeEnum::ALL) {
@@ -37,6 +40,11 @@ class ProductUpdateRequest extends FormRequest
                 }
             ],
             'published_countries.*.id' => ['required', Rule::exists(Country::class, 'id')],
+            'platforms' => ['array', 'required'],
+            'platforms.*.id' => ['required', 'exists:platforms,id'],
+            'platforms.*.price' => ['required', 'numeric', 'min:0'],
+            'platforms.*.pre_order_date' => ['nullable', 'date'],
+            'platforms.*.publish_date' => ['required', 'date'],
         ];
 
         return array_merge($data, self::common());

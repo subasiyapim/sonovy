@@ -185,7 +185,7 @@ class ProductController extends Controller
             'mainArtists',
             'featuredArtists',
         );
-        
+
         $props = [
             "product" => $product,
             "step" => $step,
@@ -232,6 +232,12 @@ class ProductController extends Controller
                 $this->excepted = ['songs'];
                 $this->excepted_data = Arr::except($data, $this->excepted);
                 break;
+            case 3:
+                $this->excepted = ['published_countries', 'platforms'];
+                $this->excepted_data = Arr::except($data, $this->excepted);
+                self::publishedCountries($product, $data);
+                self::createDownloadPlatforms($request, $product);
+
         }
 
         $product->update($this->excepted_data);
@@ -417,11 +423,11 @@ class ProductController extends Controller
      * @param $product
      * @return void
      */
-    protected static function publishedCountries(ProductStoreRequest $request, $product): void
+    protected static function publishedCountries($product, $data): void
     {
-        if ($request->publish_country_type !== ProductPublishedCountryTypeEnum::ALL && is_array($request->counties) && count($request->counties) > 0) {
+        if ($data['publish_country_type'] !== ProductPublishedCountryTypeEnum::ALL && is_array($data['published_countries']) && count($data['published_countries']) > 0) {
             $product->publishedCountries()->detach();
-            $product->publishedCountries()->attach($request->counties);
+            $product->publishedCountries()->attach($data['published_countries']);
         }
     }
 
@@ -472,18 +478,18 @@ class ProductController extends Controller
      * @param $product
      * @return void
      */
-    protected static function createDownloadPlatforms(ProductStoreRequest $request, $product): void
+    protected static function createDownloadPlatforms($product, $data): void
     {
-        if (isset($request->platforms) && is_array($request->platforms) && count($request->platforms) > 0) {
+        if (isset($data['platforms']) && is_array($data['platforms']) && count($data['platforms']) > 0) {
 
             $product->downloadPlatforms()->detach();
 
-            foreach ($request->platforms as $platform) {
+            foreach ($data['platforms'] as $platform) {
                 $product->downloadPlatforms()->attach(
-                    $platform['platformId'],
+                    $platform['id'],
                     [
-                        'price' => $platform['platform_price'],
-                        'pre_order_date' => $platform['platform_pre_order_date'],
+                        'price' => $platform['price'],
+                        'pre_order_date' => $platform['pre_order_date'],
                         'publish_date' => $platform['publish_date'],
                     ]
                 );
