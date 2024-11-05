@@ -13,21 +13,21 @@
   <div class="flex gap-10">
 
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
-      <FormElement label-width="190px" :error="form.errors.album_name" v-model="form.album_name"
+      <FormElement :required="true" label-width="190px" :error="form.errors.album_name" v-model="form.album_name"
                    label="Albüm Adı"></FormElement>
-      <FormElement label-width="190px" :error="form.errors.version" v-model="form.version" label="Sürüm"
+      <FormElement :required="true" label-width="190px" :error="form.errors.version" v-model="form.version"
+                   label="Sürüm"
                    placeholder="Lütfen giriniz"></FormElement>
 
-
-
-      <FormElement label-width="190px" :error="form.errors.main_artists || form.errors.mixed_album"
-                   v-model="form.main_artists" :disabled="form.mixed_album" type="multiselect" label="Sanatçı" placeholder="Sanatçı Seçiniz"
+      <FormElement :required="true" label-width="190px" :error="form.errors.main_artists || form.errors.mixed_album"
+                   v-model="form.main_artists" :disabled="form.mixed_album" type="multiselect" label="Sanatçı"
+                   placeholder="Sanatçı Seçiniz"
                    :config="artistSelectConfig">
 
         <template #disabled v-if="form.mixed_album">
-        <p class="label-sm !font-normal">
-             Various Artists
-        </p>
+          <p class="label-sm !font-normal">
+            Various Artists
+          </p>
 
         </template>
         <template #first_child>
@@ -74,7 +74,8 @@
           </div>
         </template>
       </FormElement>
-      <FormElement label-width="190px" :error="form.errors.featuring_artists" v-model="form.featuring_artists"
+      <FormElement label-width="190px" :error="form.errors.featuring_artists"
+                   v-model="form.featuring_artists"
                    type="multiselect" label="Düet Sanatçı" placeholder="Seçiniz" :config="artistSelectConfig">
         <template #first_child>
           <button class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
@@ -113,11 +114,13 @@
           </div>
         </template>
       </FormElement>
-      <FormElement label-width="190px" :error="form.errors.genre_id" v-model="form.genre_id" label="Tarz"
+      <FormElement :required="true" label-width="190px" :error="form.errors.genre_id" v-model="form.genre_id"
+                   label="Tarz"
                    placeholder="Seçiniz" type="select" :config="genreConfig">
 
       </FormElement>
-      <FormElement label-width="190px" :error="form.errors.sub_genre_id" v-model="form.sub_genre_id" label="Alt Tarz"
+      <FormElement :required="true" label-width="190px" :error="form.errors.sub_genre_id" v-model="form.sub_genre_id"
+                   label="Alt Tarz"
                    placeholder="Seçiniz" type="select" :config="genreConfig">
       </FormElement>
 
@@ -129,22 +132,26 @@
     </div>
 
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
-      <FormElement type="select" :error="form.errors.label_id" v-model="form.label_id" label-width="190px"
+      <FormElement :required="true" type="select" :error="form.errors.label_id" v-model="form.label_id"
+                   label-width="190px"
                    label="Plak şirketi" placeholder="Şirket Seçiniz" :config="labelConfig"></FormElement>
-      <FormElement label-width="190px" :error="form.errors.p_line" v-model="form.p_line" label="p Satırı"
+      <FormElement :required="true" label-width="190px" :error="form.errors.p_line" v-model="form.p_line"
+                   label="p Satırı"
                    placeholder="Lütfen giriniz">
         <template #tooltip>
           Besteler, şarkı sözleri ve diğer müzikal öğeler, eser sahiplerine eserlerini kullanma, kopyalama, dağıtma,
           düzenleme ve ticari olarak değerlendirme yetkisi verir.
         </template>
       </FormElement>
-      <FormElement label-width="190px" :error="form.errors.c_line" v-model="form.c_line" label="C Satırı"
+      <FormElement :required="true" label-width="190px" :error="form.errors.c_line" v-model="form.c_line"
+                   label="C Satırı"
                    placeholder="Lütfen giriniz"></FormElement>
       <FormElement label-width="190px" :error="form.errors.upc_code" v-model="form.upc_code" label="UPC/EAN Kodu"
                    placeholder="Lütfen giriniz"></FormElement>
       <FormElement label-width="190px" :error="form.errors.catalog_number" v-model="form.catalog_number"
                    label="Katalog No" placeholder="Lütfen giriniz"></FormElement>
-      <FormElement type="select" label-width="190px" :error="form.errors.language_id" v-model="form.language_id"
+      <FormElement :required="true" type="select" label-width="190px" :error="form.errors.language_id"
+                   v-model="form.language_id"
                    label="Albüm Dili" :config="languageConfig" placeholder="Lütfen giriniz">
         <template #model="scope">
           <div v-if="scope.data" class="flex items-center gap-2">
@@ -158,7 +165,8 @@
         </template>
       </FormElement>
 
-      <FormElement type="select" label-width="190px" :error="form.errors.main_price" v-model="form.main_price"
+      <FormElement :required="true" type="select" label-width="190px" :error="form.errors.main_price"
+                   v-model="form.main_price"
                    label="Ana Fiyat" placeholder="Lütfen giriniz" :config="mainPriceConfig">
 
       </FormElement>
@@ -167,7 +175,7 @@
 </template>
 
 <script setup>
-import {computed,onBeforeMount} from 'vue';
+import {computed, onBeforeMount} from 'vue';
 import {FormElement} from '@/Components/Form';
 import {AddIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';

@@ -18,7 +18,10 @@ class ArtistServices
 
     public static function search($search): mixed
     {
-        return Artist::with('platforms')->where('name', 'like', '%'.$search.'%')->get();
+        return Artist::with('platforms')
+            ->whereNot('name', 'Various Artists')
+            ->where('name', 'like', '%'.$search.'%')
+            ->get();
     }
 
     /**
