@@ -185,13 +185,13 @@ class ProductController extends Controller
             'promotions',
             'mainArtists',
             'featuredArtists',
-            'total_song_duration'
         );
 
         $props = [
             "product" => $product,
             "step" => $step,
             'progress' => $progress,
+            'total_song_duration' => $total_song_duration,
         ];
 
         switch ($step) {
