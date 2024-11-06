@@ -13,6 +13,7 @@
   --white-400: #FBFAF9;
   --white-500: #FAF9F8;
   --white-600: #EEEBE8;
+  --white-700: #C8C7C6;
   --white-900: #969595;
   --dark-green-25: #F3FFF9;
   --dark-green-500: #5BCF82;
@@ -65,15 +66,18 @@
 }
 
 .c-white-400 {
-  color: var(--dark-green-400);
+  color: var(--white-400);
 }
 
 .c-white-500 {
-  color: var(--dark-green-500);
+  color: var(--white-500);
 }
 
 .c-white-600 {
-  color: var(--dark-green-600);
+  color: var(--white-600);
+}
+.c-white-700 {
+  color: var(--white-700);
 }
 
 .c-white-900 {

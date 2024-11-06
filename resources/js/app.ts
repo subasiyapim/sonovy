@@ -11,7 +11,7 @@ import clickOutside from './Directives/ClickOutside';
 import {createPinia} from 'pinia';
 import __ from "./libs/locale";
 import 'vue-slider-component/theme/default.css'
-
+import 'tippy.js/themes/light.css'
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'

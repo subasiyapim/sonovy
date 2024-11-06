@@ -34,11 +34,7 @@
                             <p>{{scope.data.label}}</p>
                     </div>
                 </template>
-                <template #model="scope">
-                    <div class="flex items-center relative gap-2">
-                        {{scope.data}}
-                    </div>
-                </template>
+
         </FormElement>
         <FormElement label-width="190px" v-model="form.featuring_artists"  :error="form.errors.featuring_artists" type="multiselect" :label="__('control.song.fields.featuring_artists')" :placeholder="__('control.song.fields.featuring_artists_placeholder')"  :config="artistSelectConfig">
                 <template #first_child>
@@ -56,19 +52,19 @@
                 </div>
                 </template>
                 <template #model="scope">
-                <div class="flex items-center relative gap-2">
-                        <div  class="flex items-center relative" :style="{'width' : scope.data.length * 20+'px'}">
-                            <div v-for="(artist,index) in scope.data" :style="{'left': 14*index+'px'}" class="absolute w-5 h-5 rounded-full border border-white flex items-center justify-center bg-blue-300">
-                            <span class="label-xs"> {{artist.label[0]}}</span>
+                    <div class="flex items-center relative gap-2">
+                            <div  class="flex items-center relative" :style="{'width' : scope.data.length * 20+'px'}">
+                                <div v-for="(artist,index) in scope.data" :style="{'left': 14*index+'px'}" class="absolute w-5 h-5 rounded-full border border-white flex items-center justify-center bg-blue-300">
+                                <span class="label-xs"> {{artist.label[0]}}</span>
+                                </div>
                             </div>
-                        </div>
-                    <p style="white-space:nowrap;">
-                            <template v-for="artist in scope.data">
-                                {{artist.label}}, &nbsp;
-                            </template>
-                    </p>
+                        <p style="white-space:nowrap;">
+                                <template v-for="artist in scope.data">
+                                    {{artist.label}}, &nbsp;
+                                </template>
+                        </p>
 
-                </div>
+                    </div>
                 </template>
         </FormElement>
         <FormElement label-width="190px" v-model="form.genre_id"  :error="form.errors.genre_id" :label="__('control.song.fields.genre')" :required="true"  :placeholder="__('control.song.fields.genre_placeholder')" type="select" :config="genreConfig">
@@ -83,20 +79,26 @@
     </div>
     <SectionHeader :title="__('control.song.dialog.header_2')"/>
         <div class="p-5 flex flex-col gap-6">
-            <FormElement v-for="(lyric_writer,i) in form.lyrics_writer" label-width="190px" v-model="form.lyrics_writer[i]" :label="__('control.song.fields.lyrics_writer')" :placeholder="__('control.song.fields.lyrics_writer_placeholder')"  type="select" :config="lyricsConfig">
-
+            <FormElement v-for="(lyric_writer,i) in form.lyrics_writer" :disabled="form.is_instrumental" label-width="190px" v-model="form.lyrics_writer[i]" :label="__('control.song.fields.lyrics_writer')" :placeholder="__('control.song.fields.lyrics_writer_placeholder')"  type="select" :config="lyricsConfig">
+                <template #description>
+                    <div class="flex justify-end items-center">
+                        <button :disabled="form.is_instrumental" @click="form.lyrics_writer.splice(i,1)" class="mt-1">
+                            <span class="c-error-500 label-xs">Temizle</span>
+                        </button>
+                    </div>
+                </template>
             </FormElement>
 
              <div class="flex">
                 <div style="width:144px;"></div>
                 <div class="text-start flex-1">
-                    <button class="flex items-center gap-2">
+                    <button :disabled="form.is_instrumental" @click="form.lyrics_writer.push({})" class="flex items-center gap-2">
                         <AddIcon color="var(--blue-500)" />
                         <span class="c-blue-500 label-xs">Yeni Ekle</span>
                     </button>
                 </div>
              </div>
-            <FormElement label-width="190px" v-model="form.lyrics" :label="__('control.song.fields.lyrics')" :placeholder="__('control.song.fields.lyrics_placeholder')"  type="textarea">
+            <FormElement :disabled="form.is_instrumental" label-width="190px" v-model="form.lyrics" :label="__('control.song.fields.lyrics')" :placeholder="__('control.song.fields.lyrics_placeholder')"  type="textarea">
             </FormElement>
             <FormElement label-width="190px" :config="sliderConfig" v-model="form.preview_time" :label="__('control.song.fields.preview_time')"   type="slider">
             </FormElement>
@@ -109,7 +111,7 @@
 
                 </div>
                 <div class="flex-1">
-                    <AppSelectInput v-model="musican.id" :placeholder="__('control.song.fields.musicans_placeholder')"></AppSelectInput>
+                    <AppSelectInput v-model="musican.id" :config="musicansSelectConfig" :placeholder="__('control.song.fields.musicans_placeholder')"></AppSelectInput>
                 </div>
                 <div class="flex-1">
                     <AppSelectInput v-model="musican.role" :placeholder="__('control.song.fields.roles_placeholder')"></AppSelectInput>
@@ -134,7 +136,7 @@
     <SectionHeader :title="__('control.song.dialog.header_4')"/>
         <div class="p-5 flex flex-col gap-6">
                 <div class="flex items-center gap-2 " v-for="(participant,i) in form.participants">
-                    <FormElement class="flex-1" v-model="participant.id" :label="__('control.song.fields.participants')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.participants_placeholder')" />
+                    <FormElement class="flex-1" type="select" v-model="participant.id" :config="participantSelectConfig" :label="__('control.song.fields.participants')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.participants_placeholder')" />
                     <FormElement class="flex-1" v-model="participant.role" :label="__('control.song.fields.roles')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.roles_placeholder')" />
                     <div class="flex flex-col item-start mb-0.5">
                         <label class="label-sm c-strong-950">{{__('control.song.fields.share')}}</label>
@@ -143,7 +145,7 @@
                 </div>
 
                 <div>
-                    <button class="flex items-center gap-2">
+                    <button @click="form.participants.push({})" class="flex items-center gap-2">
                         <AddIcon color="var(--blue-500)" />
                         <span class="c-blue-500 label-xs">Yeni Katılımcı Ekle</span>
                     </button>
@@ -233,6 +235,49 @@ const artistSelectConfig = computed(() => {
         }
     }
 })
+const musicansSelectConfig = computed(() => {
+    return {
+
+        hasSearch:true,
+        data: [],
+        remote:async (query) => {
+            const  response = await crudStore.get(route('control.search.users',{
+                search:query
+            }))
+            const formattedData = response.map(item => ({
+                value: item.id,
+                label: item.name,
+                image: item.image ? item.image.thumb || item.image.url : null  // Use `thumb` if available, fallback to `url`
+            }));
+
+
+            return formattedData;
+
+        }
+    }
+})
+
+const participantSelectConfig = computed(() => {
+    return {
+
+        hasSearch:true,
+        data: [],
+        remote:async (query) => {
+            const  response = await crudStore.get(route('control.search.users',{
+                search:query
+            }))
+            const formattedData = response.map(item => ({
+                value: item.id,
+                label: item.name,
+                image: item.image ? item.image.thumb || item.image.url : null  // Use `thumb` if available, fallback to `url`
+            }));
+
+
+            return formattedData;
+
+        }
+    }
+})
 
 const genreConfig = computed(() => {
     return {
@@ -280,7 +325,11 @@ const onSubmit = async (e) => {
 
       },
       onSuccess: async (e) => {
-        console.log("BŞARILI",e);
+
+
+        toast.success(e.props.notification.message);
+        isDialogOn.value = false;
+        emits('done',form)
 
       },
       onError: (e) => {

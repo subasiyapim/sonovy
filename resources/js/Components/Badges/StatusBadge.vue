@@ -1,8 +1,8 @@
 <template>
-  <div class="text-sm radius-8   flex items-center gap-2 py-1 px-2" :class="getBg">
+  <div class="text-sm radius-8  flex items-center gap-2 py-1 px-2 border" :class="getBg">
     <template v-if="showIcon">
 
-      <CheckFilledIcon v-if="type == 'success'" color="var(--dark-green-600)"/>
+      <CheckFilledIcon v-if="type == 'success'" color="var(--dark-green-500)"/>
       <PendingIcon v-else-if="type == 'pending'" color="var(--orange-700)"/>
     </template>
     <slot name="default"/>

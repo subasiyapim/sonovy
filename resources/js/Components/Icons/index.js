@@ -19,6 +19,7 @@ import ArrowDoubleLeftIcon from './ArrowDoubleLeftIcon.vue';
 import ArtistsIcon from './ArtistsIcon.vue';
 import CloudIcon from './CloudIcon.vue';
 import LabelsIcon from './LabelsIcon.vue';
+import WarningIcon from './WarningIcon.vue';
 import StickyNoteFilledIcon from './StickyNoteFilledIcon.vue';
 import EyeOnIcon from './EyeOnIcon.vue';
 import LinkIcon from './LinkIcon.vue';
@@ -45,6 +46,7 @@ import EarningManagementIcon from './EarningManagementIcon.vue';
 import EyeOffIcon from './EyeOffIcon.vue';
 import LockIcon from './LockIcon.vue';
 import LoginIcon from './LoginIcon.vue';
+import PlayCircleFillIcon from './PlayCircleFillIcon.vue';
 import SendIcon from './SendIcon.vue';
 import InfoFilledIcon from './InfoFilledIcon.vue';
 import SpotifyIcon from './SpotifyIcon.vue';
@@ -80,10 +82,12 @@ export {
     ChevronDownIcon,
     ArrowLeftIcon,
     SearchIcon,
+    WarningIcon,
     NotificationIcon,
     StarIcon,
     AppLoadingIcon,
     DraggableIcon,
+    PlayCircleFillIcon,
     CheckIcon,
     MessageIcon,
     MessageIcon2,

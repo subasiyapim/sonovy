@@ -38,7 +38,7 @@ class SongController extends Controller
     {
         abort_if(Gate::denies('song_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $songs = Song::with('genre', 'subGenre', 'language', 'products.artists', 'participants', 'remixer')
+        $songs = Song::with('genre', 'subGenre',  'products.artists', 'participants', 'remixer')
             ->when($request->type, function ($query) use ($request) {
                 $query->where('type', $request->type);
             })
@@ -98,9 +98,10 @@ class SongController extends Controller
         $song->update($request->validated());
 
 
-        return to_route('dashboard.songs.index')
+        return redirect()->back()
             ->with([
-                'notification' => __('control.notification_updated', ['model' => __('control.song.title_singular')])
+                'notification' =>
+                [__('control.notification_updated', ['model' => __('control.song.title_singular')]), "message" => "Şarkı başarıyla güncellendi"]
             ]);
     }
 

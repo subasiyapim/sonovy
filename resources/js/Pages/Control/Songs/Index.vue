@@ -1,79 +1,61 @@
 <template>
-  <AdminLayout :showDatePicker="false" :title="__('control.label.header')" parentTitle="Katalog">
+  <AdminLayout :showDatePicker="false" :title="__('control.song.header')" parentTitle="Katalog">
 
-    <AppTable :hasSelect="true" :buttonLabel="__('control.label.add_new')" ref="pageTable" :config="appTableConfig"
-              v-model="usePage().props.labels" @addNewClicked="openDialog">
-      <AppTableColumn :label="__('control.label.title_singular')" align="left" sortable="name">
+    <AppTable  :showAddButton="false" ref="pageTable" :config="appTableConfig"
+              v-model="usePage().props.songs" @addNewClicked="openDialog">
+      <AppTableColumn :label="'Tür'" align="left" sortable="name">
+        <template #default="scope">
+        <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
+            <RingtoneIcon color="var(--sub-600)" v-if="scope.row.type == 1" />
+            <MusicVideoIcon color="var(--sub-600)" v-if="scope.row.type == 2" />
+        </div>
+
+        </template>
+      </AppTableColumn>
+      <AppTableColumn :label="'Durum'" sortable="name">
         <template #default="scope">
 
-          <div class="flex items-center gap-2 ">
-            <div class="w-12 h-12 rounded-full overflow-hidden">
-              <img :alt="scope.row.name"
-                   :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.name)"
-              >
+            <StatusBadge >
+                Yayında
+            </StatusBadge>
+        </template>
+      </AppTableColumn>
+
+      <AppTableColumn :label="'Parça Adı'" sortable="name">
+        <template #default="scope">
+          <p class="table-name-text c-sub-600">  {{scope.row.name}}</p>
+           <p class="paragraph-xs c-sub-600"> {{scope.row.isrc}}</p>
+        </template>
+      </AppTableColumn>
+
+      <AppTableColumn :label="'Süre'" sortable="name">
+        <template #default="scope">
+
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+                    <PlayCircleFillIcon color="var(--dark-green-500)" />
+                </div>
+                   <p class="label-sm c-strong-950">
+                     {{scope.row.duration ?? '2.35'}}
+                   </p>
             </div>
-            <a :href="route('control.catalog.labels.show',scope.row.id)"
-               class="c-sub-600 table-name-text">{{ scope.row.name }}</a>
-
-
-          </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn :label="__('control.label.fields.country_id')" sortable="name">
+      <AppTableColumn :label="'Sanatçı'" sortable="name">
+        <template #default="scope">
+                {{scope.row.remixer_artis}}
+        </template>
+      </AppTableColumn>
+      <AppTableColumn :label="'Katılımcı'" sortable="name">
         <template #default="scope">
 
-          <div class="flex items-center gap-4">
-             <span class="text-xl">
-                {{ scope.row?.country?.emoji }}
-             </span>
-            <p class="paragraph-xs c-sub-600">
-              {{ scope.row?.country?.name }}
-            </p>
-          </div>
+            <div  class="border border-soft-200 rounded c-strong-950 label-sm px-3 py-1">
+                {{scope.row.participants.length}} Katılımcı
+            </div>
 
         </template>
       </AppTableColumn>
 
-      <AppTableColumn :label="__('control.label.fields.phone')" sortable="name">
-        <template #default="scope">
-          <div class="flex gap-4">
-            <PhoneIcon color="var(--neutral-500)"/>
-            <p class="paragraph-xs c-sub-600 w-max">
-              {{ scope.row.phone }}
-            </p>
-          </div>
-        </template>
-      </AppTableColumn>
-
-      <AppTableColumn :label="__('control.label.fields.email')" sortable="name">
-        <template #default="scope">
-          <div class="flex gap-4">
-            <LabelEmailIcon color="var(--neutral-500)"/>
-            <p class="paragraph-xs c-sub-600">
-              {{ scope.row.email }}
-            </p>
-          </div>
-        </template>
-      </AppTableColumn>
-      <AppTableColumn :label="__('control.label.fields.status')" sortable="name">
-        <template #default="scope">
-          <StatusBadge class="w-max">
-            <p class="label-xs">{{ scope.row.status ?? 'Aktif Şirket' }}</p>
-          </StatusBadge>
-        </template>
-      </AppTableColumn>
-      <AppTableColumn :label="__('control.general.actions')" align="right">
-        <template #default="scope">
-          <div class="flex gap-3">
-            <IconButton @click="deleteRow(scope.row)">
-              <TrashIcon color="var(--sub-600)"/>
-            </IconButton>
-            <IconButton @click="editRow(scope.row)">
-              <EditIcon color="var(--sub-600)"/>
-            </IconButton>
-          </div>
-        </template>
-      </AppTableColumn>
       <template #empty>
         <div class="flex flex-col items-center justify-center gap-8">
           <div>
@@ -102,8 +84,8 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton, IconButton} from '@/Components/Buttons'
-import {StatusBadge} from '@/Components/Badges'
-import {AddIcon, LabelsIcon, ArtistsIcon, TrashIcon, EditIcon, PhoneIcon, LabelEmailIcon} from '@/Components/Icons'
+import {StatusBadge,BasicBadge} from '@/Components/Badges'
+import {AddIcon, LabelsIcon, ArtistsIcon, TrashIcon, PlayCircleFillIcon,EditIcon, PhoneIcon, LabelEmailIcon,AudioIcon,MusicVideoIcon,RingtoneIcon} from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {LabelDialog} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";

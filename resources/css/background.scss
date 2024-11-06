@@ -42,3 +42,7 @@
     background: var(--orange-700);
 }
 
+
+.disabledBg:disabled{
+ @extend .bg-weak-50;
+}

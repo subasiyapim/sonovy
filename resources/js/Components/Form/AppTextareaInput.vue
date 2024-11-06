@@ -4,7 +4,7 @@
         <div v-if="hasSlot('icon')">
             <slot  name="icon" />
         </div>
-        <textarea rows="5" v-model="element" :maxlength="config?.letter ?? 999999999" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent paragraph-sm c-strong-950 !font-normal" type="textarea" @keydown="onInput" @input="onInput" :placeholder="placeholder" >
+        <textarea :disabled="disabled" rows="5" v-model="element" :maxlength="config?.letter ?? 999999999" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent paragraph-sm c-strong-950 !font-normal disabledBg" type="textarea" @keydown="onInput" @input="onInput" :placeholder="placeholder" >
 
         </textarea>
         <span v-if="config?.letter > 0" class="absolute right-6 bottom-1.5 subheading-2xs c-soft-400">{{element?.length ?? '0'}} / {{config?.letter}}</span>
@@ -18,7 +18,10 @@
     const props = defineProps({
         modelValue:{},
         config:{},
-        placeholder: { type: String}
+        placeholder: { type: String},
+        disabled:{
+            default:false
+        }
     })
         const emits = defineEmits(['update:modelValue','change','input']);
 

@@ -38,7 +38,7 @@
   </div>
   <table class="w-full appTable">
     <thead>
-    <tr class="border border-white-600">
+    <tr class="border border-white-600" >
         <th v-if="hasSelect" class="bg-white-500 w-6" >
             <button class="appCheckBox " @click="selectAll" :class="selectedRowIndexes.length == data.length  ? 'checked' : (selectedRowIndexes.length == 0 ? '' : 'half') "></button>
         </th>
@@ -52,7 +52,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr v-for="(row, rowIndex) in data" :key="rowIndex">
+    <tr v-for="(row, rowIndex) in data" :key="rowIndex" :class="selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''">
         <td v-if="hasSelect">
               <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''" @click="onSelectRow(row)"></button>
         </td>

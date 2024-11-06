@@ -46,21 +46,34 @@ class TusServiceProvider extends ServiceProvider
         $filePath = $storagePath . '/' . $fileMeta['name'];
         $details = FFMpegServices::getMediaDetails($filePath);
 
-        if (!$details['status']) {
-            Log::error("Dosya türü desteklenmiyor veya bir hata oluştu: " . $details['error']);
-            return;
-        }
+        // if (!$details['status']) {
+        //     Log::error("Dosya türü desteklenmiyor veya bir hata oluştu: " . $details['error']);
+        //     return;
+        // }
+
+        // $data = [
+        //     "type" => $details['type'],
+        //     "name" => $fileMeta['metadata']['orignalName'],
+        //     "path" => 'songs/' . $fileMeta['name'],
+        //     "mime_type" => $fileMeta['metadata']['mime_type'],
+        //     "size" => $fileMeta['metadata']['size'],
+        //     "duration" => $details['details']['duration'],
+        //     "details" => $details,
+        //     "created_by" => auth()->id()
+        // ];
+
 
         $data = [
-            "type" => $details['type'],
+            "type" => 1,
             "name" => $fileMeta['metadata']['orignalName'],
             "path" => 'songs/' . $fileMeta['name'],
             "mime_type" => $fileMeta['metadata']['mime_type'],
             "size" => $fileMeta['metadata']['size'],
-            "duration" => $details['details']['duration'],
-            "details" => $details,
+            "duration" => 100,
+            "details" => [],
             "created_by" => auth()->id()
         ];
+
 
 
 

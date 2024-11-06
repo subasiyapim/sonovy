@@ -13,6 +13,14 @@
             </template>
             Parça Ekle
         </PrimaryButton>
+
+        <div class="flex items-center ms-auto gap-3">
+            <button class="label-sm c-neutral-500">Seçimi Kaldır</button>
+            <button class="flex items-center gap-1">
+                <TrashIcon color="var(--error-500)" />
+                <span class="c-error-500 label-sm">Seçili Olanları Sil</span>
+            </button>
+        </div>
     </div>
     <div class="flex gap-10">
 
@@ -42,10 +50,12 @@
                 <AppTableColumn label="Süre">
                     <template #default="scope">
                         <div class="flex items-center gap-2">
-                            <div class="w-9 h-9 rounded-full border border-soft-200 flex items-center justify-center">
-                                <MusicVideoIcon color="var(--dark-green-600)" />
+                            <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+                                <PlayCircleFillIcon color="var(--dark-green-500)" />
                             </div>
+                            <p class="label-sm c-strong-950">
                                 {{scope.row.duration ?? '2.35'}}
+                            </p>
                         </div>
                     </template>
                 </AppTableColumn>
@@ -61,7 +71,15 @@
                 <AppTableColumn label="Aksiyonlar" align="right">
                     <template #default="scope">
                         <IconButton><StarIcon color="var(--sub-600)" /></IconButton>
-                        <IconButton><TrashIcon color="var(--sub-600)" /></IconButton>
+                         <tippy :maxWidth="440" ref="myTippy" theme="light" :allowHtml="true" :sticky="true" trigger="click" :interactive="true" :appendTo="getBody">
+                            <IconButton>
+                                <TrashIcon color="var(--sub-600)" />
+                            </IconButton>
+                            <template #content>
+                               <ConfirmDeleteDialog @confirm="onDeleteSong(scope.row)" @cancel="onCancel"  title="Parçayı silmek istediğinze emin misin" description="Yüklediğiniz parçalardan albümden silenecektir. Daha sonra tekrar yayınlanma öncesi albüme parça ekleyebilirsiniz." />
+                            </template>
+                        </tippy>
+
                         <IconButton @click="openEditDialog(scope.row)"><EditIcon color="var(--sub-600)" /></IconButton>
                     </template>
                 </AppTableColumn>
@@ -90,9 +108,9 @@ import {AddIcon} from '@/Components/Icons'
 import {TusUploadInput} from '@/Components/Form'
 import {SongLoadingCard} from '@/Components/Cards';
 import {StatusBadge} from '@/Components/Badges';
-import {SongDialog} from '@/Components/Dialog';
+import {SongDialog,ConfirmDeleteDialog} from '@/Components/Dialog';
 import {RegularButton,PrimaryButton,IconButton}  from '@/Components/Buttons'
-import {StarIcon,TrashIcon,EditIcon,DraggableIcon,MusicVideoIcon} from '@/Components/Icons';
+import {StarIcon,TrashIcon,EditIcon,DraggableIcon,MusicVideoIcon,PlayCircleFillIcon} from '@/Components/Icons';
 
 const attemps = ref([],{deep:true});
 const props = defineProps({
@@ -107,6 +125,7 @@ const form = computed({
   set: (value) => emits('update:modelValue', value)
 })
 
+const myTippy = ref();
 const tusUploadElement  = ref();
 const showAttempt = ref(false);
 const isSongDialogOn = ref(false);
@@ -141,7 +160,7 @@ const onTusComplete = (e) => {
 
     if(findedIndex >= 0){
         attemps.value.splice(findedIndex,1);
-        form.value.songs.value.push(e);
+        form.value.songs.push(e);
     }
 
 
@@ -154,11 +173,24 @@ const openEditDialog = (song) => {
 
 const onComplete = (e) => {
     choosenSong.value = JSON.parse(JSON.stringify(e));
-    const findedIndex = form.value.song.findIndex((e) => e.id == e.id);
+    const findedIndex = form.value.songs.findIndex((e) => e.id == e.id);
     isSongDialogOn.value = false;
     if(findedIndex >= 0)
-        form.value.song[findedIndex] = e;
+        form.value.songs[findedIndex] = e;
     choosenSong.value = null;
+
+}
+
+const getBody = computed(() => {
+    return document.querySelector('body');
+})
+
+const onCancel = () => {
+    myTippy.value.hide();
+}
+const onDeleteSong = (row) => {
+
+    onCancel();
 
 }
 onBeforeMount(() => {
