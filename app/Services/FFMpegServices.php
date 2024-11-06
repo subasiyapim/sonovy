@@ -17,7 +17,7 @@ class FFMpegServices
             'ffprobe.binaries' => Config::get('services.ffmpeg.ffprobe'),
         ]);
     }
-    
+
     private static function formatDuration($seconds): string
     {
         $minutes = floor($seconds / 60);
@@ -39,18 +39,18 @@ class FFMpegServices
 
                 $audioStream = $streams->audios()->first();
                 $videoStream = $streams->videos()->first();
-                $duration = $ffprobe->format($file)->get('duration');
-                $formattedDuration = self::formatDuration($duration);
+
 
                 if ($audioStream) {
                     return [
                         'status' => true,
                         'type' => ProductTypeEnum::SOUND->value,
+                        'duration' => self::formatDuration($audioStream->get('duration')),
                         'details' => [
                             'bit_rate' => $audioStream->get('bit_rate'),
                             'sample_rate' => $audioStream->get('sample_rate'),
                             'channels' => $audioStream->get('channels'),
-                            'duration' => $formattedDuration,
+                            'duration' => $audioStream->get('duration'),
                             'format' => $ffprobe->format($file)->get('format_name')
                         ]
                     ];
@@ -58,12 +58,13 @@ class FFMpegServices
                     return [
                         'status' => true,
                         'type' => ProductTypeEnum::VIDEO->value,
+                        'duration' => self::formatDuration($videoStream->get('duration')),
                         'details' => [
                             'width' => $videoStream->get('width'),
                             'height' => $videoStream->get('height'),
                             'bit_rate' => $videoStream->get('bit_rate'),
                             'frame_rate' => $videoStream->get('r_frame_rate'),
-                            'duration' => $formattedDuration,
+                            'duration' => $videoStream->get('duration'),
                             'format' => $ffprobe->format($file)->get('format_name')
                         ]
                     ];
