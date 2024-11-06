@@ -23,6 +23,7 @@
         </div>
       </div>
       <div class="w-full h-full bg-white-500 flex flex-col gap-10 p-8 overflow-hidden">
+
         <AppStepper :modelValue="currentTab" @change="onChangeTab">
           <AppStepperElement title="Yayın Bilgileri"></AppStepperElement>
           <AppStepperElement title="Şarkı Detay"></AppStepperElement>
@@ -164,20 +165,22 @@ const step4Element = useForm({
      promotion_info:[{}]
 });
 
-const currentTab = ref(props.step - 1);
+const currentTab = ref(props.step-1);
 
 
 const submitStep = async () => {
     if (currentTab.value == 0) {
         step1Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
-        onError: (e) => {
-            console.log("HTAA", e);
+            onError: (e) => {
+                console.log("HTAA", e);
 
-        },
-        onSuccess: (e) => {
-            router.visit(route('control.catalog.products.form.edit', [2, props.product.id]))
-        }
+            },
+            onSuccess: (e) => {
+                console.log("EEE",e);
+
+                router.visit(route('control.catalog.products.form.edit', [2, props.product.id]))
+            }
         });
     }
     if (currentTab.value == 2) {
@@ -186,13 +189,13 @@ const submitStep = async () => {
 
         step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
-        onError: (e) => {
-            console.log("HTAA", e);
+            onError: (e) => {
+                console.log("HTAA", e);
 
-        },
-        onSuccess: (e) => {
-            router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))
-        }
+            },
+            onSuccess: (e) => {
+                router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))
+            }
         });
     }
 
