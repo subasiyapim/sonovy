@@ -110,18 +110,17 @@ class ProductController extends Controller
         abort_if(Gate::denies('product_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $product->load(
-            'artists',
+
+            'songs',
             'label',
-            'publishedCountries',
             'genre',
             'subGenre',
-            'language',
             'label',
             'hashtags',
             'downloadPlatforms',
-            'songs.participants.user.roles',
-            'addedBy',
-            'promotions'
+            'promotions',
+            'mainArtists',
+            'featuredArtists',
         );
 
         $genres = Genre::pluck('name', 'id');

@@ -47,6 +47,7 @@ import EyeOffIcon from './EyeOffIcon.vue';
 import LockIcon from './LockIcon.vue';
 import LoginIcon from './LoginIcon.vue';
 import PlayCircleFillIcon from './PlayCircleFillIcon.vue';
+import EditLineIcon from './EditLine.vue';
 import SendIcon from './SendIcon.vue';
 import InfoFilledIcon from './InfoFilledIcon.vue';
 import SpotifyIcon from './SpotifyIcon.vue';
@@ -140,5 +141,6 @@ export {
     PendingIcon,
     MusicVideoIcon,
     RingtoneIcon,
-    AudioIcon
+    AudioIcon,
+    EditLineIcon,
 }

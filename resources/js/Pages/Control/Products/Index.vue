@@ -72,7 +72,7 @@
 
             <AppTableColumn label="Yayın Bilgisi">
                 <template #default="scope">
-                    <a :href="route('control.catalog.products.form.edit',[1,scope.row.id])"  class="paragraph-xs c-blue-500">
+                    <a :href="route('control.catalog.products.show',scope.row.id)"  class="paragraph-xs c-blue-500">
                         {{scope.row.album_name}}
                     </a>
                 </template>
