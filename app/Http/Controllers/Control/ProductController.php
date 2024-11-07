@@ -190,8 +190,9 @@ class ProductController extends Controller
             'featuredArtists',
             'songs.mainArtist',
             'songs.featuringArtists',
+            'media'
         );
-
+        
         $props = [
             "product" => $product,
             "step" => $step,

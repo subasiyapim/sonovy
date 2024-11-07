@@ -77,13 +77,13 @@ Route::group(
             Route::apiResource('artist-branches', ArtistBranchController::class)->names('artist-branches');
 
             Route::resource('songs', SongController::class)->names('songs');
+            Route::post('song/favorite/{song}', [SongController::class, 'toggleFavorite'])->name('song.toggleFavorite');
             Route::post('song/change-status', [SongController::class, 'changeStatus'])->name('song-change-status');
             Route::get('songs/{song}/search-track', [SongController::class, 'searchTrack'])->name('songs.search-track');
             Route::get('songs/{song}/get-lyrics', [SongController::class, 'getLyrics'])->name('songs.get-lyrics');
-            Route::post(
-                'songs/{song}/store-lyrics',
-                [SongController::class, 'storeLyrics']
-            )->name('songs.store-lyrics');
+            Route::post('songs/{song}/store-lyrics',
+                [SongController::class, 'storeLyrics'])->name('songs.store-lyrics');
+            Route::post('songs-delete', [SongController::class, 'songsDelete'])->name('songs.songsDelete');
 
             Route::group(
                 ['prefix' => 'products', 'as' => 'products.'],
@@ -402,6 +402,9 @@ Route::group(
         Route::post('translate-language', [LanguageController::class, 'translate'])->name('translate-language');
 
         Route::resource('mail-templates', MailTemplateController::class)->names('mail-templates');
+
+        Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
+
 
         //    Route::middleware('auth')->group(function () {
         //        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

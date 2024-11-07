@@ -84,6 +84,7 @@ class Song extends Model implements HasMedia
     protected $casts = [
         'acr_response' => 'array',
         'details' => 'array',
+        'preview_start' => 'array'
     ];
 
     protected static function booted(): void

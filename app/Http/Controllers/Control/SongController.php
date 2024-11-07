@@ -343,4 +343,25 @@ class SongController extends Controller
             ])->withInput();
         }
     }
+
+    public function toggleFavorite(Request $request, Song $song)
+    {
+        $request->validate([
+            'product_id' => ['required', 'exists:products,id'],
+        ]);
+
+        $song->products()->where('id', $request->product_id)->toggle(['is_favorite']);
+
+        return redirect()->back();
+    }
+
+    public function songsDelete(Request $request)
+    {
+        $request->validate(
+            [
+                'ids' => ['array', 'in:songs,id']
+            ]);
+
+        Song::whereIn('id', $request->ids)->delete();
+    }
 }

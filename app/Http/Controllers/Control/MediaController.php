@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaController extends Controller
 {
@@ -30,9 +31,12 @@ class MediaController extends Controller
         return response()->json(['song' => $song]);
     }
 
-    public function destroy($ids)
+    public function destroy(Media $media)
     {
-        //
+        dd($media);
+        $media->delete();
+
+        return response()->json(['message' => 'Media deleted successfully']);
     }
 
     /**
