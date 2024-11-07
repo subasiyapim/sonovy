@@ -109,7 +109,7 @@ class ProductController extends Controller
     public function show(Product $product): \Inertia\Response|ResponseFactory
     {
         abort_if(Gate::denies('product_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
+        
         $product->load(
 
             'songs',
@@ -123,6 +123,7 @@ class ProductController extends Controller
             'mainArtists',
             'featuredArtists',
         );
+
 
         $genres = Genre::pluck('name', 'id');
         $artists = Artist::pluck('name', 'id');

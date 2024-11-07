@@ -7,9 +7,11 @@ use App\Enums\SongTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Song\SongChangeStatusRequest;
 use App\Http\Requests\Song\SongUpdateRequest;
+use App\Models\Participant;
 use App\Services\MusicBrainzServices;
 use App\Services\MusixmatchService;
 use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Earning;
@@ -34,11 +36,89 @@ class SongController extends Controller
         $this->musixmatch = $musixmatch;
     }
 
+    private static function updateArtists(SongUpdateRequest $request, Song $song)
+    {
+        $main_artists = $request->input('main_artist');
+        $featuring_artists = $request->input('featuring_artists');
+
+
+        if (!empty($featuring_artists)) {
+            $song->artists()->delete();
+
+            foreach ($featuring_artists as $featuring_artist) {
+                $song->artists()->create([
+                    'artist_id' => $featuring_artist['id'],
+                    'is_main' => false
+                ]);
+            }
+
+            $song->artists()->create([
+                'artist_id' => $main_artists,
+                'is_main' => true
+            ]);
+
+        }
+    }
+
+    private static function updateLyricsWriters(SongUpdateRequest $request, Song $song)
+    {
+        $lyrics_writers = $request->input('lyrics_writers');
+
+        if (!empty($lyrics_writers)) {
+            $song->lyricsWriters()->delete();
+
+            foreach ($lyrics_writers as $lyrics_writer) {
+                $song->lyricsWriters()->create([
+                    'user_id' => $lyrics_writer['id']
+                ]);
+            }
+        }
+
+    }
+
+    private static function updateMusicians(SongUpdateRequest $request, Song $song)
+    {
+        $musicians = $request->input('musicians');
+
+        if (!empty($musicians)) {
+            $song->musicians()->delete();
+
+            foreach ($musicians as $musician) {
+                $song->musicians()->create([
+                    'user_id' => $musician['id'],
+                    'role' => $musician['role'],
+                    'is_main' => $musician['is_main']
+                ]);
+            }
+        }
+    }
+
+    private static function updateParticipants(SongUpdateRequest $request, Song $song)
+    {
+        $participants = $request->input('participants');
+
+
+        if (!empty($participants)) {
+            $song->participants()->delete();
+
+            foreach ($participants as $participant) {
+                Participant::create([
+                    'user_id' => $participant['id'],
+                    'song_id' => $song->id,
+                    'tasks' => $participant['role'],
+                    'rate' => $participant['share']
+                ]);
+            }
+        }
+
+
+    }
+
     public function index(Request $request)
     {
         abort_if(Gate::denies('song_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $songs = Song::with('genre', 'subGenre',  'products.artists', 'participants', 'remixer')
+        $songs = Song::with('genre', 'subGenre', 'products.artists', 'participants', 'remixer')
             ->when($request->type, function ($query) use ($request) {
                 $query->where('type', $request->type);
             })
@@ -95,13 +175,26 @@ class SongController extends Controller
 
     public function update(SongUpdateRequest $request, Song $song)
     {
-        $song->update($request->validated());
+        $exclude = [
+            'participants', 'lyrics_writers', 'musicians', 'product_id', 'featuring_artists', 'main_artists'
+        ];
 
+        $excepts = Arr::except($request->all(), $exclude);
+
+        $song->update($excepts);
+
+        self::updateParticipants($request, $song);
+        self::updateMusicians($request, $song);
+        self::updateLyricsWriters($request, $song);
+        self::updateArtists($request, $song);
 
         return redirect()->back()
             ->with([
                 'notification' =>
-                [__('control.notification_updated', ['model' => __('control.song.title_singular')]), "message" => "Şarkı başarıyla güncellendi"]
+                    [
+                        __('control.notification_updated', ['model' => __('control.song.title_singular')]),
+                        "message" => "Şarkı başarıyla güncellendi"
+                    ]
             ]);
     }
 
@@ -114,11 +207,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                    [
-                        'type' => 'error',
-                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                        'model' => __('control.song.title_singular')
-                    ]
+                        [
+                            'type' => 'error',
+                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                            'model' => __('control.song.title_singular')
+                        ]
                 ]
             );
         }

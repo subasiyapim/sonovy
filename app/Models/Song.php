@@ -28,6 +28,7 @@ class Song extends Model implements HasMedia
 
     protected $fillable = [
         'name',
+        'version',
         'genre_id',
         'sub_genre_id',
         'type',
@@ -36,13 +37,12 @@ class Song extends Model implements HasMedia
         'size',
         'isrc',
         'is_instrumental',
-        'is_explicit',
         'language_id',
         'lyrics',
+        'lyrics_writers',
         'iswc',
         'preview_start',
         'is_cover',
-        'remixer_artis',
         'released_before',
         'original_release_date',
         'details',
@@ -117,9 +117,21 @@ class Song extends Model implements HasMedia
         return $this->belongsTo(Artist::class, 'remixer_artis', 'id');
     }
 
+    public function artists()
+    {
+        return $this->belongsToMany(Artist::class, 'artist_song', 'song_id', 'artist_id')
+            ->withPivot('is_main');
+    }
+
     public function participants(): HasMany
     {
         return $this->hasMany(Participant::class);
+    }
+
+    public function musicians(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'song_musician', 'song_id', 'musician_id')
+            ->withPivot('branch_id');
     }
 
     public function convertedSong(): HasOne
@@ -137,7 +149,7 @@ class Song extends Model implements HasMedia
         return $this->hasMany(Earning::class, 'song_id');
     }
 
-    public function addedBy()
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
@@ -145,6 +157,11 @@ class Song extends Model implements HasMedia
     public function musixMatch(): HasOne
     {
         return $this->hasOne(MusixMatach::class);
+    }
+
+    public function lyricsWriters(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'song_lyrics_writer', 'song_id', 'user_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

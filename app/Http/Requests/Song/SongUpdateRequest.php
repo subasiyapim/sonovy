@@ -23,25 +23,63 @@ class SongUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'product_id' => ['required', 'exists:products,id'],
             'name' => ['required', 'string'],
+            'version' => ['required', 'string'],
+            'main_artist' => ['required', 'exists:artists,id'],
+            'featuring_artists' => ['nullable', 'array'],
             'genre_id' => ['required', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'exists:genres,id'],
-            'type' => ['nullable', 'in:1,2'],
-            'isrc' => ['nullable', 'unique:songs,isrc'],
             'is_instrumental' => ['required', 'boolean'],
-            'is_explicit' => ['nullable', 'boolean'],
-            'language_id' => ['nullable', 'exists:countries,id'],
-            'lyrics' => ['nullable', 'string'],
             'lyrics_writers' => ['nullable', 'array'],
-            'lyrics_writers.*.id' => ['exists:artists,id'],
-            'lyrics_writers.*.tasks' => ['required'],
-            'lyrics_writers.*.rate' => ['required', 'numeric'],
-            'iswc' => ['nullable', 'string', 'unique:songs,iswc'],
+            'lyrics' => ['nullable', 'array'],
             'preview_start' => ['nullable', 'string'],
+
+            'musicians' => ['nullable', 'array'],
+            'musicians.*.id' => ['required', 'exists:users,id'],
+            'musicians.*.role' => ['required'],
+
+            'participants' => ['nullable', 'array',],
+            'participants.*.id' => ['required', 'exists:users,id'],
+            'participants.*.tasks' => ['required'],
+            'participants.*.rate' => ['required'],
+
+            'isrc' => ['nullable', 'unique:songs,isrc'],
+            'is_explicit' => ['nullable', 'boolean'],
+            'iswc' => ['nullable', 'string', 'unique:songs,iswc'],
             'is_cover' => ['nullable', 'boolean'],
             'remixer_artis' => ['nullable', 'exists:artists,id'],
             'released_before' => ['nullable', 'boolean'],
-            'songs.*.original_release_date' => ['nullable', 'date'],
+
+
         ];
     }
 }
+
+/*
+name
+genre_id
+sub_genre_id
+type
+size
+isrc
+is_instrumental
+is_explicit
+language_id
+lyrics
+iswc
+preview_start
+released_before
+original_release_date
+details
+acr_response
+created_by
+status
+status_changed_at
+created_at
+updated_at
+status_changed_by
+note
+duration
+version
+ * */

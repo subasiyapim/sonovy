@@ -222,7 +222,7 @@ class Product extends Model implements HasMedia
 
     public function songs(): BelongsToMany
     {
-        return $this->belongsToMany(Song::class, 'product_song', 'product_id', 'song_id')
+        return $this->belongsToMany(Song::class, 'product_song')
             ->withPivot('is_favorite');
     }
 
