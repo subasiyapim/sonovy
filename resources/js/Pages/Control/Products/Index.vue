@@ -61,7 +61,11 @@
         <AppTable v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
             <AppTableColumn label="Tür" sortable="type">
                 <template #default="scope">
-                    {{scope.row.type}}
+                    <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
+                        <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)" />
+                        <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)" />
+                        <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)" />
+                    </div>
                 </template>
             </AppTableColumn>
             <AppTableColumn label="Durum">
@@ -72,6 +76,10 @@
 
             <AppTableColumn label="Yayın Bilgisi">
                 <template #default="scope">
+
+                    <div v-if="scope.row.image" class="w-8 h-8 rounded overflow-hidden">
+                        <img :src="scope.row.image" >
+                    </div>
                     <a :href="route('control.catalog.products.show',scope.row.id)"  class="paragraph-xs c-blue-500">
                         {{scope.row.album_name}}
                     </a>
@@ -80,12 +88,14 @@
 
             <AppTableColumn label="Sanatçı">
                 <template #default="scope">
-                    -
+                  <span class="paragraph-xs c-strong-950" v-for="artist in scope.row.artists">{{artist.name}}</span>
                 </template>
             </AppTableColumn>
 
             <AppTableColumn label="Plak Şirketi">
                 <template #default="scope">
+
+                  <span class="paragraph-xs c-sub-600" >{{scope.row.label?.name}}</span>
 
                 </template>
             </AppTableColumn>
@@ -96,12 +106,16 @@
             </AppTableColumn>
             <AppTableColumn label="Parçalar">
                 <template #default="scope">
-
+                    <span class="paragraph-xs c-sub-600" >{{scope.row.songs?.length}} Parça</span>
                 </template>
             </AppTableColumn>
              <AppTableColumn label="UPC/Katalog">
                 <template #default="scope">
+                    <div class="flex flex-col justify-start ">
+                        <span class="paragraph-xs c-sub-600" >{{scope.row.upc_code}} Parça</span>
+                        <span class="paragraph-xs c-sub-600" >{{scope.row.catalog_number}} Parça</span>
 
+                    </div>
                 </template>
             </AppTableColumn>
              <AppTableColumn label="Mağazalar">
@@ -133,7 +147,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton} from '@/Components/Buttons'
-import {AddIcon,LabelsIcon, ArtistsIcon} from '@/Components/Icons'
+import {AddIcon,LabelsIcon, ArtistsIcon,AudioIcon,MusicVideoIcon,RingtoneIcon} from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
 const data =  ref([

@@ -1,8 +1,8 @@
 <template>
 
 
-    <div class="  p-4 border-text-input flex items-start radius-8 c-white-500 p-3 cursor-pointer" >
-        <VueSlider :tooltip-formatter="config?.formatter" :processStyle="config?.railStyle" class="!w-full" v-model="element"  contained></VueSlider>
+    <div class="p-4 border-text-input flex items-start radius-8 c-white-500 p-3 cursor-pointer" >
+        <VueSlider :minRange="config?.range" :maxRange="config?.range" :tooltip-formatter="config?.formatter" :processStyle="config?.railStyle" class="!w-full" v-model="element"  contained></VueSlider>
     </div>
 
 

@@ -104,18 +104,28 @@
             </FormElement>
         </div>
     <SectionHeader :title="__('control.song.dialog.header_3')"/>
+
         <div class="p-5 flex flex-col gap-6">
-            <div class="flex items-center justify-center gap-3" v-for="musican in form.musicans">
+            <div class="flex">
                 <div style="width:134px;" class="label-sm">
                     Müzisyen & <br> Katkı Sağlayan
 
                 </div>
-                <div class="flex-1">
-                    <AppSelectInput v-model="musican.id" :config="musicansSelectConfig" :placeholder="__('control.song.fields.musicans_placeholder')"></AppSelectInput>
-                </div>
-                <div class="flex-1">
-                    <AppSelectInput v-model="musican.role" :placeholder="__('control.song.fields.roles_placeholder')"></AppSelectInput>
-                </div>
+               <div class="flex flex-col w-full flex-1">
+                     <div class="flex items-start justify-center gap-3" v-for="(musican,musicanIndex) in form.musicans">
+
+                        <div class="flex-1">
+                            <AppSelectInput v-model="musican.id" :config="musicansSelectConfig" :placeholder="__('control.song.fields.musicans_placeholder')"></AppSelectInput>
+                        </div>
+                        <div class="flex-1">
+                            <AppSelectInput v-model="musican.role" :config="roleConfig" :placeholder="__('control.song.fields.roles_placeholder')"></AppSelectInput>
+                            <button @click="form.musicans.splice(musicanIndex,1)" class="flex items-center ms-auto gap-2 mt-2">
+
+                                <span class="c-error-500 label-xs">Temizle</span>
+                            </button>
+                        </div>
+                    </div>
+               </div>
             </div>
             <div class="flex">
                 <div style="width:150px;"></div>
@@ -135,14 +145,19 @@
 
     <SectionHeader :title="__('control.song.dialog.header_4')"/>
         <div class="p-5 flex flex-col gap-6">
-                <div class="flex items-center gap-2 " v-for="(participant,i) in form.participants">
+                <div class="flex items-start gap-2 " v-for="(participant,i) in form.participants">
                     <FormElement class="flex-1" type="select" v-model="participant.id" :config="participantSelectConfig" :label="__('control.song.fields.participants')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.participants_placeholder')" />
-                    <FormElement class="flex-1" v-model="participant.role" :label="__('control.song.fields.roles')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.roles_placeholder')" />
+                    <FormElement class="flex-1" v-model="participant.role" :config="roleConfig" :label="__('control.song.fields.roles')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.roles_placeholder')" />
                     <div class="flex flex-col item-start mb-0.5">
                         <label class="label-sm c-strong-950">{{__('control.song.fields.share')}}</label>
                         <AppIncrementer v-model="participant.share" class="h-9"></AppIncrementer>
+                         <button @click="form.participants.splice(i,1)" class="flex items-center ms-auto gap-2 mt-2">
+
+                            <span class="c-error-500 label-xs">Temizle</span>
+                        </button>
                     </div>
                 </div>
+
 
                 <div>
                     <button @click="form.participants.push({})" class="flex items-center gap-2">
@@ -293,6 +308,7 @@ const lyricsConfig = computed(() => {
 })
 const sliderConfig = computed(() => {
     return {
+        range:15,
         formatter:(v) => {
             const minutes = Math.floor(v / 60);
             const remainingSeconds = v % 60;
@@ -341,6 +357,13 @@ const onSubmit = async (e) => {
 
 const checkIfDisabled = computed(() => {
  return false;
+})
+
+
+const roleConfig = computed(() => {
+    return {
+        data: usePage().props.artistBranches,
+    }
 })
 onMounted(() => {
   if (props.song) {

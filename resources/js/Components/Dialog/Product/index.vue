@@ -90,12 +90,12 @@ const chooseProductTypeConfig = ref({
         {
             title:"Video",
             value:2,
-            icon:RingtoneIcon,
+            icon:MusicVideoIcon,
         },
         {
             title:"Zil Sesi",
             value:3,
-            icon:MusicVideoIcon,
+            icon: RingtoneIcon,
         },
     ]
 })

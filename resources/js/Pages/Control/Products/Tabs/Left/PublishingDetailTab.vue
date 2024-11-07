@@ -10,15 +10,29 @@
 <div class="flex flex-col gap-6">
     <SectionHeader title="YAYINLANMA TARİHLERİ"></SectionHeader>
 
-
+        <FormElement  label-width="190px" :error="form.errors.publish_date"  type="custom" label="Yayınlanma Yılı" >
+                 <VueDatePicker @update:model-value="onPublishDateChoosen" v-model="form.publish_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Yayınlanma Yılı">
+                    <template #input-icon>
+                    <div class="p-3">
+                            <CalendarIcon color="var(--sub-600)"/>
+                    </div>
+                    </template>
+                </VueDatePicker>
+        </FormElement>
         <FormElement label-width="190px" :error="form.errors.production_year" v-model="form.production_year" type="select" label="Yapım Yılı" placeholder="Yapım Yılı" :config="selectConfig">
 
         </FormElement>
-        <FormElement label-width="190px" :error="form.errors.is_published_before" v-model="form.is_published_before" @change="onChangeIsPublishedBefore" type="fancyCheck" label="Daha önce Yayınlandı mı?" placeholder="Daha önce Yayınlandı mı?">
+        <FormElement label-width="190px" :error="form.errors.previously_released" v-model="form.previously_released" @change="onChangeIsPublishedBefore" type="fancyCheck" label="Daha önce Yayınlandı mı?" placeholder="Daha önce Yayınlandı mı?">
 
         </FormElement>
-        <FormElement label-width="190px" :error="form.errors.publish_year" :disabled="form.is_published_before" v-model="form.publish_year" type="select" label="Yayınlanma Yılı" placeholder="Yayınlanma Yılı" :config="selectConfig">
-
+        <FormElement label-width="190px" :error="form.errors.physical_release_date" :disabled="form.previously_released" type="custom" label="Fiziksel Yayın Tarihi" >
+            <VueDatePicker :disabled="!form.previously_released" v-model="form.physical_release_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Orjinal Yayınlanma Tarihi">
+                <template #input-icon>
+                    <div class="p-3">
+                        <CalendarIcon color="var(--sub-600)"/>
+                    </div>
+                </template>
+            </VueDatePicker>
         </FormElement>
 
 
@@ -60,7 +74,7 @@
         </div>
     <SectionHeader title="PLATFORM TERCİHLERİ"></SectionHeader>
 
-    <AppTable v-model="form.platforms" @selectionChange="onPlatformSelected" :isClient="true" :hasSelect="true"  :hasSearch="false" :showAddButton="false">
+    <AppTable ref="platformTable" v-model="form.platforms" @selectionChange="onPlatformSelected" :isClient="true" :hasSelect="true"  :hasSearch="false" :showAddButton="false">
 
             <AppTableColumn label="Platform">
                 <template #default="scope">
@@ -77,7 +91,8 @@
 
             <AppTableColumn label="İndirme Fiyatı">
                 <template #default="scope">
-                    <AppTextInput v-model="scope.row.download_price" placeholder="0.00"> </AppTextInput>
+
+                    <AppTextInput :disabled="!scope.row.isSelected" v-model="scope.row.download_price" class="bg-white" placeholder="0.00"> </AppTextInput>
                 </template>
             </AppTableColumn>
 
@@ -85,7 +100,7 @@
 
                 <template #default="scope">
 
-                    <VueDatePicker v-model="scope.row.pre_order_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+                    <VueDatePicker :disabled="!scope.row.isSelected" v-model="scope.row.pre_order_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
                         <template #input-icon>
                         <div class="p-3">
                                 <CalendarIcon color="var(--sub-600)"/>
@@ -98,7 +113,7 @@
             <AppTableColumn label="Yayın Tarihi" align="end">
 
                 <template #default="scope">
-                    <VueDatePicker    v-model="scope.row.publish_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+                    <VueDatePicker :disabled="!scope.row.isSelected"   v-model="scope.row.publish_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
                         <template #input-icon>
                         <div class="p-3">
                                 <CalendarIcon color="var(--sub-600)"/>
@@ -132,7 +147,7 @@ const props = defineProps({
     modelValue:{},
 })
 
-
+const platformTable = ref();
 const emits = defineEmits(['update:modelValue']);
 
 const form = computed({
@@ -221,6 +236,20 @@ const onPlatformSelected = (rows) => {
     });
 //    form.value.platforms = rows.map((row) =>  { return {id:row.value,download_price:0,pre_order_date:null,publish_date:null}});
 }
+
+const onPublishDateChoosen = (e) => {
+
+
+    if(e){
+        platformTable.value.selectAll();
+        for (let index = 0; index < form.value.platforms.length; index++) {
+            const element = form.value.platforms[index];
+            element.publish_date = e;
+
+        }
+    }
+
+}
 onBeforeMount(() => {
     form.value.platforms = usePage().props.platforms;
     if(form.value.published_country_type){
@@ -238,6 +267,8 @@ onBeforeMount(() => {
     }
 
 });
+
+
 </script>
 
 <style lang="scss" scoped>

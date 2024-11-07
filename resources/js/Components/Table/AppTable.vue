@@ -381,6 +381,10 @@ const hasSlot = (name) => {
     return !!slots[name];
 }
 
+const deSelect = () => {
+    selectedRowIndexes.value = [];
+}
+
 onMounted(() => {
     getFilterSelects();
 });
@@ -390,7 +394,9 @@ defineExpose({
     search,
     addRow,
     removeRowDataFromRemote,
-    editRow
+    editRow,
+    deSelect,
+    selectAll
 })
 </script>
 <style>

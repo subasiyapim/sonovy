@@ -16,6 +16,7 @@ use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Http\Requests\Product\ConvertAudioRequest;
 use App\Jobs\ConvertAudioJob;
 use App\Models\Artist;
+use App\Models\ArtistBranch;
 use App\Models\Product;
 use App\Models\System\Country;
 use App\Models\Genre;
@@ -174,6 +175,8 @@ class ProductController extends Controller
         $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
         $total_song_duration = $product->totalSongsDuration() ?? 0;
 
+        $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
+
         $product->load(
             'songs',
             'label',
@@ -203,6 +206,7 @@ class ProductController extends Controller
                 $props['main_prices'] = $main_prices;
                 break;
             case 2:
+                $props['artistBranches'] = $artistBranches;
                 $props['genres'] = $genres;
                 break;
             case 3:

@@ -14,19 +14,25 @@
             Parça Ekle
         </PrimaryButton>
 
-        <div class="flex items-center ms-auto gap-3">
-            <button class="label-sm c-neutral-500">Seçimi Kaldır</button>
-            <button class="flex items-center gap-1">
-                <TrashIcon color="var(--error-500)" />
-                <span class="c-error-500 label-sm">Seçili Olanları Sil</span>
-            </button>
+        <div v-if="choosenSongs.length > 0" class="flex items-center ms-auto gap-3">
+            <button @click="deSelectAll" class="label-sm c-neutral-500">Seçimi Kaldır</button>
+            <tippy :maxWidth="440" ref="myTippy" theme="light" :allowHtml="true" :sticky="true" trigger="click" :interactive="true" :appendTo="getBody">
+                <button class="flex items-center gap-1">
+                    <TrashIcon color="var(--error-500)" />
+                    <span class="c-error-500 label-sm">Seçili Olanları Sil</span>
+                </button>
+                <template #content>
+                    <ConfirmDeleteDialog @confirm="deleteChoosenSongs" @cancel="onCancel"  title="Parçayı silmek istediğinze emin misin" description="Yüklediğiniz parçalardan albümden silenecektir. Daha sonra tekrar yayınlanma öncesi albüme parça ekleyebilirsiniz." />
+                </template>
+            </tippy>
+
         </div>
     </div>
     <div class="flex gap-10">
 
         <div class="flex-1 flex flex-col overflow-scroll gap-6">
 
-        <AppTable :hasSelect="true" v-model="form.songs" :showEmptyImage="false" :isClient="true" :hasSearch="false" :showAddButton="false">
+        <AppTable ref="songsTable" :hasSelect="true" v-model="form.songs" :showEmptyImage="false" @selectionChange="onSelectChange" :isClient="true" :hasSearch="false" :showAddButton="false">
                 <AppTableColumn label="#">
                     <template #default="scope">
                         <DraggableIcon color="var(--sub-600)" />
@@ -119,7 +125,8 @@ const props = defineProps({
     modelValue:{},
 })
 
-
+const choosenSongs = ref([]);
+const songsTable = ref();
 const form = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value)
@@ -192,6 +199,20 @@ const onDeleteSong = (row) => {
 
     onCancel();
 
+}
+const onSelectChange = (e) => {
+
+    choosenSongs.value = Object.values(e);
+
+}
+const deleteChoosenSongs = () => {
+    console.log("DELETE ALL");
+
+}
+
+const deSelectAll = () => {
+    choosenSongs.value = [];
+    songsTable.value.deSelect();
 }
 onBeforeMount(() => {
     form.value.songs = props.product.songs;

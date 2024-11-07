@@ -15,6 +15,7 @@
    --dp-border-radius: 10px !important;
    --dp-font-size: 14px !important;
    --dp-text-color:var(--sub-600) !important;
+   --dp-disabled-color:var(--weak-50) !important;
    -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
@@ -229,3 +230,7 @@
   display: none;
 }
 
+
+.dp__disabled{
+    background: var(--weak-50) !important;
+}

@@ -156,7 +156,7 @@ const step3Element = useForm({
     published_country_type:1,
      step: props.step,
     published_countries:[],
-    is_published_before:true,
+    previously_released:true,
     publish_year:null,
     platforms:{}
 });
