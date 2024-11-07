@@ -22,11 +22,12 @@ class SongUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        dd($this->request->all());
         return [
             'product_id' => ['required', 'exists:products,id'],
             'name' => ['required', 'string'],
             'version' => ['required', 'string'],
-            'main_artist' => ['required', 'exists:artists,id'],
+            'main_artists' => ['required', 'exists:artists,id'],
             'featuring_artists' => ['nullable', 'array'],
             'genre_id' => ['required', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'exists:genres,id'],

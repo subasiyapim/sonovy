@@ -123,6 +123,17 @@ class Song extends Model implements HasMedia
             ->withPivot('is_main');
     }
 
+    public function mainArtist()
+    {
+        return $this->belongsTo(Artist::class, 'main_artist', 'id')->wherePivot('is_main', true);
+    }
+
+    public function featuringArtists()
+    {
+        return $this->belongsToMany(Artist::class, 'artist_song', 'song_id', 'artist_id')
+            ->wherePivot('is_main', false);
+    }
+
     public function participants(): HasMany
     {
         return $this->hasMany(Participant::class);

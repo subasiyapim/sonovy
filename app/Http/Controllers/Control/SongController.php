@@ -38,7 +38,7 @@ class SongController extends Controller
 
     private static function updateArtists(SongUpdateRequest $request, Song $song)
     {
-        $main_artists = $request->input('main_artist');
+        $main_artists = $request->input('main_artists');
         $featuring_artists = $request->input('featuring_artists');
 
 
