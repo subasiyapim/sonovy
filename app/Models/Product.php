@@ -226,6 +226,16 @@ class Product extends Model implements HasMedia
             ->withPivot('is_favorite');
     }
 
+    public function totalSongsDuration()
+    {
+        $this->load('songs');
+
+        return $this->songs->sum(function ($song) {
+            $duration = $song->details['details']['duration'] ?? 0;
+            return is_numeric($duration) ? (float) $duration : 0;
+        });
+    }
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

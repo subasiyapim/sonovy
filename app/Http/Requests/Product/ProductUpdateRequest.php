@@ -39,7 +39,6 @@ class ProductUpdateRequest extends FormRequest
                     }
                 }
             ],
-            'published_countries.*.id' => ['required', Rule::exists(Country::class, 'id')],
             'platforms' => ['array', 'required'],
             'platforms.*.id' => ['required', 'exists:platforms,id'],
             'platforms.*.price' => ['required', 'numeric', 'min:0'],

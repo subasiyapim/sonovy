@@ -171,6 +171,7 @@ class ProductController extends Controller
         $product_published_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());
         $main_prices = enumToSelectInputFormat(MainPriceEnum::getTitles());
         $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
+        $total_song_duration = $product->totalSongsDuration() ?? 0;
 
         $product->load(
             'songs',
@@ -189,6 +190,7 @@ class ProductController extends Controller
             "product" => $product,
             "step" => $step,
             'progress' => $progress,
+            'total_song_duration' => $total_song_duration,
         ];
 
         switch ($step) {
@@ -217,7 +219,6 @@ class ProductController extends Controller
 
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
     {
-
         $data = $request->validated();
 
         switch ($data['step']) {

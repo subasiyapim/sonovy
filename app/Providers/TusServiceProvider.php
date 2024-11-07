@@ -57,12 +57,10 @@ class TusServiceProvider extends ServiceProvider
             "path" => 'songs/' . $fileMeta['name'],
             "mime_type" => $fileMeta['metadata']['mime_type'],
             "size" => $fileMeta['metadata']['size'],
-            "duration" => $details['details']['duration'],
+            "duration" => self::formatDuration($details['details']['duration']),
             "details" => $details,
             "created_by" => auth()->id()
         ];
-
-
 
 
         try {
@@ -74,6 +72,14 @@ class TusServiceProvider extends ServiceProvider
         } catch (Error $e) {
             Log::info("HATA: " . $e);
         }
+    }
+
+
+    private static function formatDuration($seconds): string
+    {
+        $minutes = floor($seconds / 60);
+        $remainingSeconds = $seconds % 60;
+        return sprintf('%02d:%02d', $minutes, $remainingSeconds);
     }
 
     public function boot() {}
