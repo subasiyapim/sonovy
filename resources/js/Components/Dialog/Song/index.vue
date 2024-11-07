@@ -175,7 +175,7 @@
         <FormElement class="flex-1" type="select" v-model="participant.id" :config="participantSelectConfig"
                      :label="__('control.song.fields.participants')" direction="vertical" :required="true"
                      :placeholder="__('control.song.fields.participants_placeholder')"/>
-        <FormElement class="flex-1" v-model="participant.role" :config="roleConfig"
+        <FormElement class="flex-1" type="select" v-model="participant.role" :config="roleConfig"
                      :label="__('control.song.fields.roles')" direction="vertical" :required="true"
                      :placeholder="__('control.song.fields.roles_placeholder')"/>
         <div class="flex flex-col item-start mb-0.5">
@@ -247,7 +247,7 @@ const form = useForm({
   name: props.song.name,
   version: props.song.version,
   main_artists: props.song.main_artists,
-  featuring_artists: props.song.main_artists,
+    featuring_artists:props.song.featuring_artists,
   genre_id: props.song.genre_id,
   sub_genre_id: props.song.sub_genre_id,
   is_instrumental: props.song.is_instrumental,
@@ -371,8 +371,6 @@ const onSubmit = async (e) => {
 
         },
         onSuccess: async (e) => {
-
-
           toast.success(e.props.notification.message);
           isDialogOn.value = false;
           emits('done', form)

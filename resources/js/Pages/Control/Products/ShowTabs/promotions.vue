@@ -8,7 +8,7 @@ const props = defineProps({
 
 <template>
     <SectionHeader class="mb-4" :title="__('control.product.show.promotion_header')"/>
-    <div class="border border-soft-200 p-4 rounded-lg mb-4">
+    <div class="border border-soft-200 p-4 rounded-lg mb-4" v-for="promotion in product.promotions">
         <div class="flex items-center gap-2">
             <span class="paragraph-xs c-sub-600">Türkçe</span>
         </div>
@@ -19,6 +19,7 @@ const props = defineProps({
                 Fermentum malesuada eget cursus nisi vulputate velit varius massa ornare. Ipsum amet condimentum ac quam. Est scelerisque sed pellentesque vitae diam interdum molestie aliquam. Convallis morbi vitae tellus ultrices gravida pharetra. Enim ut semper at neque libero proin. Vitae nascetur in nunc tortor amet aliquet sit magna cursus. Lacus at ipsum facilisis tellus vel nec sed. Aliquam aliquet quis nunc non odio. Egestas donec duis amet leo eget purus.
             </p>
         </div>
+        {{promotion}}
     </div>
 </template>
 

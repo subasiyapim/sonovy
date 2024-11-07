@@ -3,7 +3,7 @@
 
     <AppTable  :showAddButton="false" ref="pageTable" :config="appTableConfig"
               v-model="usePage().props.songs" @addNewClicked="openDialog">
-      <AppTableColumn :label="'Tür'" align="left" sortable="name">
+      <AppTableColumn :label="'Tür'" align="left" sortable="name"  width="50">
         <template #default="scope">
         <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
             <RingtoneIcon color="var(--sub-600)" v-if="scope.row.type == 1" />
@@ -12,7 +12,7 @@
 
         </template>
       </AppTableColumn>
-      <AppTableColumn :label="'Durum'" sortable="name">
+      <AppTableColumn :label="'Durum'" sortable="name" width="140">
         <template #default="scope">
 
             <StatusBadge >
@@ -23,8 +23,10 @@
 
       <AppTableColumn :label="'Parça Adı'" sortable="name">
         <template #default="scope">
-          <p class="table-name-text c-sub-600">  {{scope.row.name}}</p>
-           <p class="paragraph-xs c-sub-600"> {{scope.row.isrc}}</p>
+          <div class="flex flex-col items-start">
+            <p class="table-name-text c-sub-600">  {{scope.row.name}}</p>
+           <p class="paragraph-xs c-sub-600">ISRC: {{scope.row.isrc}}</p>
+          </div>
         </template>
       </AppTableColumn>
 
