@@ -39,10 +39,11 @@
   <table class="w-full appTable">
     <thead>
     <tr class="border border-white-600" >
-        <th v-if="hasSelect" class="bg-white-500 w-6" >
+
+        <th v-if="hasSelect"  class="bg-white-500 w-6" >
             <button class="appCheckBox " @click="selectAll" :class="selectedRowIndexes?.length == data?.length  ? 'checked' : (selectedRowIndexes?.length == 0 ? '' : 'half') "></button>
         </th>
-        <th @click="onClickHeader(column)" :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns" :key="index">
+        <th @click="onClickHeader(column)" :style="column?.props.width ? {'width' : `${column?.props.width}px`} :{'width' : 'auto'}" :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns" :key="index">
 
             <div class="flex items-center gap-2 paragraph-xs c-sub-600" :class="column.props.align == 'center' ? 'justify-center' : (column.props.align == 'right' ? 'justify-end' : 'justify-start' )">
             {{ column.props.label }}

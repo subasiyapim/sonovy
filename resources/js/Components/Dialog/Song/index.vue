@@ -147,7 +147,7 @@
         <div class="p-5 flex flex-col gap-6">
                 <div class="flex items-start gap-2 " v-for="(participant,i) in form.participants">
                     <FormElement class="flex-1" type="select" v-model="participant.id" :config="participantSelectConfig" :label="__('control.song.fields.participants')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.participants_placeholder')" />
-                    <FormElement class="flex-1" v-model="participant.role" :config="roleConfig" :label="__('control.song.fields.roles')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.roles_placeholder')" />
+                    <FormElement class="flex-1" type="select" v-model="participant.role" :config="roleConfig" :label="__('control.song.fields.roles')"  direction="vertical" :required="true" :placeholder="__('control.song.fields.roles_placeholder')" />
                     <div class="flex flex-col item-start mb-0.5">
                         <label class="label-sm c-strong-950">{{__('control.song.fields.share')}}</label>
                         <AppIncrementer v-model="participant.share" class="h-9"></AppIncrementer>
@@ -217,12 +217,13 @@ const form = useForm({
     name: props.song.name,
     version:props.song.version,
     main_artists:props.song.main_artists,
-    featuring_artists:props.song.main_artists,
+    featuring_artists:props.song.featuring_artists,
     genre_id:props.song.genre_id,
     sub_genre_id:props.song.sub_genre_id,
     is_instrumental:props.song.is_instrumental,
     isrc:props.song.isrc,
     lyrics_writer:[null],
+    lyrics:"",
     musicans:[{}],
     participants:[{}],
     preview_time:[0,20]
@@ -341,8 +342,6 @@ const onSubmit = async (e) => {
 
       },
       onSuccess: async (e) => {
-
-
         toast.success(e.props.notification.message);
         isDialogOn.value = false;
         emits('done',form)

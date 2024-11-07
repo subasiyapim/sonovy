@@ -88,8 +88,8 @@ Route::group(
             Route::group(
                 ['prefix' => 'products', 'as' => 'products.'],
                 function () {
-                    Route::get('/{id}', [ProductController::class, 'show'])->name('show');
                     Route::get('/', [ProductController::class, 'index'])->name('index');
+                    Route::get('/{product}', [ProductController::class, 'show'])->name('show');
                     Route::get('create', [ProductController::class, 'create'])->name('create');
                     Route::post('store', [ProductController::class, 'store'])->name('store');
 

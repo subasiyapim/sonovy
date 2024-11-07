@@ -46,6 +46,7 @@ import EarningManagementIcon from './EarningManagementIcon.vue';
 import EyeOffIcon from './EyeOffIcon.vue';
 import LockIcon from './LockIcon.vue';
 import LoginIcon from './LoginIcon.vue';
+import ChartsIcon from './ChartsIcon.vue';
 import PlayCircleFillIcon from './PlayCircleFillIcon.vue';
 import EditLineIcon from './EditLine.vue';
 import SendIcon from './SendIcon.vue';
@@ -62,6 +63,7 @@ import PlayFilledIcon from './PlayFilledIcon.vue';
 import PersonCardIcon from './PersonCardIcon.vue';
 import AppLoadingIcon from './AppLoadingIcon.vue';
 import LabelEmailIcon from './LabelEmailIcon.vue';
+import CopyIcon from './CopyIcon.vue';
 import TidalIcon from './TidalIcon.vue';
 import YoutubeIcon from "./YoutubeIcon.vue";
 import Icon from './Icon.vue';
@@ -128,7 +130,9 @@ export {
     SpotifyIcon,
     AppleMusicIcon,
     CheckFilledIcon,
+    ChartsIcon,
     CommentIcon,
+    CopyIcon,
     ProgressIcon,
     PlayFilledIcon,
     CloseIcon,

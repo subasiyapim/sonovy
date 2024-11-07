@@ -223,7 +223,7 @@ const chooseValue = (val) => {
         element.value.splice(vIndex,1);
         choosenAll.value.splice(vIndex,1);
     }
-
+    element.value = JSON.parse(JSON.stringify(element.value));
 
 }
 

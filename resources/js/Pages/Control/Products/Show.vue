@@ -13,26 +13,26 @@
              :src="product.image">
       </div>
       <div class=" flex-1 ms-4 flex flex-col">
-        <h1 class="label-xl c-strong-950" v-text="'albüm adı'"/>
+        <h1 class="label-xl c-strong-950" v-text="product.album_name"/>
 
        <div class="flex items-center gap-2">
             <span class="c-sub-600 paragraph-xs">02/01/2024</span>
             <span class="label-sm c-soft-300">•</span>
-            <span class="c-sub-600 paragraph-xs">12 Parça</span>
+            <span class="c-sub-600 paragraph-xs">{{product.songs.length}} Parça</span>
              <span class="label-sm c-soft-300">•</span>
-            <span class="c-sub-600 paragraph-xs">1 Saat 23 Dakika</span>
+            <span class="c-sub-600 paragraph-xs">{{product.duration}}</span>
        </div>
 
-        <div class="flex items-center mt-2">
-            <div class="w-6 h-6 rounded-full overflow-hidden me-3">
-                 <img src="https://placehold.co/400x400"/>
+        <div class="flex items-center mt-2" v-for="artist in product.main_artists">
+            <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-3">
+                 <img class="w-full h-full image-fluid" :src="artist.image"/>
             </div>
-            <p class="label-sm c-sub-600 me-1">Ellen Rose</p>
+            <p  class="label-sm c-sub-600 me-1">{{artist.name}}</p>
             <p class="c-soft-400 paragraph-xs">@ellenrow</p>
         </div>
-
         <div class="flex items-center gap-2 w-96 mt-auto">
-            <AppSelectInput class="bg-white" :config="produtStatusConfig">
+
+            <AppSelectInput class="bg-white" v-model="product.status" :config="produtStatusConfig">
 
             </AppSelectInput>
             <RegularButton class="w-full">
@@ -143,9 +143,36 @@ const remove = () => {
 
 }
 
+
+
 const produtStatusConfig = computed(() => {
     return {
-        data:[],
+        data:[
+            {
+                label:"Taslak",
+                value:1,
+            },
+             {
+                label:"İnceleniyor",
+                value:2,
+            },
+            {
+                label:"Yayınlandı",
+                value:3,
+            },
+            {
+                label:"Reddedildi",
+                value:4,
+            },
+            {
+                label:"Geri Çekildi",
+                value:5,
+            },
+            {
+                label:"Planlandı",
+                value:6,
+            }
+        ],
     };
 })
 const tabs = ref([

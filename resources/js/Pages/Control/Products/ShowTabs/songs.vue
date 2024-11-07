@@ -1,6 +1,8 @@
 <script setup>
 import AppTable from '@/Components/Table/AppTable.vue';
+import {IconButton} from '@/Components/Buttons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
+import {AudioIcon,RingtoneIcon,MusicVideoIcon,PlayCircleFillIcon,ChartsIcon,EyeOnIcon,EditIcon} from '@/Components/Icons'
 const props = defineProps({
     product:{}
 });
@@ -9,19 +11,27 @@ const props = defineProps({
     <AppTable :hasSelect="true" v-model="product.songs"  :isClient="true" :hasSearch="false" :showAddButton="false">
         <AppTableColumn label="#" sortable="id">
             <template #default="scope">
-
+                <p class="table-name-text">
+                    {{scope.row.id}}
+                </p>
             </template>
         </AppTableColumn>
         <AppTableColumn label="tür">
             <template #default="scope">
-
+                 <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
+                    <RingtoneIcon color="var(--sub-600)" v-if="scope.row.type == 1" />
+                    <MusicVideoIcon color="var(--sub-600)" v-if="scope.row.type == 2" />
+                </div>
             </template>
         </AppTableColumn>
         <AppTableColumn label="Durum">
             <template #default="scope" :showIcon="true">
-                    <StatusBadge type="pending">
-                        <p class="c-orange-700"> Bilgiler Eksik</p>
-                    </StatusBadge>
+                    <div class="flex items-center gap-2 px-2 py-1 rounded-lg border border-soft-200">
+                        <div class="w-4 h-4 rounded-full bg-dark-green-500 flex items-center justify-center">
+                            <div class="w-1 h-1 rounded-full bg-white"></div>
+                        </div>
+                       <p class="label-sm c-strong-950"> Yayında</p>
+                    </div>
             </template>
         </AppTableColumn>
 
@@ -29,12 +39,10 @@ const props = defineProps({
             <template #default="scope">
 
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center p-3 bg-dark-green-800">
-                    <img src="@/assets/images/mp3_active.png">
-                </div>
+
                 <div>
                     <p class="label-sm c-solid-950"> {{scope.row.name}}</p>
-                    <p class="paragraph-xs c-sub-600"> {{(scope.row.size / (1024 * 1024)).toFixed(2)}} MB</p>
+                    <p class="paragraph-xs c-sub-600"> {{scope.row.isrc}} </p>
                 </div>
             </div>
 
@@ -69,20 +77,17 @@ const props = defineProps({
         </AppTableColumn>
         <AppTableColumn label="Analiz">
             <template #default="scope">
-
+                <button class="flex items-center gap-2">
+                    <ChartsIcon color="var(--neutral-500)" />
+                    <span class="c-neutral-500 label-xs"> Analiz</span>
+                    <span class="w-3 h-3 rounded-full bg-[#FF8447]"></span>
+                </button>
             </template>
         </AppTableColumn>
         <AppTableColumn label="Aksiyonlar" align="right">
             <template #default="scope">
-                <IconButton><StarIcon color="var(--sub-600)" /></IconButton>
-                    <tippy :maxWidth="440" ref="myTippy" theme="light" :allowHtml="true" :sticky="true" trigger="click" :interactive="true" :appendTo="getBody">
-                    <IconButton>
-                        <TrashIcon color="var(--sub-600)" />
-                    </IconButton>
-                    <template #content>
-                        <ConfirmDeleteDialog @confirm="onDeleteSong(scope.row)" @cancel="onCancel"  title="Parçayı silmek istediğinze emin misin" description="Yüklediğiniz parçalardan albümden silenecektir. Daha sonra tekrar yayınlanma öncesi albüme parça ekleyebilirsiniz." />
-                    </template>
-                </tippy>
+                <IconButton><EyeOnIcon color="var(--sub-600)" /></IconButton>
+
 
                 <IconButton @click="openEditDialog(scope.row)"><EditIcon color="var(--sub-600)" /></IconButton>
             </template>

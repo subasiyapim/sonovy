@@ -5,7 +5,11 @@ const props = defineProps({
 import {
   DocumentIcon,
   PlayFilledIcon,
+  CopyIcon,
 } from '@/Components/Icons'
+import {
+  IconButton
+} from '@/Components/Buttons'
 </script>
 
 <template>
@@ -14,7 +18,13 @@ import {
       <div class="flex-1 flex flex-col gap-12">
 
         <div>
-          <h1 class="mb-6 subheading-regular text-start" v-text="__('control.product.show.metadata')"/>
+         <div class="flex items-center gap-2 mb-6">
+             <h1 class=" subheading-regular text-start" v-text="__('control.product.show.metadata')"/>
+
+            <IconButton>
+                <CopyIcon color="var(--sub-600)" />
+            </IconButton>
+         </div>
           <div class="flex items-start gap-4">
             <div class="flex flex-col gap-8 flex-1">
               <div class="flex gap-3.5 items-center">
@@ -41,7 +51,7 @@ import {
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.product.show.genres')"/>
-                  <span class="label-sm c-strong-950" v-text="product.genres"/>
+                  <span class="label-sm c-strong-950" v-text="product.genre?.name"/>
                 </div>
               </div>
               <div class="flex gap-3.5 items-center">
@@ -50,7 +60,8 @@ import {
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.product.show.sub_genres')"/>
-                  <span class="label-sm c-strong-950" v-text="product.sub_genres"/>
+                  <span class="label-sm c-strong-950" v-text="product.sub_genre?.name"/>
+
                 </div>
               </div>
 
@@ -60,7 +71,8 @@ import {
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.product.show.format')"/>
-                  <span class="label-sm c-strong-950" v-text="product.format"/>
+                  <span class="label-sm c-strong-950" v-text="product.format_id == 1 ? 'Single' : (product.format_id == 2 ? 'Albüm' : 'EP') "/>
+
                 </div>
               </div>
                 <div class="flex gap-3.5 items-center">
@@ -69,7 +81,7 @@ import {
                     </div>
                     <div>
                         <p class="paragraph-xs c-sub-600" v-text="__('control.product.show.type')"/>
-                        <span class="label-sm c-strong-950" v-text="product.type"/>
+                        <span class="label-sm c-strong-950" v-text="product.type == 1 ?  'Ses' : (product.type == 2 ? 'Video' :'Zil Sesi')"/>
                     </div>
                 </div>
             </div>
@@ -159,9 +171,9 @@ import {
       <div class="h-full bg-soft-200" style="width:1px;">
       </div>
       <div class="w-96 pr-8">
-        <h1 class="mb-6 subheading-regular" v-text="__('control.product.artist_albums')"/>
+        <h1 class="mb-6 subheading-regular" v-text="__('control.product.show.artist_albums')"/>
         <template v-if="false">
-          <div v-for="product in product.products" class="flex p-4">
+          <div v-for="product in product.all_artists" class="flex p-4">
             <div class="flex-1 flex items-center gap-4">
               <div class="w-8 h-8 rounded-lg overflow-hidden">
                 <img src="https://placehold.co/400x400"/>
@@ -180,7 +192,30 @@ import {
           </div>
         </template>
         <template v-else>
-          <p v-text="__('control.product.album_notfound')"/>
+          <p v-text="__('control.product.show.artist_albums_not_fount')"/>
+        </template>
+         <h1 class="my-6 subheading-regular" v-text="__('control.product.show.musicans')"/>
+        <template v-if="false">
+          <div v-for="product in product.musicans" class="flex p-4">
+            <div class="flex-1 flex items-center gap-4">
+              <div class="w-8 h-8 rounded-lg overflow-hidden">
+                <img src="https://placehold.co/400x400"/>
+              </div>
+              <div>
+                <p class="text-sm c-strong-950">Parça Adı</p>
+                <span class="paragraph-xs c-blue-500">Albüm Adı</span>
+              </div>
+            </div>
+            <div class="flex items-end gap-2">
+              <div class="h-3.5">
+                <PlayFilledIcon color="var(--strong-950)"/>
+              </div>
+              <span class="paragraph-xs c-neutral-500">02:35</span>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <p v-text="__('control.product.show.artist_albums_not_fount')"/>
         </template>
       </div>
 
