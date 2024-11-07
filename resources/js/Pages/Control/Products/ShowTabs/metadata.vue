@@ -11,7 +11,7 @@ import {
 <template>
      <div class="flex items-start gap-8 h-full">
 
-      <div class="px-8 flex-1 flex flex-col gap-12">
+      <div class="flex-1 flex flex-col gap-12">
 
         <div>
           <h1 class="mb-6 subheading-regular text-start" v-text="__('control.product.show.metadata')"/>

@@ -137,7 +137,7 @@ class ProductController extends Controller
         $time_zones = TimezoneService::getFromInputFormat();
         $youtube_channel_themes = YoutubeChannelThemeEnum::getTitles();
         $statuses = ProductStatusEnum::getTitles();
-
+        $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
         return inertia(
             'Control/Products/Show',
             compact(
@@ -153,7 +153,8 @@ class ProductController extends Controller
                 'publish_country_types',
                 'time_zones',
                 'youtube_channel_themes',
-                'statuses'
+                'statuses',
+                'countriesGroupedByRegion'
             )
         );
     }

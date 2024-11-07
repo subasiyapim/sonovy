@@ -78,8 +78,10 @@
     <div class="mt-32 ">
         <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"></AppTabs>
     </div>
+    <div class="px-8 pb-10">
+         <component :product="product" :is="tabs.find(e => e.slug == currentTab)?.component"></component>
+    </div>
 
-   <component :product="product" :is="tabs.find(e => e.slug == currentTab)?.component"></component>
   </AdminLayout>
 </template>
 

@@ -40,7 +40,7 @@
     <thead>
     <tr class="border border-white-600" >
         <th v-if="hasSelect" class="bg-white-500 w-6" >
-            <button class="appCheckBox " @click="selectAll" :class="selectedRowIndexes.length == data.length  ? 'checked' : (selectedRowIndexes.length == 0 ? '' : 'half') "></button>
+            <button class="appCheckBox " @click="selectAll" :class="selectedRowIndexes?.length == data?.length  ? 'checked' : (selectedRowIndexes?.length == 0 ? '' : 'half') "></button>
         </th>
         <th @click="onClickHeader(column)" :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns" :key="index">
 
@@ -216,7 +216,7 @@ const term = ref();
 if (params.get('s')) {
     term.value = params.get('s');
 }
-const data = ref(props.isClient ? tableData.value : tableData.value.data)
+const data = ref(props.isClient ? tableData.value : tableData.value.data ?? []);
 
 
 
