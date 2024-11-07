@@ -46,16 +46,16 @@
         </div>
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
-        <PrimaryButton @click="remove">
-          <template #icon>
-            <TrashIcon color="var(--dark-green-500)"/>
-          </template>
-        </PrimaryButton>
-        <PrimaryButton @click="isModalOn = true">
-          <template #icon>
-            <EditIcon color="var(--dark-green-500)"/>
-          </template>
-        </PrimaryButton>
+        <RegularButton @click="router.visit(route('control.catalog.products.form.edit',[1,product.id]))">
+          Güncelle
+        </RegularButton>
+
+        <RegularButton @click="remove">
+            Geri Çek
+        </RegularButton>
+        <RegularButton @click="remove">
+          Tekrar Gönder
+        </RegularButton>
       </div>
       <div class="flex items-center gap-4 absolute bottom-5 right-5">
         <a v-for="(platform, index) in filteredPlatforms"
