@@ -59,6 +59,7 @@ class SongController extends Controller
 
     private static function updateMusicians(SongUpdateRequest $request, Song $song)
     {
+
         $musicians = $request->input('musicians');
 
         if (!empty($musicians)) {
@@ -176,10 +177,10 @@ class SongController extends Controller
         return redirect()->back()
             ->with([
                 'notification' =>
-                    [
-                        __('control.notification_updated', ['model' => __('control.song.title_singular')]),
-                        "message" => "Şarkı başarıyla güncellendi"
-                    ]
+                [
+                    __('control.notification_updated', ['model' => __('control.song.title_singular')]),
+                    "message" => "Şarkı başarıyla güncellendi"
+                ]
             ]);
     }
 
@@ -192,11 +193,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                        [
-                            'type' => 'error',
-                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                            'model' => __('control.song.title_singular')
-                        ]
+                    [
+                        'type' => 'error',
+                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                        'model' => __('control.song.title_singular')
+                    ]
                 ]
             );
         }
