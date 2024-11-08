@@ -22,7 +22,7 @@ class SongUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        dd($this->request->all());
+
         return [
             'product_id' => ['required', 'exists:products,id'],
             'name' => ['required', 'string'],

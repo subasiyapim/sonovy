@@ -99,7 +99,7 @@
       <FormElement v-for="(lyric_writer,i) in form.lyrics_writers" :disabled="form.is_instrumental" label-width="190px"
                    v-model="form.lyrics_writers[i]" :label="__('control.song.fields.lyrics_writer')"
                    :placeholder="__('control.song.fields.lyrics_writer_placeholder')" type="select"
-                   :config="lyricsConfig">
+                   :config="lyricsWriterConfig">
         <template #description>
           <div class="flex justify-end items-center">
             <button :disabled="form.is_instrumental" @click="form.lyrics_writers.splice(i,1)" class="mt-1">
@@ -136,11 +136,11 @@
 
         </div>
         <div class="flex flex-col w-full flex-1">
-          <div class="flex items-start justify-center gap-3" v-for="(musician,musicanIndex) in form.musicans">
+          <div class="flex items-start justify-center gap-3" v-for="(musician,musicanIndex) in form.musicians">
 
             <div class="flex-1">
               <AppSelectInput v-model="musician.id" :config="musicansSelectConfig"
-                              :placeholder="__('control.song.fields.musicans_placeholder')"></AppSelectInput>
+                              :placeholder="__('control.song.fields.musicians_placeholder')"></AppSelectInput>
             </div>
             <div class="flex-1">
               <AppSelectInput v-model="musician.role" :config="roleConfig"
@@ -156,7 +156,7 @@
       <div class="flex">
         <div style="width:150px;"></div>
         <div class="flex-1">
-          <button @click="form.musicans.push({})" class="flex items-center gap-2">
+          <button @click="form.musicians.push({})" class="flex items-center gap-2">
             <AddIcon color="var(--blue-500)"/>
             <span class="c-blue-500 label-xs">Yeni Ekle</span>
           </button>
@@ -175,12 +175,12 @@
         <FormElement class="flex-1" type="select" v-model="participant.id" :config="participantSelectConfig"
                      :label="__('control.song.fields.participants')" direction="vertical" :required="true"
                      :placeholder="__('control.song.fields.participants_placeholder')"/>
-        <FormElement class="flex-1" type="select" v-model="participant.role" :config="roleConfig"
+        <FormElement class="flex-1" type="multiselect" v-model="participant.tasks" :config="roleConfig"
                      :label="__('control.song.fields.roles')" direction="vertical" :required="true"
                      :placeholder="__('control.song.fields.roles_placeholder')"/>
         <div class="flex flex-col item-start mb-0.5">
           <label class="label-sm c-strong-950">{{ __('control.song.fields.share') }}</label>
-          <AppIncrementer v-model="participant.share" class="h-9"></AppIncrementer>
+          <AppIncrementer v-model="participant.rate" class="h-9"></AppIncrementer>
           <button @click="form.participants.splice(i,1)" class="flex items-center ms-auto gap-2 mt-2">
 
             <span class="c-error-500 label-xs">Temizle</span>
@@ -233,6 +233,7 @@ const props = defineProps({
     default: null,
   },
   genres: {},
+  product_id:{},
 })
 const isUpdating = computed(() => {
   return props.song ? true : false;
@@ -243,6 +244,7 @@ const choosenSpotifyField = ref(null);
 const adding = ref(false)
 const image = ref();
 const form = useForm({
+    product_id:props.product_id,
   id: props.song.id,
   name: props.song.name,
   version: props.song.version,
@@ -281,6 +283,27 @@ const artistSelectConfig = computed(() => {
   }
 })
 const musicansSelectConfig = computed(() => {
+  return {
+
+    hasSearch: true,
+    data: [],
+    remote: async (query) => {
+      const response = await crudStore.get(route('control.search.users', {
+        search: query
+      }))
+      const formattedData = response.map(item => ({
+        value: item.id,
+        label: item.name,
+        image: item.image ? item.image.thumb || item.image.url : null  // Use `thumb` if available, fallback to `url`
+      }));
+
+
+      return formattedData;
+
+    }
+  }
+})
+const lyricsWriterConfig = computed(() => {
   return {
 
     hasSearch: true,

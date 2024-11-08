@@ -102,7 +102,7 @@
         </div>
 
     </div>
-    <SongDialog v-if="isSongDialogOn" @done="onComplete" v-model="isSongDialogOn" :genres="genres" :song="choosenSong"></SongDialog>
+    <SongDialog v-if="isSongDialogOn" :product_id="product.id" @done="onComplete" v-model="isSongDialogOn" :genres="genres" :song="choosenSong"></SongDialog>
 </template>
 
 <script setup>
