@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ProductStoreRequest;
 use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Http\Requests\Product\ConvertAudioRequest;
+use App\Http\Resources\Product\ProductShowResource;
 use App\Jobs\ConvertAudioJob;
 use App\Models\Artist;
 use App\Models\ArtistBranch;
@@ -106,7 +107,7 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product): \Inertia\Response|ResponseFactory
+    public function show(Product $product, $tab = 'metadata'): \Inertia\Response|ResponseFactory
     {
         abort_if(Gate::denies('product_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -121,43 +122,14 @@ class ProductController extends Controller
             'promotions',
             'mainArtists',
             'featuredArtists',
+            'histories'
         );
 
+        $response = response()->json(new ProductShowResource($product, $tab));
 
-        $genres = Genre::pluck('name', 'id');
-        $artists = Artist::pluck('name', 'id');
-        $labels = Label::pluck('name', 'id');
-        $countries = CountryServices::get();
-        $languages = Country::pluck('name', 'id');
-        $platform_types = PlatformTypeEnum::getTitles();
-        $product_types = ProductTypeEnum::getTitles();
-        $platforms = Platform::get()->groupBy('type')->map(function ($platforms) {
-            return $platforms->pluck('name', 'id');
-        });
-        $publish_country_types = ProductPublishedCountryTypeEnum::getTitles();
-        $time_zones = TimezoneService::getFromInputFormat();
-        $youtube_channel_themes = YoutubeChannelThemeEnum::getTitles();
-        $statuses = ProductStatusEnum::getTitles();
-        $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
-        return inertia(
-            'Control/Products/Show',
-            compact(
-                'product',
-                'genres',
-                'artists',
-                'labels',
-                'countries',
-                'languages',
-                'platform_types',
-                'product_types',
-                'platforms',
-                'publish_country_types',
-                'time_zones',
-                'youtube_channel_themes',
-                'statuses',
-                'countriesGroupedByRegion'
-            )
-        );
+        $content = $response->getContent();
+
+        return inertia('Control/Products/Show', compact('content', 'product'));
     }
 
     public function edit($step, Product $product): \Inertia\Response|ResponseFactory
@@ -192,7 +164,7 @@ class ProductController extends Controller
             'songs.featuringArtists',
             'media'
         );
-        
+
         $props = [
             "product" => $product,
             "step" => $step,
@@ -245,6 +217,9 @@ class ProductController extends Controller
                 $this->excepted_data = Arr::except($data, $this->excepted);
                 self::publishedCountries($product, $data);
                 self::createDownloadPlatforms($request, $product);
+            case 4:
+                self::createPromotions($product, $data);
+
         }
 
         $product->update($this->excepted_data);
@@ -460,21 +435,17 @@ class ProductController extends Controller
      * @param $product
      * @return void
      */
-    protected static function createPromotions(ProductStoreRequest $request, $product): void
+    protected static function createPromotions($product, $data): void
     {
-        if (isset($request->product_promotion_text) && is_array($request->product_promotion_text) && count($request->product_promotion_text) > 0) {
-            foreach ($request->product_promotion_text as $value) {
-                $product->introductions()->updateOrCreate(
-                    [
-                        'language_id' => $value['language_id'],
-                    ],
-                    [
-                        'p_line' => $value['punch_line'],
-                        'description' => $value['promotion_text'],
-                    ]
-                );
+        if (isset($data['promotions']) && is_array($data['promotions']) && count($data['promotions']) > 0) {
+
+            $product->promotions()->delete();
+
+            foreach ($data['promotions'] as $promotion) {
+                $product->promotions()->create($promotion);
             }
         }
+
     }
 
     /**

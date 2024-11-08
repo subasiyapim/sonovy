@@ -217,7 +217,7 @@ class Product extends Model implements HasMedia
     public function downloadPlatforms(): BelongsToMany
     {
         return $this->belongsToMany(Platform::class, 'product_download_platform', 'product_id', 'platform_id')
-            ->withPivot('price', 'pre_order_date', 'publish_date');
+            ->withPivot('price', 'pre_order_date', 'publish_date', 'status');
     }
 
     public function songs(): BelongsToMany
@@ -260,6 +260,12 @@ class Product extends Model implements HasMedia
     public function upc(): HasOne
     {
         return $this->hasOne(Upc::class);
+    }
+
+    public function histories(): BelongsToMany
+    {
+        return $this->belongsToMany(Platform::class, 'product_platform_history', 'product_id', 'platform_id')
+            ->withPivot('status', 'created_at', 'updated_at');
     }
 
     public function serializeDate(DateTimeInterface $date): string

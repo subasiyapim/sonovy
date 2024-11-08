@@ -56,7 +56,6 @@ class SongController extends Controller
                 'artist_id' => $main_artists,
                 'is_main' => true
             ]);
-
         }
     }
 
@@ -73,7 +72,6 @@ class SongController extends Controller
                 ]);
             }
         }
-
     }
 
     private static function updateMusicians(SongUpdateRequest $request, Song $song)
@@ -87,7 +85,7 @@ class SongController extends Controller
                 $song->musicians()->create([
                     'user_id' => $musician['id'],
                     'role' => $musician['role'],
-                    'is_main' => $musician['is_main']
+                    'is_main' => $musician['is_main'] ?? false
                 ]);
             }
         }
@@ -103,15 +101,14 @@ class SongController extends Controller
 
             foreach ($participants as $participant) {
                 Participant::create([
+                    'product_id' => $request->product_id,
                     'user_id' => $participant['id'],
                     'song_id' => $song->id,
-                    'tasks' => $participant['role'],
-                    'rate' => $participant['share']
+                    'tasks' => $participant['tasks'],
+                    'rate' => $participant['rate']
                 ]);
             }
         }
-
-
     }
 
     public function index(Request $request)
@@ -176,7 +173,12 @@ class SongController extends Controller
     public function update(SongUpdateRequest $request, Song $song)
     {
         $exclude = [
-            'participants', 'lyrics_writers', 'musicians', 'product_id', 'featuring_artists', 'main_artists'
+            'participants',
+            'lyrics_writers',
+            'musicians',
+            'product_id',
+            'featuring_artists',
+            'main_artists'
         ];
 
         $excepts = Arr::except($request->all(), $exclude);
@@ -191,10 +193,10 @@ class SongController extends Controller
         return redirect()->back()
             ->with([
                 'notification' =>
-                    [
-                        __('control.notification_updated', ['model' => __('control.song.title_singular')]),
-                        "message" => "Şarkı başarıyla güncellendi"
-                    ]
+                [
+                    __('control.notification_updated', ['model' => __('control.song.title_singular')]),
+                    "message" => "Şarkı başarıyla güncellendi"
+                ]
             ]);
     }
 
@@ -207,11 +209,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                        [
-                            'type' => 'error',
-                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                            'model' => __('control.song.title_singular')
-                        ]
+                    [
+                        'type' => 'error',
+                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                        'model' => __('control.song.title_singular')
+                    ]
                 ]
             );
         }
@@ -360,7 +362,8 @@ class SongController extends Controller
         $request->validate(
             [
                 'ids' => ['array', 'in:songs,id']
-            ]);
+            ]
+        );
 
         Song::whereIn('id', $request->ids)->delete();
     }

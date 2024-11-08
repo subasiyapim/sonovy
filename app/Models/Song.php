@@ -118,7 +118,7 @@ class Song extends Model implements HasMedia
         return $this->belongsTo(Artist::class, 'remixer_artis', 'id');
     }
 
-    public function artists()
+    public function artists(): BelongsToMany
     {
         return $this->belongsToMany(Artist::class, 'artist_song', 'song_id', 'artist_id')
             ->withPivot('is_main');
