@@ -128,11 +128,16 @@ class ProductController extends Controller
         $tab = 'metadata';
         $tab = request()->input('slug') ?? $tab;
 
-        $response = response()->json(new ProductShowResource($product, $tab));
+        $response = new ProductShowResource($product, $tab);
 
-        $content = $response->getContent();
-        //dd($content);
-        return inertia('Control/Products/Show', compact('content', 'product'));
+        dd($response->resolve());
+
+        return inertia('Control/Products/Show',
+            [
+                'product' => $response->resolve(),
+                'tab' => $tab,
+            ]
+        );
     }
 
     public function edit($step, Product $product): \Inertia\Response|ResponseFactory

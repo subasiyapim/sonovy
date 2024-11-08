@@ -5,7 +5,9 @@ namespace App\Http\Resources\Product;
 use App\Enums\AlbumTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SongTypeEnum;
+use App\Models\Platform;
 use App\Models\System\Country;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +24,6 @@ class ProductShowResource extends JsonResource
     private function getTabContent(): array
     {
         return match ($this->tab) {
-            'metadata' => $this->metadata(),
             'songs' => $this->songs()->toArray(),
             'regions' => $this->regions(),
             'promotion' => $this->promotion(),
@@ -39,13 +40,16 @@ class ProductShowResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $featured_platforms = Platform::whereIn('id', [2, 5, 8])->get(['id'])->pluck('id')->toArray();
+
         return [
-            'created_at' => $this->created_at,
-            'song_count' => $this->songs->count(),
+            'created_at' => Carbon::parse($this->created_at)->format('d-m-Y H:i'),
+            'song_count' => $this->songs->count().' parça',
             'total_duration' => totalDuration($this->songs, true),
-            'main_artist' => $this->mainArtists,
-            'platforms' => $this->downloadPlatforms,
-            self::getTabContent()
+            'main_artist' => $this->mainArtists->first(),
+            'featured_platforms' => $this->downloadPlatforms()->whereIn('platform_id', $featured_platforms)->get(),
+            'platform_count' => $this->downloadPlatforms->count() > 3 ? $this->downloadPlatforms->count() - 3 : 0,
+            $this->tab => self::getTabContent()
         ];
     }
 
@@ -89,29 +93,15 @@ class ProductShowResource extends JsonResource
         return $this->songs->map(function ($song) {
             return [
                 'id' => $song->id,
-                'name' => $song->name,
-                'version' => $song->version,
                 'type' => SongTypeEnum::from($song->type)->title(),
-                'genre' => $song->genre->name,
-                'sub_genre' => $song->subGenre->name,
-                'is_instrumental' => $song->is_instrumental,
-                'language' => $song->language?->language ?? $song->language?->name,
-                'lyrics' => $song->lyrics,
-                'lyrics_writers' => $song->lyrics_writers,
-                'iswc' => $song->iswc,
-                'isrc' => $song->isrc,
-                'preview_start' => $song->preview_start,
-                'is_cover' => $song->is_cover,
-                'released_before' => $song->released_before,
-                'original_release_date' => $song->original_release_date,
-                'details' => $song->details,
-                'acr_response' => $song->acr_response,
-                'duration' => $song->duration,
-                'created_by' => $song->created_by,
                 'status' => $song->status,
-                'status_changed_at' => $song->status_changed_at,
-                'status_changed_by' => $song->status_changed_by,
-                'note' => $song->note,
+                'name' => $song->name,
+                'isrc' => $song->isrc,
+                'duration' => $song->duration,
+                'artists' => $song->artists,
+                'participants' => $this->whenLoaded('participants', $song->participants),
+                'analysis' => $song->analysis,
+                'details' => $song->details,
             ];
         });
 
@@ -153,7 +143,6 @@ class ProductShowResource extends JsonResource
     private function language()
     {
         $country = Country::find($this->language_id);
-
 
         return $country ? $country->language ?? $country->name : $this->language_id;
     }
