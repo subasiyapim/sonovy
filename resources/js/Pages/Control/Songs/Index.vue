@@ -24,7 +24,10 @@
       <AppTableColumn :label="'Parça Adı'" sortable="name">
         <template #default="scope">
           <div class="flex flex-col items-start">
-            <p class="table-name-text c-sub-600">  {{scope.row.name}}</p>
+
+             <a :href="route('control.catalog.songs.show',scope.row.id)"  class="table-name-text">
+                {{scope.row.name}}
+            </a>
            <p class="paragraph-xs c-sub-600">ISRC: {{scope.row.isrc}}</p>
           </div>
         </template>

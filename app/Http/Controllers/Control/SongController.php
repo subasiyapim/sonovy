@@ -134,12 +134,12 @@ class SongController extends Controller
         $song->loadMissing(
             'genre',
             'subGenre',
-            'language',
+
             'products',
             'participants.user',
             'earnings',
             'musixMatch',
-            'addedBy',
+
             'remixer',
             'convertedSong',
             'reports'
