@@ -171,8 +171,6 @@ class ProductController extends Controller
             'media'
         );
 
-        dd($product);
-
         $props = [
             "product" => $product,
             "step" => $step,
