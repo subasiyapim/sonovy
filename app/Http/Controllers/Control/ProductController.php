@@ -122,7 +122,7 @@ class ProductController extends Controller
             'promotions',
             'mainArtists',
             'featuredArtists',
-            'histories'
+            'histories',
         );
 
         $tab = 'metadata';
@@ -130,7 +130,7 @@ class ProductController extends Controller
 
         $response = new ProductShowResource($product, $tab);
 
-
+        dd($response->resolve());
         return inertia('Control/Products/Show',
             [
                 'product' => $response->resolve(),
@@ -174,7 +174,7 @@ class ProductController extends Controller
             'songs.lyricsWriters',
             'media'
         );
-        
+
         $props = [
             "product" => $product,
             "step" => $step,

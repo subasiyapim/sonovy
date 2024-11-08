@@ -7,6 +7,7 @@ use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
 use App\Models\Scopes\FilterByUserRoleScope;
 
+use App\Models\System\Country;
 use App\Traits\DataTables\HasAdvancedFilter;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -208,11 +209,6 @@ class Product extends Model implements HasMedia
     {
         return $this->morphMany(Hashtag::class, 'model');
     }
-
-    // public function publishedCountries(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(Countr, 'product_published_country', 'product_id', 'country_id');
-    // }
 
     public function downloadPlatforms(): BelongsToMany
     {

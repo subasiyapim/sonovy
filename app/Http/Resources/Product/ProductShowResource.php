@@ -3,13 +3,16 @@
 namespace App\Http\Resources\Product;
 
 use App\Enums\AlbumTypeEnum;
+use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SongTypeEnum;
 use App\Models\Platform;
 use App\Models\System\Country;
+use App\Services\CountryServices;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class ProductShowResource extends JsonResource
 {
@@ -83,8 +86,19 @@ class ProductShowResource extends JsonResource
 
     private function regions(): array
     {
-        return [
+        $groupedCountries = CountryServices::getCountriesGroupedByRegion();
+        $country_type = $this->publishing_country_type;
 
+        foreach ($groupedCountries as $region => $countries) {
+            foreach ($countries as $key => $country) {
+                $groupedCountries[$region][$key]['selected'] = in_array($country['value'],
+                    $this->selectedCountryIds($country_type));
+            }
+        }
+        
+        return [
+            'published_country_type' => ProductPublishedCountryTypeEnum::from($country_type)->title(),
+            'countries' => $groupedCountries
         ];
     }
 
@@ -178,6 +192,15 @@ class ProductShowResource extends JsonResource
     private function type()
     {
         return ProductTypeEnum::from($this->type->value)->title();
+    }
+
+    private function selectedCountryIds($country_type): array
+    {
+        return $country_type === ProductPublishedCountryTypeEnum::ALL->value
+            ? Country::all()->pluck('id')->toArray()
+            : DB::table('product_published_country')
+                ->where('product_id', $this->id)
+                ->get()->pluck('country_id')->toArray();
     }
 
 
