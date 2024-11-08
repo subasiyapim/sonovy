@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Product;
 
 use App\Enums\AlbumTypeEnum;
+use App\Enums\PlatformStatusEnum;
 use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SongTypeEnum;
@@ -29,9 +30,9 @@ class ProductShowResource extends JsonResource
         return match ($this->tab) {
             'songs' => $this->songs()->toArray(),
             'regions' => $this->regions(),
-            'promotion' => $this->promotion(),
-            'distribution' => $this->distribution(),
-            'history' => $this->history(),
+            'promotions' => $this->promotions(),
+            'distributions' => $this->distribution(),
+            'histories' => $this->histories(),
             default => $this->metadata(),
         };
     }
@@ -56,12 +57,18 @@ class ProductShowResource extends JsonResource
         ];
     }
 
-    private function promotion(): array
+    private function promotions(): array
     {
-        return [
-            'elele' => 'elele',
-            'sdsdsd' => 'sdsdsd'
-        ];
+        return $this->promotions->map(function ($promotion) {
+            return [
+                'title' => $promotion->title,
+                'description' => $promotion->description,
+                'country' => [
+                    'name' => $promotion?->language?->name ?? $promotion?->language?->language,
+                    'emoji' => $promotion?->language?->emoji
+                ],
+            ];
+        })->toArray();
     }
 
     private function metadata(): array
@@ -95,7 +102,7 @@ class ProductShowResource extends JsonResource
                     $this->selectedCountryIds($country_type));
             }
         }
-        
+
         return [
             'published_country_type' => ProductPublishedCountryTypeEnum::from($country_type)->title(),
             'countries' => $groupedCountries
@@ -123,16 +130,23 @@ class ProductShowResource extends JsonResource
 
     private function distribution(): array
     {
-        return [
-
-        ];
+        return $this->downloadPlatforms->map(function ($platform) {
+            return [
+                'id' => $platform->id,
+                'name' => $platform->name,
+                'icon' => $platform->icon,
+                'price' => $platform->pivot->price,
+                'pre_order_date' => $platform->pivot->pre_order_date,
+                'publish_date' => $platform->pivot->publish_date,
+                'status' => PlatformStatusEnum::from($platform->status)->title(),
+                'histories' => $this->getHistoriesFromPlatformId($platform->id),
+            ];
+        })->toArray();
     }
 
-    private function history(): array
+    private function histories(): array
     {
-        return [
-
-        ];
+        return $this->getHistoriesFromProductId($this->id);
     }
 
     private function genres()
@@ -201,6 +215,47 @@ class ProductShowResource extends JsonResource
             : DB::table('product_published_country')
                 ->where('product_id', $this->id)
                 ->get()->pluck('country_id')->toArray();
+    }
+
+    private function getHistoriesFromPlatformId($id): array
+    {
+        $data = DB::table('product_download_platform')
+            ->where('platform_id', $id)
+            ->get();
+
+        $histories = [];
+
+        foreach ($data as $item) {
+            $histories[] = [
+                'price' => $item->price,
+                'pre_order_date' => $item->pre_order_date,
+                'publish_date' => $item->publish_date,
+                'status' => PlatformStatusEnum::from($item->status)->title(),
+            ];
+        }
+
+        return $histories;
+    }
+
+    private function getHistoriesFromProductId(mixed $id): array
+    {
+        $data = DB::table('product_download_platform')
+            ->where('product_id', $id)
+            ->get();
+
+        $histories = [];
+
+        foreach ($data as $item) {
+            $histories[] = [
+                'platform' => Platform::find($item->platform_id),
+                'price' => $item->price,
+                'pre_order_date' => $item->pre_order_date,
+                'publish_date' => $item->publish_date,
+                'status' => PlatformStatusEnum::from($item->status)->title(),
+            ];
+        }
+
+        return $histories;
     }
 
 

@@ -192,17 +192,17 @@ const tabs = ref([
   },
   {
     title: "Promosyon",
-    slug: "promotion",
+    slug: "promotions",
     component: PromotionsTab,
   },
   {
     title: "Dağıtım",
-    slug: "distribution",
+    slug: "distributions",
     component: DistributionsTab,
   },
   {
     title: "Tarihçe",
-    slug: "history",
+    slug: "histories",
     component: HistoryTab,
   },
 ])

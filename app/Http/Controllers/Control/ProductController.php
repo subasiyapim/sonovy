@@ -118,7 +118,7 @@ class ProductController extends Controller
             'subGenre',
             'label',
             'hashtags',
-            'downloadPlatforms',
+            'downloadPlatforms.histories',
             'promotions',
             'mainArtists',
             'featuredArtists',
