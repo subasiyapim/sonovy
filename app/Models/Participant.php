@@ -23,6 +23,10 @@ class Participant extends Model
         'tasks' => 'array',
     ];
 
+    protected $appends = [
+        'branch_names',
+    ];
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
@@ -36,6 +40,12 @@ class Participant extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function getBranchNamesAttribute()
+    {
+        $taskIds = $this->tasks;
+        return ArtistBranch::whereIn('id', $taskIds)->get()->pluck('name')->implode(', ');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

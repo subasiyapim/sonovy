@@ -119,9 +119,9 @@ class Product extends Model implements HasMedia
     {
         $file = $this->getMedia('products')->last();
         if ($file) {
-            $file->url = $file->getUrl();
-            $file->small = $file->getUrl('small');
-            $file->thumb = $file->getUrl('thumb');
+            $file->url = asset($file->getUrl());
+            $file->small = asset($file->getUrl('small'));
+            $file->thumb = asset($file->getUrl('thumb'));
         }
 
         return $file;

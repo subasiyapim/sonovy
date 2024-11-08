@@ -44,15 +44,16 @@ class ProductShowResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $featured_platforms = Platform::whereIn('id', [2, 5, 8])->get(['id'])->pluck('id')->toArray();
-
         return [
+            'album_name' => $this->album_name,
+            'image' => $this->image,
             'created_at' => Carbon::parse($this->created_at)->format('d-m-Y H:i'),
             'song_count' => $this->songs->count().' parça',
             'total_duration' => totalDuration($this->songs, true),
-            'main_artist' => $this->mainArtists->first(),
-            'featured_platforms' => $this->downloadPlatforms()->whereIn('platform_id', $featured_platforms)->get(),
+            'main_artists' => $this->mainArtists,
+            'featured_platforms' => $this->downloadPlatforms(),
             'platform_count' => $this->downloadPlatforms->count() > 3 ? $this->downloadPlatforms->count() - 3 : 0,
+            'status' => $this->status,
             $this->tab => self::getTabContent()
         ];
     }
@@ -153,14 +154,14 @@ class ProductShowResource extends JsonResource
     {
         return $this->songs->map(function ($song) {
             return $song->genre->name;
-        })->unique()->values();
+        })->unique()->values()->implode(', ');
     }
 
     private function subGenres()
     {
         return $this->songs->map(function ($song) {
             return $song->subGenre->name;
-        })->unique()->values();
+        })->unique()->values()->implode(', ');
     }
 
     private function format()
@@ -179,11 +180,7 @@ class ProductShowResource extends JsonResource
     {
         return $this->songs->map(function ($song) {
             return $song->artists->map(function ($artist) {
-                return [
-                    'id' => $artist->id,
-                    'name' => $artist->name,
-                    'is_main' => $artist->pivot->is_main,
-                ];
+                return $artist;
             });
         })->flatten()->unique()->values();
     }
@@ -193,12 +190,7 @@ class ProductShowResource extends JsonResource
     {
         return $this->songs->map(function ($song) {
             return $song->participants->map(function ($participant) {
-                return [
-                    'id' => $participant->user_id,
-                    'name' => $participant->user->name,
-                    'tasks' => $participant->tasks,
-                    'rate' => $participant->rate,
-                ];
+                return $participant->load('user');
             });
         })->flatten()->unique()->values();
     }

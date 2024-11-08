@@ -298,7 +298,7 @@ return [
         'show' => [
             'artist_albums' => "Sanatçılar",
             'artist_albums_not_fount' => "Sanatçı Bulunamadı",
-            'musicans' => "Katkı Sağlayanlar",
+            'musicians' => "Katkı Sağlayanlar",
             "tags" => "Etiketler",
             'metadata' => "Yayın Metadata",
             'album_name' => "Albüm Adı",
@@ -1570,7 +1570,7 @@ return [
             "artist" => "Sanatçı Adı",
             "label" => "Plak Şirketi",
             "isrc" => "ISRC Kodu",
-            "upc_code" =>  "UPC Kodu",
+            "upc_code" => "UPC Kodu",
             'song_albums' => 'Albümdeki Diğer Parçalar',
             'participants' => "Katılımcılar",
 

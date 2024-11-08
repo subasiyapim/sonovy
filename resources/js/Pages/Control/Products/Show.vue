@@ -9,18 +9,19 @@
       <div
           class=" rounded-lg w-60 h-60 bg-blue-300 left-8 top-8 flex items-center justify-center overflow-hidden">
         <img class="w-full h-full object-cover"
-             :alt="product.name"
-             :src="product.image">
+             :alt="product.album_name"
+             :src="product.image.original_url">
       </div>
       <div class=" flex-1 ms-4 flex flex-col">
+
         <h1 class="label-xl c-strong-950" v-text="product.album_name"/>
 
         <div class="flex items-center gap-2">
-          <span class="c-sub-600 paragraph-xs">02/01/2024</span>
+          <span class="c-sub-600 paragraph-xs">{{ product.created_at }}</span>
           <span class="label-sm c-soft-300">•</span>
-          <span class="c-sub-600 paragraph-xs">{{ product.songs.length }} Parça</span>
+          <span class="c-sub-600 paragraph-xs">{{ product.song_count }}</span>
           <span class="label-sm c-soft-300">•</span>
-          <span class="c-sub-600 paragraph-xs">{{ product.duration }}</span>
+          <span class="c-sub-600 paragraph-xs">{{ product.total_duration }}</span>
         </div>
 
         <div class="flex items-center mt-2" v-for="artist in product.main_artists">
@@ -28,11 +29,10 @@
             <img class="w-full h-full image-fluid" :src="artist.image"/>
           </div>
           <p class="label-sm c-sub-600 me-1">{{ artist.name }}</p>
-          <p class="c-soft-400 paragraph-xs">@ellenrow</p>
         </div>
         <div class="flex items-center gap-2 w-96 mt-auto">
 
-          <AppSelectInput class="bg-white" v-model="product.status" :config="produtStatusConfig">
+          <AppSelectInput class="bg-white" v-model="product.status" :config="productStatusConfig">
 
           </AppSelectInput>
           <RegularButton class="w-full">
@@ -144,7 +144,7 @@ const remove = () => {
 }
 
 
-const produtStatusConfig = computed(() => {
+const productStatusConfig = computed(() => {
   return {
     data: [
       {
