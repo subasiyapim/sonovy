@@ -130,7 +130,6 @@ class ProductController extends Controller
 
         $response = new ProductShowResource($product, $tab);
 
-        dd($response->resolve());
         return inertia('Control/Products/Show',
             [
                 'product' => $response->resolve(),
@@ -175,6 +174,7 @@ class ProductController extends Controller
             'media'
         );
 
+        dd($product);
         $props = [
             "product" => $product,
             "step" => $step,

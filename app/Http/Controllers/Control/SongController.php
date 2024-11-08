@@ -42,8 +42,23 @@ class SongController extends Controller
         $main_artists = $request->input('main_artists');
         $featuring_artists = $request->input('featuring_artists');
 
-        $song->featuringArtists()->sync($featuring_artists, ['is_main' => false]);
-        $song->artists()->sync($main_artists, ['is_main' => true]);
+        DB::table('artist_song')->where('song_id', $song->id)->delete();
+
+        DB::table('artist_song')->insert([
+            'song_id' => $song->id,
+            'artist_id' => $main_artists,
+            'is_main' => true
+        ]);
+
+        if (!empty($featuring_artists)) {
+            foreach ($featuring_artists as $featuring_artist) {
+                DB::table('artist_song')->insert([
+                    'song_id' => $song->id,
+                    'artist_id' => $featuring_artist,
+                    'is_main' => false
+                ]);
+            }
+        }
     }
 
     private static function updateLyricsWriters(SongUpdateRequest $request, Song $song)
