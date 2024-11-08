@@ -171,7 +171,7 @@ class ProductController extends Controller
             'media'
         );
 
-        dd($product);
+
 
         $props = [
             "product" => $product,
@@ -227,7 +227,6 @@ class ProductController extends Controller
                 self::createDownloadPlatforms($request, $product);
             case 4:
                 self::createPromotions($product, $data);
-
         }
 
         $product->update($this->excepted_data);
@@ -453,7 +452,6 @@ class ProductController extends Controller
                 $product->promotions()->create($promotion);
             }
         }
-
     }
 
     /**
