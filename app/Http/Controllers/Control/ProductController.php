@@ -171,8 +171,6 @@ class ProductController extends Controller
             'media'
         );
 
-
-
         $props = [
             "product" => $product,
             "step" => $step,
