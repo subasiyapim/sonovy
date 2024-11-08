@@ -73,13 +73,19 @@ class Platform extends Model implements HasMedia
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'broadcast_download_platform', 'platform_id', 'product_id')
-            ->withPivot('price', 'pre_order_date', 'release_date');
+            ->withPivot('price', 'pre_order_date', 'release_date', 'status');
     }
 
     public function artists(): BelongsToMany
     {
         return $this->belongsToMany(Artist::class, 'artist_platform', 'platform_id', 'artist_id')
             ->withPivot('url');
+    }
+
+    public function histories(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_platform_history', 'platform_id', 'product_id')
+            ->withPivot('status', 'created_at', 'updated_at');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

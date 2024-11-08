@@ -15,33 +15,33 @@
       <div class=" flex-1 ms-4 flex flex-col">
         <h1 class="label-xl c-strong-950" v-text="product.album_name"/>
 
-       <div class="flex items-center gap-2">
-            <span class="c-sub-600 paragraph-xs">02/01/2024</span>
-            <span class="label-sm c-soft-300">•</span>
-            <span class="c-sub-600 paragraph-xs">{{product.songs.length}} Parça</span>
-             <span class="label-sm c-soft-300">•</span>
-            <span class="c-sub-600 paragraph-xs">{{product.duration}}</span>
-       </div>
+        <div class="flex items-center gap-2">
+          <span class="c-sub-600 paragraph-xs">02/01/2024</span>
+          <span class="label-sm c-soft-300">•</span>
+          <span class="c-sub-600 paragraph-xs">{{ product.songs.length }} Parça</span>
+          <span class="label-sm c-soft-300">•</span>
+          <span class="c-sub-600 paragraph-xs">{{ product.duration }}</span>
+        </div>
 
         <div class="flex items-center mt-2" v-for="artist in product.main_artists">
-            <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-3">
-                 <img class="w-full h-full image-fluid" :src="artist.image"/>
-            </div>
-            <p  class="label-sm c-sub-600 me-1">{{artist.name}}</p>
-            <p class="c-soft-400 paragraph-xs">@ellenrow</p>
+          <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-3">
+            <img class="w-full h-full image-fluid" :src="artist.image"/>
+          </div>
+          <p class="label-sm c-sub-600 me-1">{{ artist.name }}</p>
+          <p class="c-soft-400 paragraph-xs">@ellenrow</p>
         </div>
         <div class="flex items-center gap-2 w-96 mt-auto">
 
-            <AppSelectInput class="bg-white" v-model="product.status" :config="produtStatusConfig">
+          <AppSelectInput class="bg-white" v-model="product.status" :config="produtStatusConfig">
 
-            </AppSelectInput>
-            <RegularButton class="w-full">
-                <template #icon>
-                    <EditLineIcon color="var(--sub-600)" />
-                </template>
-                Yayını Düzenle
+          </AppSelectInput>
+          <RegularButton class="w-full">
+            <template #icon>
+              <EditLineIcon color="var(--sub-600)"/>
+            </template>
+            Yayını Düzenle
 
-            </RegularButton>
+          </RegularButton>
 
         </div>
       </div>
@@ -51,7 +51,7 @@
         </RegularButton>
 
         <RegularButton @click="remove">
-            Geri Çek
+          Geri Çek
         </RegularButton>
         <RegularButton @click="remove">
           Tekrar Gönder
@@ -76,10 +76,10 @@
     </div>
     <!---APP TABS --->
     <div class="mt-32 ">
-        <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"></AppTabs>
+      <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"></AppTabs>
     </div>
     <div class="px-8 pb-10">
-         <component :product="product" :is="tabs.find(e => e.slug == currentTab)?.component"></component>
+      <component :product="product" :is="tabs.find(e => e.slug == currentTab)?.component"></component>
     </div>
 
   </AdminLayout>
@@ -102,7 +102,7 @@ import {
   WorldIcon,
   EditLineIcon
 } from '@/Components/Icons'
-import {PrimaryButton,RegularButton} from '@/Components/Buttons'
+import {PrimaryButton, RegularButton} from '@/Components/Buttons'
 import {AppSelectInput} from '@/Components/Form'
 import {AppTabs} from '@/Components/Widgets'
 import {BasicBadge} from '@/Components/Badges'
@@ -111,9 +111,9 @@ import {BasicBadge} from '@/Components/Badges'
 import {useDefaultStore} from "@/Stores/default";
 import {TidalIcon, YoutubeIcon} from "@/Components/Icons/index.js";
 import {computed, ref} from "vue";
-import {useForm, usePage,router} from '@inertiajs/vue3';
+import {useForm, usePage, router} from '@inertiajs/vue3';
 import MetadataTab from './ShowTabs/metadata.vue';
-import Historyab from './ShowTabs/history.vue';
+import HistoryTab from './ShowTabs/history.vue';
 import RegionsTab from './ShowTabs/regions.vue';
 import DistributionsTab from './ShowTabs/distributions.vue';
 import PromotionsTab from './ShowTabs/promotions.vue';
@@ -144,75 +144,74 @@ const remove = () => {
 }
 
 
-
 const produtStatusConfig = computed(() => {
-    return {
-        data:[
-            {
-                label:"Taslak",
-                value:1,
-            },
-             {
-                label:"İnceleniyor",
-                value:2,
-            },
-            {
-                label:"Yayınlandı",
-                value:3,
-            },
-            {
-                label:"Reddedildi",
-                value:4,
-            },
-            {
-                label:"Geri Çekildi",
-                value:5,
-            },
-            {
-                label:"Planlandı",
-                value:6,
-            }
-        ],
-    };
+  return {
+    data: [
+      {
+        label: "Taslak",
+        value: 1,
+      },
+      {
+        label: "İnceleniyor",
+        value: 2,
+      },
+      {
+        label: "Yayınlandı",
+        value: 3,
+      },
+      {
+        label: "Reddedildi",
+        value: 4,
+      },
+      {
+        label: "Geri Çekildi",
+        value: 5,
+      },
+      {
+        label: "Planlandı",
+        value: 6,
+      }
+    ],
+  };
 })
 const tabs = ref([
-    {
-        title:"Metadata",
-        slug:"metadata",
-        component: MetadataTab,
-    },
-     {
-        title:"Parçalar",
-        slug:"songs",
-        component: SongsTab,
-    },
-     {
-        title:"Bölgeler",
-        slug:"regios",
-        component: RegionsTab,
-    },
-     {
-        title:"Promosyon",
-        slug:"promotion",
-        component: PromotionsTab,
-    },
-     {
-        title:"Dağıtım",
-        slug:"distribution",
-        component:DistributionsTab ,
-    },
-     {
-        title:"Tarihçe",
-        slug:"history",
-        component: Historyab ,
-    },
+  {
+    title: "Metadata",
+    slug: "metadata",
+    component: MetadataTab,
+  },
+  {
+    title: "Parçalar",
+    slug: "songs",
+    component: SongsTab,
+  },
+  {
+    title: "Bölgeler",
+    slug: "regions",
+    component: RegionsTab,
+  },
+  {
+    title: "Promosyon",
+    slug: "promotion",
+    component: PromotionsTab,
+  },
+  {
+    title: "Dağıtım",
+    slug: "distribution",
+    component: DistributionsTab,
+  },
+  {
+    title: "Tarihçe",
+    slug: "history",
+    component: HistoryTab,
+  },
 ])
 
 const onTabChange = (tab) => {
 
-    router.visit(route(route().current(),props.product.id ?? 4),{
-       data:{ slug:tab.slug}
-    });
+  router.visit(route(route().current(), props.product.id ?? 4), {
+    data: {slug: tab.slug}
+  });
 }
 </script>
 
