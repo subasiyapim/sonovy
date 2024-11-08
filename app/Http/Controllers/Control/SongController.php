@@ -21,6 +21,7 @@ use App\Services\ISRCServices;
 use App\Services\LanguageServices;
 use App\Services\SongServices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -41,22 +42,10 @@ class SongController extends Controller
         $main_artists = $request->input('main_artists');
         $featuring_artists = $request->input('featuring_artists');
 
+        $song->artists()->delete();
+        $song->featuringArtists()->sync($featuring_artists, ['is_main' => false]);
 
-        if (!empty($featuring_artists)) {
-            $song->artists()->delete();
-
-            foreach ($featuring_artists as $featuring_artist) {
-                $song->artists()->create([
-                    'artist_id' => $featuring_artist['id'],
-                    'is_main' => false
-                ]);
-            }
-
-            $song->artists()->create([
-                'artist_id' => $main_artists,
-                'is_main' => true
-            ]);
-        }
+        $song->artists()->syncWithoutDetaching($main_artists, ['is_main' => true]);
     }
 
     private static function updateLyricsWriters(SongUpdateRequest $request, Song $song)
@@ -64,13 +53,7 @@ class SongController extends Controller
         $lyrics_writers = $request->input('lyrics_writers');
 
         if (!empty($lyrics_writers)) {
-            $song->lyricsWriters()->delete();
-
-            foreach ($lyrics_writers as $lyrics_writer) {
-                $song->lyricsWriters()->create([
-                    'user_id' => $lyrics_writer['id']
-                ]);
-            }
+            $song->lyricsWriters()->sync($lyrics_writers);
         }
     }
 
@@ -79,13 +62,13 @@ class SongController extends Controller
         $musicians = $request->input('musicians');
 
         if (!empty($musicians)) {
-            $song->musicians()->delete();
+            DB::table('song_musician')->where('song_id', $song->id)->delete();
 
             foreach ($musicians as $musician) {
-                $song->musicians()->create([
-                    'user_id' => $musician['id'],
-                    'role' => $musician['role'],
-                    'is_main' => $musician['is_main'] ?? false
+                DB::table('song_musician')->insert([
+                    'song_id' => $song->id,
+                    'musician_id' => $musician['id'],
+                    'branch_id' => $musician['role']
                 ]);
             }
         }
@@ -193,10 +176,10 @@ class SongController extends Controller
         return redirect()->back()
             ->with([
                 'notification' =>
-                [
-                    __('control.notification_updated', ['model' => __('control.song.title_singular')]),
-                    "message" => "Şarkı başarıyla güncellendi"
-                ]
+                    [
+                        __('control.notification_updated', ['model' => __('control.song.title_singular')]),
+                        "message" => "Şarkı başarıyla güncellendi"
+                    ]
             ]);
     }
 
@@ -209,11 +192,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                    [
-                        'type' => 'error',
-                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                        'model' => __('control.song.title_singular')
-                    ]
+                        [
+                            'type' => 'error',
+                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                            'model' => __('control.song.title_singular')
+                        ]
                 ]
             );
         }
