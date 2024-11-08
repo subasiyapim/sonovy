@@ -7,14 +7,36 @@
         </div>
 
 <div class="flex flex-col gap-6">
-    <SectionHeader title="YAYIN VE TANITIM METNİ"></SectionHeader>
-    <div class="flex flex-col gap-6" v-for="(info,index) in form.promotion_info">
-        <FormElement label-width="190px" :error="form.errors[`promotion_info.${index}.language_id`]" type="select" label="Tanıtım Dil" v-model="info.language_id" :required="true" placeholder="Lütfen Seçiniz" :config="selectConfig">
-        </FormElement>
-        <FormElement label-width="190px"  :error="form.errors[`promotion_info.${index}.title`]" type="text" label="Vurucu Cümle" v-model="info.title" placeholder="Yapım Yılı" >
-        </FormElement>
-        <FormElement label-width="190px"  :error="form.errors[`promotion_info.${index}.promotion_text`]" type="textarea" :required="true" v-model="info.promotion_text" label="Yayın Tanıtım Metni" placeholder="Metni giriniz">
-        </FormElement>
+    <div  v-for="(info,index) in form.promotion_info">
+        <SectionHeader title="YAYIN VE TANITIM METNİ" class="mb-2"></SectionHeader>
+        <div class="flex flex-col gap-6 px-1">
+            <FormElement label-width="190px" :error="form.errors[`promotion_info.${index}.language_id`]" type="select" label="Tanıtım Dil" v-model="info.language_id" :required="true" placeholder="Lütfen Seçiniz" :config="selectConfig">
+                    <template #option="scope">
+                        <span>{{ scope.data.iconKey }}</span>
+                        <span class="paragraph-sm c-strong-950">
+                                        {{ scope.data.label }}
+                                    </span>
+                    </template>
+                    <template #model="scope">
+
+                        <div v-if="scope.data" class="flex items-center gap-2">
+
+                            <span>{{ selectConfig.data.find((el) => el.value == scope.data)?.iconKey }}</span>
+                            <span>{{ selectConfig.data.find((el) => el.value == scope.data)?.label }}</span>
+                        </div>
+                    </template>
+            </FormElement>
+            <FormElement label-width="190px"  :error="form.errors[`promotion_info.${index}.title`]" type="text" label="Vurucu Cümle" v-model="info.title" placeholder="Yapım Yılı" >
+            </FormElement>
+            <FormElement label-width="190px"  :error="form.errors[`promotion_info.${index}.promotion_text`]" type="textarea" :required="true" v-model="info.promotion_text" label="Yayın Tanıtım Metni" placeholder="Metni giriniz">
+            </FormElement>
+        </div>
+        <div class="flex items-center justify-end mt-2">
+            <button @click="form.promotion_info.splice(index,1)" class="flex items-center gap-2">
+                <TrashIcon color="var(--error-500)" />
+                <span class="label-sm c-error-500">Tanıtım Yazısını Sil</span>
+            </button>
+        </div>
     </div>
     <div>
         <button @click="form.promotion_info.push({})" class="flex items-center justify-center gap-2 w-auto">
@@ -22,9 +44,6 @@
             <p class="label-xs c-blue-500">Farklı Dilde Tanıtım Metni Ekle</p>
         </button>
     </div>
-
-
-
 
 </div>
 </template>
@@ -35,7 +54,7 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed,ref} from 'vue';
 import {FormElement,AppTextInput} from '@/Components/Form';
-import {AddIcon,Icon} from '@/Components/Icons'
+import {AddIcon,Icon,TrashIcon} from '@/Components/Icons'
 import { usePage} from '@inertiajs/vue3';
 const props = defineProps({
     product:{},

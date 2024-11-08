@@ -1,5 +1,5 @@
 <template>
-   <div class="w-full flex h-9 border-text-input flex items-center radius-8 c-white-500" :class="hasSlot('icon') || type == 'web' || type == 'phone' ? 'px-2.5' :''">
+   <div class="w-full flex h-9 border-text-input flex items-center radius-8 c-white-500 bg-white" :class="hasSlot('icon') || type == 'web' || type == 'phone' ? 'px-2.5' :''">
         <div v-if="hasSlot('icon')">
             <slot  name="icon" />
         </div>
@@ -20,7 +20,7 @@
                 </div>
         </div>
 
-        <input v-model="element" @input="onInput" @change="onChange" :disabled="disabled" v-debounce="400" ref="inputEl" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent label-sm !font-normal disabledBg" :type="type" :placeholder="placeholder">
+        <input v-model="element" @input="onInput" @change="onChange" :disabled="disabled" v-debounce="400" ref="inputEl" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent label-sm !font-normal disabledBg " :type="type" :placeholder="placeholder">
         <IconButton v-if="type == 'password'" @click="onEyeClicked">
            <EyeOnIcon  v-if="isPasswordHidden" color="var(--sub-600)" />
            <EyeOffIcon v-else color="var(--sub-600)" />
