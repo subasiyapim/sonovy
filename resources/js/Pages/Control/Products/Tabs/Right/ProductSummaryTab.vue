@@ -31,7 +31,7 @@
     <div>
         <p class="paragraph-xs c-sub-600">Düet</p>
         <span class="label-sm c-strong-950">
-            <template v-for="artist in product.featuring_artists ">
+            <template v-for="artist in product.featured_artists">
                 {{artist.name}}
             </template>
         </span>

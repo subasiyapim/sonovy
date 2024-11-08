@@ -106,7 +106,7 @@ const removeImage = (index) => {
 };
 onBeforeMount(() => {
     if(props.image){
-        images.value.push({
+        images.push({
             url:props.image,
         })
     }

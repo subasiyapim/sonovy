@@ -149,12 +149,12 @@ const step1Element = useForm({
 
 const step2Element = useForm({
      step: props.step,
-   songs:[],
+    songs:[],
 });
 const step3Element = useForm({
     production_year:null,
     published_country_type:1,
-     step: props.step,
+    step: props.step,
     published_countries:[],
     previously_released:true,
     publish_year:null,
@@ -169,6 +169,8 @@ const currentTab = ref(props.step-1);
 
 
 const submitStep = async () => {
+    console.log(currentTab.value);
+
     if (currentTab.value == 0) {
         step1Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
@@ -184,8 +186,27 @@ const submitStep = async () => {
         });
     }
     if (currentTab.value == 2) {
-        step3Element.platforms = step3Element.platforms.filter((el) => el.isSelected);
+        console.log(step3Element.platforms);
 
+        let tempPlatforms = [];
+        let toUploadBackPlatforms = step3Element.platforms;
+
+
+        step3Element.platforms.forEach(element => {
+            if(element.isSelected){
+
+                tempPlatforms.push({
+                    id:element.value,
+                    price:element.price,
+                    publish_date:element.publish_date,
+                    pre_order_date:element.pre_order_date
+                })
+            }
+
+        });
+
+
+    step3Element.platforms = tempPlatforms;
 
         step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
@@ -195,11 +216,17 @@ const submitStep = async () => {
             },
             onSuccess: (e) => {
                 router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))
+            },
+            onFinish:() => {
+                   step3Element.platforms = toUploadBackPlatforms;
+
             }
         });
     }
 
       if (currentTab.value == 3) {
+
+
         step4Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
             onError: (e) => {
@@ -216,6 +243,7 @@ const submitStep = async () => {
 onBeforeMount(() => {
 
     step1Element.main_artists = props.product.main_artists.map((e) => e.id) ?? [];
+    step1Element.featuring_artists = props.product.featured_artists.map((e) => e.id) ?? [];
 });
 
 </script>

@@ -19,19 +19,29 @@ class ProductUpdateRequest extends FormRequest
 
     private static function stepFour(): array
     {
-        return [];
+        $data = [
+            'promotion_info' => [
+                'required',
+                'array',
+            ],
+
+        ];
+
+        return array_merge($data, self::common());
     }
 
     private static function stepThree($published_country_type): array
     {
         $data = [
-            'production_year' => ['required', 'integer', 'min:1900', 'max:'.date('Y')],
+            'production_year' => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
             'previously_released' => ['required', 'boolean'],
             'previous_release_date' => ['required_if:previously_released,true', 'nullable', 'date'],
             'published_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
             'physical_release_date' => ['required', 'date'],
             'published_countries' => [
-                'required', 'array', function ($attribute, $value, $fail) use ($published_country_type) {
+                'required',
+                'array',
+                function ($attribute, $value, $fail) use ($published_country_type) {
                     if ($published_country_type !== ProductPublishedCountryTypeEnum::ALL) {
                         if (count($value) < 1) {
                             $fail("The {$attribute} must have at least 1 item(s) when published_country_type is specific.");
@@ -135,5 +145,4 @@ class ProductUpdateRequest extends FormRequest
             'published_countries.*.id' => __('control.product.fields.published_countries'),
         ];
     }
-
 }

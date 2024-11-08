@@ -74,6 +74,7 @@
           </div>
         </template>
       </FormElement>
+
       <FormElement label-width="190px" :error="form.errors.featuring_artists"
                    v-model="form.featuring_artists"
                    type="multiselect" label="Düet Sanatçı" placeholder="Seçiniz" :config="artistSelectConfig">
@@ -287,6 +288,21 @@ onBeforeMount(() => {
         });
 
     }
+    if(props.product.featured_artists){
+
+        props.product.featured_artists.forEach(element => {
+            console.log("ELEENT",element);
+
+            artistSelectConfig.value.data.push({
+                "image" : element.media[0]?.original_url,
+                "value" : element.id,
+                "label" : element.name,
+            });
+        });
+
+    }
+
+
 });
 
 </script>

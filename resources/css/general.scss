@@ -176,6 +176,10 @@
     background: var(--red-50);
 }
 
+.hasError .dp__input {
+     background: var(--red-50) !important;
+     border: 1px solid var(--error-500) !important;
+}
 .appSelectInput::placeholder{
     color: var(--soft-400);
     @extend .label-sm;

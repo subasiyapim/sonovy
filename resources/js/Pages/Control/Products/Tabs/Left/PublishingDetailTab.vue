@@ -91,35 +91,41 @@
 
             <AppTableColumn label="İndirme Fiyatı">
                 <template #default="scope">
+                    <FormElement :error="form.errors[`platforms.${scope.index}.price`]" direction="vertical" :disabled="!scope.row.isSelected" v-model="scope.row.price"  placeholder="0.00"></FormElement>
 
-                    <AppTextInput :disabled="!scope.row.isSelected" v-model="scope.row.download_price" class="bg-white" placeholder="0.00"> </AppTextInput>
                 </template>
             </AppTableColumn>
 
             <AppTableColumn label="Ön Sipariş Tarihi">
 
                 <template #default="scope">
+                    <FormElement :error="form.errors[`platforms.${scope.index}.pre_order_date`]" type="custom" direction="vertical">
 
-                    <VueDatePicker :disabled="!scope.row.isSelected" v-model="scope.row.pre_order_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
-                        <template #input-icon>
-                        <div class="p-3">
-                                <CalendarIcon color="var(--sub-600)"/>
-                        </div>
-                        </template>
-                    </VueDatePicker>
+                        <VueDatePicker :disabled="!scope.row.isSelected" v-model="scope.row.pre_order_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+                            <template #input-icon>
+                                <div class="p-3">
+                                        <CalendarIcon color="var(--sub-600)"/>
+                                </div>
+                            </template>
+                        </VueDatePicker>
+                    </FormElement>
                  </template>
             </AppTableColumn>
 
             <AppTableColumn label="Yayın Tarihi" align="end">
 
                 <template #default="scope">
-                    <VueDatePicker :disabled="!scope.row.isSelected"   v-model="scope.row.publish_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
-                        <template #input-icon>
-                        <div class="p-3">
-                                <CalendarIcon color="var(--sub-600)"/>
-                        </div>
-                        </template>
-                    </VueDatePicker>
+                    <FormElement :error="form.errors[`platforms.${scope.index}.publish_date`]" type="custom" direction="vertical">
+                         <VueDatePicker :disabled="!scope.row.isSelected"   v-model="scope.row.publish_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+                            <template #input-icon>
+                                <div class="p-3">
+                                    <CalendarIcon color="var(--sub-600)"/>
+                                </div>
+                            </template>
+                        </VueDatePicker>
+                    </FormElement>
+
+
                 </template>
             </AppTableColumn>
 
@@ -234,7 +240,7 @@ const onPlatformSelected = (rows) => {
             finded.isSelected = true;
 
     });
-//    form.value.platforms = rows.map((row) =>  { return {id:row.value,download_price:0,pre_order_date:null,publish_date:null}});
+//    form.value.platforms = rows.map((row) =>  { return {id:row.value,price:0,pre_order_date:null,publish_date:null}});
 }
 
 const onPublishDateChoosen = (e) => {
