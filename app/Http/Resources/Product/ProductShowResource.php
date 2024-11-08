@@ -23,11 +23,12 @@ class ProductShowResource extends JsonResource
     {
         return match ($this->tab) {
             'metadata' => $this->metadata(),
-            'songs' => $this->songs(),
+            'songs' => $this->songs()->toArray(),
             'regions' => $this->regions(),
             'promotion' => $this->promotion(),
             'distribution' => $this->distribution(),
             'history' => $this->history(),
+            default => $this->metadata(),
         };
     }
 
@@ -39,29 +40,12 @@ class ProductShowResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'type' => $this->type,
-            'album_name' => $this->album_name,
-            'version' => $this->version,
-            'genre_id' => $this->genre_id,
-            'sub_genre_id' => $this->sub_genre_id,
-            'format_id' => $this->format_id,
-            'label_id' => $this->label_id,
-            'p_line' => $this->p_line,
-            'c_line' => $this->c_line,
-            'upc_code' => $this->upc_code,
-            'catalog_number' => $this->catalog_number,
-            'language_id' => $this->language_id,
-            'main_price' => $this->main_price,
-            'production_year' => $this->production_year,
-            'previously_released' => $this->previously_released,
-            'previous_release_date' => $this->previous_release_date,
-            'publishing_country_type' => $this->publishing_country_type,
-            'created_by' => $this->created_by,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'image' => $this->image,
-            'tab' => self::getTabContent(),
+            'song_count' => $this->songs->count(),
+            'total_duration' => totalDuration($this->songs, true),
+            'main_artist' => $this->mainArtists,
+            'platforms' => $this->downloadPlatforms,
+            self::getTabContent()
         ];
     }
 
@@ -100,11 +84,37 @@ class ProductShowResource extends JsonResource
         ];
     }
 
-    private function songs(): array
+    private function songs()
     {
-        return [
+        return $this->songs->map(function ($song) {
+            return [
+                'id' => $song->id,
+                'name' => $song->name,
+                'version' => $song->version,
+                'type' => SongTypeEnum::from($song->type)->title(),
+                'genre' => $song->genre->name,
+                'sub_genre' => $song->subGenre->name,
+                'is_instrumental' => $song->is_instrumental,
+                'language' => $song->language?->language ?? $song->language?->name,
+                'lyrics' => $song->lyrics,
+                'lyrics_writers' => $song->lyrics_writers,
+                'iswc' => $song->iswc,
+                'isrc' => $song->isrc,
+                'preview_start' => $song->preview_start,
+                'is_cover' => $song->is_cover,
+                'released_before' => $song->released_before,
+                'original_release_date' => $song->original_release_date,
+                'details' => $song->details,
+                'acr_response' => $song->acr_response,
+                'duration' => $song->duration,
+                'created_by' => $song->created_by,
+                'status' => $song->status,
+                'status_changed_at' => $song->status_changed_at,
+                'status_changed_by' => $song->status_changed_by,
+                'note' => $song->note,
+            ];
+        });
 
-        ];
     }
 
     private function distribution(): array
@@ -137,13 +147,15 @@ class ProductShowResource extends JsonResource
 
     private function format()
     {
-        return AlbumTypeEnum::from($this->format_id)->title();
+        return $this->format_id ? AlbumTypeEnum::from($this->format_id)->title() : $this->format_id;
     }
 
     private function language()
     {
         $country = Country::find($this->language_id);
-        return $country->language ?? $country->name;
+
+
+        return $country ? $country->language ?? $country->name : $this->language_id;
     }
 
     private function artists()

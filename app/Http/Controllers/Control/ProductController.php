@@ -107,7 +107,7 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product, $tab = 'metadata'): \Inertia\Response|ResponseFactory
+    public function show(Product $product): \Inertia\Response|ResponseFactory
     {
         abort_if(Gate::denies('product_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -125,10 +125,13 @@ class ProductController extends Controller
             'histories'
         );
 
+        $tab = 'metadata';
+        $tab = request()->input('slug') ?? $tab;
+
         $response = response()->json(new ProductShowResource($product, $tab));
 
         $content = $response->getContent();
-
+        //dd($content);
         return inertia('Control/Products/Show', compact('content', 'product'));
     }
 
@@ -145,7 +148,7 @@ class ProductController extends Controller
         $product_published_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());
         $main_prices = enumToSelectInputFormat(MainPriceEnum::getTitles());
         $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
-        $total_song_duration = $product->totalSongsDuration() ?? 0;
+        $total_song_duration = totalDuration($product->songs);
 
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
@@ -162,8 +165,13 @@ class ProductController extends Controller
             'featuredArtists',
             'songs.mainArtist',
             'songs.featuringArtists',
+            'songs.musicians',
+            'songs.participants',
+            'songs.lyricsWriters',
             'media'
         );
+
+        dd($product);
 
         $props = [
             "product" => $product,
