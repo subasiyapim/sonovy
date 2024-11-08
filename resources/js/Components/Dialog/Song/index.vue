@@ -145,7 +145,7 @@
             <div class="flex-1">
               <AppSelectInput v-model="musician.role" :config="roleConfig"
                               :placeholder="__('control.song.fields.roles_placeholder')"></AppSelectInput>
-              <button @click="form.musicans.splice(musicanIndex,1)" class="flex items-center ms-auto gap-2 mt-2">
+              <button @click="form.musicians.splice(musicanIndex,1)" class="flex items-center ms-auto gap-2 mt-2">
 
                 <span class="c-error-500 label-xs">Temizle</span>
               </button>
@@ -216,7 +216,7 @@ import BaseDialog from '../BaseDialog.vue';
 import {SectionHeader} from '@/Components/Widgets';
 import {AddIcon} from '@/Components/Icons'
 import {RegularButton, PrimaryButton} from '@/Components/Buttons'
-import {computed, ref, onMounted} from 'vue';
+import {computed, ref, onBeforeMount} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
 import {useCrudStore} from '@/Stores/useCrudStore';
@@ -245,26 +245,38 @@ const adding = ref(false)
 const image = ref();
 const form = useForm({
     product_id:props.product_id,
-  id: props.song.id,
-  name: props.song.name,
-  version: props.song.version,
-  main_artists: props.song.main_artists,
-    featuring_artists:props.song.featuring_artists,
-  genre_id: props.song.genre_id,
-  sub_genre_id: props.song.sub_genre_id,
-  is_instrumental: props.song.is_instrumental,
-  isrc: props.song.isrc,
-  lyrics_writers: [null],
-  musicians: [{}],
-  participants: [{}],
-  preview_time: [0, 20]
+    id: props.song.id,
+    name: props.song.name,
+    version: props.song.version,
+    main_artists: [],
+    featuring_artists:[],
+    genre_id: props.song.genre_id,
+    sub_genre_id: props.song.sub_genre_id,
+    is_instrumental: props.song.is_instrumental,
+    isrc: props.song.isrc,
+    lyrics_writers: [null],
+    musicians: [{}],
+    participants: [{}],
+    preview_time: [0, 20]
 });
 
 const artistSelectConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
-    data: [],
+    data: [...(props.song?.featuring_artists ?? [])?.map((element) => {
+       return {
+               label: element.name,
+               value:element.id,
+               image:element.media[0]?.original_url,
+            };
+    }),...(props.song?.main_artists ?? []).map((element) => {
+       return {
+               label: element.name,
+               value:element.id,
+               image:element.media[0]?.original_url,
+            };
+    })],
     remote: async (query) => {
 
       const response = await crudStore.get(route('control.search.artists', {
@@ -282,11 +294,17 @@ const artistSelectConfig = computed(() => {
     }
   }
 })
+
 const musicansSelectConfig = computed(() => {
   return {
 
     hasSearch: true,
-    data: [],
+    data: (props.song?.musicians ?? [])?.map((element) => {
+       return {
+                value:element.id,
+               label: element.name,
+            };
+    }),
     remote: async (query) => {
       const response = await crudStore.get(route('control.search.users', {
         search: query
@@ -307,7 +325,12 @@ const lyricsWriterConfig = computed(() => {
   return {
 
     hasSearch: true,
-    data: [],
+    data: (props.song?.lyrics_writers ?? [])?.map((element) => {
+       return {
+                value:element.id,
+               label: element.name,
+            };
+    }),
     remote: async (query) => {
       const response = await crudStore.get(route('control.search.users', {
         search: query
@@ -329,7 +352,12 @@ const participantSelectConfig = computed(() => {
   return {
 
     hasSearch: true,
-    data: [],
+      data: (props.song?.participants ?? [])?.map((element) => {
+       return {
+                value:element.id,
+               label: element.name,
+            };
+    }),
     remote: async (query) => {
       const response = await crudStore.get(route('control.search.users', {
         search: query
@@ -416,31 +444,26 @@ const roleConfig = computed(() => {
     data: usePage().props.artistBranches,
   }
 })
-onMounted(() => {
-  if (props.song) {
-    // form['id'] = props.song['id']
-    // form['name'] = props.song['name']
-    // form['about'] = props.song['about']
-    // form['phone'] = props.song['phone']
-    // form['website'] = props.song['website']
-    // form['ipi_code'] = props.song['ipi_code']
-    // form['isni_code'] = props.song['isni_code']
-    // form['artist_branches'] = props.song['artist_branches'].map((e) => e.id);
-    // form['platforms'] = props.song['platforms']
-    // form['platforms'].map((e) => {
-    //   e.value = e.id;
-    //   if (e.id == 4) {
-    //     choosenItunesField.value = e.url;
-    //   }
-    //   if (e.id == 2) {
-    //     choosenSpotifyField.value = e.url;
-    //   }
+onBeforeMount(() => {
+    if (props.song) {
+        form.featuring_artists  = (props.song.featuring_artists??[]).map((e) => e.id);
+        form.main_artists  = (props.song.main_artists??[]).map((e) => e.id);
 
+        form.musicians = (props.song.musicians ?? []).map((e) => {return{id:e.id,role:e.role}}) ?? [{}];
+        form.participants = (props.song.participants ?? []).map((e) => {return {id:e.id,tasks:e.tasks,rate:e.rate}}) ?? [{}];
+        form.lyrics_writers =  (props.song.lyrics_writers ?? []).map((e) => e.id) ?? [1];
 
-    // })
-    // form['country_id'] = props.song?.country?.id;
+        if(form.lyrics_writers.length == 0){
+                form.lyrics_writers = [null];
+        }
+        if(form.participants.length == 0){
+            form.participants = [{}]
+        }
+        if(form.musicians.length == 0){
+            form.musicians = [{}]
+        }
 
-  }
+    }
 });
 </script>
 

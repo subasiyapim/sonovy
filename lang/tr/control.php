@@ -1564,6 +1564,17 @@ return [
             'status' => 'Durum',
             'note' => 'Not',
         ],
+        'show' => [
+            'song_info' => 'Parça bilgileri',
+            "album_name" => "Albüm Adı",
+            "artist" => "Sanatçı Adı",
+            "label" => "Plak Şirketi",
+            "isrc" => "ISRC Kodu",
+            "upc_code" =>  "UPC Kodu",
+            'song_albums' => 'Albümdeki Diğer Parçalar',
+            'participants' => "Katılımcılar",
+
+        ],
         'fields' => [
             "name" => "Parçanın Adı",
             "name_placeholder" => "Lütfen giriniz",

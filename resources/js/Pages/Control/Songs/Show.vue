@@ -1,20 +1,34 @@
 <template>
 
-  <AdminLayout :showDatePicker="false" :title="__('control.label.show_header')"
-               :parentTitle="__('control.label.title_singular')"
+  <AdminLayout :showDatePicker="false" :title="__('control.song.show_header')"
+               :parentTitle="__('control.song.title_singular')"
                :hasPadding="false">
 
-    <div class="bg-white-400 h-44 p-5 relative">
-      <div class="">
-        <h1 class="label-xl c-strong-950" v-text="label.name"/>
-        <span class="c-sub-600 paragraph-medium" v-text="label.id"/>
-      </div>
-
-      <div
-          class="absolute rounded-full w-32 h-32 bg-blue-300 left-8 -bottom-16 flex items-center justify-center overflow-hidden">
+    <div class="bg-dark-green-800  p-5 flex  relative">
+       <div
+          class=" rounded-lg w-60 h-60 bg-blue-300 left-8 top-8 flex items-center justify-center overflow-hidden">
         <img class="w-full h-full object-cover"
-             :alt="label.name"
-             :src="label.image ? label.image.thumb : defaultStore.profileImage(label.name)">
+             :alt="song.name"
+             :src="song.image">
+      </div>
+      <div class=" flex-1 ms-4 flex flex-col justify-end">
+        <div class="bg-white rounded-lg flex items-center gap-2 px-2 py-1 w-min mb-6">
+            <CheckFilledIcon color="var(--dark-green-800)" />
+            <p class="label-xs c-strong-950"> Yayında</p>
+        </div>
+        <h1 style="line-height:72px;" class="text-5xl text-white font-semibold" v-text="song.name"/>
+
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-3">
+                <img class="w-full h-full image-fluid" :src="song.main_artist?.image"/>
+            </div>
+          <p class="label-sm text-white me-1">{{ song.main_artist?.name }}</p>
+          <p class="c-sub-600 paragraph-sm">@ellenrow</p>
+
+          <span class="text-white paragraph-sm">{{ song.duration }}</span>
+        </div>
+
+
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
         <PrimaryButton @click="remove">
@@ -33,79 +47,91 @@
     <div class="mt-32 flex items-start gap-8 h-full">
       <div class="px-8 flex-1 flex flex-col gap-12">
         <div>
-          <h1 class="mb-6 subheading-regular text-start" v-text="__('control.label.label_info')"/>
-          <div class="flex items-start gap-4">
+          <h1 class="mb-6 subheading-regular text-start" v-text="__('control.song.show.song_info')"/>
+          <div class="flex items-start gap-4 mb-3">
             <div class="flex flex-col gap-8 flex-1">
-              <div class="flex gap-3.5 items-center">
-                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                  <PersonCardIcon color="var(--sub-600)"/>
+
+
+
+                <div class="flex gap-3.5 items-center">
+                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                        <DocumentIcon color="var(--sub-600)"/>
+                    </div>
+                    <div>
+                        <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.album_name')"/>
+                        <span class="song-sm c-strong-950" v-text="song.isrc"/>
+                    </div>
                 </div>
-                <div>
-                  <p class="paragraph-xs c-sub-600" v-text="__('control.label.title_singular')"/>
-                  <span class="label-sm c-strong-950" v-text="label.name"/>
+                <div class="flex gap-3.5 items-center">
+                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                        <DocumentIcon color="var(--sub-600)"/>
+                    </div>
+                    <div>
+                        <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.artist')"/>
+                        <span class="song-sm c-strong-950" v-text="song.isrc"/>
+                    </div>
                 </div>
-              </div>
-              <div class="flex gap-3.5 items-center">
-                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                  <WorldIcon color="var(--sub-600)"/>
+                <div class="flex gap-3.5 items-center">
+                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                        <DocumentIcon color="var(--sub-600)"/>
+                    </div>
+                    <div>
+                        <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.label')"/>
+                        <span class="song-sm c-strong-950" v-text="song.isrc"/>
+                    </div>
                 </div>
-                <div>
-                  <p class="paragraph-xs c-sub-600" v-text="__('control.label.fields.country_id')"/>
-                  <span class="label-sm c-strong-950" v-text="label.country.name"/>
+
+
+
+                <div class="flex gap-3.5 items-center">
+                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                    <DocumentIcon color="var(--sub-600)"/>
+                    </div>
+                    <div>
+                    <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.isrc')"/>
+                    <span class="song-sm c-strong-950" v-text="song.isrc"/>
+                    </div>
                 </div>
-              </div>
-              <div class="flex gap-3.5 items-center">
-                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                  <PhoneIcon color="var(--sub-600)"/>
+                <div class="flex gap-3.5 items-center">
+                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                    <DocumentIcon color="var(--sub-600)"/>
+                    </div>
+                    <div>
+                    <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.upc_code')"/>
+                    <span class="song-sm c-strong-950" v-text="song.upc_code"/>
+                    </div>
                 </div>
-                <div>
-                  <p class="paragraph-xs c-sub-600" v-text="__('control.label.fields.address')"/>
-                  <span class="label-sm c-strong-950" v-text="label.address"/>
-                </div>
-              </div>
+
 
             </div>
             <div class="flex flex-col gap-8 flex-1">
+            <!--- SONG PLATFORM --->
               <div class="flex gap-3.5 items-center">
                 <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
                   <PhoneIcon color="var(--sub-600)"/>
                 </div>
                 <div>
-                  <p class="paragraph-xs c-sub-600" v-text="__('control.label.fields.phone')"/>
-                  <span class="label-sm c-strong-950" v-text="label.phone"/>
+                  <p class="paragraph-xs c-sub-600" v-text="'Youtube ID'"/>
+                  <span class="song-sm c-strong-950" v-text="'**'"/>
                 </div>
               </div>
-              <div class="flex gap-3.5 items-center">
-                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                  <LinkIcon color="var(--sub-600)"/>
-                </div>
-                <div>
-                  <p class="paragraph-xs c-sub-600" v-text="__('control.label.fields.web')"/>
-                  <span class="label-sm c-strong-950" v-text="label.web"/>
-                </div>
-              </div>
-              <div class="flex gap-3.5 items-center">
-                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                  <MessageIcon color="var(--sub-600)"/>
-                </div>
-                <div>
-                  <p class="paragraph-xs c-sub-600" v-text="__('control.label.fields.email')"/>
-                  <span class="label-sm c-strong-950" v-text="label.email"/>
-                </div>
-              </div>
-
             </div>
           </div>
+           <h1 class="mb-6 subheading-regular text-start" v-text="__('control.song.show.participants')"/>
+
         </div>
 
       </div>
       <div class="h-full bg-soft-200" style="width:1px;">
+
       </div>
       <div class="w-96 pr-8">
-        <h1 class="mb-6 subheading-regular" v-text="__('control.label.label_albums')"/>
+        <h1 class="mb-6 subheading-regular" >
+            {{__('control.song.show.song_albums')}} (12)
+        </h1>
 
-        <template v-if="label.products.length > 0">
-          <div v-for="product in label.products" class="flex p-4">
+        <template v-if="song.products.length > 0">
+          <div v-for="song in song.products" class="flex p-4">
             <div class="flex-1 flex items-center gap-4">
               <div class="w-8 h-8 rounded-lg overflow-hidden">
                 <img src="https://placehold.co/400x400"/>
@@ -124,11 +150,11 @@
           </div>
         </template>
         <template v-else>
-          <p v-text="__('control.label.album_notfound')"/>
+          <p v-text="__('control.song.album_notfound')"/>
         </template>
       </div>
     </div>
-    <LabelDialog :label="label" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
+    <LabelDialog :song="song" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -140,10 +166,11 @@ import {
   PercantageIcon,
   MessageIcon,
   PhoneIcon,
-  WorldIcon,
+  DocumentIcon,
   TrashIcon,
   EditIcon,
   SpotifyIcon,
+  CheckFilledIcon,
   GenreIcon,
   PlayFilledIcon,
   LinkIcon
@@ -157,7 +184,7 @@ import {useDefaultStore} from "@/Stores/default";
 import {LabelDialog} from '@/Components/Dialog';
 
 const props = defineProps({
-  label: {
+  song: {
     type: Object,
     required: true
   },
@@ -176,7 +203,7 @@ const appIncrementerConfig = {
 };
 
 const remove = () => {
-  router.delete(route('control.catalog.labels.destroy', props.label.id), {});
+  router.delete(route('control.catalog.labels.destroy', props.song.id), {});
 }
 </script>
 
