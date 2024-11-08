@@ -128,7 +128,7 @@ class ProductController extends Controller
         $response = response()->json(new ProductShowResource($product, $tab));
 
         $content = $response->getContent();
-        dd($content);
+
         return inertia('Control/Products/Show', compact('content', 'product'));
     }
 
