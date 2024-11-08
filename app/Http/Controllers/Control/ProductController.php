@@ -230,7 +230,6 @@ class ProductController extends Controller
                 self::createDownloadPlatforms($request, $product);
             case 4:
                 self::createPromotions($product, $data);
-
         }
 
         $product->update($this->excepted_data);
@@ -456,7 +455,6 @@ class ProductController extends Controller
                 $product->promotions()->create($promotion);
             }
         }
-
     }
 
     /**

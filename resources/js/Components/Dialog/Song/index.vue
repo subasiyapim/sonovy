@@ -4,8 +4,8 @@
     <template #icon>
       <img width="24" height="24" src="@/assets/images/mp3_active.png"/>
     </template>
-
     <SectionHeader :title="__('control.song.dialog.header_1')"/>
+
     <div class="p-5 flex flex-col gap-6">
       <FormElement label-width="190px"
                    :required="true"
@@ -123,8 +123,8 @@
                    :label="__('control.song.fields.lyrics')" :placeholder="__('control.song.fields.lyrics_placeholder')"
                    type="textarea">
       </FormElement>
-      <FormElement label-width="190px" :config="sliderConfig" v-model="form.preview_time"
-                   :label="__('control.song.fields.preview_time')" type="slider">
+      <FormElement label-width="190px" :config="sliderConfig" v-model="form.preview_start"
+                   :label="__('control.song.fields.preview_start')" type="slider">
       </FormElement>
     </div>
     <SectionHeader :title="__('control.song.dialog.header_3')"/>
@@ -257,7 +257,7 @@ const form = useForm({
     lyrics_writers: [null],
     musicians: [{}],
     participants: [{}],
-    preview_time: [0, 20]
+    preview_start: [0, 20]
 });
 
 const artistSelectConfig = computed(() => {
@@ -302,7 +302,7 @@ const musicansSelectConfig = computed(() => {
     data: (props.song?.musicians ?? [])?.map((element) => {
        return {
                 value:element.id,
-               label: element.name,
+                label: element.name,
             };
     }),
     remote: async (query) => {
@@ -354,8 +354,8 @@ const participantSelectConfig = computed(() => {
     hasSearch: true,
       data: (props.song?.participants ?? [])?.map((element) => {
        return {
-                value:element.id,
-               label: element.name,
+                value:element.user_id,
+                label: element.name,
             };
     }),
     remote: async (query) => {
@@ -447,10 +447,13 @@ const roleConfig = computed(() => {
 onBeforeMount(() => {
     if (props.song) {
         form.featuring_artists  = (props.song.featuring_artists??[]).map((e) => e.id);
-        form.main_artists  = (props.song.main_artists??[]).map((e) => e.id);
+       console.log("İMASD",props.song.main_artists);
+
+       form.main_artists  = (props.song.main_artists ?? []).map((e) => e.id);
+
 
         form.musicians = (props.song.musicians ?? []).map((e) => {return{id:e.id,role:e.role}}) ?? [{}];
-        form.participants = (props.song.participants ?? []).map((e) => {return {id:e.id,tasks:e.tasks,rate:e.rate}}) ?? [{}];
+        form.participants = (props.song.participants ?? []).map((e) => {return {id:e.user_id,tasks:e.tasks,rate:e.rate}}) ?? [{}];
         form.lyrics_writers =  (props.song.lyrics_writers ?? []).map((e) => e.id) ?? [1];
 
         if(form.lyrics_writers.length == 0){
