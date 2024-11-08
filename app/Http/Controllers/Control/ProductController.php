@@ -217,6 +217,9 @@ class ProductController extends Controller
                 $this->excepted_data = Arr::except($data, $this->excepted);
                 self::publishedCountries($product, $data);
                 self::createDownloadPlatforms($request, $product);
+            case 4:
+                self::createPromotions($product, $data);
+
         }
 
         $product->update($this->excepted_data);
@@ -432,21 +435,17 @@ class ProductController extends Controller
      * @param $product
      * @return void
      */
-    protected static function createPromotions(ProductStoreRequest $request, $product): void
+    protected static function createPromotions($product, $data): void
     {
-        if (isset($request->product_promotion_text) && is_array($request->product_promotion_text) && count($request->product_promotion_text) > 0) {
-            foreach ($request->product_promotion_text as $value) {
-                $product->introductions()->updateOrCreate(
-                    [
-                        'language_id' => $value['language_id'],
-                    ],
-                    [
-                        'p_line' => $value['punch_line'],
-                        'description' => $value['promotion_text'],
-                    ]
-                );
+        if (isset($data['promotions']) && is_array($data['promotions']) && count($data['promotions']) > 0) {
+
+            $product->promotions()->delete();
+
+            foreach ($data['promotions'] as $promotion) {
+                $product->promotions()->create($promotion);
             }
         }
+
     }
 
     /**

@@ -12,10 +12,8 @@ class Promotion extends Model
 
     protected $fillable = [
         'product_id',
-        'platform_id',
         'title',
         'description',
-        'date',
     ];
 
     public function product(): BelongsTo

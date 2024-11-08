@@ -4,6 +4,7 @@ namespace App\Http\Requests\Song;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class SongUpdateRequest extends FormRequest
 {
@@ -22,7 +23,6 @@ class SongUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        dd($this->request->all());
         return [
             'product_id' => ['required', 'exists:products,id'],
             'name' => ['required', 'string'],
@@ -45,7 +45,7 @@ class SongUpdateRequest extends FormRequest
             'participants.*.tasks' => ['required'],
             'participants.*.rate' => ['required'],
 
-            'isrc' => ['nullable', 'unique:songs,isrc'],
+            'isrc' => ['nullable', 'unique:songs,isrc,'.$this->song->id],
             'is_explicit' => ['nullable', 'boolean'],
             'iswc' => ['nullable', 'string', 'unique:songs,iswc'],
             'is_cover' => ['nullable', 'boolean'],

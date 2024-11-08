@@ -20,20 +20,20 @@ class ProductUpdateRequest extends FormRequest
     private static function stepFour(): array
     {
         $data = [
-            'promotion_info' => [
-                'required',
-                'array',
-            ],
-
+            'promotions' => ['array'],
+            'promotions.*.language_id' => ['required',],
+            'promotions.*.title' => ['required', 'string', 'min:3', 'max:100'],
+            'promotions.*.description' => ['required', 'string', 'min:3'],
         ];
 
         return array_merge($data, self::common());
+
     }
 
     private static function stepThree($published_country_type): array
     {
         $data = [
-            'production_year' => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
+            'production_year' => ['required', 'integer', 'min:1900', 'max:'.date('Y')],
             'previously_released' => ['required', 'boolean'],
             'previous_release_date' => ['required_if:previously_released,true', 'nullable', 'date'],
             'published_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
@@ -64,9 +64,8 @@ class ProductUpdateRequest extends FormRequest
         return [];
     }
 
-    private static function stepOne($mixed_album = false): array
+    private static function stepOne(): array
     {
-        // dd(request()->all());
         $data = [
             'type' => ['required', Rule::enum(ProductTypeEnum::class)],
             'album_name' => ['required', 'string', 'min:3', 'max:100'],
@@ -110,7 +109,7 @@ class ProductUpdateRequest extends FormRequest
     public function rules(): array
     {
         return match ($this->step) {
-            '1' => self::stepOne($this->mixed_album),
+            '1' => self::stepOne(),
             '2' => self::stepTwo(),
             '3' => self::stepThree($this->published_country_type),
             '4' => self::stepFour(),
