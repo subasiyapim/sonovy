@@ -34,7 +34,7 @@ class SongUpdateRequest extends FormRequest
             'is_instrumental' => ['required', 'boolean'],
             'lyrics_writers' => ['nullable', 'array'],
             'lyrics' => ['nullable', 'array'],
-            'preview_start' => ['nullable', 'string'],
+            'preview_start' => ['nullable'],
 
             'musicians' => ['nullable', 'array'],
             'musicians.*.id' => ['required', 'exists:users,id'],
@@ -45,7 +45,7 @@ class SongUpdateRequest extends FormRequest
             'participants.*.tasks' => ['required'],
             'participants.*.rate' => ['required'],
 
-            'isrc' => ['nullable', 'unique:songs,isrc,' . $this->song->id],
+            'isrc' => ['nullable', 'unique:songs,isrc,'.$this->song->id],
             'is_explicit' => ['nullable', 'boolean'],
             'iswc' => ['nullable', 'string', 'unique:songs,iswc'],
             'is_cover' => ['nullable', 'boolean'],

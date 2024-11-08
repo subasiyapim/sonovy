@@ -130,7 +130,6 @@ class ProductController extends Controller
 
         $response = new ProductShowResource($product, $tab);
 
-        dd($response->resolve());
 
         return inertia('Control/Products/Show',
             [
@@ -170,12 +169,12 @@ class ProductController extends Controller
             'featuredArtists',
             'songs.mainArtist',
             'songs.featuringArtists',
-            'songs.musicians',
-            'songs.participants',
+            'songs.musicians.branch',
+            'songs.participants.user',
             'songs.lyricsWriters',
             'media'
         );
-
+        
         $props = [
             "product" => $product,
             "step" => $step,

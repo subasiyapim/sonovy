@@ -42,10 +42,8 @@ class SongController extends Controller
         $main_artists = $request->input('main_artists');
         $featuring_artists = $request->input('featuring_artists');
 
-        $song->artists()->delete();
         $song->featuringArtists()->sync($featuring_artists, ['is_main' => false]);
-
-        $song->artists()->syncWithoutDetaching($main_artists, ['is_main' => true]);
+        $song->artists()->sync($main_artists, ['is_main' => true]);
     }
 
     private static function updateLyricsWriters(SongUpdateRequest $request, Song $song)
@@ -177,10 +175,10 @@ class SongController extends Controller
         return redirect()->back()
             ->with([
                 'notification' =>
-                [
-                    __('control.notification_updated', ['model' => __('control.song.title_singular')]),
-                    "message" => "Şarkı başarıyla güncellendi"
-                ]
+                    [
+                        __('control.notification_updated', ['model' => __('control.song.title_singular')]),
+                        "message" => "Şarkı başarıyla güncellendi"
+                    ]
             ]);
     }
 
@@ -193,11 +191,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                    [
-                        'type' => 'error',
-                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                        'model' => __('control.song.title_singular')
-                    ]
+                        [
+                            'type' => 'error',
+                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                            'model' => __('control.song.title_singular')
+                        ]
                 ]
             );
         }

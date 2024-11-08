@@ -141,10 +141,16 @@ class Song extends Model implements HasMedia
         return $this->hasMany(Participant::class);
     }
 
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(ArtistBranch::class, 'branch_id', 'id');
+    }
+
+    
     public function musicians(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'song_musician', 'song_id', 'musician_id')
-            ->withPivot('branch_id');
+            ->withPivot('branch_id')->with('branch');
     }
 
     public function convertedSong(): HasOne
