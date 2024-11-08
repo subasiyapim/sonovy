@@ -33,7 +33,7 @@ class SongUpdateRequest extends FormRequest
             'sub_genre_id' => ['required', 'exists:genres,id'],
             'is_instrumental' => ['required', 'boolean'],
             'lyrics_writers' => ['nullable', 'array'],
-            'lyrics' => ['nullable', 'array'],
+            'lyrics' => ['nullable'],
             'preview_start' => ['nullable'],
 
             'musicians' => ['nullable', 'array'],
