@@ -125,15 +125,16 @@ class Song extends Model implements HasMedia
             ->withPivot('is_main');
     }
 
-    public function mainArtist()
+    public function mainArtists()
     {
-        return $this->belongsTo(Artist::class, 'main_artist', 'id')->wherePivot('is_main', true);
+        return $this->belongsToMany(Artist::class, 'artist_song', 'song_id', 'artist_id')
+            ->wherePivot('is_main', 1);
     }
 
     public function featuringArtists()
     {
         return $this->belongsToMany(Artist::class, 'artist_song', 'song_id', 'artist_id')
-            ->wherePivot('is_main', false);
+            ->wherePivot('is_main', 0);
     }
 
     public function participants(): HasMany
@@ -146,7 +147,7 @@ class Song extends Model implements HasMedia
         return $this->belongsTo(ArtistBranch::class, 'branch_id', 'id');
     }
 
-    
+
     public function musicians(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'song_musician', 'song_id', 'musician_id')
