@@ -8,7 +8,7 @@
 
       <div
           class=" rounded-lg w-60 h-60 bg-blue-300 left-8 top-8 flex items-center justify-center overflow-hidden">
-        <img class="w-full h-full object-cover"
+        <img v-if="product.image" class="w-full h-full object-cover"
              :alt="product.album_name"
              :src="product.image.original_url">
       </div>
