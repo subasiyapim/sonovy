@@ -465,7 +465,7 @@ return [
             'remaster_release_date_desc' => 'Yayının düzenlendiği ve yeniden üretildiği',
             'original_release_date' => 'Orjinal / fiziksel yayın tarihi',
             'original_release_date_desc' => 'Bu yayının ilk ne zaman yayınlandığını girebilirsin',
-            'publish_country_type' => 'Yayınlama hangi ülkelerde yapılsın?',
+            'publishing_country_type' => 'Yayınlama hangi ülkelerde yapılsın?',
             'publish_country_type_2' => 'Yayın yapılmayacak ülkeleri seçin',
             'publish_country_type_2_placeholder' => 'Örn; Zimbabwe; Fransa',
             'publish_country_type_2_desc' => 'Bu alanda birden çok seçim yapabilir, <br> birden çok ülkeyi ; işaretiyle yazarak ekleyebilirsin',

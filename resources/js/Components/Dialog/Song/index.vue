@@ -96,7 +96,7 @@
     </div>
     <SectionHeader :title="__('control.song.dialog.header_2')"/>
     <div class="p-5 flex flex-col gap-6">
-      <FormElement v-for="(lyric_writer,i) in form.lyrics_writers" :disabled="form.is_instrumental" label-width="190px"
+      <FormElement v-for="(lyric_writer,i) in form.lyrics_writers" :errors="form.errors[`lyrics_writers.${i}.id`]" :disabled="form.is_instrumental" label-width="190px"
                    v-model="form.lyrics_writers[i]" :label="__('control.song.fields.lyrics_writer')"
                    :placeholder="__('control.song.fields.lyrics_writer_placeholder')" type="select"
                    :config="lyricsWriterConfig">
@@ -135,16 +135,24 @@
           Müzisyen & <br> Katkı Sağlayan
 
         </div>
+
         <div class="flex flex-col w-full flex-1">
           <div class="flex items-start justify-center gap-3" v-for="(musician,musicanIndex) in form.musicians">
 
             <div class="flex-1">
+            <FormElement direction="vertical" :error="form.errors[`musicians.${musicanIndex}.id`]"  type="custom">
+
               <AppSelectInput v-model="musician.id" :config="musicansSelectConfig"
                               :placeholder="__('control.song.fields.musicians_placeholder')"></AppSelectInput>
+            </FormElement>
+
             </div>
             <div class="flex-1">
-              <AppSelectInput v-model="musician.role" :config="roleConfig"
+            <FormElement  direction="vertical" :error="form.errors[`musicians.${musicanIndex}.role`]"  type="custom">
+                    <AppSelectInput v-model="musician.role" :config="roleConfig"
                               :placeholder="__('control.song.fields.roles_placeholder')"></AppSelectInput>
+            </FormElement>
+
               <button @click="form.musicians.splice(musicanIndex,1)" class="flex items-center ms-auto gap-2 mt-2">
 
                 <span class="c-error-500 label-xs">Temizle</span>
@@ -168,23 +176,30 @@
         </FormElement>
       </div>
     </div>
-
     <SectionHeader :title="__('control.song.dialog.header_4')"/>
     <div class="p-5 flex flex-col gap-6">
       <div class="flex items-start gap-2 " v-for="(participant,i) in form.participants">
-        <FormElement class="flex-1" type="select" v-model="participant.id" :config="participantSelectConfig"
+
+        <FormElement class="flex-1" type="select" :error="form.errors[`participants.${i}.id`]" v-model="participant.id" :config="participantSelectConfig"
                      :label="__('control.song.fields.participants')" direction="vertical" :required="true"
                      :placeholder="__('control.song.fields.participants_placeholder')"/>
-        <FormElement class="flex-1" type="multiselect" v-model="participant.tasks" :config="roleConfig"
+        <FormElement class="flex-1" type="multiselect" :error="form.errors[`participants.${i}.tasks`]" v-model="participant.tasks" :config="roleConfig"
                      :label="__('control.song.fields.roles')" direction="vertical" :required="true"
                      :placeholder="__('control.song.fields.roles_placeholder')"/>
         <div class="flex flex-col item-start mb-0.5">
-          <label class="label-sm c-strong-950">{{ __('control.song.fields.share') }}</label>
-          <AppIncrementer v-model="participant.rate" class="h-9"></AppIncrementer>
-          <button @click="form.participants.splice(i,1)" class="flex items-center ms-auto gap-2 mt-2">
+            <FormElement  direction="vertical" :error="form.errors[`participants.${i}.rate`]" :label=" __('control.song.fields.share')" type="custom">
 
-            <span class="c-error-500 label-xs">Temizle</span>
-          </button>
+
+                <AppIncrementer v-model="participant.rate" class="h-9"></AppIncrementer>
+                <template #description>
+                    <div>
+                        <button @click="form.participants.splice(i,1)" class="flex items-center ms-auto gap-2 mt-2">
+                                <span class="c-error-500 label-xs">Temizle</span>
+                        </button>
+                    </div>
+                </template>
+            </FormElement>
+
         </div>
       </div>
 

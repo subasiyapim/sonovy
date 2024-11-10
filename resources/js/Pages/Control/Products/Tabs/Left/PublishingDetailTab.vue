@@ -8,10 +8,11 @@
 <div class="">
 
 <div class="flex flex-col gap-6">
+
     <SectionHeader title="YAYINLANMA TARİHLERİ"></SectionHeader>
 
         <FormElement  label-width="190px" :error="form.errors.physical_release_date"  type="custom" label="Yayınlanma Yılı" >
-                 <VueDatePicker @update:model-value="onPublishDateChoosen" v-model="form.physical_release_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Yayınlanma Yılı">
+                 <VueDatePicker @update:model-value="onPublishDateChoosen" v-model="form.physical_release_date" :convertModel="false" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Yayınlanma Yılı">
                     <template #input-icon>
                     <div class="p-3">
                             <CalendarIcon color="var(--sub-600)"/>
@@ -38,7 +39,7 @@
 
     <SectionHeader title="ÜLKE VE BÖLGE TERCİHLERİ"></SectionHeader>
 
-        <FormElement label-width="190px"  :error="form.errors.publish_country_type" v-model="form.publish_country_type" type="radio" label="Tercihler"  :config="countryRadioConfig">
+        <FormElement label-width="190px"  :error="form.errors.publishing_country_type" v-model="form.publishing_country_type" type="radio" label="Tercihler"  :config="countryRadioConfig">
 
         </FormElement>
         <div class="flex">
@@ -144,7 +145,7 @@
 import {SectionHeader,AppAccordion} from '@/Components/Widgets';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {computed,ref,onBeforeMount} from 'vue';
+import {computed,ref,onBeforeMount,nextTick} from 'vue';
 import {FormElement,AppTextInput} from '@/Components/Form';
 import {AddIcon,Icon,CalendarIcon} from '@/Components/Icons'
 import { usePage} from '@inertiajs/vue3';
@@ -258,7 +259,7 @@ const onPublishDateChoosen = (e) => {
 }
 onBeforeMount(() => {
     form.value.platforms = usePage().props.platforms;
-    if(form.value.publish_country_type){
+    if(form.value.publishing_country_type){
         form.value.published_countries = [];
         Object.keys(usePage().props.countriesGroupedByRegion).forEach((key) => {
             usePage().props.countriesGroupedByRegion[key].forEach((e) => {
@@ -268,8 +269,30 @@ onBeforeMount(() => {
                 }
             });
         })
+    }
+    if(usePage().props.product.download_platforms){
+        let tempPlatformsTofill = [];
+       usePage().props.product.download_platforms.forEach(element => {
 
 
+
+            const findedIndex = form.value.platforms.findIndex((e) => e.value == element.id);
+            if(findedIndex >= 0){
+
+                form.value.platforms[findedIndex].isSelected = true;
+                form.value.platforms[findedIndex].price = element.pivot?.price;
+                form.value.platforms[findedIndex].pre_order_date = new Date(element.pivot?.pre_order_date);
+                form.value.platforms[findedIndex].publish_date = new Date(element.pivot?.publish_date);
+
+                tempPlatformsTofill.push(findedIndex);
+
+            }
+       });
+
+       nextTick(() => {
+
+           platformTable.value?.selectRows(tempPlatformsTofill);
+       })
     }
 
 });

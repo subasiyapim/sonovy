@@ -61,6 +61,7 @@ class Product extends Model implements HasMedia
         'previously_released',
         'previous_release_date',
         'publishing_country_type',
+        'physical_release_date'
         //step 4
     ];
     public static array $excludedFields = [
@@ -76,7 +77,7 @@ class Product extends Model implements HasMedia
         'has_audiovisual_rights' => 'boolean',
         'is_compilation_publication' => 'boolean',
         'has_been_released' => 'boolean',
-        'publish_country_type' => ProductPublishedCountryTypeEnum::class,
+        'publishing_country_type' => ProductPublishedCountryTypeEnum::class,
         'release_date' => 'date',
     ];
 
@@ -165,7 +166,7 @@ class Product extends Model implements HasMedia
     public function publishCountryTypeText(): Attribute
     {
         return Attribute::make(
-            get: fn() => ProductPublishedCountryTypeEnum::getTitles()[$this->publish_country_type],
+            get: fn() => ProductPublishedCountryTypeEnum::getTitles()[$this->publishing_country_type],
         );
     }
 
@@ -261,7 +262,11 @@ class Product extends Model implements HasMedia
 
     public function publishedCountries(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\System\Country::class, 'product_published_country', 'product_id',
-            'country_id');
+        return $this->belongsToMany(
+            \App\Models\System\Country::class,
+            'product_published_country',
+            'product_id',
+            'country_id'
+        );
     }
 }

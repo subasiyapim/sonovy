@@ -401,7 +401,7 @@ return array(
             'remaster_release_date_desc' => 'The publication was edited and reproduced',
             'original_release_date' => 'Original/physical release date',
             'original_release_date_desc' => 'You can enter when this post was first published',
-            'publish_country_type' => 'In which countries should publishing take place?',
+            'publishing_country_type' => 'In which countries should publishing take place?',
             'publish_country_type_2' => 'Select countries that will not product',
             'publish_country_type_2_placeholder' => 'For example; Zimbabwe; France',
             'publish_country_type_2_desc' => 'You can make more than one selection in this field, <br> more than one country; You can add it by typing',

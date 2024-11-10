@@ -55,6 +55,7 @@
     <tbody>
     <tr v-for="(row, rowIndex) in data" :key="rowIndex" :class="selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''">
         <td v-if="hasSelect">
+
               <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''" @click="onSelectRow(row)"></button>
         </td>
         <td v-for="(column, colIndex) in columns" :key="colIndex">
@@ -302,6 +303,7 @@ const selectAll = () => {
     if(data.value.length == selectedRowIndexes.value.length){
         selectedRowIndexes.value = [];
     }else {
+        deSelect();
         data.value.forEach(element => {
             const findedIndex = selectedRowIndexes.value.findIndex((el) => el == element);
             if(findedIndex < 0)   selectedRowIndexes.value.push(element);
@@ -385,7 +387,16 @@ const hasSlot = (name) => {
 const deSelect = () => {
     selectedRowIndexes.value = [];
 }
+const selectRows = (arr) => {
 
+    arr.forEach(i => {
+        console.log("EEE",i);
+    console.log("DATA",data.value);
+
+        selectedRowIndexes.value.push(data.value[i]);
+    });
+
+}
 onMounted(() => {
     getFilterSelects();
 });
@@ -397,7 +408,8 @@ defineExpose({
     removeRowDataFromRemote,
     editRow,
     deSelect,
-    selectAll
+    selectAll,
+    selectRows
 })
 </script>
 <style>

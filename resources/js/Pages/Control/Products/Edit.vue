@@ -152,13 +152,13 @@ const step2Element = useForm({
     songs:[],
 });
 const step3Element = useForm({
-    production_year:null,
-    publish_country_type:1,
+    production_year:props.product.production_year,
+    publishing_country_type:props.product.publishing_country_type ?? 1,
     step: props.step,
     published_countries:[],
-    previously_released:true,
-    previous_release_date:null,
-    physical_release_date:null,
+    previously_released:props.product.previously_released == null ? false : props.product.previously_released,
+    previous_release_date:props.product.previous_release_date == null ? null : new Date(props.product.previous_release_date),
+    physical_release_date:props.product.physical_release_date == null ? null : new Date(props.product.physical_release_date),
     platforms:{}
 });
 const step4Element = useForm({
@@ -187,21 +187,27 @@ const submitStep = async () => {
         });
     }
     if (currentTab.value == 2) {
-        console.log(step3Element.platforms);
 
+
+        if(step3Element.physical_release_date)
+            step3Element.physical_release_date = step3Element.physical_release_date.toISOString().split("T")[0];
+        if(step3Element.previous_release_date)
+        step3Element.previous_release_date = step3Element.previous_release_date.toISOString().split("T")[0];
         let tempPlatforms = [];
         let toUploadBackPlatforms = step3Element.platforms;
 
 
         step3Element.platforms.forEach(element => {
             if(element.isSelected){
-
-                tempPlatforms.push({
+                let data = {
                     id:element.value,
                     price:element.price,
-                    publish_date:element.publish_date,
-                    pre_order_date:element.pre_order_date
-                })
+                    publish_date:element.publish_date?.toISOString().split("T")[0]
+                }
+                if(element.pre_order_date){
+                    data['pre_order_date'] = element.pre_order_date.toISOString().split("T")[0];
+                }
+                tempPlatforms.push(data);
             }
 
         });

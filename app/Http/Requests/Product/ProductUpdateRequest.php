@@ -29,22 +29,21 @@ class ProductUpdateRequest extends FormRequest
         return array_merge($data, self::common());
     }
 
-    private static function stepThree($publish_country_type): array
+    private static function stepThree($publishing_country_type): array
     {
         $data = [
             'production_year' => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
             'previously_released' => ['required', 'boolean'],
             'previous_release_date' => ['required_if:previously_released,true', 'nullable', 'date'],
-            'publish_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
+            'publishing_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
             'physical_release_date' => ['required', 'date'],
-
             'published_countries' => [
                 'required',
                 'array',
-                function ($attribute, $value, $fail) use ($publish_country_type) {
-                    if ($publish_country_type !== ProductPublishedCountryTypeEnum::ALL) {
+                function ($attribute, $value, $fail) use ($publishing_country_type) {
+                    if ($publishing_country_type !== ProductPublishedCountryTypeEnum::ALL) {
                         if (count($value) < 1) {
-                            $fail("The {$attribute} must have at least 1 item(s) when publish_country_type is specific.");
+                            $fail("The {$attribute} must have at least 1 item(s) when publishing_country_type is specific.");
                         }
                     }
                 }
@@ -111,7 +110,7 @@ class ProductUpdateRequest extends FormRequest
         return match ($this->step) {
             '1' => self::stepOne(),
             '2' => self::stepTwo(),
-            '3' => self::stepThree($this->publish_country_type),
+            '3' => self::stepThree($this->publishing_country_type),
             '4' => self::stepFour(),
             '5' => self::stepFive(),
         };
@@ -139,7 +138,7 @@ class ProductUpdateRequest extends FormRequest
             'language_id' => __('control.product.fields.language_id'),
             'main_price' => __('control.product.fields.main_price'),
             'production_year' => __('control.product.fields.production_year'),
-            'publish_country_type' => __('control.product.fields.publish_country_type'),
+            'publishing_country_type' => __('control.product.fields.publishing_country_type'),
             'published_countries' => __('control.product.fields.published_countries'),
             'published_countries.*.id' => __('control.product.fields.published_countries'),
         ];

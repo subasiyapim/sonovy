@@ -229,12 +229,11 @@ class ProductController extends Controller
                 $this->excepted = ['published_countries', 'platforms'];
                 $this->excepted_data = Arr::except($data, $this->excepted);
                 self::publishedCountries($product, $data);
-                self::createDownloadPlatforms($request, $product);
+                self::createDownloadPlatforms($product, $data);
             case 4:
                 self::createPromotions($product, $data);
         }
 
-        
         $product->update($this->excepted_data);
         $progress = ProductServices::progress($product);
 
