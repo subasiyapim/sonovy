@@ -65,7 +65,7 @@ class SongController extends Controller
     {
         $lyrics_writers = $request->input('lyrics_writers');
 
-        if (!empty($lyrics_writers)) {
+        if (!empty($lyrics_writers) && is_array($lyrics_writers) && $lyrics_writers[0] !== null) {
             $song->lyricsWriters()->sync($lyrics_writers);
         }
     }

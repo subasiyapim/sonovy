@@ -168,14 +168,15 @@ class ProductController extends Controller
             'promotions',
             'mainArtists',
             'featuredArtists',
-            'songs.mainArtist',
+            'songs.artists',
+            'songs.mainArtists',
             'songs.featuringArtists',
             'songs.musicians.branch',
             'songs.participants.user',
             'songs.lyricsWriters',
             'media'
         );
-
+        
         $props = [
             "product" => $product,
             "step" => $step,
