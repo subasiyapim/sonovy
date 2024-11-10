@@ -178,6 +178,14 @@ class SongController extends Controller
 
         $song->update($excepts);
 
+        $song->load([
+            'artists',
+            'mainArtists',
+            'featuringArtists',
+            'musicians.branch',
+            'participants.user',
+            'lyricsWriters',
+        ]);
         self::updateParticipants($request, $song);
         self::updateMusicians($request, $song);
         self::updateLyricsWriters($request, $song);
@@ -186,10 +194,11 @@ class SongController extends Controller
         return redirect()->back()
             ->with([
                 'notification' =>
-                    [
-                        __('control.notification_updated', ['model' => __('control.song.title_singular')]),
-                        "message" => "Şarkı başarıyla güncellendi"
-                    ]
+                [
+                    'song' => $song,
+                    __('control.notification_updated', ['model' => __('control.song.title_singular')]),
+                    "message" => "Şarkı başarıyla güncellendi"
+                ]
             ]);
     }
 
@@ -202,11 +211,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                        [
-                            'type' => 'error',
-                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                            'model' => __('control.song.title_singular')
-                        ]
+                    [
+                        'type' => 'error',
+                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                        'model' => __('control.song.title_singular')
+                    ]
                 ]
             );
         }

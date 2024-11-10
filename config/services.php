@@ -35,8 +35,8 @@ return [
         ],
     ],
     'ffmpeg' => [
-        'binaries' => env('FFMPEG_PATH', '/usr/bin/ffmpeg'),
-        'ffprobe' => env('FFPROBE_PATH', '/usr/bin/ffprobe'),
+        'binaries' => env('FFMPEG_PATH', '/usr/local/bin/ffmpeg'),
+        'ffprobe' => env('FFPROBE_PATH', '/usr/local/bin/ffprobe'),
     ],
 
 ];
