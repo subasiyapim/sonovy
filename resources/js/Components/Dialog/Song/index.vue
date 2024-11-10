@@ -248,13 +248,14 @@ const form = useForm({
     id: props.song.id,
     name: props.song.name,
     version: props.song.version,
-    main_artists: [],
+    main_artists: null,
     featuring_artists:[],
     genre_id: props.song.genre_id,
     sub_genre_id: props.song.sub_genre_id,
     is_instrumental: props.song.is_instrumental,
     isrc: props.song.isrc,
     lyrics_writers: [null],
+    lyrics: props.song.lyrics,
     musicians: [{}],
     participants: [{}],
     preview_start: props.song.preview_start ?? [0,15]
@@ -422,9 +423,11 @@ const onSubmit = async (e) => {
 
         },
         onSuccess: async (e) => {
+            console.log("EEE",);
+
           toast.success(e.props.notification.message);
           isDialogOn.value = false;
-          emits('done', form)
+          emits('done', e.props.notification.song)
 
         },
         onError: (e) => {
@@ -449,13 +452,13 @@ onBeforeMount(() => {
         form.featuring_artists  = (props.song.featuring_artists??[]).map((e) => e.id);
        console.log("İMASD",props.song.main_artists);
 
-       form.main_artists  = (props.song.main_artists ?? []).map((e) => e.id);
+       form.main_artists  = props.song.main_artists?.length> 0 ? props.song.main_artists[0].id : null;
 
 
-        form.musicians = (props.song.musicians ?? []).map((e) => {return{id:e.id,role:e.role}}) ?? [{}];
+        form.musicians = (props.song.musicians ?? []).map((e) => {return{id:e.id,role:e.pivot?.branch_id}}) ?? [{}];
         form.participants = (props.song.participants ?? []).map((e) => {return {id:e.user_id,tasks:e.tasks,rate:e.rate}}) ?? [{}];
         form.lyrics_writers =  (props.song.lyrics_writers ?? []).map((e) => e.id) ?? [1];
-        console.log("form.participants",props.song);
+        console.log("form.musicians",props.song.musicians);
 
         if(form.lyrics_writers.length == 0){
                 form.lyrics_writers = [null];

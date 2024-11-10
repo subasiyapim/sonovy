@@ -45,7 +45,6 @@ class TusServiceProvider extends ServiceProvider
 
         $filePath = $storagePath . '/' . $fileMeta['name'];
         $details = FFMpegServices::getMediaDetails(file: $filePath);
-        Log::error("Dosya türü desteklenmiyor veya bir hata oluştu: " . $details['error']);
 
         if (!$details['status']) {
             Log::error("Dosya türü desteklenmiyor veya bir hata oluştu: " . $details['error']);
