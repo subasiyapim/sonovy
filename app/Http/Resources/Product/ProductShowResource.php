@@ -108,7 +108,7 @@ class ProductShowResource extends JsonResource
         }
 
         return [
-            'published_country_type' => ProductPublishedCountryTypeEnum::from($country_type)->title(),
+            'publish_country_type' => ProductPublishedCountryTypeEnum::from($country_type ?? 1)->title(),
             'countries' => $groupedCountries
         ];
     }

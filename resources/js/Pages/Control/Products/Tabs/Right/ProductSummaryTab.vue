@@ -55,7 +55,7 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Yayın Tarihi</p>
-      <span class="label-sm c-strong-950">-</span>
+      <span class="label-sm c-strong-950">{{product.physical_release_date}}</span>
     </div>
 
 
@@ -68,7 +68,7 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Toplam Süre</p>
-      <span class="label-sm c-strong-950">-</span>
+      <span class="label-sm c-strong-950">{{product.duration}}</span>
     </div>
 
 

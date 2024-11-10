@@ -10,8 +10,8 @@
 <div class="flex flex-col gap-6">
     <SectionHeader title="YAYINLANMA TARİHLERİ"></SectionHeader>
 
-        <FormElement  label-width="190px" :error="form.errors.publish_date"  type="custom" label="Yayınlanma Yılı" >
-                 <VueDatePicker @update:model-value="onPublishDateChoosen" v-model="form.publish_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Yayınlanma Yılı">
+        <FormElement  label-width="190px" :error="form.errors.physical_release_date"  type="custom" label="Yayınlanma Yılı" >
+                 <VueDatePicker @update:model-value="onPublishDateChoosen" v-model="form.physical_release_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Yayınlanma Yılı">
                     <template #input-icon>
                     <div class="p-3">
                             <CalendarIcon color="var(--sub-600)"/>
@@ -25,8 +25,8 @@
         <FormElement label-width="190px" :error="form.errors.previously_released" v-model="form.previously_released" @change="onChangeIsPublishedBefore" type="fancyCheck" label="Daha önce Yayınlandı mı?" placeholder="Daha önce Yayınlandı mı?">
 
         </FormElement>
-        <FormElement label-width="190px" :error="form.errors.physical_release_date" :disabled="form.previously_released" type="custom" label="Fiziksel Yayın Tarihi" >
-            <VueDatePicker :disabled="!form.previously_released" v-model="form.physical_release_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Orjinal Yayınlanma Tarihi">
+        <FormElement label-width="190px" :error="form.errors.previous_release_date" :disabled="form.previously_released" type="custom" label="Fiziksel Yayın Tarihi" >
+            <VueDatePicker :disabled="!form.previously_released" v-model="form.previous_release_date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Orjinal Yayınlanma Tarihi">
                 <template #input-icon>
                     <div class="p-3">
                         <CalendarIcon color="var(--sub-600)"/>
@@ -38,7 +38,7 @@
 
     <SectionHeader title="ÜLKE VE BÖLGE TERCİHLERİ"></SectionHeader>
 
-        <FormElement label-width="190px"  :error="form.errors.published_country_type" v-model="form.published_country_type" type="radio" label="Tercihler"  :config="countryRadioConfig">
+        <FormElement label-width="190px"  :error="form.errors.publish_country_type" v-model="form.publish_country_type" type="radio" label="Tercihler"  :config="countryRadioConfig">
 
         </FormElement>
         <div class="flex">
@@ -186,7 +186,7 @@ const selectConfig = computed(() => {
 const countryRadioConfig = computed(() => {
     return {
         optionDirection:'vertical',
-        options: usePage().props.product_published_country_types
+        options: usePage().props.product_publish_country_types
 
         // [
         //     {value:1,label:"Tüm ülkelerde yayınlansın"},
@@ -258,7 +258,7 @@ const onPublishDateChoosen = (e) => {
 }
 onBeforeMount(() => {
     form.value.platforms = usePage().props.platforms;
-    if(form.value.published_country_type){
+    if(form.value.publish_country_type){
         form.value.published_countries = [];
         Object.keys(usePage().props.countriesGroupedByRegion).forEach((key) => {
             usePage().props.countriesGroupedByRegion[key].forEach((e) => {

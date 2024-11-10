@@ -14,7 +14,7 @@ class Promotion extends Model
         'product_id',
         'title',
         'description',
-        'country_id',
+        'language_id',
     ];
 
     public function product(): BelongsTo
@@ -29,7 +29,6 @@ class Promotion extends Model
 
     public function language(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\System\Country::class, 'country_id');
+        return $this->belongsTo(\App\Models\System\Country::class, 'language_id');
     }
-
 }

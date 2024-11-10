@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::table('promotions', function (Blueprint $table) {
             $table->dropForeign(['platform_id']);
             $table->dropColumn(['platform_id', 'date']);
-            $table->foreignIdFor(\App\Models\System\Country::class, 'country_id');
+            $table->foreignIdFor(\App\Models\System\Country::class, 'language_id');
         });
     }
 

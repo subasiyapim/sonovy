@@ -7,10 +7,10 @@
         </div>
 
 <div class="flex flex-col gap-6">
-    <div  v-for="(info,index) in form.promotion_info">
+    <div  v-for="(info,index) in form.promotions">
         <SectionHeader title="YAYIN VE TANITIM METNİ" class="mb-2"></SectionHeader>
         <div class="flex flex-col gap-6 px-1">
-            <FormElement label-width="190px" :error="form.errors[`promotion_info.${index}.language_id`]" type="select" label="Tanıtım Dil" v-model="info.language_id" :required="true" placeholder="Lütfen Seçiniz" :config="selectConfig">
+            <FormElement label-width="190px" :error="form.errors[`promotions.${index}.language_id`]" type="select" label="Tanıtım Dil" v-model="info.language_id" :required="true" placeholder="Lütfen Seçiniz" :config="selectConfig">
                     <template #option="scope">
                         <span>{{ scope.data.iconKey }}</span>
                         <span class="paragraph-sm c-strong-950">
@@ -26,20 +26,20 @@
                         </div>
                     </template>
             </FormElement>
-            <FormElement label-width="190px"  :error="form.errors[`promotion_info.${index}.title`]" type="text" label="Vurucu Cümle" v-model="info.title" placeholder="Yapım Yılı" >
+            <FormElement label-width="190px"  :error="form.errors[`promotions.${index}.title`]" type="text" label="Vurucu Cümle" v-model="info.title" placeholder="Yapım Yılı" >
             </FormElement>
-            <FormElement label-width="190px"  :error="form.errors[`promotion_info.${index}.promotion_text`]" type="textarea" :required="true" v-model="info.promotion_text" label="Yayın Tanıtım Metni" placeholder="Metni giriniz">
+            <FormElement label-width="190px"  :error="form.errors[`promotions.${index}.description`]" type="textarea" :required="true" v-model="info.description" label="Yayın Tanıtım Metni" placeholder="Metni giriniz">
             </FormElement>
         </div>
         <div class="flex items-center justify-end mt-2">
-            <button @click="form.promotion_info.splice(index,1)" class="flex items-center gap-2">
+            <button @click="form.promotions.splice(index,1)" class="flex items-center gap-2">
                 <TrashIcon color="var(--error-500)" />
                 <span class="label-sm c-error-500">Tanıtım Yazısını Sil</span>
             </button>
         </div>
     </div>
     <div>
-        <button @click="form.promotion_info.push({})" class="flex items-center justify-center gap-2 w-auto">
+        <button @click="form.promotions.push({})" class="flex items-center justify-center gap-2 w-auto">
             <AddIcon color="var(--blue-500)" />
             <p class="label-xs c-blue-500">Farklı Dilde Tanıtım Metni Ekle</p>
         </button>

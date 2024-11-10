@@ -28,9 +28,9 @@ enum ProductPublishedCountryTypeEnum: int
     public function title()
     {
         return match ($this) {
-            self::ALL => __('control.broadcast.published_country_type_all'),
-            self::EXCEPT_SELECTED => __('control.broadcast.published_country_type_except_selected'),
-            self::ONLY_SELECTED => __('control.broadcast.published_country_type_only_selected'),
+            self::ALL => __('control.broadcast.publish_country_type_all'),
+            self::EXCEPT_SELECTED => __('control.broadcast.publish_country_type_except_selected'),
+            self::ONLY_SELECTED => __('control.broadcast.publish_country_type_only_selected'),
         };
     }
 }

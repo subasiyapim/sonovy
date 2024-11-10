@@ -117,7 +117,7 @@ const props = defineProps({
   languages: {},
   formats: {},
   progress: Number,
-  product_published_country_types:{},
+  product_publish_country_types:{},
 })
 
 const progress = ref(props.progress);
@@ -153,16 +153,17 @@ const step2Element = useForm({
 });
 const step3Element = useForm({
     production_year:null,
-    published_country_type:1,
+    publish_country_type:1,
     step: props.step,
     published_countries:[],
     previously_released:true,
-    publish_year:null,
+    previous_release_date:null,
+    physical_release_date:null,
     platforms:{}
 });
 const step4Element = useForm({
      step: props.step,
-     promotion_info:[{}]
+     promotions:[{}]
 });
 
 const currentTab = ref(props.step-1);

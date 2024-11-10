@@ -150,7 +150,7 @@ class ProductController extends Controller
         $languages = getDataFromInputFormat(Country::whereNotNull('language')->get(), 'id', 'language', 'emoji');
         $progress = ProductServices::progress($product);
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
-        $product_published_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());
+        $product_publish_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());
         $main_prices = enumToSelectInputFormat(MainPriceEnum::getTitles());
         $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
         $total_song_duration = totalDuration($product->songs);
@@ -176,7 +176,7 @@ class ProductController extends Controller
             'songs.lyricsWriters',
             'media'
         );
-        
+
         $props = [
             "product" => $product,
             "step" => $step,
@@ -198,7 +198,7 @@ class ProductController extends Controller
                 break;
             case 3:
                 $props['platforms'] = $platforms;
-                $props['product_published_country_types'] = $product_published_country_types;
+                $props['product_publish_country_types'] = $product_publish_country_types;
                 $props['countriesGroupedByRegion'] = $countriesGroupedByRegion;
                 break;
             case 4:
@@ -453,6 +453,7 @@ class ProductController extends Controller
             $product->promotions()->delete();
 
             foreach ($data['promotions'] as $promotion) {
+
                 $product->promotions()->create($promotion);
             }
         }
