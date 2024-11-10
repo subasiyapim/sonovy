@@ -450,7 +450,7 @@ const roleConfig = computed(() => {
 onBeforeMount(() => {
     if (props.song) {
         form.featuring_artists  = (props.song.featuring_artists??[]).map((e) => e.id);
-       console.log("İMASD",props.song.main_artists);
+
 
        form.main_artists  = props.song.main_artists?.length> 0 ? props.song.main_artists[0].id : null;
 
@@ -458,7 +458,7 @@ onBeforeMount(() => {
         form.musicians = (props.song.musicians ?? []).map((e) => {return{id:e.id,role:e.pivot?.branch_id}}) ?? [{}];
         form.participants = (props.song.participants ?? []).map((e) => {return {id:e.user_id,tasks:e.tasks,rate:e.rate}}) ?? [{}];
         form.lyrics_writers =  (props.song.lyrics_writers ?? []).map((e) => e.id) ?? [1];
-        console.log("form.musicians",props.song.musicians);
+
 
         if(form.lyrics_writers.length == 0){
                 form.lyrics_writers = [null];

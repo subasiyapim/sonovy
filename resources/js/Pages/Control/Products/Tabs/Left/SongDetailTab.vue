@@ -76,7 +76,7 @@
 
                 <AppTableColumn label="Aksiyonlar" align="right">
                     <template #default="scope">
-                        <IconButton><StarIcon color="var(--sub-600)" /></IconButton>
+                        <IconButton @click="favoriteSong(scope.row)"><StarIcon color="var(--sub-600)" /></IconButton>
                          <tippy :maxWidth="440" ref="myTippy" theme="light" :allowHtml="true" :sticky="true" trigger="click" :interactive="true" :appendTo="getBody">
                             <IconButton>
                                 <TrashIcon color="var(--sub-600)" />
@@ -110,6 +110,7 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed,ref,useSlots,nextTick,onBeforeMount} from 'vue';
 import {FormElement} from '@/Components/Form';
+import {useCrudStore} from '@/Stores/useCrudStore';
 import {AddIcon} from '@/Components/Icons'
 import {TusUploadInput} from '@/Components/Form'
 import {SongLoadingCard} from '@/Components/Cards';
@@ -125,6 +126,7 @@ const props = defineProps({
     modelValue:{},
 })
 
+const crudStore = useCrudStore();
 const choosenSongs = ref([]);
 const songsTable = ref();
 const form = computed({
@@ -140,6 +142,18 @@ const onTusStart = (e) => {
     showAttempt.value = true;
     console.log("STARTT",e);
     attemps.value.push(e);
+}
+
+const deleteSong = async (songs) => {
+//     1. media silmek için: control.media.destroy
+// 2. ⁠song favorite toggle: control.song.toggleFavorite
+// 3. ⁠song delete all : control.songs.songsDelete
+
+    const response = await crudStore.post(route('control.catalog.songs.songsDelete'),{
+        ids: songs,
+    })
+    console.log("RESPONSEE",response);
+
 }
 
 const choosenSong = ref();
@@ -196,6 +210,7 @@ const onCancel = () => {
     myTippy.value.hide();
 }
 const onDeleteSong = (row) => {
+    deleteSong([row.id])
 
     onCancel();
 
@@ -206,10 +221,18 @@ const onSelectChange = (e) => {
 
 }
 const deleteChoosenSongs = () => {
-    console.log("DELETE ALL");
+   const tempIds = choosenSongs.value.map((e) => e.id);
+
+    deleteSong(tempIds)
 
 }
+const favoriteSong = async (song) => {
+    const response = await crudStore.post(route('control.catalog.song.toggleFavorite',song.id),{
+        product_id:props.product.id
+    })
+    console.log("RESPONSE",response);
 
+}
 const deSelectAll = () => {
     choosenSongs.value = [];
     songsTable.value.deSelect();
