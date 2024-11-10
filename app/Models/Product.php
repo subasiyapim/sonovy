@@ -259,8 +259,9 @@ class Product extends Model implements HasMedia
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function publishedCountries()
+    public function publishedCountries(): BelongsToMany
     {
-        return $this->belongsToMany(Country::class, 'product_published_country', 'product_id', 'country_id');
+        return $this->belongsToMany(\App\Models\System\Country::class, 'product_published_country', 'product_id',
+            'country_id');
     }
 }

@@ -42,13 +42,9 @@ class SongController extends Controller
         $main_artists = $request->input('main_artists');
         $featuring_artists = $request->input('featuring_artists');
 
-        DB::table('artist_song')->where('song_id', $song->id)->delete();
+        $song->artists()->detach();
 
-        DB::table('artist_song')->insert([
-            'song_id' => $song->id,
-            'artist_id' => $main_artists,
-            'is_main' => true
-        ]);
+        $song->artists()->attach($main_artists, ['is_main' => true]);
 
         if (!empty($featuring_artists)) {
             foreach ($featuring_artists as $featuring_artist) {

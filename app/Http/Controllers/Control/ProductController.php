@@ -35,6 +35,7 @@ use App\Services\ProductServices;
 use App\Services\CountryServices;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Inertia\ResponseFactory;
@@ -233,6 +234,7 @@ class ProductController extends Controller
                 self::createPromotions($product, $data);
         }
 
+        
         $product->update($this->excepted_data);
         $progress = ProductServices::progress($product);
 
@@ -415,9 +417,13 @@ class ProductController extends Controller
      */
     protected static function publishedCountries($product, $data): void
     {
-        if ($data['publish_country_type'] !== ProductPublishedCountryTypeEnum::ALL && is_array($data['published_countries']) && count($data['published_countries']) > 0) {
-            $product->publishedCountries()->detach();
-            $product->publishedCountries()->attach($data['published_countries']);
+        DB::table('product_published_country')->where('product_id', $product->id)->delete();
+
+        foreach ($data['published_countries'] as $country) {
+            DB::table('product_published_country')->insert([
+                'product_id' => $product->id,
+                'country_id' => $country,
+            ]);
         }
     }
 
