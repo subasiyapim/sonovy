@@ -131,7 +131,8 @@ class ProductController extends Controller
         $response = new ProductShowResource($product, $tab);
 
         //dd($response->resolve());
-        return inertia('Control/Products/Show',
+        return inertia(
+            'Control/Products/Show',
             [
                 'product' => $response->resolve(),
                 'tab' => $tab,

@@ -257,7 +257,7 @@ const form = useForm({
     lyrics_writers: [null],
     musicians: [{}],
     participants: [{}],
-    preview_start: [0, 20]
+    preview_start: props.song.preview_start ?? [0,15]
 });
 
 const artistSelectConfig = computed(() => {
@@ -355,7 +355,7 @@ const participantSelectConfig = computed(() => {
       data: (props.song?.participants ?? [])?.map((element) => {
        return {
                 value:element.user_id,
-                label: element.name,
+                label: element.user?.name,
             };
     }),
     remote: async (query) => {
@@ -455,6 +455,7 @@ onBeforeMount(() => {
         form.musicians = (props.song.musicians ?? []).map((e) => {return{id:e.id,role:e.role}}) ?? [{}];
         form.participants = (props.song.participants ?? []).map((e) => {return {id:e.user_id,tasks:e.tasks,rate:e.rate}}) ?? [{}];
         form.lyrics_writers =  (props.song.lyrics_writers ?? []).map((e) => e.id) ?? [1];
+        console.log("form.participants",props.song);
 
         if(form.lyrics_writers.length == 0){
                 form.lyrics_writers = [null];

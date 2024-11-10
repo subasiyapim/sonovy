@@ -1553,6 +1553,7 @@ return [
     ],
     'song' => [
         'title' => 'Şarkılar',
+        'header' => 'Şarkılar',
         'title_singular' => 'Şarkı',
         'enums' => [
             'type_sound' => 'Ses',
@@ -1607,7 +1608,12 @@ return [
             'header_2' => "ŞARKI META BİLGİLERİ",
             'header_3' => "KATKI SAĞLAYANLAR",
             'header_4' => "KATILIMCILAR",
-        ]
+        ],
+        'table' => [
+            'empty_header' => "Henüz Şarkı bulunmamaktadır",
+            "empty_description" => "Oluşturucağınız tüm Şarkılar burada listelenecektir.",
+
+        ],
     ],
     'upc' => [
         'title' => 'UPC Kodları',

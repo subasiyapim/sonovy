@@ -44,7 +44,8 @@ class TusServiceProvider extends ServiceProvider
         Log::info("Upload tamamlandı: " . json_encode($fileMeta));
 
         $filePath = $storagePath . '/' . $fileMeta['name'];
-        $details = FFMpegServices::getMediaDetails($filePath);
+        $details = FFMpegServices::getMediaDetails(file: $filePath);
+        Log::error("Dosya türü desteklenmiyor veya bir hata oluştu: " . $details['error']);
 
         if (!$details['status']) {
             Log::error("Dosya türü desteklenmiyor veya bir hata oluştu: " . $details['error']);

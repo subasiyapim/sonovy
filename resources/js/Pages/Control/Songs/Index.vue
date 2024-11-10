@@ -64,15 +64,10 @@
       <template #empty>
         <div class="flex flex-col items-center justify-center gap-8">
           <div>
-            <h2 class="label-medium c-strong-950">{{ __('control.label.table.empty_header') }}</h2>
-            <h3 class="paragraph-medium c-neutral-500">{{ __('control.label.table.empty_description') }}</h3>
+            <h2 class="label-medium c-strong-950">{{ __('control.song.table.empty_header') }}</h2>
+            <h3 class="paragraph-medium c-neutral-500">{{ __('control.song.table.empty_description') }}</h3>
           </div>
-          <PrimaryButton>
-            <template #icon>
-              <AddIcon/>
-            </template>
-            {{ __('control.label.table.empty_button') }}
-          </PrimaryButton>
+
         </div>
       </template>
     </AppTable>

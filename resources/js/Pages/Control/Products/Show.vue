@@ -10,7 +10,7 @@
           class=" rounded-lg w-60 h-60 bg-blue-300 left-8 top-8 flex items-center justify-center overflow-hidden">
         <img class="w-full h-full object-cover"
              :alt="product.album_name"
-             :src="product.image.original_url">
+             :src="product.image?.original_url">
       </div>
       <div class=" flex-1 ms-4 flex flex-col">
 
@@ -48,6 +48,7 @@
       <div class="flex items-center gap-2 absolute top-5 right-5">
         <RegularButton @click="router.visit(route('control.catalog.products.form.edit',[1,product.id]))">
           Güncelle
+
         </RegularButton>
 
         <RegularButton @click="remove">

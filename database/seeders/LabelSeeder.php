@@ -7,6 +7,7 @@ use App\Models\System\Tenant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class LabelSeeder extends Seeder
@@ -20,11 +21,15 @@ class LabelSeeder extends Seeder
         DB::table('labels')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
+        $diskName = 'tenant_' . tenant('id');
+        if (!Storage::disk($diskName)->exists('/')) {
+            Storage::disk($diskName)->makeDirectory('/');
+        }
         Label::factory(15)->create()->each(function (Label $label) {
             $label->addMediaFromUrl('https://picsum.photos/400/400')
                 ->usingFileName(Str::slug($label->name) . '.jpg')
-                ->usingName($label->name)
-                ->toMediaCollection('labels', 'tenant_' . tenant('id'));
+                ->usingName($label->name);
+            // ->toMediaCollection('labels', 'tenant_' . tenant('id'));
         });
     }
 }

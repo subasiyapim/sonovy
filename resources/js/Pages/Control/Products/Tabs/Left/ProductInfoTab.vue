@@ -281,7 +281,7 @@ onBeforeMount(() => {
             console.log("ELEENT",element);
 
             artistSelectConfig.value.data.push({
-                "image" : element.media[0].original_url,
+                "image" : element.media[0]?.original_url,
                 "value" : element.id,
                 "label" : element.name,
             });

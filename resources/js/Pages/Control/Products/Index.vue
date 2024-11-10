@@ -70,7 +70,7 @@
             </AppTableColumn>
             <AppTableColumn label="Durum">
                 <template #default="scope">
-                    {{scope.row.status}}
+
                 </template>
             </AppTableColumn>
 

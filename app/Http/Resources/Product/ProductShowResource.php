@@ -45,10 +45,11 @@ class ProductShowResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'album_name' => $this->album_name,
             'image' => $this->image,
             'created_at' => Carbon::parse($this->created_at)->format('d-m-Y H:i'),
-            'song_count' => $this->songs->count().' parça',
+            'song_count' => $this->songs->count() . ' parça',
             'total_duration' => totalDuration($this->songs, true),
             'main_artists' => $this->mainArtists,
             'featured_platforms' => $this->downloadPlatforms(),
@@ -99,8 +100,10 @@ class ProductShowResource extends JsonResource
 
         foreach ($groupedCountries as $region => $countries) {
             foreach ($countries as $key => $country) {
-                $groupedCountries[$region][$key]['selected'] = in_array($country['value'],
-                    $this->selectedCountryIds($country_type));
+                $groupedCountries[$region][$key]['selected'] = in_array(
+                    $country['value'],
+                    $this->selectedCountryIds($country_type)
+                );
             }
         }
 
@@ -126,7 +129,6 @@ class ProductShowResource extends JsonResource
                 'details' => $song->details,
             ];
         });
-
     }
 
     private function distribution(): array
@@ -205,8 +207,8 @@ class ProductShowResource extends JsonResource
         return $country_type === ProductPublishedCountryTypeEnum::ALL->value
             ? Country::all()->pluck('id')->toArray()
             : DB::table('product_published_country')
-                ->where('product_id', $this->id)
-                ->get()->pluck('country_id')->toArray();
+            ->where('product_id', $this->id)
+            ->get()->pluck('country_id')->toArray();
     }
 
     private function getHistoriesFromPlatformId($id): array
@@ -249,6 +251,4 @@ class ProductShowResource extends JsonResource
 
         return $histories;
     }
-
-
 }
