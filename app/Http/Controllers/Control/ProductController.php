@@ -52,18 +52,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): \Inertia\Response|ResponseFactory
     {
-
         abort_if(Gate::denies('product_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-
-        // $products = Product::with('artists', 'label', 'publishedCountries', 'songs')
-        //     ->when($request->input('status'), function ($query) use ($request) {
-        //         $query->where('status', $request->input('status'));
-        //     })
-        //     ->when($request->input('type'), function ($query) use ($request) {
-        //         $query->where('type', $request->input('type'));
-        //     })
-        //     ->advancedFilter();
 
         $products = Product::with('artists', 'label', 'songs')
             ->when($request->input('status'), function ($query) use ($request) {
@@ -73,6 +62,7 @@ class ProductController extends Controller
                 $query->where('type', $request->input('type'));
             })
             ->advancedFilter();
+        
         $country_count = Country::count();
         $statuses = ProductStatusEnum::getTitles();
         $types = ProductTypeEnum::getTitles();

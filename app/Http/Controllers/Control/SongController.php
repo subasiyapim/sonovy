@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Song\SongChangeStatusRequest;
 use App\Http\Requests\Song\SongUpdateRequest;
 use App\Models\Participant;
+use App\Models\Product;
 use App\Services\MusicBrainzServices;
 use App\Services\MusixmatchService;
 use Exception;
@@ -194,11 +195,11 @@ class SongController extends Controller
         return redirect()->back()
             ->with([
                 'notification' =>
-                [
-                    'song' => $song,
-                    __('control.notification_updated', ['model' => __('control.song.title_singular')]),
-                    "message" => "Şarkı başarıyla güncellendi"
-                ]
+                    [
+                        'song' => $song,
+                        __('control.notification_updated', ['model' => __('control.song.title_singular')]),
+                        "message" => "Şarkı başarıyla güncellendi"
+                    ]
             ]);
     }
 
@@ -211,11 +212,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                    [
-                        'type' => 'error',
-                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                        'model' => __('control.song.title_singular')
-                    ]
+                        [
+                            'type' => 'error',
+                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                            'model' => __('control.song.title_singular')
+                        ]
                 ]
             );
         }
@@ -354,7 +355,11 @@ class SongController extends Controller
             'product_id' => ['required', 'exists:products,id'],
         ]);
 
-        $song->products()->where('id', $request->product_id)->toggle(['is_favorite']);
+        $product = Product::find($request->product_id);
+
+        $product->songs()->update(['is_favorite' => 0]);
+
+        $product->songs()->updateExistingPivot($song->id, ['is_favorite' => !$request->is_favorite]);
 
         return redirect()->back();
     }
@@ -363,10 +368,14 @@ class SongController extends Controller
     {
         $request->validate(
             [
-                'ids' => ['array', 'in:songs,id']
+                'ids' => ['array', 'in:'.Song::pluck('id')->implode(',')],
+                'product_id' => ['required', 'exists:products,id']
             ]
         );
 
-        Song::whereIn('id', $request->ids)->delete();
+        $product = Product::find($request->product_id);
+        $product->songs()->detach($request->ids);
+
+        return redirect()->back();
     }
 }
