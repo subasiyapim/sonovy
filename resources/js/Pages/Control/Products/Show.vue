@@ -32,7 +32,7 @@
         </div>
         <div class="flex items-center gap-2 w-96 mt-auto">
 
-          <AppSelectInput class="bg-white" v-model="product.status" :config="productStatusConfig">
+          <AppSelectInput @change="onStatusChange" class="bg-white" v-model="product.status" :config="productStatusConfig">
 
           </AppSelectInput>
           <RegularButton class="w-full">
@@ -119,8 +119,9 @@ import RegionsTab from './ShowTabs/regions.vue';
 import DistributionsTab from './ShowTabs/distributions.vue';
 import PromotionsTab from './ShowTabs/promotions.vue';
 import SongsTab from './ShowTabs/songs.vue';
-
+import {useCrudStore} from '@/Stores/useCrudStore';
 const isModalOn = ref(false);
+import {toast} from 'vue3-toastify';
 
 const props = defineProps({
   product: {
@@ -130,6 +131,8 @@ const props = defineProps({
 });
 
 
+
+const crudStore = useCrudStore();
 const defaultStore = useDefaultStore();
 let params = new URLSearchParams(window.location.search)
 
@@ -213,6 +216,21 @@ const onTabChange = (tab) => {
   router.visit(route(route().current(), props.product.id ?? 4), {
     data: {slug: tab.slug}
   });
+}
+
+const onStatusChange = async (e) => {
+
+    const response = await crudStore.post(route('control.catalog.products.changeStatus',props.product.id),{
+        status: e.value
+    });
+    if(response.success){
+        toast.success("Durum Başarıyla Değiştirildi");
+
+    }
+
+
+
+
 }
 </script>
 

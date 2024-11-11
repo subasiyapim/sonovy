@@ -64,7 +64,9 @@ import PersonCardIcon from './PersonCardIcon.vue';
 import AppLoadingIcon from './AppLoadingIcon.vue';
 import LabelEmailIcon from './LabelEmailIcon.vue';
 import CopyIcon from './CopyIcon.vue';
+import RetractedIcon from './RetractedIcon.vue';
 import TidalIcon from './TidalIcon.vue';
+import StarFilledIcon from './StarFilledIcon.vue';
 import ISRCStarsIcon from './ISRCStarsIcon.vue';
 import YoutubeIcon from "./YoutubeIcon.vue";
 import Icon from './Icon.vue';
@@ -86,7 +88,9 @@ export {
     ChevronDownIcon,
     ArrowLeftIcon,
     ISRCStarsIcon,
+    StarFilledIcon,
     SearchIcon,
+    RetractedIcon,
     WarningIcon,
     NotificationIcon,
     StarIcon,

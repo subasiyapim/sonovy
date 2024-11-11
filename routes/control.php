@@ -81,8 +81,10 @@ Route::group(
             Route::post('song/change-status', [SongController::class, 'changeStatus'])->name('song-change-status');
             Route::get('songs/{song}/search-track', [SongController::class, 'searchTrack'])->name('songs.search-track');
             Route::get('songs/{song}/get-lyrics', [SongController::class, 'getLyrics'])->name('songs.get-lyrics');
-            Route::post('songs/{song}/store-lyrics',
-                [SongController::class, 'storeLyrics'])->name('songs.store-lyrics');
+            Route::post(
+                'songs/{song}/store-lyrics',
+                [SongController::class, 'storeLyrics']
+            )->name('songs.store-lyrics');
             Route::post('songs-delete', [SongController::class, 'songsDelete'])->name('songs.songsDelete');
 
             Route::group(
@@ -102,6 +104,7 @@ Route::group(
             );
 
             // Get ISRC
+            Route::post('changeStatus/{product}', [ProductController::class, 'changeStatus'])->name('products.changeStatus');
             Route::get('getISRC', [ProductController::class, 'getISRC'])->name('products.get-isrc');
             // Check ISRC
             Route::get('checkISRC', [ProductController::class, 'checkISRC'])->name('products.check-isrc');

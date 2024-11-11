@@ -52,20 +52,9 @@ class ProductController extends Controller
      */
     public function index(Request $request): \Inertia\Response|ResponseFactory
     {
-
         abort_if(Gate::denies('product_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-
-        // $products = Product::with('artists', 'label', 'publishedCountries', 'songs')
-        //     ->when($request->input('status'), function ($query) use ($request) {
-        //         $query->where('status', $request->input('status'));
-        //     })
-        //     ->when($request->input('type'), function ($query) use ($request) {
-        //         $query->where('type', $request->input('type'));
-        //     })
-        //     ->advancedFilter();
-
-        $products = Product::with('artists', 'label', 'songs')
+        $products = Product::with('artists', 'label', 'songs', 'downloadPlatforms')
             ->when($request->input('status'), function ($query) use ($request) {
                 $query->where('status', $request->input('status'));
             })
@@ -73,6 +62,7 @@ class ProductController extends Controller
                 $query->where('type', $request->input('type'));
             })
             ->advancedFilter();
+
         $country_count = Country::count();
         $statuses = ProductStatusEnum::getTitles();
         $types = ProductTypeEnum::getTitles();
@@ -299,6 +289,13 @@ class ProductController extends Controller
         }
 
         return response()->json(['exist' => false]);
+    }
+    public function changeStatus(Product $product, Request $request): JsonResponse
+    {
+        $product->status = $request->status;
+        $product->save();
+
+        return response()->json(['success' => true]);
     }
 
     public function checkISRC(Request $request): JsonResponse

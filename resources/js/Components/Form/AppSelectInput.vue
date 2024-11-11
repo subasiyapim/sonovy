@@ -89,7 +89,7 @@ const props = defineProps({
     default:false
   }
 })
-const emits = defineEmits(['update:modelValue'])
+const emits = defineEmits(['update:modelValue','change'])
 const element = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value),
@@ -189,6 +189,7 @@ const adjustDropdownDirection = () => {
 const chooseValue = (val) => {
   element.value = val[props.config.value ?? 'value'];
   isOpen.value = false;
+  emits('change',val)
 }
 
 // Handle window resize event to recheck dropdown direction

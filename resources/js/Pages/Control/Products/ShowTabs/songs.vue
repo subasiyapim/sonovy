@@ -21,6 +21,7 @@ const props = defineProps({
                  <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
                     <RingtoneIcon color="var(--sub-600)" v-if="scope.row.type == 1" />
                     <MusicVideoIcon color="var(--sub-600)" v-if="scope.row.type == 2" />
+
                 </div>
             </template>
         </AppTableColumn>
@@ -63,6 +64,13 @@ const props = defineProps({
         <AppTableColumn label="Sanatçı">
             <template #default="scope">
 
+            <div class="flex items-center gap-2">
+
+                <div class="flex -space-x-3 rtl:space-x-reverse">
+                    <img class="w-8 h-8 border-2 border-white rounded-full " v-for="a in scope.row.artists" src="/docs/images/people/profile-picture-5.jpg" alt="">
+                    <a class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full  " href="#">+5</a>
+                </div>
+            </div>
             </template>
         </AppTableColumn>
         <AppTableColumn label="Linkler">
@@ -72,7 +80,9 @@ const props = defineProps({
         </AppTableColumn>
         <AppTableColumn label="Katılımcılar">
             <template #default="scope">
-
+                <div class="flex items-center gap-2 label-xs c-sub-600 border border-soft-200 px-2 py-1 rounded-lg">
+                   <p class="w-max"> {{scope.row.participants?.length ?? 0}} Katılımcı</p>
+                </div>
             </template>
         </AppTableColumn>
         <AppTableColumn label="Analiz">
