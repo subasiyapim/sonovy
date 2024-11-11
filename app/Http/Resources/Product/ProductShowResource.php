@@ -155,14 +155,22 @@ class ProductShowResource extends JsonResource
     private function genres()
     {
         return $this->songs->map(function ($song) {
-            return $song->genre->name;
+            if ($song->genre) {
+                return $song->genre->name;
+            } else {
+                return '';
+            }
         })->unique()->values()->implode(', ');
     }
 
     private function subGenres()
     {
         return $this->songs->map(function ($song) {
-            return $song->subGenre->name;
+            if ($song->subGenre) {
+                return $song->subGenre->name;
+            } else {
+                return '';
+            }
         })->unique()->values()->implode(', ');
     }
 

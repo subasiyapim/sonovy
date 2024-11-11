@@ -171,9 +171,17 @@
         </div>
 
       </div>
-      <div>
-        <FormElement label-width="190px" v-model="form.isrc" label="ISRC" placeholder="Lütfen giriniz" type="text">
+      <div class="flex items-center gap-2">
+       <div class="flex-1">
+         <FormElement label-width="190px" v-model="form.isrc" label="ISRC" placeholder="Lütfen giriniz" type="text">
         </FormElement>
+       </div>
+        <RegularButton class="w-min" @click="generateISRCCode">
+            <template #icon>
+                <ISRCStarsIcon color="var(--sub-600)" />
+            </template>
+            Oluştur
+        </RegularButton>
       </div>
     </div>
     <SectionHeader :title="__('control.song.dialog.header_4')"/>
@@ -229,7 +237,8 @@
 <script setup>
 import BaseDialog from '../BaseDialog.vue';
 import {SectionHeader} from '@/Components/Widgets';
-import {AddIcon} from '@/Components/Icons'
+
+import {AddIcon,ISRCStarsIcon} from '@/Components/Icons'
 import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {computed, ref, onBeforeMount} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
@@ -254,6 +263,21 @@ const isUpdating = computed(() => {
   return props.song ? true : false;
 });
 
+
+const generateISRCCode = async () => {
+    console.log();
+
+    const response = await crudStore.get(route('control.catalog.products.get-isrc'),{
+          type: props.song.type,
+          index: props.song.id,
+        })
+        console.log("RESPONSEEE",response);
+
+        if (response) {
+          form.isrc = response
+        }
+
+}
 const choosenItunesField = ref(null);
 const choosenSpotifyField = ref(null);
 const adding = ref(false)

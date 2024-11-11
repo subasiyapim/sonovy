@@ -155,6 +155,7 @@ class ProductController extends Controller
         $main_prices = enumToSelectInputFormat(MainPriceEnum::getTitles());
         $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
         $total_song_duration = totalDuration($product->songs);
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
@@ -192,6 +193,8 @@ class ProductController extends Controller
                 $props['languages'] = $languages;
                 $props['formats'] = $formats;
                 $props['main_prices'] = $main_prices;
+                $props['countries'] = $countries;
+                $props['artistBranches'] = $artistBranches;
                 break;
             case 2:
                 $props['artistBranches'] = $artistBranches;

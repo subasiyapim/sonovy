@@ -101,7 +101,13 @@
             </AppTableColumn>
             <AppTableColumn label="Yayın Tarih">
                 <template #default="scope">
+                    <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
+                        <CalendarIcon color="var(--sub-600)" />
+                        <p class="paragraph-xs c-sub-600">
 
+                            {{scope.row.physical_release_date}}
+                        </p>
+                    </div>
                 </template>
             </AppTableColumn>
             <AppTableColumn label="Parçalar">
@@ -120,7 +126,15 @@
             </AppTableColumn>
              <AppTableColumn label="Mağazalar">
                 <template #default="scope">
+                   <div class="flex flex-col items-start paragraph-xs c-sub-600">
+                         <p>
 
+                            {{scope.row.published_countries?.length}}
+                        </p>
+                        <p>
+                            {{scope.row.platforms?.length}}
+                        </p>
+                   </div>
                 </template>
             </AppTableColumn>
             <template #empty>
@@ -147,7 +161,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton} from '@/Components/Buttons'
-import {AddIcon,LabelsIcon, ArtistsIcon,AudioIcon,MusicVideoIcon,RingtoneIcon} from '@/Components/Icons'
+import {AddIcon,LabelsIcon,CalendarIcon, ArtistsIcon,AudioIcon,MusicVideoIcon,RingtoneIcon} from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
 const data =  ref([

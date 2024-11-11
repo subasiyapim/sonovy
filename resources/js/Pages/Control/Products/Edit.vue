@@ -6,7 +6,7 @@
         <div class="flex items-center staticTopInfo h-20">
           <div class="flex items-center gap-3.5 flex-1 ">
 
-            <IconButton hasBorder size="medium">
+            <IconButton @click="router.visit(route('control.catalog.products.index'))" hasBorder size="medium">
               <ArrowLeftIcon color="var(--sub-600)"/>
             </IconButton>
             <div class="flex flex-col flex-1">

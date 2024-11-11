@@ -31,7 +31,7 @@
 
         </template>
         <template #first_child>
-          <button class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
+          <button @click="createArtistDialog = true" class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
             Sanatçı Oluştur
           </button>
@@ -173,16 +173,19 @@
       </FormElement>
     </div>
   </div>
+  <SmallArtistCreateDialog v-if="createArtistDialog" v-model="createArtistDialog"></SmallArtistCreateDialog>
 </template>
 
 <script setup>
-import {computed, onBeforeMount} from 'vue';
+import {computed, onBeforeMount,ref} from 'vue';
 import {FormElement} from '@/Components/Form';
 import {AddIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {usePage} from '@inertiajs/vue3';
+import {SmallArtistCreateDialog} from '@/Components/Dialog';
 
 
+const createArtistDialog = ref(false);
 const crudStore = useCrudStore();
 const props = defineProps({
   modelValue: {},

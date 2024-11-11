@@ -65,6 +65,7 @@ import AppLoadingIcon from './AppLoadingIcon.vue';
 import LabelEmailIcon from './LabelEmailIcon.vue';
 import CopyIcon from './CopyIcon.vue';
 import TidalIcon from './TidalIcon.vue';
+import ISRCStarsIcon from './ISRCStarsIcon.vue';
 import YoutubeIcon from "./YoutubeIcon.vue";
 import Icon from './Icon.vue';
 import ItunesIcon from './ItunesIcon.vue';
@@ -84,6 +85,7 @@ export {
     ChevronRightIcon,
     ChevronDownIcon,
     ArrowLeftIcon,
+    ISRCStarsIcon,
     SearchIcon,
     WarningIcon,
     NotificationIcon,
