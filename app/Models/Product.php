@@ -42,6 +42,7 @@ class Product extends Model implements HasMedia
         'type',
         'album_name',
         'created_by',
+        'status',
 
         //step 1
         'version',
@@ -63,6 +64,7 @@ class Product extends Model implements HasMedia
         'publishing_country_type',
         'physical_release_date'
         //step 4
+        
     ];
     public static array $excludedFields = [
         'id',
