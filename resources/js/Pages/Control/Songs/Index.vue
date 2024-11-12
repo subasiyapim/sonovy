@@ -1,63 +1,62 @@
 <template>
   <AdminLayout :showDatePicker="false" :title="__('control.song.header')" parentTitle="Katalog">
 
-    <AppTable  :showAddButton="false" ref="pageTable" :config="appTableConfig"
+    <AppTable :showAddButton="false" ref="pageTable" :config="appTableConfig"
               v-model="usePage().props.songs" @addNewClicked="openDialog">
-      <AppTableColumn :label="'Tür'" align="left" sortable="name"  width="50">
+      <AppTableColumn :label="'Tür'" align="left" sortable="name" width="50">
         <template #default="scope">
-        <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
-            <RingtoneIcon color="var(--sub-600)" v-if="scope.row.type == 1" />
-            <MusicVideoIcon color="var(--sub-600)" v-if="scope.row.type == 2" />
-        </div>
-
+          <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
+            <RingtoneIcon color="var(--sub-600)" v-if="scope.row.type == 1"/>
+            <MusicVideoIcon color="var(--sub-600)" v-if="scope.row.type == 2"/>
+          </div>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="'Durum'" sortable="name" width="140">
         <template #default="scope">
-
-            <StatusBadge >
-                Yayında
-            </StatusBadge>
+          <StatusBadge>
+            Yayında
+          </StatusBadge>
         </template>
       </AppTableColumn>
 
       <AppTableColumn :label="'Parça Adı'" sortable="name">
         <template #default="scope">
           <div class="flex flex-col items-start">
-
-             <a :href="route('control.catalog.songs.show',scope.row.id)"  class="table-name-text">
-                {{scope.row.name}}
+            <a :href="route('control.catalog.songs.show',scope.row.id)" class="table-name-text">
+              {{ scope.row.name }}
             </a>
-           <p class="paragraph-xs c-sub-600">ISRC: {{scope.row.isrc}}</p>
+            <p class="paragraph-xs c-sub-600">ISRC: {{ scope.row.isrc }}</p>
           </div>
         </template>
       </AppTableColumn>
 
       <AppTableColumn :label="'Süre'" sortable="name">
         <template #default="scope">
-
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
-                    <PlayCircleFillIcon color="var(--dark-green-500)" />
-                </div>
-                   <p class="label-sm c-strong-950">
-                     {{scope.row.duration ?? '2.35'}}
-                   </p>
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+              <PlayCircleFillIcon color="var(--dark-green-500)"/>
             </div>
+            <p class="label-sm c-strong-950">
+              {{ scope.row.duration ?? '2.35' }}
+            </p>
+          </div>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="'Sanatçı'" sortable="name">
         <template #default="scope">
-                {{scope.row.remixer_artis}}
+          <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
+            <img :alt="scope.row.name"
+                 class="w-10 h-10 rounded-full overflow-hidden"
+                 :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
+            <span>{{ artist.name }}</span>
+          </div>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="'Katılımcı'" sortable="name">
         <template #default="scope">
-
-            <div  class="border border-soft-200 rounded c-strong-950 label-sm px-3 py-1">
-                {{scope.row.participants.length}} Katılımcı
-            </div>
-
+          <div class="border border-soft-200 rounded c-strong-950 label-sm px-3 py-1">
+            {{ scope.row.participants.length }} Katılımcı
+          </div>
         </template>
       </AppTableColumn>
 
@@ -67,7 +66,6 @@
             <h2 class="label-medium c-strong-950">{{ __('control.song.table.empty_header') }}</h2>
             <h3 class="paragraph-medium c-neutral-500">{{ __('control.song.table.empty_description') }}</h3>
           </div>
-
         </div>
       </template>
     </AppTable>
@@ -84,15 +82,27 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton, IconButton} from '@/Components/Buttons'
-import {StatusBadge,BasicBadge} from '@/Components/Badges'
-import {AddIcon, LabelsIcon, ArtistsIcon, TrashIcon, PlayCircleFillIcon,EditIcon, PhoneIcon, LabelEmailIcon,AudioIcon,MusicVideoIcon,RingtoneIcon} from '@/Components/Icons'
+import {StatusBadge, BasicBadge} from '@/Components/Badges'
+
+import {
+  AddIcon,
+  LabelsIcon,
+  ArtistsIcon,
+  TrashIcon,
+  PlayCircleFillIcon,
+  EditIcon,
+  PhoneIcon,
+  LabelEmailIcon,
+  AudioIcon,
+  MusicVideoIcon,
+  RingtoneIcon
+} from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {LabelDialog} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 
-const defaultStore = useDefaultStore();
 const pageTable = ref();
-
+const defaultStore = useDefaultStore();
 const props = defineProps({
   filters: {
     type: Array,

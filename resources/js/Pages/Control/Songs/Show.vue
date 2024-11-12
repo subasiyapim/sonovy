@@ -5,25 +5,25 @@
                :hasPadding="false">
 
     <div class="bg-dark-green-800  p-5 flex  relative">
-       <div
+      <div
           class=" rounded-lg w-60 h-60 bg-blue-300 left-8 top-8 flex items-center justify-center overflow-hidden">
         <img class="w-full h-full object-cover"
              :alt="song.name"
-             :src="song.image">
+             :src="song.image.thumb">
       </div>
       <div class=" flex-1 ms-4 flex flex-col justify-end">
         <div class="bg-white rounded-lg flex items-center gap-2 px-2 py-1 w-min mb-6">
-            <CheckFilledIcon color="var(--dark-green-800)" />
-            <p class="label-xs c-strong-950"> Yayında</p>
+          <CheckFilledIcon color="var(--dark-green-800)"/>
+          <p class="label-xs c-strong-950"> Yayında</p>
         </div>
         <h1 style="line-height:72px;" class="text-5xl text-white font-semibold" v-text="song.name"/>
 
         <div class="flex items-center gap-2">
-            <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-3">
-                <img class="w-full h-full image-fluid" :src="song.main_artist?.image"/>
-            </div>
-          <p class="label-sm text-white me-1">{{ song.main_artist?.name }}</p>
-          <p class="c-sub-600 paragraph-sm">@ellenrow</p>
+          <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-3">
+            <img alt="" class="w-full h-full image-fluid" :src="song.image.thumb"/>
+          </div>
+          <p class="label-sm text-white me-1">{{ song.main_artist.name }}</p>
+          <p class="c-sub-600 paragraph-sm hidden">@ellenrow</p>
 
           <span class="text-white paragraph-sm">{{ song.duration }}</span>
         </div>
@@ -52,72 +52,70 @@
             <div class="flex flex-col gap-8 flex-1">
 
 
-
-                <div class="flex gap-3.5 items-center">
-                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                        <DocumentIcon color="var(--sub-600)"/>
-                    </div>
-                    <div>
-                        <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.album_name')"/>
-                        <span class="song-sm c-strong-950" v-text="song.isrc"/>
-                    </div>
+              <div class="flex gap-3.5 items-center">
+                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                  <DocumentIcon color="var(--sub-600)"/>
                 </div>
-                <div class="flex gap-3.5 items-center">
-                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                        <DocumentIcon color="var(--sub-600)"/>
-                    </div>
-                    <div>
-                        <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.artist')"/>
-                        <span class="song-sm c-strong-950" v-text="song.isrc"/>
-                    </div>
+                <div>
+                  <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.album_name')"/>
+                  <span class="song-sm c-strong-950" v-text="song.album_name"/>
                 </div>
-                <div class="flex gap-3.5 items-center">
-                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                        <DocumentIcon color="var(--sub-600)"/>
-                    </div>
-                    <div>
-                        <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.label')"/>
-                        <span class="song-sm c-strong-950" v-text="song.isrc"/>
-                    </div>
+              </div>
+              <div class="flex gap-3.5 items-center">
+                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                  <DocumentIcon color="var(--sub-600)"/>
                 </div>
-
+                <div>
+                  <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.artist')"/>
+                  <span class="song-sm c-strong-950" v-text="song.main_artist.name"/>
+                </div>
+              </div>
+              <div class="flex gap-3.5 items-center">
+                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                  <DocumentIcon color="var(--sub-600)"/>
+                </div>
+                <div>
+                  <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.label')"/>
+                  <span class="song-sm c-strong-950" v-text="song.label_name"/>
+                </div>
+              </div>
 
 
-                <div class="flex gap-3.5 items-center">
-                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                    <DocumentIcon color="var(--sub-600)"/>
-                    </div>
-                    <div>
-                    <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.isrc')"/>
-                    <span class="song-sm c-strong-950" v-text="song.isrc"/>
-                    </div>
+              <div class="flex gap-3.5 items-center">
+                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                  <DocumentIcon color="var(--sub-600)"/>
                 </div>
-                <div class="flex gap-3.5 items-center">
-                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                    <DocumentIcon color="var(--sub-600)"/>
-                    </div>
-                    <div>
-                    <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.upc_code')"/>
-                    <span class="song-sm c-strong-950" v-text="song.upc_code"/>
-                    </div>
+                <div>
+                  <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.isrc')"/>
+                  <span class="song-sm c-strong-950" v-text="song.isrc"/>
                 </div>
+              </div>
+              <div class="flex gap-3.5 items-center">
+                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                  <DocumentIcon color="var(--sub-600)"/>
+                </div>
+                <div>
+                  <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.upc_code')"/>
+                  <span class="song-sm c-strong-950" v-text="song.upc_code"/>
+                </div>
+              </div>
 
 
             </div>
             <div class="flex flex-col gap-8 flex-1">
-            <!--- SONG PLATFORM --->
+              <!--- SONG PLATFORM --->
               <div class="flex gap-3.5 items-center">
                 <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                  <PhoneIcon color="var(--sub-600)"/>
+                  <LinkIcon color="var(--sub-600)"/>
                 </div>
-                <div>
-                  <p class="paragraph-xs c-sub-600" v-text="'Youtube ID'"/>
-                  <span class="song-sm c-strong-950" v-text="'**'"/>
+                <div v-for="platform in song.platforms" :key="platform.id">
+                  <p class="paragraph-xs c-sub-600" v-text="platform.name"/>
+                  <span class="song-sm c-strong-950" v-text="platform.pivot.url"/>
                 </div>
               </div>
             </div>
           </div>
-           <h1 class="mb-6 subheading-regular text-start" v-text="__('control.song.show.participants')"/>
+          <h1 class="mb-6 subheading-regular text-start" v-text="__('control.song.show.participants')"/>
 
         </div>
 
@@ -126,26 +124,26 @@
 
       </div>
       <div class="w-96 pr-8">
-        <h1 class="mb-6 subheading-regular" >
-            {{__('control.song.show.song_albums')}} (12)
+        <h1 class="mb-6 subheading-regular">
+          {{ __('control.song.show.song_albums') }} (12)
         </h1>
 
-        <template v-if="song.products.length > 0">
-          <div v-for="song in song.products" class="flex p-4">
+        <template v-if="song.other_songs">
+          <div v-for="song in song.other_songs" class="flex p-4">
             <div class="flex-1 flex items-center gap-4">
               <div class="w-8 h-8 rounded-lg overflow-hidden">
-                <img src="https://placehold.co/400x400"/>
+                <img v-if="song.image" :src="song.image.original_url"/>
               </div>
               <div>
-                <p class="text-sm c-strong-950">Parça Adı</p>
-                <span class="paragraph-xs c-blue-500">Albüm Adı</span>
+                <p class="text-sm c-strong-950">{{ song.album_name }}</p>
+                <span class="paragraph-xs c-blue-500">{{ song.name }}</span>
               </div>
             </div>
             <div class="flex items-end gap-2">
               <div class="h-3.5">
                 <PlayFilledIcon color="var(--strong-950)"/>
               </div>
-              <span class="paragraph-xs c-neutral-500">02:35</span>
+              <span class="paragraph-xs c-neutral-500">{{ song.duration }}</span>
             </div>
           </div>
         </template>

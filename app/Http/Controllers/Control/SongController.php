@@ -7,6 +7,7 @@ use App\Enums\SongTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Song\SongChangeStatusRequest;
 use App\Http\Requests\Song\SongUpdateRequest;
+use App\Http\Resources\Song\SongShowResource;
 use App\Models\Participant;
 use App\Models\Product;
 use App\Services\MusicBrainzServices;
@@ -31,7 +32,7 @@ use function PHPUnit\Framework\isEmpty;
 
 class SongController extends Controller
 {
-    protected $musixmatch;
+    protected MusixmatchService $musixmatch;
 
     public function __construct(MusixmatchService $musixmatch)
     {
@@ -109,12 +110,14 @@ class SongController extends Controller
     {
         abort_if(Gate::denies('song_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $songs = Song::with('genre', 'subGenre', 'products.artists', 'participants', 'remixer')
+        $songs = Song::with('genre', 'subGenre', 'participants', 'remixer', 'mainArtists',
+            'featuringArtists')
             ->when($request->type, function ($query) use ($request) {
                 $query->where('type', $request->type);
             })
             ->whereHas('products')
             ->advancedFilter();
+
 
         $types = array_merge([['label' => 'Tümü', 'value' => null]], SongTypeEnum::getTitlesFromInputFormat());
 
@@ -129,26 +132,30 @@ class SongController extends Controller
             'genre',
             'subGenre',
 
-            'products',
+            'products.label',
             'participants.user',
             'earnings',
             'musixMatch',
 
             'remixer',
             'convertedSong',
-            'reports'
+            'reports',
+            'mainArtists',
+            'featuringArtists',
         );
-
-        $earnings = $song->earnings()->advancedFilter();
-        $total_earning = Earning::where('song_id', $song->id)->sum('earning');
 
         if ($song->musixMatch === null) {
             $this->searchTrackFromIsrc($song);
         }
 
         $isrcResult = MusicBrainzServices::lookupISRC($song->isrc);
-
-        return inertia('Control/Songs/Show', compact('song', 'earnings', 'total_earning', 'isrcResult'));
+        $response = new SongShowResource($song);
+        //dd($response->resolve());
+        return inertia('Control/Songs/Show',
+            [
+                'song' => $response->resolve(),
+                'isrcResult' => $isrcResult
+            ]);
     }
 
     public function edit(Song $song)
