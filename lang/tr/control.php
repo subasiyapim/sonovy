@@ -1555,6 +1555,7 @@ return [
     'song' => [
         'title' => 'Şarkılar',
         'header' => 'Şarkılar',
+        'show_header' => 'Şarkı',
         'title_singular' => 'Şarkı',
         'enums' => [
             'type_sound' => 'Ses',

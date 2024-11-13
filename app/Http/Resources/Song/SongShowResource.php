@@ -25,7 +25,7 @@ class SongShowResource extends JsonResource
             'type' => $this->type,
             'path' => $this->path,
             'isrc' => $this->isrc,
-            'main_artist' => $this->getMainArtist(),
+            'main_artist' => $this->mainArtists()->first(),
             'participants' => $this->participants,
             'platforms' => $this->platforms,
             'other_songs' => $this->otherSongs(),

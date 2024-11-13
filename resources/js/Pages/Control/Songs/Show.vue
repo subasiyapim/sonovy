@@ -9,7 +9,7 @@
           class=" rounded-lg w-60 h-60 bg-blue-300 left-8 top-8 flex items-center justify-center overflow-hidden">
         <img class="w-full h-full object-cover"
              :alt="song.name"
-             :src="song.image.thumb">
+             :src="song.image ? song.image.original_url : 'https://via.placeholder.com/150'">
       </div>
       <div class=" flex-1 ms-4 flex flex-col justify-end">
         <div class="bg-white rounded-lg flex items-center gap-2 px-2 py-1 w-min mb-6">
@@ -20,7 +20,8 @@
 
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-3">
-            <img alt="" class="w-full h-full image-fluid" :src="song.image.thumb"/>
+            <img alt="" class="w-full h-full image-fluid"
+                 :src="song.main_artist.image ? song.main_artist.image.original_url : 'https://via.placeholder.com/150'"/>
           </div>
           <p class="label-sm text-white me-1">{{ song.main_artist.name }}</p>
           <p class="c-sub-600 paragraph-sm hidden">@ellenrow</p>
@@ -132,7 +133,7 @@
           <div v-for="song in song.other_songs" class="flex p-4">
             <div class="flex-1 flex items-center gap-4">
               <div class="w-8 h-8 rounded-lg overflow-hidden">
-                <img v-if="song.image" :src="song.image.original_url"/>
+                <img v-if="song.image" :src="song.image ? song.image.original_url : 'https://via.placeholder.com/150'"/>
               </div>
               <div>
                 <p class="text-sm c-strong-950">{{ song.album_name }}</p>
