@@ -17,7 +17,7 @@ class SongShowResource extends JsonResource
         return [
             'id' => $this->id,
             'image' => $this->products[0]->image,
-            'label_name' => $this->products[0]->label->name,
+            'label_name' => $this->products[0]?->label?->name,
             'album_name' => $this->products[0]->album_name,
             'version' => $this->version,
             'genre' => $this->genre->name,
