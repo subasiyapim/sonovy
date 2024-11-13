@@ -18,7 +18,7 @@ class TusServiceProvider extends ServiceProvider
     {
         $this->app->singleton('tus-server', function ($app) {
             $server = new TusServer();
-            $storagePath = storage_path('app/public/tenant_' . tenant('id') . '/songs');
+            $storagePath = storage_path('app/public/tenant_'.tenant('id').'/songs');
 
             if (!File::exists($storagePath)) {
                 File::makeDirectory($storagePath, 0775, true, true);
@@ -40,21 +40,36 @@ class TusServiceProvider extends ServiceProvider
 
     protected function handleFileUploadComplete($event, $storagePath): void
     {
-        $fileMeta = $event->getFile()->details();
-        Log::info("Upload tamamlandı: " . json_encode($fileMeta));
+        //izin verilen dosya uzantıları
+        $allowedExtensions = [
+            'sound' => ['wav', 'flac'],
+            'video' => ['mp4', 'avi', 'mkv', 'mov'],
+        ];
 
-        $filePath = $storagePath . '/' . $fileMeta['name'];
+        $fileMeta = $event->getFile()->details();
+        Log::info("Upload tamamlandı: ".json_encode($fileMeta));
+
+        $filePath = $storagePath.'/'.$fileMeta['name'];
+
+        //Dosya uzantısı kontrolü
+        $fileExtension = strtolower(File::extension($filePath));
+
+        if (!in_array($fileExtension, $allowedExtensions['sound'])) {
+            Log::error("Dosya türü desteklenmiyor: ".$fileExtension);
+            return;
+        }
+        
         $details = FFMpegServices::getMediaDetails(file: $filePath);
 
         if (!$details['status']) {
-            Log::error("Dosya türü desteklenmiyor veya bir hata oluştu: " . json_encode($details));
+            Log::error("Dosya türü desteklenmiyor veya bir hata oluştu: ".json_encode($details));
             return;
         }
 
         $data = [
             "type" => $details['type'],
             "name" => $fileMeta['metadata']['orignalName'],
-            "path" => 'songs/' . $fileMeta['name'],
+            "path" => 'songs/'.$fileMeta['name'],
             "mime_type" => $fileMeta['metadata']['mime_type'],
             "size" => $fileMeta['metadata']['size'],
             "duration" => self::formatDuration($details['details']['duration']),
@@ -66,11 +81,11 @@ class TusServiceProvider extends ServiceProvider
         try {
             $file = Song::create($data);
             $file->products()->attach([$fileMeta['metadata']['product_id']]);
-            Log::info("IDD: " . $fileMeta['metadata']['product_id']);
+            Log::info("IDD: ".$fileMeta['metadata']['product_id']);
 
             $event->getResponse()->setHeaders(['upload_info' => $file->id]);
         } catch (Error $e) {
-            Log::info("HATA: " . $e);
+            Log::info("HATA: ".$e);
         }
     }
 
@@ -82,5 +97,7 @@ class TusServiceProvider extends ServiceProvider
         return sprintf('%02d:%02d', $minutes, $remainingSeconds);
     }
 
-    public function boot() {}
+    public function boot()
+    {
+    }
 }

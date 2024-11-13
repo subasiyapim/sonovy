@@ -82,7 +82,7 @@
           <template #default="scope">
             <IconButton @click="favoriteSong(scope.row)">
               <StarFilledIcon v-if="scope.row.pivot?.is_favorite" color="#FF8447"/>
-              <StarIcon  v-else color="var(--sub-600)"/>
+              <StarIcon v-else color="var(--sub-600)"/>
 
 
             </IconButton>
@@ -133,7 +133,15 @@ import {SongLoadingCard} from '@/Components/Cards';
 import {StatusBadge} from '@/Components/Badges';
 import {SongDialog, ConfirmDeleteDialog} from '@/Components/Dialog';
 import {RegularButton, PrimaryButton, IconButton} from '@/Components/Buttons'
-import {StarIcon,StarFilledIcon, TrashIcon, EditIcon, DraggableIcon, MusicVideoIcon, PlayCircleFillIcon} from '@/Components/Icons';
+import {
+  StarIcon,
+  StarFilledIcon,
+  TrashIcon,
+  EditIcon,
+  DraggableIcon,
+  MusicVideoIcon,
+  PlayCircleFillIcon
+} from '@/Components/Icons';
 import {toast} from 'vue3-toastify';
 
 const attemps = ref([], {deep: true});
@@ -163,19 +171,19 @@ const onTusStart = (e) => {
 
 const deleteSong = async (songs) => {
 
-    const response = await crudStore.post(route('control.catalog.songs.songsDelete'), {
-        ids: songs,
-        product_id: props.product.id
-    })
+  const response = await crudStore.post(route('control.catalog.songs.songsDelete'), {
+    ids: songs,
+    product_id: props.product.id
+  })
 
-    songs.forEach(element => {
-        const findedIndex = form.value.songs.findIndex((e) => e.id == element) ;
-        if(findedIndex >= 0){
-            form.value.songs.splice(findedIndex,1);
-        }
-    });
+  songs.forEach(element => {
+    const findedIndex = form.value.songs.findIndex((e) => e.id == element);
+    if (findedIndex >= 0) {
+      form.value.songs.splice(findedIndex, 1);
+    }
+  });
 
-    toast.success("İşlem başarılı");
+  toast.success("İşlem başarılı");
 
 //   console.log("RESPONSEE", response);
 
@@ -256,18 +264,18 @@ const favoriteSong = async (song) => {
     product_id: props.product.id
   })
 
-    console.log("SONG",song.pivot);
-     form.value.songs.forEach(element => {
-        if(song.id == element.id){
-            element.pivot.is_favorite =1;
-        }else {
-            if(element.pivot){
-                element.pivot.is_favorite = 0
-            }
-        }
+  console.log("SONG", song.pivot);
+  form.value.songs.forEach(element => {
+    if (song.id == element.id) {
+      element.pivot.is_favorite = 1;
+    } else {
+      if (element.pivot) {
+        element.pivot.is_favorite = 0
+      }
+    }
 
-    });
-      toast.success("Şarkının favori durumu başarıyla değiştirildi");
+  });
+  toast.success("Şarkının favori durumu başarıyla değiştirildi");
 //   song.pivot?.is_favorite = !song.pivot.is_favorite;
 
 

@@ -74,29 +74,35 @@
       <AppTableColumn label="Durum">
         <template #default="scope">
 
-           <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2">
-                <component :is="statusData.find((e) => e.value == scope.row.status)?.icon" :color="statusData.find((e) => e.value == scope.row.status)?.color"></component>
-                <p class="subheading-xs c-sub-600">
-                    {{statusData.find((e) => e.value == scope.row.status)?.label}}
-                </p>
-           </div>
+          <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2">
+            <component :is="statusData.find((e) => e.value == scope.row.status)?.icon"
+                       :color="statusData.find((e) => e.value == scope.row.status)?.color"></component>
+            <p class="subheading-xs c-sub-600">
+              {{ statusData.find((e) => e.value == scope.row.status)?.label }}
+            </p>
+          </div>
         </template>
       </AppTableColumn>
 
       <AppTableColumn label="Yayın Bilgisi">
         <template #default="scope">
-          <div v-if="scope.row.image" class="w-8 h-8 rounded overflow-hidden">
-            <img :src="scope.row.image.thumb">
+          <div class="flex gap-x-2 items-center">
+            <div class="w-8 h-8 rounded overflow-hidden">
+              <img class="w-10 h-10" alt=""
+                   :src="scope.row.image ? scope.row.image.thumb : 'https://loremflickr.com/400/400'">
+            </div>
+            <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
+              {{ scope.row.album_name }}
+            </a>
           </div>
-          <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
-            {{ scope.row.album_name }}
-          </a>
         </template>
       </AppTableColumn>
 
       <AppTableColumn label="Sanatçı">
         <template #default="scope">
-          <span class="paragraph-xs c-strong-950" v-for="artist in scope.row.artists">{{ artist.name }}</span>
+          <p class="paragraph-xs c-strong-950 px-1" v-for="artist in scope.row.main_artists">
+            {{ artist.name }}
+          </p>
         </template>
       </AppTableColumn>
 
@@ -108,57 +114,57 @@
         </template>
       </AppTableColumn>
 
-            <AppTableColumn label="Yayın Tarih">
-                <template #default="scope">
-                    <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
-                        <CalendarIcon color="var(--sub-600)" />
-                        <p class="paragraph-xs c-sub-600">
+      <AppTableColumn label="Yayın Tarih">
+        <template #default="scope">
+          <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
+            <CalendarIcon color="var(--sub-600)"/>
+            <p class="paragraph-xs c-sub-600">
 
-                            {{scope.row.physical_release_date}}
-                        </p>
-                    </div>
-                </template>
-            </AppTableColumn>
-            <AppTableColumn label="Parçalar">
-                <template #default="scope">
-                    <span class="paragraph-xs c-sub-600" >{{scope.row.songs?.length}} Parça</span>
-                </template>
-            </AppTableColumn>
-             <AppTableColumn label="UPC/Katalog">
-                <template #default="scope">
-                    <div class="flex flex-col justify-start ">
-                        <span class="paragraph-xs c-sub-600" >{{scope.row.upc_code}} Parça</span>
-                        <span class="paragraph-xs c-sub-600" >{{scope.row.catalog_number}} Parça</span>
+              {{ scope.row.physical_release_date }}
+            </p>
+          </div>
+        </template>
+      </AppTableColumn>
+      <AppTableColumn label="Parçalar">
+        <template #default="scope">
+          <span class="paragraph-xs c-sub-600">{{ scope.row.songs?.length }} Parça</span>
+        </template>
+      </AppTableColumn>
+      <AppTableColumn label="UPC/Katalog">
+        <template #default="scope">
+          <div class="flex flex-col justify-start ">
+            <span class="paragraph-xs c-sub-600">{{ scope.row.upc_code }}</span>
+            <span class="paragraph-xs c-sub-600">{{ scope.row.catalog_number }}</span>
 
-                    </div>
-                </template>
-            </AppTableColumn>
-             <AppTableColumn label="Mağazalar">
-                <template #default="scope">
-                   <div class="flex flex-col items-start paragraph-xs c-sub-600">
-                         <p>
+          </div>
+        </template>
+      </AppTableColumn>
+      <AppTableColumn label="Mağazalar">
+        <template #default="scope">
+          <div class="flex flex-col items-start paragraph-xs c-sub-600">
+            <p>
 
-                            {{scope.row.published_countries?.length ?? 0}} Bölge
-                        </p>
-                        <p>
-                            {{scope.row.download_platforms?.length}} Mağaza
-                        </p>
-                   </div>
-                </template>
-            </AppTableColumn>
-            <template #empty>
-                <div class="flex flex-col items-center justify-center gap-8">
-                    <div>
-                        <h2 class="label-medium c-strong-950">Henüz yayınız bulunmamaktadır.</h2>
-                        <h3 class="paragraph-medium c-neutral-500">Oluşturucağınız tüm yayınlar burada listelenecektir.</h3>
-                    </div>
-                    <PrimaryButton>
-                        <template #icon>
-                                <AddIcon />
-                        </template>
-                        İlk Yayını Oluştur
-                    </PrimaryButton>
-                </div>
+              {{ scope.row.published_countries?.length ?? 0 }} Bölge
+            </p>
+            <p>
+              {{ scope.row.download_platforms?.length }} Mağaza
+            </p>
+          </div>
+        </template>
+      </AppTableColumn>
+      <template #empty>
+        <div class="flex flex-col items-center justify-center gap-8">
+          <div>
+            <h2 class="label-medium c-strong-950">Henüz yayınız bulunmamaktadır.</h2>
+            <h3 class="paragraph-medium c-neutral-500">Oluşturucağınız tüm yayınlar burada listelenecektir.</h3>
+          </div>
+          <PrimaryButton>
+            <template #icon>
+              <AddIcon/>
+            </template>
+            İlk Yayını Oluştur
+          </PrimaryButton>
+        </div>
 
 
       </template>
@@ -172,7 +178,19 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton} from '@/Components/Buttons'
-import {AddIcon,LabelsIcon,CalendarIcon, EditLineIcon,WarningIcon,RetractedIcon,ArtistsIcon,AudioIcon,MusicVideoIcon,RingtoneIcon,CheckFilledIcon} from '@/Components/Icons'
+import {
+  AddIcon,
+  LabelsIcon,
+  CalendarIcon,
+  EditLineIcon,
+  WarningIcon,
+  RetractedIcon,
+  ArtistsIcon,
+  AudioIcon,
+  MusicVideoIcon,
+  RingtoneIcon,
+  CheckFilledIcon
+} from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
 
@@ -187,43 +205,43 @@ const data = ref([
 
 
 const statusData = ref([
-    {
-        label: "Taslak",
-        value: 1,
-         icon:EditLineIcon,
-        color:"#FF8447",
+  {
+    label: "Taslak",
+    value: 1,
+    icon: EditLineIcon,
+    color: "#FF8447",
 
-      },
-      {
-        label: "İnceleniyor",
-        value: 2,
-        icon:EditLineIcon,
-        color:"#FF8447",
-      },
-      {
-        label: "Yayınlandı",
-        value: 3,
-        icon:CheckFilledIcon,
-        color:"#335CFF",
-      },
-      {
-        label: "Reddedildi",
-        value: 4,
-        icon:WarningIcon,
-         color:"##FB3748",
-      },
-      {
-        label: "Geri Çekildi",
-        value: 5,
-         icon:RetractedIcon,
-          color:"#717784",
-      },
-      {
-        label: "Planlandı",
-        value: 6,
-        icon:CheckFilledIcon,
-         color:"#FF8447",
-      }
+  },
+  {
+    label: "İnceleniyor",
+    value: 2,
+    icon: EditLineIcon,
+    color: "#FF8447",
+  },
+  {
+    label: "Yayınlandı",
+    value: 3,
+    icon: CheckFilledIcon,
+    color: "#335CFF",
+  },
+  {
+    label: "Reddedildi",
+    value: 4,
+    icon: WarningIcon,
+    color: "##FB3748",
+  },
+  {
+    label: "Geri Çekildi",
+    value: 5,
+    icon: RetractedIcon,
+    color: "#717784",
+  },
+  {
+    label: "Planlandı",
+    value: 6,
+    icon: CheckFilledIcon,
+    color: "#FF8447",
+  }
 ]);
 </script>
 

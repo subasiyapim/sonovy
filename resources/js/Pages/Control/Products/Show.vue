@@ -32,10 +32,12 @@
         </div>
         <div class="flex items-center gap-2 w-96 mt-auto">
 
-          <AppSelectInput @change="onStatusChange" class="bg-white" v-model="product.status" :config="productStatusConfig">
+          <AppSelectInput @change="onStatusChange" class="bg-white" v-model="product.status"
+                          :config="productStatusConfig">
 
           </AppSelectInput>
-          <RegularButton class="w-full">
+          <RegularButton class="w-full"
+                         @click="router.visit(route('control.catalog.products.form.edit',[1,product.id]))">
             <template #icon>
               <EditLineIcon color="var(--sub-600)"/>
             </template>
@@ -46,7 +48,7 @@
         </div>
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
-        <RegularButton @click="router.visit(route('control.catalog.products.form.edit',[1,product.id]))">
+        <RegularButton>
           Güncelle
 
         </RegularButton>
@@ -120,6 +122,7 @@ import DistributionsTab from './ShowTabs/distributions.vue';
 import PromotionsTab from './ShowTabs/promotions.vue';
 import SongsTab from './ShowTabs/songs.vue';
 import {useCrudStore} from '@/Stores/useCrudStore';
+
 const isModalOn = ref(false);
 import {toast} from 'vue3-toastify';
 
@@ -129,7 +132,6 @@ const props = defineProps({
     required: true
   }
 });
-
 
 
 const crudStore = useCrudStore();
@@ -220,15 +222,13 @@ const onTabChange = (tab) => {
 
 const onStatusChange = async (e) => {
 
-    const response = await crudStore.post(route('control.catalog.products.changeStatus',props.product.id),{
-        status: e.value
-    });
-    if(response.success){
-        toast.success("Durum Başarıyla Değiştirildi");
+  const response = await crudStore.post(route('control.catalog.products.changeStatus', props.product.id), {
+    status: e.value
+  });
+  if (response.success) {
+    toast.success("Durum Başarıyla Değiştirildi");
 
-    }
-
-
+  }
 
 
 }

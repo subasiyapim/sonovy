@@ -7,8 +7,6 @@ use App\Enums\MainPriceEnum;
 use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
-use App\Enums\YoutubeChannelThemeEnum;
-use App\Enums\PlatformTypeEnum;
 use App\Exports\ProductExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ProductStoreRequest;
@@ -16,7 +14,6 @@ use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Http\Requests\Product\ConvertAudioRequest;
 use App\Http\Resources\Product\ProductShowResource;
 use App\Jobs\ConvertAudioJob;
-use App\Models\Artist;
 use App\Models\ArtistBranch;
 use App\Models\Product;
 use App\Models\System\Country;
@@ -27,7 +24,6 @@ use App\Models\Platform;
 use App\Services\ISRCServices;
 use App\Services\iTunesServices;
 use App\Services\MusicBrainzServices;
-use App\Services\TimezoneService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -54,7 +50,7 @@ class ProductController extends Controller
     {
         abort_if(Gate::denies('product_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $products = Product::with('artists', 'label', 'songs', 'downloadPlatforms')
+        $products = Product::with('artists', 'mainArtists', 'label', 'songs', 'downloadPlatforms')
             ->when($request->input('status'), function ($query) use ($request) {
                 $query->where('status', $request->input('status'));
             })
@@ -290,6 +286,7 @@ class ProductController extends Controller
 
         return response()->json(['exist' => false]);
     }
+
     public function changeStatus(Product $product, Request $request): JsonResponse
     {
         $product->status = $request->status;
