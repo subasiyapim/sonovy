@@ -21,9 +21,9 @@
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-3">
             <img alt="" class="w-full h-full image-fluid"
-                 :src="song.main_artist.image ? song.main_artist.image.original_url : 'https://via.placeholder.com/150'"/>
+                 :src="song?.main_artist?.image ? song?.main_artist.image.original_url : 'https://via.placeholder.com/150' "/>
           </div>
-          <p class="label-sm text-white me-1">{{ song.main_artist.name }}</p>
+          <p class="label-sm text-white me-1">{{ song.main_artist?.name }}</p>
           <p class="c-sub-600 paragraph-sm hidden">@ellenrow</p>
 
           <span class="text-white paragraph-sm">{{ song.duration }}</span>
@@ -68,7 +68,7 @@
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.artist')"/>
-                  <span class="song-sm c-strong-950" v-text="song.main_artist.name"/>
+                  <span class="song-sm c-strong-950" v-text="song?.main_artist?.name"/>
                 </div>
               </div>
               <div class="flex gap-3.5 items-center">
