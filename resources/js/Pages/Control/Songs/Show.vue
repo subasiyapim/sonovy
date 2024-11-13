@@ -14,7 +14,7 @@
       <div class=" flex-1 ms-4 flex flex-col justify-end">
         <div class="bg-white rounded-lg flex items-center gap-2 px-2 py-1 w-min mb-6">
           <CheckFilledIcon color="var(--dark-green-800)"/>
-          <p class="label-xs c-strong-950"> Yayında</p>
+          <p class="label-xs c-strong-950" v-text="song.product_status"/>
         </div>
         <h1 style="line-height:72px;" class="text-5xl text-white font-semibold" v-text="song.name"/>
 

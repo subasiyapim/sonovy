@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Song;
 
+use App\Enums\ProductStatusEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -29,6 +30,7 @@ class SongShowResource extends JsonResource
             'participants' => $this->participants,
             'platforms' => $this->platforms,
             'other_songs' => $this->otherSongs(),
+            'product_status' => ProductStatusEnum::from($this->products[0]->status)->title(),
         ];
     }
 
