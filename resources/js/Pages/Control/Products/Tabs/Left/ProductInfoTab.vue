@@ -5,17 +5,12 @@
       İlk adım, yayın bilgilerinizi dolduralım.✍🏻
     </p>
   </div>
-
-  <ul>
-    <li v-for="error in form.errors">{{ error }}</li>
-  </ul>
-
   <div class="flex gap-10">
 
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
       <FormElement :required="true" label-width="190px" :error="form.errors.album_name" v-model="form.album_name"
                    label="Albüm Adı"></FormElement>
-      <FormElement :required="true" label-width="190px" :error="form.errors.version" v-model="form.version"
+      <FormElement label-width="190px" :error="form.errors.version" v-model="form.version"
                    label="Sürüm"
                    placeholder="Lütfen giriniz"></FormElement>
 
@@ -177,7 +172,7 @@
 </template>
 
 <script setup>
-import {computed, onBeforeMount,ref} from 'vue';
+import {computed, onBeforeMount, ref} from 'vue';
 import {FormElement} from '@/Components/Form';
 import {AddIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';
@@ -272,38 +267,38 @@ const formatConfig = computed(() => {
 })
 
 onBeforeMount(() => {
-    if(props.product.label){
-        labelConfig.value.data.push({
-            "value" : props.product.label.id,
-            "label" : props.product.label.name,
-        });
-    }
-    if(props.product.main_artists){
+  if (props.product.label) {
+    labelConfig.value.data.push({
+      "value": props.product.label.id,
+      "label": props.product.label.name,
+    });
+  }
+  if (props.product.main_artists) {
 
-        props.product.main_artists.forEach(element => {
-            console.log("ELEENT",element);
+    props.product.main_artists.forEach(element => {
+      console.log("ELEENT", element);
 
-            artistSelectConfig.value.data.push({
-                "image" : element.media[0]?.original_url,
-                "value" : element.id,
-                "label" : element.name,
-            });
-        });
+      artistSelectConfig.value.data.push({
+        "image": element.media[0]?.original_url,
+        "value": element.id,
+        "label": element.name,
+      });
+    });
 
-    }
-    if(props.product.featured_artists){
+  }
+  if (props.product.featured_artists) {
 
-        props.product.featured_artists.forEach(element => {
-            console.log("ELEENT",element);
+    props.product.featured_artists.forEach(element => {
+      console.log("ELEENT", element);
 
-            artistSelectConfig.value.data.push({
-                "image" : element.media[0]?.original_url,
-                "value" : element.id,
-                "label" : element.name,
-            });
-        });
+      artistSelectConfig.value.data.push({
+        "image": element.media[0]?.original_url,
+        "value": element.id,
+        "label": element.name,
+      });
+    });
 
-    }
+  }
 
 
 });

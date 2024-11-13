@@ -5,6 +5,7 @@ namespace App\Http\Requests\Product;
 use App\Enums\AlbumTypeEnum;
 use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductTypeEnum;
+use App\Models\Product;
 use App\Models\System\Country;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
@@ -32,7 +33,7 @@ class ProductUpdateRequest extends FormRequest
     private static function stepThree($publishing_country_type): array
     {
         $data = [
-            'production_year' => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
+            'production_year' => ['required', 'integer', 'min:1900', 'max:'.date('Y')],
             'previously_released' => ['required', 'boolean'],
             'previous_release_date' => ['required_if:previously_released,true', 'nullable', 'date'],
             'publishing_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
@@ -68,7 +69,7 @@ class ProductUpdateRequest extends FormRequest
         $data = [
             'type' => ['required', Rule::enum(ProductTypeEnum::class)],
             'album_name' => ['required', 'string', 'min:3', 'max:100'],
-            'version' => ['required', 'string', 'min:3', 'max:100'],
+            'version' => ['nullable', 'string', 'min:3', 'max:100'],
             'mixed_album' => ['required', 'boolean'],
             'genre_id' => ['required', 'integer', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'integer', 'exists:genres,id'],
@@ -89,7 +90,18 @@ class ProductUpdateRequest extends FormRequest
 
     private static function common(): array
     {
-        return ['step' => ['required', 'integer', 'min:1', 'max:5']];
+        $product = Product::find(request()->route('product')->id);
+
+        $common = [
+            'step' => ['required', 'integer', 'min:1', 'max:5'],
+        ];
+
+        if ($product && !$product->image) {
+            $common['image'] = ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'];
+        }
+
+        return $common;
+
     }
 
     /**

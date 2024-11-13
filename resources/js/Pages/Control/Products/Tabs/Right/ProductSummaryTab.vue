@@ -1,4 +1,10 @@
 <template>
+  <span v-if="usePage().props.errors && usePage().props.errors.image"
+        class="c-error-500 paragraph-xs flex items-center gap-1 mt-2">
+    <InfoFilledIcon color="var(--error-500)"/>
+    {{ usePage().props.errors.image }}
+  </span>
+
   <DragUploadInput @change="onChange" :image="product.image" label="Albüm Kapağı"
                    note="JPEG, PNG, PDF, and MP4 formats, up to 50 MB."></DragUploadInput>
   <div class="flex gap-3.5 items-center">
@@ -7,7 +13,7 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Albüm Adı</p>
-      <span class="label-sm c-strong-950">{{product.album_name ?? '-'}}</span>
+      <span class="label-sm c-strong-950">{{ product.album_name ?? '-' }}</span>
     </div>
   </div>
 
@@ -17,9 +23,9 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Sanatçılar</p>
-        <span class="label-sm c-strong-950">
+      <span class="label-sm c-strong-950">
             <template v-for="artist in product.main_artists ">
-                {{artist.name}}
+                {{ artist.name }}
             </template>
         </span>
     </div>
@@ -29,10 +35,10 @@
       <PersonIcon color="var(--sub-600)"/>
     </div>
     <div>
-        <p class="paragraph-xs c-sub-600">Düet</p>
-        <span class="label-sm c-strong-950">
+      <p class="paragraph-xs c-sub-600">Düet</p>
+      <span class="label-sm c-strong-950">
             <template v-for="artist in product.featured_artists">
-                {{artist.name}}
+                {{ artist.name }}
             </template>
         </span>
     </div>
@@ -44,7 +50,7 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Tarz</p>
-      <span class="label-sm c-strong-950">{{product.genre?.name}}</span>
+      <span class="label-sm c-strong-950">{{ product.genre?.name }}</span>
     </div>
   </div>
 
@@ -55,7 +61,7 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Yayın Tarihi</p>
-      <span class="label-sm c-strong-950">{{product.physical_release_date}}</span>
+      <span class="label-sm c-strong-950">{{ product.physical_release_date }}</span>
     </div>
 
 
@@ -68,7 +74,7 @@
     </div>
     <div>
       <p class="paragraph-xs c-sub-600">Toplam Süre</p>
-      <span class="label-sm c-strong-950">{{product.duration}}</span>
+      <span class="label-sm c-strong-950">{{ product.duration }}</span>
     </div>
 
 
@@ -78,11 +84,20 @@
 
 <script setup>
 import {DragUploadInput} from '@/Components/Form';
-import {AddIcon, BroadcastTitleIcon, PersonIcon, GenreIcon, CalendarIcon, DurationIcon} from '@/Components/Icons';
+import {
+  AddIcon,
+  BroadcastTitleIcon,
+  PersonIcon,
+  GenreIcon,
+  CalendarIcon,
+  DurationIcon,
+  InfoFilledIcon
+} from '@/Components/Icons';
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {usePage} from "@inertiajs/vue3";
+
 const props = defineProps({
-    product:{},
+  product: {},
 })
 
 const crudStore = useCrudStore();
