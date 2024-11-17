@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Models\System\Tenant;
 use Stancl\Tenancy\Database\Models\Domain;
-use Stancl\Tenancy\Database\Models\Tenant;
+
 
 $data = [
-    'tenant_model' => \App\Models\System\Tenant::class,
-    'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
-
+    'tenant_model' => Tenant::class,
+    'id_generator' => null,
     'domain_model' => Domain::class,
 
     /**
@@ -20,7 +20,7 @@ $data = [
     'bootstrappers' => [
         Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper::class,
         Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper::class,
-        //Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class,
+        Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class,
         Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper::class,
         App\Contracts\TenantInitializeBootstrapper::class,
     ],
@@ -29,7 +29,7 @@ $data = [
      * Database tenancy config. Used by DatabaseTenancyBootstrapper.
      */
     'database' => [
-        'central_connection' => env('DB_CONNECTION', 'central'),
+        'central_connection' => env('DB_CONNECTION', 'sonovy'),
 
         /**
          * Connection used as a "template" for the dynamically created tenant database connection.
@@ -41,7 +41,7 @@ $data = [
          * Tenant database names are created like this:
          * prefix + tenant_id + suffix.
          */
-        'prefix' => 'tenant',
+        'prefix' => 'tenant_',
         'suffix' => '',
 
         /**
@@ -79,7 +79,7 @@ $data = [
      * You can clear cache selectively by specifying the tag.
      */
     'cache' => [
-        'tag_base' => 'tenant',
+        'tag_base' => 'tenant_',
         // This tag_base, followed by the tenant_id, will form a tag that will be applied on each cache call.
     ],
 
@@ -91,43 +91,33 @@ $data = [
         /**
          * Each disk listed in the 'disks' array will be suffixed by the suffix_base, followed by the tenant_id.
          */
-//        'suffix_base' => 'tenant_',
-//        'disks' => [
-//            //'local',
-//            //'public',
-//            // 's3',
-//        ],
+        'suffix_base' => 'tenant_',
+        'disks' => [
+            //'local',
+            //'public',
+            // 's3',
+        ],
 
         /**
          * Use this for local disks.
          *
          * See https://tenancyforlaravel.com/docs/v3/tenancy-bootstrappers/#filesystem-tenancy-boostrapper
          */
-//        'root_override' => [
-//            // Disks whose roots should be overridden after storage_path() is suffixed.
-//            'local' => '%storage_path%/app/',
-//            'public' => '%storage_path%/app/public/',
-//        ],
+        'root_override' => [
+            // Define the root for the 'local' and 'public' disks to include storage_10.
+            //'local' => '%storage_path%/app/',
+            //'public' => '%storage_path%/app/public/',
+        ],
 
         /**
          * Should storage_path() be suffixed.
-         *
-         * Note: Disabling this will likely break local disk tenancy. Only disable this if you're using an external file storage service like S3.
-         *
-         * For the vast majority of applications, this feature should be enabled. But in some
-         * edge cases, it can cause issues (like using Passport with Vapor - see #196), so
-         * you may want to disable this if you are experiencing these edge case issues.
          */
         'suffix_storage_path' => false,
 
         /**
-         * By default, asset() calls are made multi-tenant too. You can use global_asset() and mix()
-         * for global, non-tenant-specific assets. However, you might have some issues when using
-         * packages that use asset() calls inside the tenant app. To avoid such issues, you can
-         * disable asset() helper tenancy and explicitly use tenant_asset() calls in places
-         * where you want to use tenant-specific assets (product images, avatars, etc).
+         * Asset tenancy configuration.
          */
-        'asset_helper_tenancy' => true,
+        'asset_helper_tenancy' => false,
     ],
 
     /**
@@ -140,7 +130,7 @@ $data = [
      * either using the Redis facade or by injecting it as a dependency.
      */
     'redis' => [
-        'prefix_base' => 'tenant',
+        'prefix_base' => 'tenant_',
         // Each key in Redis will be prepended by this prefix_base, followed by the tenant id.
         'prefixed_connections' => [ // Redis connections whose keys are prefixed, to separate one tenant's keys from another.
             // 'default',
@@ -177,7 +167,7 @@ $data = [
      * Parameters used by the tenants:migrate command.
      */
     'migration_parameters' => [
-        '--force' => true, // This needs to be true to run migrations in production.
+        '--force' => true,
         '--path' => [database_path('migrations/tenant')],
         '--realpath' => true,
     ],
@@ -187,7 +177,7 @@ $data = [
      */
     'seeder_parameters' => [
         '--class' => 'DatabaseSeeder', // root seeder class
-        // '--force' => true,
+        '--force' => true,
     ],
 
 ];

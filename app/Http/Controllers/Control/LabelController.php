@@ -86,7 +86,7 @@ class LabelController extends Controller
         $label = Label::create($data);
 
         if ($request->hasFile('image')) {
-            MediaServices::upload($label, $request->image['file'], 'labels');
+            MediaServices::upload($label, $request->image['file'], 'labels', 'labels');
         }
 
         return redirect()->back()->with([
@@ -127,7 +127,7 @@ class LabelController extends Controller
         $label->update($request->validated());
 
         if ($request->hasFile('image')) {
-            MediaServices::upload($label, $request->image['file'], 'labels');
+            MediaServices::upload($label, $request->image['file'], 'labels', 'labels');
         }
 
         return redirect()->back()->with([

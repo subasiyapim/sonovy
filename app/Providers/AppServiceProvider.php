@@ -8,6 +8,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
+use Stancl\Tenancy\Events\TenancyInitialized;
+use Stancl\Tenancy\Events\TenancyEnded;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +38,21 @@ class AppServiceProvider extends ServiceProvider
                 ->action(__('notification.verify_email.action'), $url)
                 ->salutation(__('notification.verify_email.salutation'));
         });
-        
+
+        // Tenancy initialized event
+        \Event::listen(TenancyInitialized::class, function () {
+            config([
+                'media-library.temporary_directory_path' => storage_path('app/tenant_'.tenant('id').'/media-library/temp'),
+                'media-library.disk_name' => 'tenant_'.tenant('id'),
+            ]);
+        });
+
+        // Optionally handle when tenancy ends
+        \Event::listen(TenancyEnded::class, function () {
+            config([
+                'media-library.temporary_directory_path' => storage_path('app/media-library/temp'),
+            ]);
+        });
+
     }
 }

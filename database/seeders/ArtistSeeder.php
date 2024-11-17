@@ -43,10 +43,6 @@ class ArtistSeeder extends Seeder
             }
 
             $artist->artistBranches()->attach($randomArtistBranchIds);
-
-            $artist->addMediaFromUrl('https://picsum.photos/400/400')
-                ->usingFileName(Str::slug($artist->name) . '.jpg');
-            // ->toMediaCollection('artists', 'tenant_'.tenant('id'));
         });
     }
 }

@@ -24,6 +24,7 @@ class NewTenantJob implements ShouldQueue
     public function __construct(string $domain)
     {
         $this->domain = $domain;
+        Log::info("Creating tenant with domain: {$domain}");
     }
 
     /**
@@ -31,8 +32,7 @@ class NewTenantJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $uniqId = uniqid();
-        $dbName = 'tenant_'.$this->domain.'_'.$uniqId;
+        $dbName = 'tenant_'.$this->domain;
 
         // Check if the domain already exists
         if (\Stancl\Tenancy\Database\Models\Domain::where('domain', $this->domain)->exists()) {
@@ -42,26 +42,21 @@ class NewTenantJob implements ShouldQueue
 
         // Prepare tenant data
         $data = [
-            'id' => $uniqId,
             'tenancy_db_name' => $dbName,
-            'name' => $this->domain,
+            'domain' => $this->domain,
         ];
 
         // Production environment database user and password
         if (config('app.env') == 'production') {
             $data['tenancy_db_username'] = 'tenant_'.$this->domain;
-            $data['tenancy_db_password'] = uniqid();
+            $data['tenancy_db_password'] = Str::random(16);
         }
 
         // Create the tenant and associate the domain
         $tenant = \App\Models\System\Tenant::create($data);
         $tenant->domains()->create(['domain' => $this->domain]);
 
-        Artisan::call('optimize:clear');
-
         $tenantKey = $tenant->getTenantKey();
-
-        TenantDiskInitialize::dispatch($tenant);
 
         Log::info("Tenant key: {$tenantKey}");
         Log::info("Tenant created successfully with domain: {$this->domain}");

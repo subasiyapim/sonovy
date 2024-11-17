@@ -4,7 +4,7 @@
       <AppCard class="flex-1">
         <template #header>
           <p class="font-normal leading-3 text-sm">Toplam Yayın Sayısı</p>
-          <span class="font-semibold leading-8 text-2xl">0</span>
+          <span class="font-semibold leading-8 text-2xl">{{ statistics.product_count }}</span>
         </template>
         <template #tool>
           <div class="w-28 max-w-xs mx-auto">
@@ -23,7 +23,8 @@
         <template #header>
           <div class="flex items-center gap-2">
             <LabelsIcon color="var(--sub-600)"/>
-            <p class="font-normal leading-3 text-sm">Toplam Yayın Sayısı</p>
+            <p class="font-normal leading-3 text-sm">Plak Şirketleri</p>
+            <span class="font-semibold leading-8 text-2xl">{{ statistics.label_count }}</span>
           </div>
 
         </template>
@@ -44,7 +45,8 @@
         <template #header>
           <div class="flex items-center gap-2">
             <ArtistsIcon color="var(--sub-600)"/>
-            <p class="font-normal leading-3 text-sm">Toplam Yayın Sayısı</p>
+            <p class="font-normal leading-3 text-sm">Sanatçılar</p>
+            <span class="font-semibold leading-8 text-2xl">{{ statistics.artist_count }}</span>
           </div>
 
         </template>
@@ -193,6 +195,10 @@ import {
 } from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
+
+const props = defineProps({
+  statistics: Object,
+})
 
 const data = ref([
   {

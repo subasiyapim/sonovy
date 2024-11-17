@@ -20,11 +20,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     use HasDomains;
     use CentralConnection;
 
+    protected $guarded = [];
+
     public static function getCustomColumns(): array
     {
         return [
-            'id',
-            'name',
+            'domain',
         ];
     }
 

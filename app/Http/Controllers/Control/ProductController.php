@@ -14,6 +14,7 @@ use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Http\Requests\Product\ConvertAudioRequest;
 use App\Http\Resources\Product\ProductShowResource;
 use App\Jobs\ConvertAudioJob;
+use App\Models\Artist;
 use App\Models\ArtistBranch;
 use App\Models\Product;
 use App\Models\System\Country;
@@ -59,11 +60,19 @@ class ProductController extends Controller
             })
             ->advancedFilter();
 
+        $statistics = [
+            'product_count' => $products->count(),
+            'label_count' => Label::count(),
+            'artist_count' => Artist::count(),
+        ];
+
+
         $country_count = Country::count();
         $statuses = ProductStatusEnum::getTitles();
         $types = ProductTypeEnum::getTitles();
 
-        return inertia('Control/Products/Index', compact('products', 'country_count', 'statuses', 'types'));
+        return inertia('Control/Products/Index',
+            compact('products', 'country_count', 'statuses', 'types', 'statistics'));
     }
 
     public function create(): \Inertia\Response|ResponseFactory

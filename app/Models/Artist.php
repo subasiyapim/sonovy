@@ -88,9 +88,9 @@ class Artist extends Model implements HasMedia
     {
         $file = $this->getMedia('artists')->last();
         if ($file) {
-            $file->url = asset($file->getUrl());
-            $file->small = asset($file->getUrl('small'));
-            $file->thumb = asset($file->getUrl('thumb'));
+            $file->url = $file->getUrl();
+            $file->small = $file->getUrl('small');
+            $file->thumb = $file->getUrl('thumb');
         }
 
         return $file;

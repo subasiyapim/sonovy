@@ -10,9 +10,8 @@ class MediaServices
     /**
      * @param $model
      * @param $media
-     * @param  string  $name
-     * @param  string  $file_name
      * @param  string  $collection_name
+     * @param  string  $disk
      * @return void
      */
 
@@ -24,12 +23,13 @@ class MediaServices
 
         $name = uniqid().'-'.time();
         $file_name = uniqid().'-'.time().'-'.$media->getClientOriginalName();
-        $disk = 'tenant_'.tenant('id');
+
+        $diskName = 'tenant_'.tenant('domain').'_'.$disk;
 
         $model->addMedia($media)
             ->usingFileName($file_name)
             ->usingName($name)
-            ->toMediaCollection($collection_name, $disk);
+            ->toMediaCollection($collection_name, $diskName);
     }
 
     public static function mediaUpload(mixed $media, $type = 1)

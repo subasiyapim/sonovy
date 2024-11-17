@@ -113,7 +113,7 @@ class ArtistController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            MediaServices::upload($artist, $request->file('image'));
+            MediaServices::upload($artist, $request->file('image'), 'artists', 'artists');
         } elseif ($artist->platforms && $artist->platforms->contains('code', 'spotify')) {
             SpotifyImageUploadJob::dispatch($artist);
         }
@@ -180,7 +180,7 @@ class ArtistController extends Controller
 
 
         if ($request->hasFile('image')) {
-            MediaServices::upload($artist, $request->file('image'), 'artists');
+            MediaServices::upload($artist, $request->file('image'), 'artists', 'artists');
         } elseif ($artist->image == null && $artist->platforms && $artist->platforms->contains('code', 'spotify')) {
             SpotifyImageUploadJob::dispatch($artist);
         }

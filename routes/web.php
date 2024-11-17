@@ -6,15 +6,18 @@ use Illuminate\Http\Request;
 Route::group(
     [
         'middleware' => [
-            // \App\Http\Middleware\HandleInertiaRequests::class,
+            'web'
         ]
     ],
     function () {
 
+        Route::get('/', function () {
+            return view('welcome');
+        });
 
-        Route::get('new-tenant', function (Request $request) {
+        Route::get('create-tenant', function (Request $request) {
             $validate = \Illuminate\Support\Facades\Validator::make($request->all(), [
-                'domain' => 'required|string|unique:tenants,name'
+                'domain' => 'required|string|unique:domains,domain'
             ]);
 
             if ($validate->fails()) {
@@ -26,7 +29,12 @@ Route::group(
         });
 
         Route::get('delete-tenant', function (Request $request) {
-            $tenant = \App\Models\System\Tenant::where('name', $request->name)->first();
+
+            $validate = \Illuminate\Support\Facades\Validator::make($request->all(), [
+                'domain' => 'required|string|exists:domains,domain'
+            ]);
+
+            $tenant = \App\Models\System\Tenant::where('domain', $request->domain)->first();
 
             if (!$tenant) {
                 return response()->json(['message' => 'Tenant not found'], 404);

@@ -2,37 +2,36 @@
 
 namespace App\Contracts;
 
-use Illuminate\Support\Facades\Session;
 use Stancl\Tenancy\Contracts\TenancyBootstrapper;
 use Stancl\Tenancy\Contracts\Tenant;
-use Stancl\Tenancy\Database\Models\Domain;
+use Illuminate\Support\Facades\Log;
 
 class TenantInitializeBootstrapper implements TenancyBootstrapper
 {
     public function bootstrap(Tenant $tenant)
     {
-        tenancy()->initialize($tenant);
+        $publicDisks = [
+            'products',
+            'songs',
+            'artists',
+            'labels',
+        ];
 
-        // This is where you can put your tenant-specific bootstrapping code.
-
-        $disks = config('filesystems.disks');
-
-        \App\Models\System\Tenant::chunk(100, function ($tenants) use (&$disks) {
-            foreach ($tenants as $tenant) {
-                $disks['tenant_'.$tenant->id] = [
+        foreach ($publicDisks as $publicDisk) {
+            config([
+                "filesystems.disks.tenant_{$tenant->domain}_{$publicDisk}" => [
                     'driver' => 'local',
-                    'root' => storage_path('app/public/tenant_'.$tenant->id),
-                    'url' => env('APP_URL').'/storage/tenant_'.$tenant->id,
+                    'root' => storage_path("app/public/tenant_{$tenant->domain}_{$publicDisk}"),
+                    'url' => env('APP_URL')."/storage/tenant_{$tenant->domain}_{$publicDisk}",
                     'visibility' => 'public',
-                ];
-            }
-        });
-
-        config(['filesystems.disks' => $disks]);
+                ],
+            ]);
+        }
     }
 
     public function revert()
     {
-        // ...
+        Log::info('TenantInitializeBootstrapper revert called');
+
     }
 }
