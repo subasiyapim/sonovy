@@ -33,7 +33,11 @@ class NewTenantJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $dbName = 'tenant_'.$this->domain;
+        $baseDbName = 'tenant_'.$this->domain;
+        $dbName = $this->getUniqueDatabaseName($baseDbName);
+
+        $baseUsername = 'tenant_'.$this->domain;
+        $username = $this->getUniqueUsername($baseUsername);
 
         // Check if the domain already exists
         if (\Stancl\Tenancy\Database\Models\Domain::where('domain', $this->domain)->exists()) {
@@ -47,9 +51,9 @@ class NewTenantJob implements ShouldQueue
             'domain' => $this->domain,
         ];
 
-        // Production environment database user and password
+        // Production environment database password
         if (config('app.env') == 'production') {
-            $data['tenancy_db_username'] = 'tenant_'.$this->domain;
+            $data['tenancy_db_username'] = $username;
             $data['tenancy_db_password'] = Str::random(16);
         }
 
@@ -61,5 +65,71 @@ class NewTenantJob implements ShouldQueue
 
         Log::info("Tenant key: {$tenantKey}");
         Log::info("Tenant created successfully with domain: {$this->domain}");
+    }
+
+    /**
+     * Generate a unique database name by appending an incrementing number if needed.
+     *
+     * @param  string  $baseDbName
+     * @return string
+     */
+    private function getUniqueDatabaseName(string $baseDbName): string
+    {
+        $dbName = $baseDbName;
+        $counter = 1;
+
+        while ($this->databaseExists($dbName)) {
+            $dbName = $baseDbName.'_'.$counter;
+            $counter++;
+        }
+
+        return $dbName;
+    }
+
+    /**
+     * Generate a unique username by appending an incrementing number if needed.
+     *
+     * @param  string  $baseUsername
+     * @return string
+     */
+    private function getUniqueUsername(string $baseUsername): string
+    {
+        $username = $baseUsername;
+        $counter = 1;
+
+        while ($this->usernameExists($username)) {
+            $username = $baseUsername.'_'.$counter;
+            $counter++;
+        }
+
+        return $username;
+    }
+
+    /**
+     * Check if a database with the given name already exists.
+     *
+     * @param  string  $dbName
+     * @return bool
+     */
+    private function databaseExists(string $dbName): bool
+    {
+        $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?";
+        $result = \DB::select($query, [$dbName]);
+
+        return !empty($result);
+    }
+
+    /**
+     * Check if a username already exists.
+     *
+     * @param  string  $username
+     * @return bool
+     */
+    private function usernameExists(string $username): bool
+    {
+        $query = "SELECT User FROM mysql.user WHERE User = ?";
+        $result = \DB::select($query, [$username]);
+
+        return !empty($result);
     }
 }
