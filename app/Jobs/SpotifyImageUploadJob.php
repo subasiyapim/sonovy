@@ -151,11 +151,11 @@ class SpotifyImageUploadJob implements ShouldQueue
     private function uploadImageToMediaLibrary(string $filePath, string $fileName): void
     {
         try {
-            $tenantId = tenant('id');
+            $diskName = 'tenant_'.tenant('domain').'_artists';
             $this->artist->addMedia($filePath)
                 ->usingFileName($fileName)
                 ->usingName($this->artist->name)
-                ->toMediaCollection('artists', 'tenant_'.$tenantId);
+                ->toMediaCollection('artists', $diskName);
         } catch (Exception $e) {
             Log::error("Medya kütüphanesine yükleme hatası: ".$e->getMessage());
             throw $e;
