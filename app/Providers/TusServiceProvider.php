@@ -18,7 +18,7 @@ class TusServiceProvider extends ServiceProvider
     {
         $this->app->singleton('tus-server', function ($app) {
             $server = new TusServer();
-            $storagePath = storage_path('app/public/tenant_'.tenant('id').'/songs');
+            $storagePath = storage_path('app/public/tenant_'.tenant('domain').'_songs');
 
             if (!File::exists($storagePath)) {
                 File::makeDirectory($storagePath, 0775, true, true);
@@ -58,7 +58,7 @@ class TusServiceProvider extends ServiceProvider
             Log::error("Dosya türü desteklenmiyor: ".$fileExtension);
             return;
         }
-        
+
         $details = FFMpegServices::getMediaDetails(file: $filePath);
 
         if (!$details['status']) {

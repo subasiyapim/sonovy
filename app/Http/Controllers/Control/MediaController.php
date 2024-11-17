@@ -67,7 +67,7 @@ class MediaController extends Controller
         $file = $validated['file'];
         $collection_name = $modelInstance->getTable();
 
-        MediaServices::upload($modelInstance, $file, $collection_name);
+        MediaServices::upload($modelInstance, $file, $collection_name, $collection_name);
 
         return response()->json(
             [
