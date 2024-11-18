@@ -31,13 +31,16 @@ use Illuminate\Http\Request;
 use App\Services\ProductServices;
 use App\Services\CountryServices;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Inertia\ResponseFactory;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class ProductController
+ * Controller handling operations related to products.
+ */
 class ProductController extends Controller
 {
     protected int $step = 1;
@@ -90,7 +93,6 @@ class ProductController extends Controller
     public function store(ProductStoreRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        $validated['created_by'] = Auth::id();
 
         $product = Product::create($validated);
 
@@ -211,36 +213,69 @@ class ProductController extends Controller
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
     {
         $data = $request->validated();
+        $step = $data['step'];
+        $this->excepted_data = $this->getExceptedData($data, $step);
 
-        switch ($data['step']) {
+        switch ($step) {
             case 1:
-                $this->excepted = ['main_artists', 'featuring_artists'];
-                $this->excepted_data = Arr::except($data, $this->excepted);
-                self::attachArtistFromProduct($product, $data);
-
+                $this->handleStepOne($product, $data);
                 break;
             case 2:
-                $this->excepted = ['songs'];
-                $this->excepted_data = Arr::except($data, $this->excepted);
+                $this->handleStepTwo($product, $data);
                 break;
             case 3:
-                $this->excepted = ['published_countries', 'platforms'];
-                $this->excepted_data = Arr::except($data, $this->excepted);
-                self::publishedCountries($product, $data);
-                self::createDownloadPlatforms($product, $data);
+                $this->handleStepThree($product, $data);
+                break;
             case 4:
-                self::createPromotions($product, $data);
+                $this->handleStepFour($product, $data);
+                break;
         }
 
         $product->update($this->excepted_data);
+
         $progress = ProductServices::progress($product);
 
+        return $this->redirectWithNotification($progress);
+    }
+
+    private function getExceptedData(array $data, int $step): array
+    {
+        $exceptedKeys = match ($step) {
+            1 => ['main_artists', 'featuring_artists'],
+            2 => ['songs'],
+            3 => ['published_countries', 'platforms'],
+            default => []
+        };
+
+        return Arr::except($data, $exceptedKeys);
+    }
+
+    private function handleStepOne(Product $product, array $data): void
+    {
+        self::attachArtistFromProduct($product, $data);
+    }
+
+    private function handleStepTwo(Product $product, array $data): void
+    {
+        // Step 2 specific logic (if any)
+    }
+
+    private function handleStepThree(Product $product, array $data): void
+    {
+        self::publishedCountries($product, $data);
+        self::createDownloadPlatforms($product, $data);
+    }
+
+    private function handleStepFour(Product $product, array $data): void
+    {
+        self::createPromotions($product, $data);
+    }
+
+    private function redirectWithNotification($progress): RedirectResponse
+    {
         return redirect()->back()
             ->with([
-                'notification' => __(
-                    'control.notification_updated',
-                    ['model' => __('control.product.title_singular')],
-                ),
+                'notification' => __('control.notification_updated', ['model' => __('control.product.title_singular')]),
                 'progress' => $progress,
             ]);
     }

@@ -49,13 +49,7 @@ class SongController extends Controller
         $song->artists()->attach($main_artists, ['is_main' => true]);
 
         if (!empty($featuring_artists)) {
-            foreach ($featuring_artists as $featuring_artist) {
-                DB::table('artist_song')->insert([
-                    'song_id' => $song->id,
-                    'artist_id' => $featuring_artist,
-                    'is_main' => false
-                ]);
-            }
+            $song->featuringArtists()->sync($featuring_artists);
         }
     }
 
@@ -158,6 +152,11 @@ class SongController extends Controller
             ]);
     }
 
+    public function searchTrackFromIsrc(Song $song)
+    {
+        return $this->musixmatch->searchTrackFromIsrc($song);
+    }
+
     public function edit(Song $song)
     {
         abort_if(Gate::denies('song_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -169,45 +168,6 @@ class SongController extends Controller
 
 
         return inertia('Control/Songs/Edit', compact('song', 'genres', 'languages', 'availablePlanItems'));
-    }
-
-    public function update(SongUpdateRequest $request, Song $song)
-    {
-        $exclude = [
-            'participants',
-            'lyrics_writers',
-            'musicians',
-            'product_id',
-            'featuring_artists',
-            'main_artists'
-        ];
-
-        $excepts = Arr::except($request->all(), $exclude);
-
-        $song->update($excepts);
-
-        $song->load([
-            'artists',
-            'mainArtists',
-            'featuringArtists',
-            'musicians.branch',
-            'participants.user',
-            'lyricsWriters',
-        ]);
-        self::updateParticipants($request, $song);
-        self::updateMusicians($request, $song);
-        self::updateLyricsWriters($request, $song);
-        self::updateArtists($request, $song);
-
-        return redirect()->back()
-            ->with([
-                'notification' =>
-                    [
-                        'song' => $song,
-                        __('control.notification_updated', ['model' => __('control.song.title_singular')]),
-                        "message" => "Şarkı başarıyla güncellendi"
-                    ]
-            ]);
     }
 
     public function destroy(Song $song)
@@ -235,19 +195,6 @@ class SongController extends Controller
         return redirect()->back();
     }
 
-    public function search(Request $request)
-    {
-        $request->validate([
-            'search' => 'required|string|min:3|max:255'
-        ]);
-
-        $search = $request->input('search');
-
-        $labels = SongServices::search($search);
-
-        return response()->json($labels, Response::HTTP_OK);
-    }
-
     public function searchCatalog(Request $request)
     {
         $request->validate([
@@ -260,6 +207,8 @@ class SongController extends Controller
 
         return response()->json($labels, Response::HTTP_OK);
     }
+
+// Yinelenen kodu fonksiyon içine alma
 
     public function uploadSong(Request $request)
     {
@@ -300,6 +249,19 @@ class SongController extends Controller
         return response()->json($labels, Response::HTTP_OK);
     }
 
+    public function search(Request $request)
+    {
+        $request->validate([
+            'search' => 'required|string|min:3|max:255'
+        ]);
+
+        $search = $request->input('search');
+
+        $labels = SongServices::search($search);
+
+        return response()->json($labels, Response::HTTP_OK);
+    }
+
     public function changeStatus(SongChangeStatusRequest $request)
     {
         $validated = $request->validated();
@@ -314,9 +276,65 @@ class SongController extends Controller
         ]);
     }
 
-    public function searchTrackFromIsrc(Song $song)
+    public function update(SongUpdateRequest $request, Song $song)
     {
-        return $this->musixmatch->searchTrackFromIsrc($song);
+        $excludedFields = $this->getExcludedFields();
+
+        $updateData = Arr::except($request->all(), $excludedFields);
+
+        $song->update($updateData);
+
+        $song->load($this->getRelationsToLoad());
+
+        $this->updateSongDetails($request, $song);
+
+
+        return redirect()->back()
+            ->with([
+                'notification' => [
+                    'song' => $song,
+                    __('control.notification_updated', ['model' => __('control.song.title_singular')]),
+                    "message" => "Şarkı başarıyla güncellendi"
+                ]
+            ]);
+    }
+
+    private function getExcludedFields(): array
+    {
+        return [
+            'participants',
+            'lyrics_writers',
+            'musicians',
+            'product_id',
+            'featuring_artists',
+            'main_artists'
+        ];
+    }
+
+    private function getRelationsToLoad(): array
+    {
+        return [
+            'artists',
+            'mainArtists',
+            'featuringArtists',
+            'musicians.branch',
+            'participants.user',
+            'lyricsWriters',
+        ];
+    }
+
+    private function updateSongDetails(SongUpdateRequest $request, Song $song)
+    {
+        $updateFunctions = [
+            'updateParticipants',
+            'updateMusicians',
+            'updateLyricsWriters',
+            'updateArtists'
+        ];
+
+        foreach ($updateFunctions as $function) {
+            self::$function($request, $song);
+        }
     }
 
     public function storeLyrics(Request $request, Song $song)

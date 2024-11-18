@@ -33,7 +33,6 @@ class MediaController extends Controller
 
     public function destroy(Media $media)
     {
-        dd($media);
         $media->delete();
 
         return response()->json(['message' => 'Media deleted successfully']);

@@ -12,8 +12,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use function Laravel\Prompts\select;
 
 /**
  * @method static create(array $array)
@@ -25,8 +27,13 @@ class Song extends Model implements HasMedia
     use InteractsWithMedia;
     use HasAdvancedFilter;
 
+    private const REQUIRED_FIELDS = [
+        'name',
+        'genre_id',
+        'main_artists',
+        'sub_genre_id'
+    ];
     protected $table = 'songs';
-
     protected $fillable = [
         'name',
         'version',
@@ -54,6 +61,7 @@ class Song extends Model implements HasMedia
         'status_changed_by',
         'note',
         'duration',
+        'is_completed'
     ];
     protected array $filterable = [
         'name',
@@ -81,17 +89,68 @@ class Song extends Model implements HasMedia
         'released_before',
         'original_release_date',
     ];
-
     protected $casts = [
         'acr_response' => 'array',
         'details' => 'array',
-        'preview_start' => 'array'
+        'preview_start' => 'array',
+        'name' => 'string'
     ];
 
     protected static function booted(): void
     {
         static::addGlobalScope(new FilterByUserRoleScope);
+        static::creating(fn($song) => self::updateCreatedBy($song));
+
+        static::saving(function ($song) {
+            self::updateIsCompleted($song);
+        });
     }
+
+    private static function updateCreatedBy($song): void
+    {
+        $song->update(['created_by' => auth()->id()]);
+    }
+
+    private static function updateIsCompleted(Song $song): void
+    {
+        $requiredFields = collect(self::REQUIRED_FIELDS);
+
+        $mainArtistsExists = $song->mainArtists()->exists();
+
+        $isCompleted = $requiredFields->every(function ($field) use ($song, $mainArtistsExists) {
+
+            if ($field === 'main_artists') {
+                return $mainArtistsExists;
+            }
+
+            if (!array_key_exists($field, $song->getAttributes())) {
+                return false;
+            }
+
+            $fieldValue = $song->$field;
+            return !is_null($fieldValue);
+        });
+
+        if ($song->is_completed !== $isCompleted) {
+            $song->is_completed = $isCompleted;
+            self::saveWithoutEvents($song);
+        }
+    }
+
+    protected static function saveWithoutEvents(Song $song): void
+    {
+        Song::withoutEvents(function () use ($song) {
+            $song->save();
+        });
+    }
+
+
+    public function mainArtists()
+    {
+        return $this->belongsToMany(Artist::class, 'artist_song', 'song_id', 'artist_id')
+            ->wherePivot('is_main', 1);
+    }
+
 
     public function genre(): BelongsTo
     {
@@ -123,12 +182,6 @@ class Song extends Model implements HasMedia
     {
         return $this->belongsToMany(Artist::class, 'artist_song', 'song_id', 'artist_id')
             ->withPivot('is_main');
-    }
-
-    public function mainArtists()
-    {
-        return $this->belongsToMany(Artist::class, 'artist_song', 'song_id', 'artist_id')
-            ->wherePivot('is_main', 1);
     }
 
     public function featuringArtists()

@@ -64,7 +64,7 @@ class Product extends Model implements HasMedia
         'publishing_country_type',
         'physical_release_date'
         //step 4
-        
+
     ];
     public static array $excludedFields = [
         'id',
@@ -133,6 +133,12 @@ class Product extends Model implements HasMedia
     protected static function booted(): void
     {
         static::addGlobalScope(new FilterByUserRoleScope);
+        static::created(fn($model) => self::updateCreatedBy($model));
+    }
+
+    protected static function updateCreatedBy($model): void
+    {
+        $model->update(['created_by' => auth()->id()]);
     }
 
     protected function statusText(): Attribute

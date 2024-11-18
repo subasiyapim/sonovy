@@ -95,11 +95,9 @@ class ArtistController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ArtistStoreRequest $request)
+    public function store(ArtistStoreRequest $request): \Illuminate\Http\RedirectResponse
     {
         $data = $request->validated();
-        $data['created_by'] = auth()->id();
-
         $artist = Artist::create($data);
 
         $artist->artistBranches()->sync($request->input('artist_branches', []));

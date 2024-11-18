@@ -26,9 +26,9 @@ class SongUpdateRequest extends FormRequest
         return [
             'product_id' => ['required', 'exists:products,id'],
             'name' => ['required', 'string'],
-            'version' => ['required', 'string'],
+            'version' => ['nullable', 'string'],
             'main_artists' => ['required', 'exists:artists,id'],
-            'featuring_artists' => ['nullable', 'array'],
+            'featuring_artists' => ['required', 'array'],
             'genre_id' => ['required', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'exists:genres,id'],
             'is_instrumental' => ['required', 'boolean'],

@@ -82,7 +82,6 @@ class LabelController extends Controller
     public function store(LabelStoreRequest $request)
     {
         $data = $request->validated();
-        $data['created_by'] = auth()->id();
         $label = Label::create($data);
 
         if ($request->hasFile('image')) {
