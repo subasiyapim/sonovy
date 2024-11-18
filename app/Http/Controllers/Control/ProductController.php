@@ -98,7 +98,7 @@ class ProductController extends Controller
         $validated = $request->validated();
 
         $product = Product::create($validated);
-
+        
         return redirect()->route('control.catalog.products.form.edit', [1, $product->id])
             ->with([
                 'notification' => __('control.notification_created', ['model' => __('control.product.title_singular')])

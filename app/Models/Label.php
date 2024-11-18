@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\FilterByUserRoleScope;
 use App\Traits\DataTables\HasAdvancedFilter;
-use App\Traits\FilterByUser;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -26,7 +27,6 @@ class Label extends Model implements HasMedia
     use InteractsWithMedia;
     use SoftDeletes;
     use HasAdvancedFilter;
-    use FilterByUser;
 
     protected $table = 'labels';
 
@@ -59,6 +59,18 @@ class Label extends Model implements HasMedia
     ];
 
     protected $appends = ['image'];
+
+    protected static function booted(): void
+    {
+        parent::boot();
+        static::addGlobalScope(new FilterByUserRoleScope);
+        static::created(fn($model) => self::updateCreatedBy($model));
+    }
+
+    protected static function updateCreatedBy($model): void
+    {
+        $model->update(['created_by' => auth()->id()]);
+    }
 
     public function registerMediaCollections(): void
     {

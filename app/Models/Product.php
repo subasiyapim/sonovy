@@ -5,8 +5,8 @@ namespace App\Models;
 use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
+use App\Models\Scopes\FilterByUserRoleScope;
 use App\Traits\DataTables\HasAdvancedFilter;
-use App\Traits\FilterByUser;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,7 +28,6 @@ class Product extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
     use HasAdvancedFilter;
-    use FilterByUser;
 
     protected $table = 'products';
 
@@ -126,6 +125,17 @@ class Product extends Model implements HasMedia
         return $file;
     }
 
+    protected static function booted(): void
+    {
+        self::boot();
+        self::created(fn($model) => self::updateCreatedBy($model));
+        static::addGlobalScope(new FilterByUserRoleScope);
+    }
+
+    protected static function updateCreatedBy($model): void
+    {
+        $model->update(['created_by' => auth()->id()]);
+    }
 
     protected function statusText(): Attribute
     {

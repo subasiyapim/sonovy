@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\FilterByUserRoleScope;
 use App\Traits\DataTables\HasAdvancedFilter;
-use App\Traits\FilterByUser;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -24,7 +25,6 @@ class Artist extends Model implements HasMedia
     use HasAdvancedFilter;
     use InteractsWithMedia;
     use SoftDeletes;
-    use FilterByUser;
 
     protected $table = 'artists';
 
@@ -55,6 +55,17 @@ class Artist extends Model implements HasMedia
     ];
 
     protected $appends = ['image'];
+
+
+    /**
+     * @return void
+     */
+    protected static function booted(): void
+    {
+        parent::boot();
+        static::addGlobalScope(new FilterByUserRoleScope);
+        static::created(fn($model) => self::updateCreatedBy($model));
+    }
 
     /**
      * @param $model
