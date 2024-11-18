@@ -13,6 +13,7 @@ enum ProductStatusEnum: string
     case NOT_BROADCASTING = '4';
 
     case DRAFT = '5';
+    case PLANNED = '6';
 
     public static function getTitles(): array
     {
@@ -31,6 +32,7 @@ enum ProductStatusEnum: string
             self::REJECTED => __('control.product.status_rejected'),
             self::NOT_BROADCASTING => __('control.product.status_not_producting'),
             self::DRAFT => __('control.product.status_draft'),
+            self::PLANNED => __('control.product.status_planned'),
         };
     }
 }

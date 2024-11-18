@@ -280,6 +280,7 @@ return [
         'status_waiting' => 'Onay Bekliyor',
         'status_approved' => 'Onaylandı',
         'status_rejected' => 'Reddedildi',
+        'status_planned' => 'Planlandı',
         'status_not_producting' => 'Yayınlanmıyor',
         'status_draft' => 'Taslak',
         'type' => 'Tür',
