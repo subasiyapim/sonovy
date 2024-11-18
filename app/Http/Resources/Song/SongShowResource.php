@@ -21,8 +21,8 @@ class SongShowResource extends JsonResource
             'label_name' => $this->products[0]?->label?->name,
             'album_name' => $this->products[0]->album_name,
             'version' => $this->version,
-            'genre' => $this->genre->name,
-            'sub_genre' => $this->subGenre->name,
+            'genre' => $this->genre?->name,
+            'sub_genre' => $this->subGenre?->name,
             'type' => $this->type,
             'path' => $this->path,
             'isrc' => $this->isrc,
@@ -60,7 +60,6 @@ class SongShowResource extends JsonResource
                 'duration' => $song->duration,
             ];
         });
-
     }
 
     private function getPlatformUrls(string $string)

@@ -1596,7 +1596,7 @@ return [
             "lyrics_writer" => "Şarkı Sözü Yazarı",
             "lyrics_writer_placeholder" => "Lütfen Seçiniz",
             "lyrics" => "Şarkı Sözleri",
-            "preview_time" => "Ön izleme zamanı",
+            "preview_start" => "Ön izleme zamanı",
             "lyrics_placeholder" => "Şarkı Sözleri",
             "musicians" => 'Müzisyen & Katkı Sağlayan',
             "musicians_placeholder" => "Lütfen Seçiniz",

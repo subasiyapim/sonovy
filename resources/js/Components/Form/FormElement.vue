@@ -40,7 +40,7 @@
 
         <slot v-if="type=='custom'" />
 
-        <AppMultiSelectInput v-else-if="type=='multiselect'" :config="config" :type="type" v-model="element"
+        <AppMultiSelectInput ref="appMultiSelect" v-else-if="type=='multiselect'" :config="config" :type="type" v-model="element"
                             :placeholder="placeholder" :disabled="disabled">
             <template v-if="hasSlot('first_child')" #first_child>
                     <slot  name="first_child" />
@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import {computed} from 'vue';
+import {computed,ref} from 'vue';
 import {InfoFilledIcon} from '@/Components/Icons'
 import AppTextInput from './AppTextInput.vue';
 import AppTextareaInput from './AppTextareaInput.vue';
@@ -86,7 +86,7 @@ import AppSliderInput from './AppSliderInput.vue';
 
 import {useSlots} from 'vue';
 
-
+const appMultiSelect  =ref();
 const props = defineProps({
   direction: {
     default: 'horizontal', //vertical
@@ -122,6 +122,8 @@ const hasSlot = (name) => {
 const change = (e) => {
     emits('change',e)
 }
+
+defineExpose({appMultiSelect})
 </script>
 
 <style lang="scss" scoped>

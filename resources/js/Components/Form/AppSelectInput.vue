@@ -220,6 +220,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 })
+
 </script>
 
 <style scoped>

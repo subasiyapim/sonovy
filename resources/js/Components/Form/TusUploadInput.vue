@@ -68,7 +68,7 @@ const props = defineProps({
 
   }
 })
-const emits = defineEmits(['start', 'progress', 'complete'])
+const emits = defineEmits(['start', 'progress', 'complete','error'])
 
 const csrf_token = ref('');
 const acceptedAudioExtensions = ['mp3', 'wav', 'aac'];
@@ -192,18 +192,22 @@ const handleFileInput = (e) => {
     // Callback for once the upload is completed
     onSuccess: async function (payload) {
       const {lastResponse} = payload
-    console.log("UPLOAD İNFOOO",lastResponse.getHeader('upload_info'));
+    let errorMessage = lastResponse.getHeader('error_message');
+    if(errorMessage){
+        emits('error', {...metaData,message:errorMessage})
 
+    }else {
+         let response = await crudStore.post(route('control.find.songs'), {
 
-      let response = await crudStore.post(route('control.find.songs'), {
+            id: lastResponse.getHeader('upload_info')
+        });
 
-        id: lastResponse.getHeader('upload_info')
-      });
+        console.log("RESPONSEE",response);
 
-    console.log("RESPONSEE",response);
+        response.percentage = 100;
+        emits('complete', response)
+    }
 
-      response.percentage = 100;
-      emits('complete', response)
     },
   })
 

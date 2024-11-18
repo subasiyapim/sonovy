@@ -110,8 +110,14 @@ class SongController extends Controller
     {
         abort_if(Gate::denies('song_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $songs = Song::with('genre', 'subGenre', 'participants', 'remixer', 'mainArtists',
-            'featuringArtists')
+        $songs = Song::with(
+            'genre',
+            'subGenre',
+            'participants',
+            'remixer',
+            'mainArtists',
+            'featuringArtists'
+        )
             ->when($request->type, function ($query) use ($request) {
                 $query->where('type', $request->type);
             })
@@ -151,11 +157,13 @@ class SongController extends Controller
         $isrcResult = MusicBrainzServices::lookupISRC($song->isrc);
         $response = new SongShowResource($song);
         //dd($response->resolve());
-        return inertia('Control/Songs/Show',
+        return inertia(
+            'Control/Songs/Show',
             [
                 'song' => $response->resolve(),
                 'isrcResult' => $isrcResult
-            ]);
+            ]
+        );
     }
 
     public function edit(Song $song)
@@ -202,11 +210,11 @@ class SongController extends Controller
         return redirect()->back()
             ->with([
                 'notification' =>
-                    [
-                        'song' => $song,
-                        __('control.notification_updated', ['model' => __('control.song.title_singular')]),
-                        "message" => "Şarkı başarıyla güncellendi"
-                    ]
+                [
+                    'song' => $song,
+                    __('control.notification_updated', ['model' => __('control.song.title_singular')]),
+                    "message" => "Şarkı başarıyla güncellendi"
+                ]
             ]);
     }
 
@@ -219,11 +227,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                        [
-                            'type' => 'error',
-                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                            'model' => __('control.song.title_singular')
-                        ]
+                    [
+                        'type' => 'error',
+                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                        'model' => __('control.song.title_singular')
+                    ]
                 ]
             );
         }
@@ -375,7 +383,7 @@ class SongController extends Controller
     {
         $request->validate(
             [
-                'ids' => ['array', 'in:'.Song::pluck('id')->implode(',')],
+                'ids' => ['array', 'in:' . Song::pluck('id')->implode(',')],
                 'product_id' => ['required', 'exists:products,id']
             ]
         );

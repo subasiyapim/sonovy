@@ -38,17 +38,17 @@
         </template>
 
       </FormElement>
-      <FormElement label-width="190px" v-model="form.featuring_artists" :error="form.errors.featuring_artists"
+      <FormElement ref="featuringArtistMultiselect" label-width="190px" v-model="form.featuring_artists" :error="form.errors.featuring_artists"
                    type="multiselect" :label="__('control.song.fields.featuring_artists')"
                    :placeholder="__('control.song.fields.featuring_artists_placeholder')" :config="artistSelectConfig">
         <template #first_child>
-          <button class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
+          <button @click="openArtistCreateDialog" class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
             Sanatçı Oluştur
           </button>
         </template>
         <template #empty>
-          <button class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
+          <button @click="openArtistCreateDialog" class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
             <AddIcon color="var(--dark-green-600)"/>
             Sanatçı Oluştur
           </button>
@@ -64,14 +64,16 @@
         <template #model="scope">
           <div class="flex items-center relative gap-2">
             <div class="flex items-center relative" :style="{'width' : scope.data.length * 20+'px'}">
+
               <div v-for="(artist,index) in scope.data" :style="{'left': 14*index+'px'}"
                    class="absolute w-5 h-5 rounded-full border border-white flex items-center justify-center bg-blue-300">
                 <span class="label-xs"> {{ artist.label[0] }}</span>
               </div>
             </div>
             <p style="white-space:nowrap;">
-              <template v-for="artist in scope.data">
-                {{ artist.label }}, &nbsp;
+
+              <template v-for="(artist,artistIndex) in scope.data">
+                {{ artist.label }} <template v-if="artistIndex != scope.data.length-1">, &nbsp;</template>
               </template>
             </p>
 
@@ -232,11 +234,15 @@
       </PrimaryButton>
     </div>
   </BaseDialog>
+
+  <SmallArtistCreateDialog @done="onArtistCreated" v-if="createArtistDialog" v-model="createArtistDialog"></SmallArtistCreateDialog>
+
 </template>
 
 <script setup>
 import BaseDialog from '../BaseDialog.vue';
 import {SectionHeader} from '@/Components/Widgets';
+import {SmallArtistCreateDialog} from '@/Components/Dialog';
 
 import {AddIcon,ISRCStarsIcon} from '@/Components/Icons'
 import {RegularButton, PrimaryButton} from '@/Components/Buttons'
@@ -246,8 +252,12 @@ import {toast} from 'vue3-toastify';
 import {useCrudStore} from '@/Stores/useCrudStore';
 
 
-import {FormElement, ArtistInput, AppIncrementer, AppSelectInput} from '@/Components/Form'
+const featuringArtistMultiselect = ref();
 
+
+
+import {FormElement, ArtistInput, AppIncrementer, AppSelectInput} from '@/Components/Form'
+const createArtistDialog = ref(false);
 const crudStore = useCrudStore();
 const props = defineProps({
   modelValue: {
@@ -480,7 +490,15 @@ const checkIfDisabled = computed(() => {
   return false;
 })
 
+const onArtistCreated =  (e) => {
+    let row = {
+        label: e.name,
+        value: e.id,
 
+    };
+    featuringArtistMultiselect.value.appMultiSelect.insertData(row);
+    artistSelectConfig.value.data.push(row);
+}
 const roleConfig = computed(() => {
   return {
     data: usePage().props.artistBranches,
@@ -511,6 +529,13 @@ onBeforeMount(() => {
 
     }
 });
+
+const openArtistCreateDialog = () => {
+    createArtistDialog.value = true;
+
+
+}
+
 </script>
 
 <style scoped>

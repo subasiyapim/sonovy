@@ -71,8 +71,10 @@ class ProductController extends Controller
         $statuses = ProductStatusEnum::getTitles();
         $types = ProductTypeEnum::getTitles();
 
-        return inertia('Control/Products/Index',
-            compact('products', 'country_count', 'statuses', 'types', 'statistics'));
+        return inertia(
+            'Control/Products/Index',
+            compact('products', 'country_count', 'statuses', 'types', 'statistics')
+        );
     }
 
     public function create(): \Inertia\Response|ResponseFactory
@@ -194,6 +196,7 @@ class ProductController extends Controller
             case 2:
                 $props['artistBranches'] = $artistBranches;
                 $props['genres'] = $genres;
+                $props['countries'] = $countries;
                 break;
             case 3:
                 $props['platforms'] = $platforms;

@@ -1,5 +1,5 @@
 <template>
-  <BaseDialog v-model="isDialogOn" align="center" :title="artist ? __('control.artist.edit') : __('control.artist.add')"
+  <BaseDialog v-model="isDialogOn" height="min-content" align="center" :title="artist ? __('control.artist.edit') : __('control.artist.add')"
               :description="__('control.artist.dialog.description')">
     <template #icon>
       <AddIcon color="var(--dark-green-950)"/>
@@ -89,7 +89,7 @@ import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {computed, ref, onMounted} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
-
+import {useCrudStore} from '@/Stores/useCrudStore'
 import {FormElement, ArtistInput} from '@/Components/Form'
 
 const props = defineProps({
@@ -121,7 +121,7 @@ const form = useForm({
   isni_code: "",
   platforms: []
 });
-
+const crudStore = useCrudStore();
 const onPlatformsChoosen = (e) => {
   console.log(usePage().props.platforms);
 
@@ -151,7 +151,7 @@ const countryConfig = computed(() => {
     data: usePage().props.countries,
   };
 })
-const onSubmit = (e) => {
+const onSubmit = async (e) => {
     console.log("SUBMİTTEYİZZZ");
 
 
@@ -159,43 +159,40 @@ const onSubmit = (e) => {
   if (image.value) {
     form.image = image.value?.file;
   }
-  if (isUpdating.value) {
-    console.log("GÜNCELLİYOR");
+    try {
+        const response = await crudStore.post(route('control.catalog.artists.store'),form);
 
-    form
-        .transform((data) => ({
-          ...data,
-          _method: 'PUT',
 
-        }))
-        .post(route('control.catalog.artists.update', form.id), {
-          preserveScroll: true,
-          onSuccess: (e) => {
-            toast.success(e.props.notification.message);
-            emits('update', e.props.notification.data)
+        if(response.type == 'success'){
+            toast.success(response.message);
+            emits('done', response.data)
             isDialogOn.value = false;
-          },
-          onError: (e) => {
-            console.log("HATAAA", e);
-          }
-        });
-        return;
-  } else {
+        }
+    } catch (error) {
+        console.log("ERERR",error);
+        if(error.response){
+            form.errors = error.response?.data?.errors;
 
-    form.post(route('control.catalog.artists.store'), {
-      onFinish: () => {
-        adding.value = false;
-      },
-      onSuccess: async (e) => {
-        toast.success(e.props.notification.message);
-        emits('done', e.props.notification.data)
-        isDialogOn.value = false;
-      },
-      onError: (e) => {
-        console.log("HATAAAA", e);
-      },
-    });
-  }
+        }
+    }
+
+
+    // form.post(route('control.catalog.artists.store'), {
+    //     onFinish: () => {
+    //         adding.value = false;
+    //     },
+    //     onSuccess: async (e) => {
+    //         console.log("BAŞARILIIII");
+
+    //         // toast.success(e.props.notification.message);
+    //         // emits('done', e.props.notification.data)
+    //         // isDialogOn.value = false;
+    //     },
+    //     onError: (e) => {
+    //         console.log("HATAAAA", e);
+    //     },
+    // },{ headers: { 'accept': 'application/json' }});
+
 
 
 }

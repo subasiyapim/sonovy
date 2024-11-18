@@ -160,7 +160,7 @@
             <h2 class="label-medium c-strong-950">Henüz yayınız bulunmamaktadır.</h2>
             <h3 class="paragraph-medium c-neutral-500">Oluşturucağınız tüm yayınlar burada listelenecektir.</h3>
           </div>
-          <PrimaryButton>
+          <PrimaryButton @click="openCreateProductDialog">
             <template #icon>
               <AddIcon/>
             </template>
@@ -172,12 +172,15 @@
       </template>
     </AppTable>
   </AdminLayout>
+  <ProductDialog v-model="isCreateProductDialogOn" v-if="isCreateProductDialogOn"></ProductDialog>
+
 </template>
 
 <script setup>
 import {ref} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
+import {ProductDialog} from '@/Components/Dialog';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton} from '@/Components/Buttons'
 import {
@@ -208,8 +211,10 @@ const data = ref([
     name: "ikinci"
   },
 ])
-
-
+const isCreateProductDialogOn = ref(false);
+const openCreateProductDialog  = () => {
+    isCreateProductDialogOn.value = true;
+}
 const statusData = ref([
   {
     label: "Taslak",

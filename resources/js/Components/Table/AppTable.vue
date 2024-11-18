@@ -63,7 +63,7 @@
         </td>
     </tr>
     <tr  v-if="hasSlot('appends')">
-        <td :colspan="columns.length" class="!p-0">
+        <td :colspan="columns.length+1" class="!p-0">
              <slot name="appends" />
         </td>
 
