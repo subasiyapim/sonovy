@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
 use Spatie\MediaLibrary\HasMedia;
@@ -45,6 +46,7 @@ class Product extends Model implements HasMedia
         'status',
 
         //step 1
+        'mixed_album',
         'version',
         'genre_id',
         'sub_genre_id',

@@ -72,7 +72,10 @@
 
         <AppTableColumn label="Durum">
           <template #default="scope" :showIcon="true">
-            <StatusBadge type="pending">
+            <StatusBadge v-if="scope.row.is_completed" type="success">
+              <p v-if="scope.row.is_completed" class="c-sub-600"> Tamamlandı</p>
+            </StatusBadge>
+            <StatusBadge v-else type="pending">
               <p class="c-orange-700"> Bilgiler Eksik</p>
             </StatusBadge>
           </template>
@@ -106,11 +109,13 @@
         <template #appends v-if="attemps.length > 0 && showAttempt">
           <div class="flex flex-col gap-2">
 
-            <SongLoadingCard v-model="attemps[index]" @remove="attemps.splice(index,1)" :key="index" v-for="(loadingCardAttempt,index) in attemps"/>
+            <SongLoadingCard v-model="attemps[index]" @remove="attemps.splice(index,1)" :key="index"
+                             v-for="(loadingCardAttempt,index) in attemps"/>
           </div>
         </template>
         <template #empty>
-          <TusUploadInput @error="onErrorOccured" :product_id="product.id" ref="tusUploadElement" @start="onTusStart" @progress="onTusProgress"
+          <TusUploadInput @error="onErrorOccured" :product_id="product.id" ref="tusUploadElement" @start="onTusStart"
+                          @progress="onTusProgress"
                           @complete="onTusComplete"></TusUploadInput>
         </template>
       </AppTable>
@@ -248,14 +253,14 @@ const onDeleteSong = (row) => {
   onCancel();
 
 }
-const onErrorOccured  = (e) => {
+const onErrorOccured = (e) => {
 
-    let findedIndex = attemps.value.findIndex((el) => el.filename == e.filename)
+  let findedIndex = attemps.value.findIndex((el) => el.filename == e.filename)
 
-    if(findedIndex >= 0){
-        attemps.value[findedIndex].errorMessage = e.message;
+  if (findedIndex >= 0) {
+    attemps.value[findedIndex].errorMessage = e.message;
 
-    }
+  }
 
 }
 const onSelectChange = (e) => {

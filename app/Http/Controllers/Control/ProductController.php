@@ -36,6 +36,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Inertia\ResponseFactory;
 use Symfony\Component\HttpFoundation\Response;
+use function Psy\debug;
 
 /**
  * Class ProductController
@@ -216,6 +217,7 @@ class ProductController extends Controller
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
     {
         $data = $request->validated();
+        //dd($data['mixed_album']);
         $step = $data['step'];
         $this->excepted_data = $this->getExceptedData($data, $step);
 
@@ -422,8 +424,16 @@ class ProductController extends Controller
     protected static function attachArtistFromProduct($product, array $data): void
     {
         $product->artists()->detach();
-        $product->artists()->attach($data['main_artists'], ['is_main' => true]);
-        $product->artists()->attach($data['featuring_artists'], ['is_main' => false]);
+
+        if ($data['mixed_album']) {
+            $variousArtistID = Artist::find(1)->id;
+
+            $product->mainArtists()->attach($variousArtistID, ['is_main' => true]);
+
+        } else {
+            $product->artists()->attach($data['main_artists'], ['is_main' => true]);
+            $product->artists()->attach($data['featuring_artists'], ['is_main' => false]);
+        }
     }
 
     /**
