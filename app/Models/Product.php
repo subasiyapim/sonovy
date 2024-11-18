@@ -5,10 +5,8 @@ namespace App\Models;
 use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
-use App\Models\Scopes\FilterByUserRoleScope;
-
-use App\Models\System\Country;
 use App\Traits\DataTables\HasAdvancedFilter;
+use App\Traits\FilterByUser;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,14 +16,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rules\Enum;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * @method static advancedFilter()
@@ -35,6 +28,7 @@ class Product extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
     use HasAdvancedFilter;
+    use FilterByUser;
 
     protected $table = 'products';
 
@@ -132,16 +126,6 @@ class Product extends Model implements HasMedia
         return $file;
     }
 
-    protected static function booted(): void
-    {
-        static::addGlobalScope(new FilterByUserRoleScope);
-        static::created(fn($model) => self::updateCreatedBy($model));
-    }
-
-    protected static function updateCreatedBy($model): void
-    {
-        $model->update(['created_by' => auth()->id()]);
-    }
 
     protected function statusText(): Attribute
     {

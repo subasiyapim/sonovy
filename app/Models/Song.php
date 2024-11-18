@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\FilterByUserRoleScope;
 use App\Models\System\Country;
 use App\Traits\DataTables\HasAdvancedFilter;
 use DateTimeInterface;
@@ -12,10 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use function Laravel\Prompts\select;
 
 /**
  * @method static create(array $array)
@@ -99,17 +96,11 @@ class Song extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new FilterByUserRoleScope);
-        static::creating(fn($song) => self::updateCreatedBy($song));
+        parent::boot();
 
         static::saving(function ($song) {
             self::updateIsCompleted($song);
         });
-    }
-
-    private static function updateCreatedBy($song): void
-    {
-        $song->update(['created_by' => auth()->id()]);
     }
 
     private static function updateIsCompleted(Song $song): void

@@ -36,7 +36,7 @@ class SongUpdateRequest extends FormRequest
                 'array',
                 'min:1',
             ],
-            'lyrics_writers.*' => ['required_if:is_instrumental,0'],
+            'lyrics_writers.*' => ['required_if:is_instrumental,false', 'required_if:is_instrumental,0'],
             'lyrics' => ['nullable'],
             'preview_start' => ['nullable'],
 
