@@ -26,13 +26,13 @@
 
         </template>
         <template #first_child>
-          <button @click="createArtistDialog = true" class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
+          <button @click="openArtistCreateDialog" class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
             Sanatçı Oluştur
           </button>
         </template>
         <template #empty>
-          <button class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
+          <button @click="openArtistCreateDialog"  class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
             <AddIcon color="var(--dark-green-600)"/>
             Sanatçı Oluştur
           </button>
@@ -74,13 +74,13 @@
                    v-model="form.featuring_artists"
                    type="multiselect" label="Düet Sanatçı" placeholder="Seçiniz" :config="artistSelectConfig">
         <template #first_child>
-          <button class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
+          <button @click="openArtistCreateDialog"  class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
             Sanatçı Oluştur
           </button>
         </template>
         <template #empty>
-          <button class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
+          <button @click="openArtistCreateDialog" class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
             <AddIcon color="var(--dark-green-600)"/>
             Sanatçı Oluştur
           </button>
@@ -179,7 +179,9 @@ import {useCrudStore} from '@/Stores/useCrudStore';
 import {usePage} from '@inertiajs/vue3';
 import {SmallArtistCreateDialog} from '@/Components/Dialog';
 
-
+const openArtistCreateDialog = () => {
+        createArtistDialog.value = true;
+}
 const createArtistDialog = ref(false);
 const crudStore = useCrudStore();
 const props = defineProps({

@@ -105,12 +105,12 @@
         </AppTableColumn>
         <template #appends v-if="attemps.length > 0 && showAttempt">
           <div class="flex flex-col gap-2">
-            {{ attemps }}
-            <SongLoadingCard v-model="attemps[index]" :key="index" v-for="(loadingCardAttempt,index) in attemps"/>
+
+            <SongLoadingCard v-model="attemps[index]" @remove="attemps.splice(index,1)" :key="index" v-for="(loadingCardAttempt,index) in attemps"/>
           </div>
         </template>
         <template #empty>
-          <TusUploadInput :product_id="product.id" ref="tusUploadElement" @start="onTusStart" @progress="onTusProgress"
+          <TusUploadInput @error="onErrorOccured" :product_id="product.id" ref="tusUploadElement" @start="onTusStart" @progress="onTusProgress"
                           @complete="onTusComplete"></TusUploadInput>
         </template>
       </AppTable>
@@ -248,6 +248,16 @@ const onDeleteSong = (row) => {
   onCancel();
 
 }
+const onErrorOccured  = (e) => {
+
+    let findedIndex = attemps.value.findIndex((el) => el.filename == e.filename)
+
+    if(findedIndex >= 0){
+        attemps.value[findedIndex].errorMessage = e.message;
+
+    }
+
+}
 const onSelectChange = (e) => {
 
   choosenSongs.value = Object.values(e);
@@ -267,7 +277,7 @@ const favoriteSong = async (song) => {
   console.log("SONG", song.pivot);
   form.value.songs.forEach(element => {
     if (song.id == element.id) {
-      element.pivot.is_favorite = 1;
+      element.pivot.is_favorite = song.pivot.is_favorite;
     } else {
       if (element.pivot) {
         element.pivot.is_favorite = 0

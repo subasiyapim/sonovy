@@ -20,7 +20,7 @@ class ArtistServices
     {
         return Artist::with('platforms')
             ->whereNot('name', 'Various Artists')
-            ->where('name', 'like', '%'.$search.'%')
+            ->where('name', 'like', '%' . $search . '%')
             ->get();
     }
 
@@ -34,8 +34,8 @@ class ArtistServices
         return $artists->flatMap(function ($artist) {
             return $artist->products->map(function ($product) {
                 return [
-                    'id' => $product->genre->id,
-                    'name' => $product->genre->name,
+                    'id' => $product?->genre?->id,
+                    'name' => $product?->genre?->name,
                 ];
             });
         })->unique('id')->values()->all();

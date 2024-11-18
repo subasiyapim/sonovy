@@ -69,10 +69,13 @@
 </template>
 
 <script setup>
-import { useSlots, ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useSlots, ref, computed, onMounted, onBeforeUnmount, nextTick ,getCurrentInstance} from 'vue'
 import { ChevronRightIcon, SearchIcon,CheckIcon } from '@/Components/Icons'
 import AppTextInput from './AppTextInput.vue';
 import {StatusBadge} from '@/Components/Badges'
+
+  const instance = getCurrentInstance()
+
 const slots = useSlots()
 const props = defineProps({
     config: {
@@ -100,7 +103,10 @@ const onClose = () => {
 
 }
 
-const choosenAll = ref(props.config?.data.filter((e) => element.value.includes(e.value)));
+const choosenAll = computed({
+    get:() => props.config?.data.filter((e) => element.value.includes(e.value)),
+    set:(value) => element.value
+ });
 const onChangeForSearch = (e) => {
 
     searchTerm.value = e;
@@ -234,7 +240,11 @@ const handleResize = () => {
     }
 }
 
-
+const insertData = (e) => {
+    chooseValue(e);
+    instance.update();
+    // const $forceUpdate = () => queueJob(instance.update)
+}
 
 // Add event listener for window resize on mounted, and remove on unmounted
 onMounted(() => {
@@ -243,6 +253,9 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     window.removeEventListener('resize', handleResize);
+})
+defineExpose({
+  insertData,
 })
 </script>
 

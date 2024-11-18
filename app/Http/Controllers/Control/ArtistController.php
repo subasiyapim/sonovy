@@ -98,6 +98,8 @@ class ArtistController extends Controller
     public function store(ArtistStoreRequest $request): \Illuminate\Http\RedirectResponse
     {
         $data = $request->validated();
+        $accept = $request->header('Accept');
+
         $artist = Artist::create($data);
 
         $artist->artistBranches()->sync($request->input('artist_branches', []));
@@ -115,17 +117,22 @@ class ArtistController extends Controller
         } elseif ($artist->platforms && $artist->platforms->contains('code', 'spotify')) {
             SpotifyImageUploadJob::dispatch($artist);
         }
+        $props = [
+            'type' => 'success',
+            'message' => __('control.notification_created', ['model' => __('control.artist.title_singular')]),
+            'data' => new ArtistResource($artist),
+        ];
+        if ($accept === 'application/json') {
 
 
-        return redirect()->route('control.catalog.artists.index')->with(
-            [
-                'notification' => [
-                    'type' => 'success',
-                    'message' => __('control.notification_created', ['model' => __('control.artist.title_singular')]),
-                    'data' => new ArtistResource($artist),
+            return response()->json($props, Response::HTTP_OK);
+        } else {
+            return redirect()->route('control.catalog.artists.index')->with(
+                [
+                    'notification' => $props
                 ]
-            ]
-        );
+            );
+        }
     }
 
     /**

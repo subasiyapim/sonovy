@@ -4,7 +4,7 @@
       <AppCard class="flex-1">
         <template #header>
           <p class="font-normal leading-3 text-sm">Toplam Yayın Sayısı</p>
-          <span class="font-semibold leading-8 text-2xl">{{ statistics.product_count }}</span>
+          <span class="font-semibold leading-8 text-2xl">{{ statistics.product_count }} Yayın</span>
         </template>
         <template #tool>
           <div class="w-28 max-w-xs mx-auto">
@@ -17,6 +17,11 @@
             </select>
           </div>
         </template>
+        <template #body>
+
+                <Vue3Apexcharts height="120" :options="options" :series="series"></Vue3Apexcharts>
+
+         </template>
       </AppCard>
 
       <AppCard class="flex-1">
@@ -39,27 +44,47 @@
             </select>
           </div>
         </template>
+        <template #body>
+            <hr class="my-3">
+            <Vue3Apexcharts
+            height="120"
+            type="bar"
+            width="100%"
+            :options="barOptions"
+            :series="barSeries"
+            />
+
+        </template>
       </AppCard>
 
-      <AppCard class="flex-1">
+      <AppCard class="flex-1 ">
         <template #header>
-          <div class="flex items-center gap-2">
+          <div class="flex mt-2 items-center gap-2">
             <ArtistsIcon color="var(--sub-600)"/>
             <p class="font-normal leading-3 text-sm">Sanatçılar</p>
-            <span class="font-semibold leading-8 text-2xl">{{ statistics.artist_count }}</span>
           </div>
 
         </template>
         <template #tool>
-          <div class="w-28 max-w-xs mx-auto">
+          <div class="">
 
-            <select id="options" name="options"
-                    class="block w-full pl-3 pr-10  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
-              <option>7. Sayfa</option>
-              <option>8. Sayfa</option>
-              <option>9. Sayfa</option>
-            </select>
+            <RegularButton>Detay</RegularButton>
           </div>
+        </template>
+
+         <template #body>
+            <hr class="my-3">
+            <div class="flex flex-col items-start">
+                <p class="label-medium c-strong-950 !font-semibold">{{statistics.artist_count}}</p>
+                <span class="paragraph-xs c-sub-600 mb-4">Toplam Sanatçılar</span>
+                <div class="flex items-center gap-2">
+                    <div class="flex -space-x-3 rtl:space-x-reverse">
+                        <img class="w-8 h-8 border-2 border-white rounded-full " v-for="a in 3" src="/docs/images/people/profile-picture-5.jpg" alt="">
+                    </div>
+                    <span class="paragraph-xs c-sub-600">12 Yeni eklendi</span>
+                </div>
+            </div>
+
         </template>
       </AppCard>
     </div>
@@ -160,7 +185,7 @@
             <h2 class="label-medium c-strong-950">Henüz yayınız bulunmamaktadır.</h2>
             <h3 class="paragraph-medium c-neutral-500">Oluşturucağınız tüm yayınlar burada listelenecektir.</h3>
           </div>
-          <PrimaryButton>
+          <PrimaryButton @click="openCreateProductDialog">
             <template #icon>
               <AddIcon/>
             </template>
@@ -172,14 +197,19 @@
       </template>
     </AppTable>
   </AdminLayout>
+  <ProductDialog v-model="isCreateProductDialogOn" v-if="isCreateProductDialogOn"></ProductDialog>
+
 </template>
 
 <script setup>
 import {ref} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
+import {ProductDialog} from '@/Components/Dialog';
+import {RegularButton} from '@/Components/Buttons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton} from '@/Components/Buttons'
+import Vue3Apexcharts from 'vue3-apexcharts'
 import {
   AddIcon,
   LabelsIcon,
@@ -208,8 +238,10 @@ const data = ref([
     name: "ikinci"
   },
 ])
-
-
+const isCreateProductDialogOn = ref(false);
+const openCreateProductDialog  = () => {
+    isCreateProductDialogOn.value = true;
+}
 const statusData = ref([
   {
     label: "Taslak",
@@ -249,6 +281,146 @@ const statusData = ref([
     color: "#FF8447",
   }
 ]);
+const options = ref({
+  chart: {
+    type: 'area',
+    height: 120,
+     toolbar: {
+      show: false, // Hides zoom and other toolbar options
+    },
+  },
+   dataLabels: {
+    enabled: false
+  },
+   colors: ['#5BCF82'], // Custom color for the line
+   stroke: {
+    curve: 'smooth',
+
+  },
+  fill: {
+    type: 'gradient', // Enable gradient fill
+    gradient: {
+      shade: 'light',
+      type: 'vertical', // Linear vertical gradient
+      shadeIntensity: 0.4,
+
+
+      inverseColors: false,
+      opacityFrom: 0.8, // Opaque at the line
+      opacityTo: 0, // Fully transparent at the bottom
+      stops: [0, 100], // Gradient starts from the line (0%) to bottom (100%)
+    },
+  },
+
+   grid: {
+    show: true,
+    xaxis: {
+      lines: {
+        show: true, // Enable vertical grid lines
+      },
+    },
+    yaxis: {
+      lines: {
+        show: false, // Disable horizontal grid lines
+      },
+    },
+    borderColor: '#CCCCCC', // Custom color for grid lines
+    strokeDashArray: 3, // Make grid lines dashed
+  },
+  yaxis: {
+    labels: {
+      show: false, // Hides the Y-axis labels
+    },
+  },
+  xaxis: {
+    categories: ['O', 'Ş', 'M', 'N', 'M','H'],
+  axisBorder: {
+      show: false,
+    },
+    axisTicks: {
+      show: false,
+    },
+  },
+});
+
+const series = ref([
+  {
+    name: "Yayın Sayısı",
+    data: [44, 55, 41, 17, 15],
+  },
+]);
+
+
+
+
+const barOptions = ref({
+  chart: {
+    type: 'bar', // Specify the chart type as 'bar'
+
+    toolbar: {
+      show: false, // Hide zoom and other toolbar options
+    },
+  },
+
+  plotOptions: {
+    bar: {
+      horizontal: true, // Bars will come out from the y-axis
+      barHeight: '70%', // Adjust bar thickness
+      borderRadius: 2, // Rounded corners for bars
+      distributed: true,
+    },
+  },
+  dataLabels: {
+    enabled: false, // Hide values on bars
+  },
+  xaxis: {
+    categories: ['ABC', 'XYZ', 'TYZ'], // Labels for the y-axis
+     labels: {
+      enabled: false,  // Disable category labels under the bars
+    },
+     axisBorder: {
+      show: false, // Hide the axis border
+    },
+    legend:{
+        show:false,
+    },
+    axisTicks: {
+      show: false, // Hide the x-axis ticks
+    },
+  },
+  yaxis: {
+    labels: {
+      style: {
+        colors: ['#333'], // Custom color for y-axis labels
+        fontSize: '12px',
+      },
+    },
+  },
+  grid: {
+    xaxis: {
+      lines: {
+        show: true, // Show vertical grid lines
+      },
+    },
+     yaxis: {
+      lines: {
+        show: false, // Show vertical grid lines
+      },
+    },
+  },
+  colors: ['#1A7544', '#49A668', '#5BCF82'], // Custom colors for the bars
+  legend: {
+    show: false, // Hide the legend
+  },
+});
+
+const barSeries = ref([
+  {
+     name: "Yayın Sayısı",
+    data: [30, 70, 50], // Data points for the bars
+  },
+]);
+
 </script>
 
 <style lang="scss" scoped>
