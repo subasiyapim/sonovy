@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\CountryServices;
 use Illuminate\Http\RedirectResponse;
@@ -40,9 +41,8 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->validated()['password']),
             'phone' => $request->validated()['phone'],
         ]);
-
-
-
+        $userRole = Role::where('code', 'user')->first();
+        $user->roles()->attach($userRole->id);
 
         Auth::login($user);
 
