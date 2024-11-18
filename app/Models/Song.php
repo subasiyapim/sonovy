@@ -31,7 +31,8 @@ class Song extends Model implements HasMedia
         'name',
         'genre_id',
         'main_artists',
-        'sub_genre_id'
+        'sub_genre_id',
+        'lyrics_writers',
     ];
     protected $table = 'songs';
     protected $fillable = [
@@ -116,11 +117,19 @@ class Song extends Model implements HasMedia
         $requiredFields = collect(self::REQUIRED_FIELDS);
 
         $mainArtistsExists = $song->mainArtists()->exists();
+        $lyricsWritersExists = $song->lyricsWriters()->exists();
 
-        $isCompleted = $requiredFields->every(function ($field) use ($song, $mainArtistsExists) {
+        $isCompleted = $requiredFields->every(function ($field) use ($song, $mainArtistsExists, $lyricsWritersExists) {
 
             if ($field === 'main_artists') {
                 return $mainArtistsExists;
+            }
+
+            if ($field === 'lyrics_writers') {
+                if ($song->is_instrumental === 1) {
+                    return true;
+                }
+                return $lyricsWritersExists && $song->is_instrumental === 0;
             }
 
             if (!array_key_exists($field, $song->getAttributes())) {

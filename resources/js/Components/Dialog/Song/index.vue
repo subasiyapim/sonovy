@@ -5,7 +5,6 @@
       <img width="24" height="24" src="@/assets/images/mp3_active.png"/>
     </template>
     <SectionHeader :title="__('control.song.dialog.header_1')"/>
-
     <div class="p-5 flex flex-col gap-6">
       <FormElement label-width="190px"
                    :required="true"
@@ -16,7 +15,7 @@
                    type="text"
                    :placeholder="__('control.song.fields.name_placeholder')"/>
       <FormElement label-width="190px"
-                   :required="true"
+                   :required="false"
                    :error="form.errors.version"
                    :config="{letter:500}"
                    v-model="form.version"
@@ -38,7 +37,8 @@
         </template>
 
       </FormElement>
-      <FormElement ref="featuringArtistMultiselect" label-width="190px" v-model="form.featuring_artists" :error="form.errors.featuring_artists"
+      <FormElement ref="featuringArtistMultiselect" label-width="190px" v-model="form.featuring_artists"
+                   :error="form.errors.featuring_artists"
                    type="multiselect" :label="__('control.song.fields.featuring_artists')"
                    :placeholder="__('control.song.fields.featuring_artists_placeholder')" :config="artistSelectConfig">
         <template #first_child>
@@ -73,7 +73,8 @@
             <p style="white-space:nowrap;">
 
               <template v-for="(artist,artistIndex) in scope.data">
-                {{ artist.label }} <template v-if="artistIndex != scope.data.length-1">, &nbsp;</template>
+                {{ artist.label }}
+                <template v-if="artistIndex != scope.data.length-1">, &nbsp;</template>
               </template>
             </p>
 
@@ -98,7 +99,9 @@
     </div>
     <SectionHeader :title="__('control.song.dialog.header_2')"/>
     <div class="p-5 flex flex-col gap-6">
-      <FormElement v-for="(lyric_writer,i) in form.lyrics_writers" :errors="form.errors[`lyrics_writers.${i}.id`]" :disabled="form.is_instrumental" label-width="190px"
+      <input-error :message="form.errors.lyrics_writers" class="mb-2"/>
+      <FormElement :required="!form.is_instrumental" v-for="(lyric_writer,i) in form.lyrics_writers"
+                   :error="form.errors[`lyrics_writers.${i}`]" :disabled="form.is_instrumental" label-width="190px"
                    v-model="form.lyrics_writers[i]" :label="__('control.song.fields.lyrics_writer')"
                    :placeholder="__('control.song.fields.lyrics_writer_placeholder')" type="select"
                    :config="lyricsWriterConfig">
@@ -142,18 +145,18 @@
           <div class="flex items-start justify-center gap-3" v-for="(musician,musicanIndex) in form.musicians">
 
             <div class="flex-1">
-            <FormElement direction="vertical" :error="form.errors[`musicians.${musicanIndex}.id`]"  type="custom">
+              <FormElement direction="vertical" :error="form.errors[`musicians.${musicanIndex}.id`]" type="custom">
 
-              <AppSelectInput v-model="musician.id" :config="musicansSelectConfig"
-                              :placeholder="__('control.song.fields.musicians_placeholder')"></AppSelectInput>
-            </FormElement>
+                <AppSelectInput v-model="musician.id" :config="musicansSelectConfig"
+                                :placeholder="__('control.song.fields.musicians_placeholder')"></AppSelectInput>
+              </FormElement>
 
             </div>
             <div class="flex-1">
-            <FormElement  direction="vertical" :error="form.errors[`musicians.${musicanIndex}.role`]"  type="custom">
-                    <AppSelectInput v-model="musician.role" :config="roleConfig"
-                              :placeholder="__('control.song.fields.roles_placeholder')"></AppSelectInput>
-            </FormElement>
+              <FormElement direction="vertical" :error="form.errors[`musicians.${musicanIndex}.role`]" type="custom">
+                <AppSelectInput v-model="musician.role" :config="roleConfig"
+                                :placeholder="__('control.song.fields.roles_placeholder')"></AppSelectInput>
+              </FormElement>
 
               <button @click="form.musicians.splice(musicanIndex,1)" class="flex items-center ms-auto gap-2 mt-2">
 
@@ -174,15 +177,15 @@
 
       </div>
       <div class="flex items-center gap-2">
-       <div class="flex-1">
-         <FormElement label-width="190px" v-model="form.isrc" label="ISRC" placeholder="Lütfen giriniz" type="text">
-        </FormElement>
-       </div>
+        <div class="flex-1">
+          <FormElement label-width="190px" v-model="form.isrc" label="ISRC" placeholder="Lütfen giriniz" type="text">
+          </FormElement>
+        </div>
         <RegularButton class="w-min" @click="generateISRCCode">
-            <template #icon>
-                <ISRCStarsIcon color="var(--sub-600)" />
-            </template>
-            Oluştur
+          <template #icon>
+            <ISRCStarsIcon color="var(--sub-600)"/>
+          </template>
+          Oluştur
         </RegularButton>
       </div>
     </div>
@@ -190,25 +193,28 @@
     <div class="p-5 flex flex-col gap-6">
       <div class="flex items-start gap-2 " v-for="(participant,i) in form.participants">
 
-        <FormElement class="flex-1" type="select" :error="form.errors[`participants.${i}.id`]" v-model="participant.id" :config="participantSelectConfig"
+        <FormElement class="flex-1" type="select" :error="form.errors[`participants.${i}.id`]" v-model="participant.id"
+                     :config="participantSelectConfig"
                      :label="__('control.song.fields.participants')" direction="vertical" :required="true"
                      :placeholder="__('control.song.fields.participants_placeholder')"/>
-        <FormElement class="flex-1" type="multiselect" :error="form.errors[`participants.${i}.tasks`]" v-model="participant.tasks" :config="roleConfig"
+        <FormElement class="flex-1" type="multiselect" :error="form.errors[`participants.${i}.tasks`]"
+                     v-model="participant.tasks" :config="roleConfig"
                      :label="__('control.song.fields.roles')" direction="vertical" :required="true"
                      :placeholder="__('control.song.fields.roles_placeholder')"/>
         <div class="flex flex-col item-start mb-0.5">
-            <FormElement  direction="vertical" :error="form.errors[`participants.${i}.rate`]" :label=" __('control.song.fields.share')" type="custom">
+          <FormElement direction="vertical" :error="form.errors[`participants.${i}.rate`]"
+                       :label=" __('control.song.fields.share')" type="custom">
 
 
-                <AppIncrementer v-model="participant.rate" class="h-9"></AppIncrementer>
-                <template #description>
-                    <div>
-                        <button @click="form.participants.splice(i,1)" class="flex items-center ms-auto gap-2 mt-2">
-                                <span class="c-error-500 label-xs">Temizle</span>
-                        </button>
-                    </div>
-                </template>
-            </FormElement>
+            <AppIncrementer v-model="participant.rate" class="h-9"></AppIncrementer>
+            <template #description>
+              <div>
+                <button @click="form.participants.splice(i,1)" class="flex items-center ms-auto gap-2 mt-2">
+                  <span class="c-error-500 label-xs">Temizle</span>
+                </button>
+              </div>
+            </template>
+          </FormElement>
 
         </div>
       </div>
@@ -235,7 +241,8 @@
     </div>
   </BaseDialog>
 
-  <SmallArtistCreateDialog @done="onArtistCreated" v-if="createArtistDialog" v-model="createArtistDialog"></SmallArtistCreateDialog>
+  <SmallArtistCreateDialog @done="onArtistCreated" v-if="createArtistDialog"
+                           v-model="createArtistDialog"></SmallArtistCreateDialog>
 
 </template>
 
@@ -244,7 +251,7 @@ import BaseDialog from '../BaseDialog.vue';
 import {SectionHeader} from '@/Components/Widgets';
 import {SmallArtistCreateDialog} from '@/Components/Dialog';
 
-import {AddIcon,ISRCStarsIcon} from '@/Components/Icons'
+import {AddIcon, ISRCStarsIcon} from '@/Components/Icons'
 import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {computed, ref, onBeforeMount} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
@@ -255,8 +262,9 @@ import {useCrudStore} from '@/Stores/useCrudStore';
 const featuringArtistMultiselect = ref();
 
 
-
 import {FormElement, ArtistInput, AppIncrementer, AppSelectInput} from '@/Components/Form'
+import InputError from "@/Components/InputError.vue";
+
 const createArtistDialog = ref(false);
 const crudStore = useCrudStore();
 const props = defineProps({
@@ -267,7 +275,7 @@ const props = defineProps({
     default: null,
   },
   genres: {},
-  product_id:{},
+  product_id: {},
 })
 const isUpdating = computed(() => {
   return props.song ? true : false;
@@ -275,17 +283,17 @@ const isUpdating = computed(() => {
 
 
 const generateISRCCode = async () => {
-    console.log();
+  console.log();
 
-    const response = await crudStore.get(route('control.catalog.products.get-isrc'),{
-          type: props.song.type,
-          index: props.song.id,
-        })
-        console.log("RESPONSEEE",response);
+  const response = await crudStore.get(route('control.catalog.products.get-isrc'), {
+    type: props.song.type,
+    index: props.song.id,
+  })
+  console.log("RESPONSEEE", response);
 
-        if (response) {
-          form.isrc = response
-        }
+  if (response) {
+    form.isrc = response
+  }
 
 }
 const choosenItunesField = ref(null);
@@ -293,21 +301,21 @@ const choosenSpotifyField = ref(null);
 const adding = ref(false)
 const image = ref();
 const form = useForm({
-    product_id:props.product_id,
-    id: props.song.id,
-    name: props.song.name,
-    version: props.song.version,
-    main_artists: null,
-    featuring_artists:[],
-    genre_id: props.song.genre_id,
-    sub_genre_id: props.song.sub_genre_id,
-    is_instrumental: props.song.is_instrumental,
-    isrc: props.song.isrc,
-    lyrics_writers: [null],
-    lyrics: props.song.lyrics,
-    musicians: [{}],
-    participants: [{}],
-    preview_start: props.song.preview_start ?? [0,15]
+  product_id: props.product_id,
+  id: props.song.id,
+  name: props.song.name,
+  version: props.song.version,
+  main_artists: null,
+  featuring_artists: [],
+  genre_id: props.song.genre_id,
+  sub_genre_id: props.song.sub_genre_id,
+  is_instrumental: props.song.is_instrumental,
+  isrc: props.song.isrc,
+  lyrics_writers: [null],
+  lyrics: props.song.lyrics,
+  musicians: [{}],
+  participants: [{}],
+  preview_start: props.song.preview_start ?? [0, 15]
 });
 
 const artistSelectConfig = computed(() => {
@@ -315,17 +323,17 @@ const artistSelectConfig = computed(() => {
     showTags: false,
     hasSearch: true,
     data: [...(props.song?.featuring_artists ?? [])?.map((element) => {
-       return {
-               label: element.name,
-               value:element.id,
-               image:element.media[0]?.original_url,
-            };
-    }),...(props.song?.main_artists ?? []).map((element) => {
-       return {
-               label: element.name,
-               value:element.id,
-               image:element.media[0]?.original_url,
-            };
+      return {
+        label: element.name,
+        value: element.id,
+        image: element.media[0]?.original_url,
+      };
+    }), ...(props.song?.main_artists ?? []).map((element) => {
+      return {
+        label: element.name,
+        value: element.id,
+        image: element.media[0]?.original_url,
+      };
     })],
     remote: async (query) => {
 
@@ -350,10 +358,10 @@ const musicansSelectConfig = computed(() => {
 
     hasSearch: true,
     data: (props.song?.musicians ?? [])?.map((element) => {
-       return {
-                value:element.id,
-                label: element.name,
-            };
+      return {
+        value: element.id,
+        label: element.name,
+      };
     }),
     remote: async (query) => {
       const response = await crudStore.get(route('control.search.users', {
@@ -376,10 +384,10 @@ const lyricsWriterConfig = computed(() => {
 
     hasSearch: true,
     data: (props.song?.lyrics_writers ?? [])?.map((element) => {
-       return {
-                value:element.id,
-               label: element.name,
-            };
+      return {
+        value: element.id,
+        label: element.name,
+      };
     }),
     remote: async (query) => {
       const response = await crudStore.get(route('control.search.users', {
@@ -402,11 +410,11 @@ const participantSelectConfig = computed(() => {
   return {
 
     hasSearch: true,
-      data: (props.song?.participants ?? [])?.map((element) => {
-       return {
-                value:element.user_id,
-                label: element.user?.name,
-            };
+    data: (props.song?.participants ?? [])?.map((element) => {
+      return {
+        value: element.user_id,
+        label: element.user?.name,
+      };
     }),
     remote: async (query) => {
       const response = await crudStore.get(route('control.search.users', {
@@ -472,7 +480,7 @@ const onSubmit = async (e) => {
 
         },
         onSuccess: async (e) => {
-            console.log("EEE",);
+          console.log("EEE",);
 
           toast.success(e.props.notification.message);
           isDialogOn.value = false;
@@ -480,7 +488,9 @@ const onSubmit = async (e) => {
 
         },
         onError: (e) => {
-          console.log("HATAAAA", e);
+          if (e.lyrics_writers) {
+            console.log("EEE", e);
+          }
         }
       });
 
@@ -490,14 +500,14 @@ const checkIfDisabled = computed(() => {
   return false;
 })
 
-const onArtistCreated =  (e) => {
-    let row = {
-        label: e.name,
-        value: e.id,
+const onArtistCreated = (e) => {
+  let row = {
+    label: e.name,
+    value: e.id,
 
-    };
-    featuringArtistMultiselect.value.appMultiSelect.insertData(row);
-    artistSelectConfig.value.data.push(row);
+  };
+  featuringArtistMultiselect.value.appMultiSelect.insertData(row);
+  artistSelectConfig.value.data.push(row);
 }
 const roleConfig = computed(() => {
   return {
@@ -505,33 +515,37 @@ const roleConfig = computed(() => {
   }
 })
 onBeforeMount(() => {
-    if (props.song) {
-        form.featuring_artists  = (props.song.featuring_artists??[]).map((e) => e.id);
+  if (props.song) {
+    form.featuring_artists = (props.song.featuring_artists ?? []).map((e) => e.id);
 
 
-       form.main_artists  = props.song.main_artists?.length> 0 ? props.song.main_artists[0].id : null;
+    form.main_artists = props.song.main_artists?.length > 0 ? props.song.main_artists[0].id : null;
 
 
-        form.musicians = (props.song.musicians ?? []).map((e) => {return{id:e.id,role:e.pivot?.branch_id}}) ?? [{}];
-        form.participants = (props.song.participants ?? []).map((e) => {return {id:e.user_id,tasks:e.tasks,rate:e.rate}}) ?? [{}];
-        form.lyrics_writers =  (props.song.lyrics_writers ?? []).map((e) => e.id) ?? [1];
+    form.musicians = (props.song.musicians ?? []).map((e) => {
+      return {id: e.id, role: e.pivot?.branch_id}
+    }) ?? [{}];
+    form.participants = (props.song.participants ?? []).map((e) => {
+      return {id: e.user_id, tasks: e.tasks, rate: e.rate}
+    }) ?? [{}];
+    form.lyrics_writers = (props.song.lyrics_writers ?? []).map((e) => e.id) ?? [1];
 
 
-        if(form.lyrics_writers.length == 0){
-                form.lyrics_writers = [null];
-        }
-        if(form.participants.length == 0){
-            form.participants = [{}]
-        }
-        if(form.musicians.length == 0){
-            form.musicians = [{}]
-        }
-
+    if (form.lyrics_writers.length == 0) {
+      form.lyrics_writers = [null];
     }
+    if (form.participants.length == 0) {
+      form.participants = [{}]
+    }
+    if (form.musicians.length == 0) {
+      form.musicians = [{}]
+    }
+
+  }
 });
 
 const openArtistCreateDialog = () => {
-    createArtistDialog.value = true;
+  createArtistDialog.value = true;
 
 
 }

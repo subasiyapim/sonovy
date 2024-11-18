@@ -32,7 +32,11 @@ class SongUpdateRequest extends FormRequest
             'genre_id' => ['required', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'exists:genres,id'],
             'is_instrumental' => ['required', 'boolean'],
-            'lyrics_writers' => ['nullable', 'array'],
+            'lyrics_writers' => [
+                'array',
+                'min:1',
+            ],
+            'lyrics_writers.*' => ['required_if:is_instrumental,0'],
             'lyrics' => ['nullable'],
             'preview_start' => ['nullable'],
 
@@ -56,31 +60,3 @@ class SongUpdateRequest extends FormRequest
         ];
     }
 }
-
-/*
-name
-genre_id
-sub_genre_id
-type
-size
-isrc
-is_instrumental
-is_explicit
-language_id
-lyrics
-iswc
-preview_start
-released_before
-original_release_date
-details
-acr_response
-created_by
-status
-status_changed_at
-created_at
-updated_at
-status_changed_by
-note
-duration
-version
- * */
