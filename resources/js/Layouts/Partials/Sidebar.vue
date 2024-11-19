@@ -1,7 +1,8 @@
 <template>
 
 
-  <div class="bg-white-500 flex flex-col w-full md:h-screen md:w-[272px]  sideBar overflow-y-hidden border border-white-600">
+  <div
+      class="bg-white-500 flex flex-col w-full md:h-screen md:w-[272px]  sideBar overflow-y-hidden border border-white-600">
     <div class=" p-3">
       <div class="p-3 flex  gap-3 items-center ">
         <img class="cursor-pointer w-10 h-10 " alt="" src="@/assets/images/logo.png">
@@ -57,14 +58,17 @@
 
       <div class="flex h-min items-center gap-3 border-t border-soft-200 p-3">
         <div class="rounded-full w-10 h-10 bg-blue-300">
-
+          <img :alt="usePage().props.auth.user.name"
+               :src="usePage().props.auth.user.image
+                         ? usePage().props.auth.user.image
+                         : defaultStore.profileImage(usePage().props.auth.user.name)">
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <p class="label-sm c-strong-950">Sophia Williams</p>
+            <p class="label-sm c-strong-950" v-text="usePage().props.auth.user.name"/>
             <VerifiedFilledIcon/>
           </div>
-          <p class="paragraph-xs c-sub-600">sophia@alignui.com</p>
+          <p class="paragraph-xs c-sub-600" v-text="usePage().props.auth.user.email"/>
         </div>
 
       </div>
@@ -99,6 +103,9 @@ import {
 import MenuItem from '@/Components/Menu/MenuItem.vue'
 import SubMenuItem from '@/Components/Menu/SubMenuItem.vue'
 import {usePage, router} from '@inertiajs/vue3';
+import {useDefaultStore} from "@/Stores/default";
+
+const defaultStore = useDefaultStore();
 const isProductDialogOn = ref(false);
 </script>
 

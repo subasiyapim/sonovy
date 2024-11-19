@@ -166,6 +166,7 @@ class SettingSeeder extends Seeder
                 'value' => 120,
                 'input_type' => $input_types->filter(fn($input_type) => $input_type === 'text')->keys()->implode(','),
             ],
+            //Site banner
             [
                 'key' => 'site_banner',
                 'name' => 'Site Banner',
@@ -220,8 +221,15 @@ class SettingSeeder extends Seeder
                 'value' => 1,
                 'name' => 'Doğrulama kodu geçerlilik süresi',
                 'description' => 'Dakika cinsinden yazılması gerekmektedir.',
-                'input_type' => $input_types->filter(fn($input_type
-                ) => $input_type === 'text')->keys()->implode(',')
+                'input_type' => $input_types->filter(fn($input_type) => $input_type === 'text')->keys()->implode(',')
+            ],
+            //Song preview start&end time
+            [
+                'key' => 'song_preview_start_end_time',
+                'value' => json_encode([15, 30]),
+                'name' => 'Şarkı önizleme başlangıç ve bitiş zamanı',
+                'description' => 'Yayın düzenleme esnasında şarkının önizlemesi için gerekli olan sabit başlangıç ve bitiş zamanı',
+                'input_type' => $input_types->filter(fn($input_type) => $input_type === 'text')->keys()->implode(',')
             ]
 
         ];

@@ -57,6 +57,7 @@ class PermissionRoleSeeder extends Seeder
                     'copyright_create',
                     'label_list',
                     'label_create',
+                    'label_edit',
                     'label_show',
                     'product_list',
                     'product_create',
