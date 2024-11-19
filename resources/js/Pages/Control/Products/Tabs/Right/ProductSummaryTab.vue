@@ -5,7 +5,7 @@
     {{ usePage().props.errors.image }}
   </span>
 
-  <DragUploadInput @change="onChange" :image="product.image" label="Albüm Kapağı"
+  <DragUploadInput @change="onChange" :image="product.image?.small" label="Albüm Kapağı"
                    note="JPEG, PNG, PDF, and MP4 formats, up to 50 MB."></DragUploadInput>
   <div class="flex gap-3.5 items-center">
     <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">

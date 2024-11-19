@@ -102,7 +102,7 @@ class Song extends Model implements HasMedia
 //            self::updateIsCompleted($song);
 //        });
     }
-    
+
     //Deprecated
     protected static function saveWithoutEvents(Song $song): void
     {

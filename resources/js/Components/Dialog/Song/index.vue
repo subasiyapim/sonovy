@@ -128,6 +128,7 @@
                    :label="__('control.song.fields.lyrics')" :placeholder="__('control.song.fields.lyrics_placeholder')"
                    type="textarea">
       </FormElement>
+
       <FormElement label-width="190px" :config="sliderConfig" v-model="form.preview_start"
                    :label="__('control.song.fields.preview_start')" type="slider">
       </FormElement>
@@ -315,7 +316,7 @@ const form = useForm({
   lyrics: props.song.lyrics,
   musicians: [{}],
   participants: [{}],
-  preview_start: props.song.preview_start ?? [0, 15]
+  preview_start: props.song.preview_start ?? (JSON.parse(usePage().props.site_settings.song_preview_start_end_time ?? '[0,15]'))
 });
 
 const artistSelectConfig = computed(() => {

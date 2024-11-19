@@ -77,6 +77,7 @@
             </StatusBadge>
             <StatusBadge v-else type="pending">
               <p class="c-orange-700"> Bilgiler Eksik</p>
+
             </StatusBadge>
           </template>
         </AppTableColumn>
@@ -232,8 +233,10 @@ const openEditDialog = (song) => {
 
 const onComplete = (e) => {
   choosenSong.value = JSON.parse(JSON.stringify(e));
-  const findedIndex = form.value.songs.findIndex((e) => e.id == e.id);
+  const findedIndex = form.value.songs.findIndex((el) => el.id == e.id);
   isSongDialogOn.value = false;
+  console.log("GÜNCELLEME BİTTİ",findedIndex);
+
   if (findedIndex >= 0)
     form.value.songs[findedIndex] = e;
   choosenSong.value = null;
@@ -272,17 +275,17 @@ const deleteChoosenSongs = () => {
   const tempIds = choosenSongs.value.map((e) => e.id);
 
   deleteSong(tempIds)
-
+onCancel();
 }
 const favoriteSong = async (song) => {
   const response = await crudStore.post(route('control.catalog.song.toggleFavorite', song.id), {
     product_id: props.product.id
   })
 
-  console.log("SONG", song.pivot);
+  console.log("SONG", response);
   form.value.songs.forEach(element => {
     if (song.id == element.id) {
-      element.pivot.is_favorite = song.pivot.is_favorite;
+      element.pivot.is_favorite = response.pivot.is_favorite;
     } else {
       if (element.pivot) {
         element.pivot.is_favorite = 0

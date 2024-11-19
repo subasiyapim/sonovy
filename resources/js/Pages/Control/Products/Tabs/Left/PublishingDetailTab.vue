@@ -11,10 +11,10 @@
 
       <SectionHeader title="YAYINLANMA TARİHLERİ"></SectionHeader>
 
-      <FormElement label-width="190px" :error="form.errors.physical_release_date" type="custom" label="Yayınlanma Yılı">
+      <FormElement label-width="190px" :error="form.errors.physical_release_date" type="custom" label="Genel Yayın Tarihi">
         <VueDatePicker @update:model-value="onPublishDateChoosen" v-model="form.physical_release_date"
                        :convertModel="false" class="radius-8" auto-apply :enable-time-picker="false"
-                       placeholder="Yayınlanma Yılı">
+                       placeholder="Tarih Seçiniz">
           <template #input-icon>
             <div class="p-3">
               <CalendarIcon color="var(--sub-600)"/>
@@ -32,9 +32,9 @@
 
       </FormElement>
       <FormElement label-width="190px" :error="form.errors.previous_release_date" :disabled="form.previously_released"
-                   type="custom" label="Fiziksel Yayın Tarihi">
+                   type="custom" label="Orjinal / Fiziksel Yayın Tarihi">
         <VueDatePicker :disabled="!form.previously_released" v-model="form.previous_release_date" class="radius-8"
-                       auto-apply :enable-time-picker="false" placeholder="Orjinal Yayınlanma Tarihi">
+                       auto-apply :enable-time-picker="false" placeholder="Orjinal / Fiziksel Yayınlanma Tarihi">
           <template #input-icon>
             <div class="p-3">
               <CalendarIcon color="var(--sub-600)"/>

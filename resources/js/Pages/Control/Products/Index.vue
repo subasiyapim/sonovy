@@ -276,7 +276,7 @@ const statusData = ref([
     label: "Reddedildi",
     value: 4,
     icon: WarningIcon,
-    color: "##FB3748",
+    color: "#FB3748",
   },
   {
     label: "Geri Çekildi",
