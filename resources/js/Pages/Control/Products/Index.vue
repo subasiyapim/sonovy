@@ -19,9 +19,9 @@
         </template>
         <template #body>
 
-                <Vue3Apexcharts height="120" :options="options" :series="series"></Vue3Apexcharts>
+          <Vue3Apexcharts height="120" :options="options" :series="series"></Vue3Apexcharts>
 
-         </template>
+        </template>
       </AppCard>
 
       <AppCard class="flex-1">
@@ -45,14 +45,14 @@
           </div>
         </template>
         <template #body>
-            <hr class="my-3">
-            <Vue3Apexcharts
-            height="120"
-            type="bar"
-            width="100%"
-            :options="barOptions"
-            :series="barSeries"
-            />
+          <hr class="my-3">
+          <Vue3Apexcharts
+              height="120"
+              type="bar"
+              width="100%"
+              :options="barOptions"
+              :series="barSeries"
+          />
 
         </template>
       </AppCard>
@@ -72,18 +72,19 @@
           </div>
         </template>
 
-         <template #body>
-            <hr class="my-3">
-            <div class="flex flex-col items-start">
-                <p class="label-medium c-strong-950 !font-semibold">{{statistics.artist_count}}</p>
-                <span class="paragraph-xs c-sub-600 mb-4">Toplam Sanatçılar</span>
-                <div class="flex items-center gap-2">
-                    <div class="flex -space-x-3 rtl:space-x-reverse">
-                        <img class="w-8 h-8 border-2 border-white rounded-full " v-for="a in 3" src="/docs/images/people/profile-picture-5.jpg" alt="">
-                    </div>
-                    <span class="paragraph-xs c-sub-600">12 Yeni eklendi</span>
-                </div>
+        <template #body>
+          <hr class="my-3">
+          <div class="flex flex-col items-start">
+            <p class="label-medium c-strong-950 !font-semibold">{{ statistics.artist_count }}</p>
+            <span class="paragraph-xs c-sub-600 mb-4">Toplam Sanatçılar</span>
+            <div class="flex items-center gap-2">
+              <div class="flex -space-x-3 rtl:space-x-reverse">
+                <img class="w-8 h-8 border-2 border-white rounded-full " v-for="a in 3"
+                     src="/docs/images/people/profile-picture-5.jpg" alt="">
+              </div>
+              <span class="paragraph-xs c-sub-600">12 Yeni eklendi</span>
             </div>
+          </div>
 
         </template>
       </AppCard>
@@ -117,6 +118,11 @@
             <div class="w-8 h-8 rounded overflow-hidden">
               <img class="w-10 h-10" alt=""
                    :src="scope.row.image ? scope.row.image.thumb : 'https://loremflickr.com/400/400'">
+
+              <img :alt="scope.row.album_name"
+                   :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.album_name)"
+              >
+
             </div>
             <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
               {{ scope.row.album_name }}
@@ -210,6 +216,7 @@ import {RegularButton} from '@/Components/Buttons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton} from '@/Components/Buttons'
 import Vue3Apexcharts from 'vue3-apexcharts'
+import {useDefaultStore} from "@/Stores/default";
 import {
   AddIcon,
   LabelsIcon,
@@ -226,6 +233,9 @@ import {
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
 
+
+const defaultStore = useDefaultStore();
+
 const props = defineProps({
   statistics: Object,
 })
@@ -239,8 +249,8 @@ const data = ref([
   },
 ])
 const isCreateProductDialogOn = ref(false);
-const openCreateProductDialog  = () => {
-    isCreateProductDialogOn.value = true;
+const openCreateProductDialog = () => {
+  isCreateProductDialogOn.value = true;
 }
 const statusData = ref([
   {
@@ -285,15 +295,15 @@ const options = ref({
   chart: {
     type: 'area',
     height: 120,
-     toolbar: {
+    toolbar: {
       show: false, // Hides zoom and other toolbar options
     },
   },
-   dataLabels: {
+  dataLabels: {
     enabled: false
   },
-   colors: ['#5BCF82'], // Custom color for the line
-   stroke: {
+  colors: ['#5BCF82'], // Custom color for the line
+  stroke: {
     curve: 'smooth',
 
   },
@@ -312,7 +322,7 @@ const options = ref({
     },
   },
 
-   grid: {
+  grid: {
     show: true,
     xaxis: {
       lines: {
@@ -333,8 +343,8 @@ const options = ref({
     },
   },
   xaxis: {
-    categories: ['O', 'Ş', 'M', 'N', 'M','H'],
-  axisBorder: {
+    categories: ['O', 'Ş', 'M', 'N', 'M', 'H'],
+    axisBorder: {
       show: false,
     },
     axisTicks: {
@@ -349,8 +359,6 @@ const series = ref([
     data: [44, 55, 41, 17, 15],
   },
 ]);
-
-
 
 
 const barOptions = ref({
@@ -375,14 +383,14 @@ const barOptions = ref({
   },
   xaxis: {
     categories: ['ABC', 'XYZ', 'TYZ'], // Labels for the y-axis
-     labels: {
+    labels: {
       enabled: false,  // Disable category labels under the bars
     },
-     axisBorder: {
+    axisBorder: {
       show: false, // Hide the axis border
     },
-    legend:{
-        show:false,
+    legend: {
+      show: false,
     },
     axisTicks: {
       show: false, // Hide the x-axis ticks
@@ -402,7 +410,7 @@ const barOptions = ref({
         show: true, // Show vertical grid lines
       },
     },
-     yaxis: {
+    yaxis: {
       lines: {
         show: false, // Show vertical grid lines
       },
@@ -416,7 +424,7 @@ const barOptions = ref({
 
 const barSeries = ref([
   {
-     name: "Yayın Sayısı",
+    name: "Yayın Sayısı",
     data: [30, 70, 50], // Data points for the bars
   },
 ]);

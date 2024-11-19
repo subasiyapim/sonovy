@@ -28,7 +28,7 @@ class SongUpdateRequest extends FormRequest
             'name' => ['required', 'string'],
             'version' => ['nullable', 'string'],
             'main_artists' => ['required', 'exists:artists,id'],
-            'featuring_artists' => ['required', 'array'],
+            'featuring_artists' => ['nullable', 'array'],
             'genre_id' => ['required', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'exists:genres,id'],
             'is_instrumental' => ['required', 'boolean'],

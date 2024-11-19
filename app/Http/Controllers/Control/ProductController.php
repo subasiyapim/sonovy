@@ -98,7 +98,7 @@ class ProductController extends Controller
         $validated = $request->validated();
 
         $product = Product::create($validated);
-        
+
         return redirect()->route('control.catalog.products.form.edit', [1, $product->id])
             ->with([
                 'notification' => __('control.notification_created', ['model' => __('control.product.title_singular')])
@@ -426,9 +426,9 @@ class ProductController extends Controller
         $product->artists()->detach();
 
         if ($data['mixed_album']) {
-            $variousArtistID = Artist::find(1)->id;
+            $variousArtistID = 1;
 
-            $product->mainArtists()->attach($variousArtistID, ['is_main' => true]);
+            $product->mainArtists()->attach([$variousArtistID], ['is_main' => true]);
 
         } else {
             $product->artists()->attach($data['main_artists'], ['is_main' => true]);
