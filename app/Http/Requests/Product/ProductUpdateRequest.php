@@ -15,7 +15,15 @@ class ProductUpdateRequest extends FormRequest
 {
     private static function stepFive(): array
     {
-        return [];
+        $product = Product::find(request()->route('product')->id);
+
+        if ($product && !$product->image) {
+            return
+                [
+                    'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048']
+                ];
+        }
+
     }
 
     private static function stepFour(): array
@@ -90,17 +98,9 @@ class ProductUpdateRequest extends FormRequest
 
     private static function common(): array
     {
-        $product = Product::find(request()->route('product')->id);
-
-        $common = [
+        return [
             'step' => ['required', 'integer', 'min:1', 'max:5'],
         ];
-
-        if ($product && !$product->image) {
-            $common['image'] = ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'];
-        }
-
-        return $common;
 
     }
 
