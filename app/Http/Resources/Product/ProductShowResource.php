@@ -124,7 +124,9 @@ class ProductShowResource extends JsonResource
                 'isrc' => $song->isrc,
                 'duration' => $song->duration,
                 'artists' => $song->artists,
-                'participants' => $this->whenLoaded('participants', $song->participants),
+                'participants' => $song->participants->map(function ($participant) {
+                    return $participant->load('user');
+                }),
                 'analysis' => $song->analysis,
                 'details' => $song->details,
             ];

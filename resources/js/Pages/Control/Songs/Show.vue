@@ -116,8 +116,21 @@
               </div>
             </div>
           </div>
-          <h1 class="mb-6 subheading-regular text-start" v-text="__('control.song.show.participants')"/>
-
+          <h1 class="my-9 subheading-regular text-start" v-text="__('control.song.show.participants')"/>
+           <div class="mb-10 grid grid-cols-2 gap-12">
+            <div v-for="participant in song.participants" class="flex items-start gap-2 w-64">
+                <div class="w-12 h-12 rounded-full bg-blue-300 flex items-center justify-center">
+                    <img class="image-fluid" :src="participant.user?.image">
+                </div>
+                <div class="flex flex-col items-start">
+                   <p class="c-sub-600 label-xs mb-2">{{participant.user?.name}}</p>
+                    <p class="c-strong-950 label-sm">{{participant.user?.name}}</p>
+                </div>
+                <div class="label-xs c-sub-600 ms-auto">
+                   %  {{participant.rate}}
+                </div>
+            </div>
+           </div>
         </div>
 
       </div>

@@ -4,6 +4,9 @@ import ProductDialog from './Product/index.vue';
 import SongDialog from './Song/index.vue';
 import SmallArtistCreateDialog from './Artist/small.vue';
 import ConfirmDeleteDialog from './ConfirmDeleteDialog.vue';
+import SongParticipantModal from './Song/participants.vue';
+import SongDetailModal from './Song/details.vue';
+import SongAcrResponseModal from './Song/acrResponse.vue';
 
 export {
     ArtistDialog,
@@ -11,5 +14,8 @@ export {
     ProductDialog,
     SongDialog,
     ConfirmDeleteDialog,
-    SmallArtistCreateDialog
+    SmallArtistCreateDialog,
+    SongParticipantModal,
+    SongDetailModal,
+    SongAcrResponseModal,
 }

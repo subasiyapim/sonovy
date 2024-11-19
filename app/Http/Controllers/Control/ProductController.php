@@ -430,7 +430,6 @@ class ProductController extends Controller
             $variousArtistID = 1;
 
             $product->mainArtists()->attach([$variousArtistID], ['is_main' => true]);
-
         } else {
             $product->artists()->attach($data['main_artists'], ['is_main' => true]);
             $product->artists()->attach($data['featuring_artists'], ['is_main' => false]);

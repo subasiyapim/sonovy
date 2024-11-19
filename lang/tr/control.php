@@ -324,6 +324,15 @@ return [
             'promotion_header' => 'PROMOSYONLAR',
             'tabs' => [
                 'songs' => 'Parçalar',
+                'song_tab' => [
+                    'details' => [
+                        'sample_rate' => "Sample Rate",
+                        'bit_rate' => 'Bit Rate',
+                        'channels' => 'Kanallar',
+                        'duration' => 'Süre',
+                        'format' => 'Biçim',
+                    ]
+                ],
                 'platforms' => 'Platformlar',
                 'regions' => 'Bölgeler',
                 'promotions' => 'Promosyonlar',
