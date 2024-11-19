@@ -10,10 +10,19 @@
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
       <FormElement :required="true" label-width="190px" :error="form.errors.album_name" v-model="form.album_name"
                    label="Albüm Adı"></FormElement>
-      <FormElement label-width="190px" :error="form.errors.version" v-model="form.version"
+      <FormElement v-if="form.type == 1" label-width="190px" :error="form.errors.version" v-model="form.version"
                    label="Sürüm"
                    placeholder="Lütfen giriniz"></FormElement>
+        <FormElement v-if="form.type == 2" :required="true" label-width="190px" type="select" placeholder="Seçiniz" :error="form.errors.video_type" v-model="form.video_type"
+                   label="Video Türü">
 
+        </FormElement>
+        <FormElement v-if="form.type == 2" :required="true" :config="{letter:5000}"  label-width="190px" type="textarea" placeholder="Açıklama giriniz" :error="form.errors.description" v-model="form.description"
+                   label="Açıklama">
+            <template #tooltip>
+                Video Açıklaması
+            </template>
+        </FormElement>
       <FormElement :required="true" label-width="190px" :error="form.errors.main_artists || form.errors.mixed_album"
                    v-model="form.main_artists" :disabled="form.mixed_album" type="multiselect" label="Sanatçı"
                    placeholder="Sanatçı Seçiniz"
@@ -120,10 +129,15 @@
                    placeholder="Seçiniz" type="select" :config="genreConfig">
       </FormElement>
 
-      <FormElement label-width="190px" :error="form.errors.format_id" v-model="form.format_id" label="Biçim"
+      <FormElement v-if="form.type == 1" label-width="190px" :error="form.errors.format_id" v-model="form.format_id" label="Biçim"
                    placeholder="Seçiniz" type="select" :config="formatConfig">
 
       </FormElement>
+
+        <FormElement  v-if="form.type == 2" label-width="190px" :error="form.errors.is_for_kids" v-model="form.is_for_kids"
+                    placeholder="Bu video çocuklar için yapıldı" type="fancyCheck">
+
+        </FormElement>
 
     </div>
 

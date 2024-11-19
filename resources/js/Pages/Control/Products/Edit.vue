@@ -26,7 +26,7 @@
 
         <AppStepper :modelValue="currentTab" @change="onChangeTab">
           <AppStepperElement title="Yayın Bilgileri"></AppStepperElement>
-          <AppStepperElement title="Şarkı Detay"></AppStepperElement>
+          <AppStepperElement :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
           <AppStepperElement title="Yayınlama Detayları"></AppStepperElement>
           <AppStepperElement title="Pazarlama ve Onay"></AppStepperElement>
 
@@ -144,6 +144,9 @@ const step1Element = useForm({
   catalog_number: props.product.catalog_number,
   language_id: props.product.language_id,
   main_price: props.product.main_price,
+  video_type: props.product.video_type,
+  description: props.product.description,
+  is_for_kids: props.product.is_for_kids,
 });
 
 
