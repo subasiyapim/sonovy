@@ -153,7 +153,8 @@
         </template>
       </div>
     </div>
-    <LabelDialog :song="song" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
+     <SongDialog v-if="isModalOn" :product_id="song.product_id" @done="onComplete" v-model="isModalOn"
+              :genres="genres" :song="song"></SongDialog>
   </AdminLayout>
 </template>
 
@@ -180,12 +181,15 @@ import {PrimaryButton} from '@/Components/Buttons'
 import {AppIncrementer} from '@/Components/Form'
 import {ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";
-import {LabelDialog} from '@/Components/Dialog';
+import {SongDialog} from '@/Components/Dialog';
 
 const props = defineProps({
   song: {
     type: Object,
     required: true
+  },
+  genres:{
+
   },
 })
 

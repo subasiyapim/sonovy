@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Song\SongChangeStatusRequest;
 use App\Http\Requests\Song\SongUpdateRequest;
 use App\Http\Resources\Song\SongShowResource;
+use App\Models\ArtistBranch;
 use App\Models\Participant;
 use App\Models\Product;
 use App\Services\MusicBrainzServices;
@@ -17,6 +18,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Earning;
+use App\Models\Genre;
 use App\Models\Song;
 use App\Services\GenreService;
 use App\Services\ISRCServices;
@@ -127,21 +129,27 @@ class SongController extends Controller
     public function show(Song $song)
     {
         abort_if(Gate::denies('song_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+
+        $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
         $song->loadMissing(
             'genre',
             'subGenre',
-
             'products.label',
             'participants.user',
             'earnings',
             'musixMatch',
-
             'remixer',
             'convertedSong',
             'reports',
             'mainArtists',
             'featuringArtists',
+            'artists',
+            'musicians.branch',
+            'lyricsWriters',
+
         );
 
         if ($song->musixMatch === null) {
@@ -154,8 +162,12 @@ class SongController extends Controller
         return inertia(
             'Control/Songs/Show',
             [
+
+                'genres' => $genres,
                 'song' => $response->resolve(),
-                'isrcResult' => $isrcResult
+                'isrcResult' => $isrcResult,
+                'artistBranches' => $artistBranches,
+                'countries' => $countries,
             ]
         );
     }
