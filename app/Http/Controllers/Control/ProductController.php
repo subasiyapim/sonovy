@@ -536,7 +536,6 @@ class ProductController extends Controller
     protected static function createDownloadPlatforms($product, $data): void
     {
         if (isset($data['platforms']) && is_array($data['platforms']) && count($data['platforms']) > 0) {
-
             $product->downloadPlatforms()->detach();
 
             foreach ($data['platforms'] as $platform) {
@@ -544,7 +543,7 @@ class ProductController extends Controller
                     $platform['id'],
                     [
                         'price' => $platform['price'],
-                        'pre_order_date' => $platform['pre_order_date'],
+                        'pre_order_date' => !empty($platform['pre_order_date']) ? $platform['pre_order_date'] : null,
                         'publish_date' => $platform['publish_date'],
                     ]
                 );

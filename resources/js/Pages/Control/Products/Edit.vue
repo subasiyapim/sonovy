@@ -26,7 +26,8 @@
 
         <AppStepper :modelValue="currentTab" @change="onChangeTab">
           <AppStepperElement title="Yayın Bilgileri"></AppStepperElement>
-          <AppStepperElement :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
+          <AppStepperElement
+              :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
           <AppStepperElement title="Yayınlama Detayları"></AppStepperElement>
           <AppStepperElement title="Pazarlama ve Onay"></AppStepperElement>
 
@@ -37,7 +38,8 @@
           <ProductInfoTab v-model="step1Element" :genres="genres" :formats="formats" :product="product"
                           :languages="languages"
                           v-if="currentTab == 0"></ProductInfoTab>
-          <SongDetailTab :product="product" :genres="genres" v-model="step2Element" v-if="currentTab == 1"></SongDetailTab>
+          <SongDetailTab :product="product" :genres="genres" v-model="step2Element"
+                         v-if="currentTab == 1"></SongDetailTab>
           <PublishingDetailTab v-if="currentTab == 2" v-model="step3Element" :product="product"></PublishingDetailTab>
           <MarketingAndSend v-if="currentTab == 3" v-model="step4Element" :product="product"></MarketingAndSend>
 
@@ -117,7 +119,7 @@ const props = defineProps({
   languages: {},
   formats: {},
   progress: Number,
-  product_publish_country_types:{},
+  product_publish_country_types: {},
 })
 
 const progress = ref(props.progress);
@@ -151,110 +153,126 @@ const step1Element = useForm({
 
 
 const step2Element = useForm({
-     step: props.step,
-    songs:[],
+  step: props.step,
+  songs: [],
 });
 const step3Element = useForm({
-    production_year:props.product.production_year,
-    publishing_country_type:props.product.publishing_country_type ?? 1,
-    step: props.step,
-    published_countries:[],
-    previously_released:props.product.previously_released == null ? false : props.product.previously_released,
-    previous_release_date:props.product.previous_release_date == null ? null : new Date(props.product.previous_release_date),
-    physical_release_date:props.product.physical_release_date == null ? null : new Date(props.product.physical_release_date),
-    platforms:{}
+  production_year: props.product.production_year,
+  publishing_country_type: props.product.publishing_country_type ?? 1,
+  step: props.step,
+  published_countries: [],
+  previously_released: props.product.previously_released == null ? false : props.product.previously_released,
+  previous_release_date: props.product.previous_release_date == null ? null : new Date(props.product.previous_release_date),
+  physical_release_date: props.product.physical_release_date == null ? null : new Date(props.product.physical_release_date),
+  platforms: {}
 });
 const step4Element = useForm({
-     step: props.step,
-     promotions:[{}]
+  step: props.step,
+  promotions: [{}]
 });
 
-const currentTab = ref(props.step-1);
+const currentTab = ref(props.step - 1);
 
 
 const submitStep = async () => {
-    console.log(currentTab.value);
+  console.log(currentTab.value);
 
-    if (currentTab.value == 0) {
-        step1Element.post(route('control.catalog.products.form.step.store', props.product.id), {
+  if (currentTab.value == 0) {
+    step1Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
-            onError: (e) => {
-                console.log("HTAA", e);
+      onError: (e) => {
+        console.log("HTAA", e);
 
-            },
-            onSuccess: (e) => {
-                console.log("EEE",e);
+      },
+      onSuccess: (e) => {
+        console.log("EEE", e);
 
-                router.visit(route('control.catalog.products.form.edit', [2, props.product.id]))
-            }
-        });
+        router.visit(route('control.catalog.products.form.edit', [2, props.product.id]))
+      }
+    });
+  }
+  if (currentTab.value == 2) {
+
+
+    if (step3Element.physical_release_date instanceof Date) {
+      step3Element.physical_release_date = step3Element.physical_release_date.toISOString().split("T")[0];
+    } else if (step3Element.physical_release_date) {
+      // Tarih stringine dönüştürebileceğiniz bir formatta olduğundan emin olun
+      let date = new Date(step3Element.physical_release_date);
+      if (!isNaN(date)) {
+        step3Element.physical_release_date = date.toISOString().split("T")[0];
+      }
     }
-    if (currentTab.value == 2) {
+
+    if (step3Element.previous_release_date instanceof Date) {
+      step3Element.previous_release_date = step3Element.previous_release_date.toISOString().split("T")[0];
+    } else if (step3Element.previous_release_date) {
+      // Tarih stringine dönüştürebileceğiniz bir formatta olduğundan emin olun
+      let date = new Date(step3Element.previous_release_date);
+      if (!isNaN(date)) {
+        step3Element.previous_release_date = date.toISOString().split("T")[0];
+      }
+    }
+
+    let tempPlatforms = [];
+    let toUploadBackPlatforms = step3Element.platforms;
 
 
-        if(step3Element.physical_release_date)
-            step3Element.physical_release_date = step3Element.physical_release_date.toISOString().split("T")[0];
-        if(step3Element.previous_release_date)
-        step3Element.previous_release_date = step3Element.previous_release_date.toISOString().split("T")[0];
-        let tempPlatforms = [];
-        let toUploadBackPlatforms = step3Element.platforms;
+    step3Element.platforms.forEach(element => {
+      if (element.isSelected) {
+        let data = {
+          id: element.value,
+          price: element.price,
+          publish_date: element.publish_date?.toISOString().split("T")[0]
+        }
+        if (element.pre_order_date) {
+          data['pre_order_date'] = element.pre_order_date.toISOString().split("T")[0];
+        }
+        tempPlatforms.push(data);
+      }
 
-
-        step3Element.platforms.forEach(element => {
-            if(element.isSelected){
-                let data = {
-                    id:element.value,
-                    price:element.price,
-                    publish_date:element.publish_date?.toISOString().split("T")[0]
-                }
-                if(element.pre_order_date){
-                    data['pre_order_date'] = element.pre_order_date.toISOString().split("T")[0];
-                }
-                tempPlatforms.push(data);
-            }
-
-        });
+    });
 
 
     step3Element.platforms = tempPlatforms;
 
-        step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
+    step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
-            onError: (e) => {
-                console.log("HTAA", e);
+      onError: (e) => {
+        console.log("HTAA", e);
 
-            },
-            onSuccess: (e) => {
-                router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))
-            },
-            onFinish:() => {
-                   step3Element.platforms = toUploadBackPlatforms;
+      },
+      onSuccess: (e) => {
+        router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))
+      },
+      onFinish: () => {
+        step3Element.platforms = toUploadBackPlatforms;
 
-            }
-        });
-    }
+      }
+    });
+  }
 
-      if (currentTab.value == 3) {
+  if (currentTab.value == 3) {
 
 
-        step4Element.post(route('control.catalog.products.form.step.store', props.product.id), {
+    step4Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
-            onError: (e) => {
-                console.log("HTAA", e);
+      onError: (e) => {
+        console.log("HTAA", e);
 
-            },
-            onSuccess: (e) => {
-                router.visit(route('control.catalog.products.show', props.product.id))
+      },
+      onSuccess: (e) => {
+        router.visit(route('control.catalog.products.show', props.product.id))
 
-            }
-        });
-    }
+      }
+    });
+  }
 
 }
 onBeforeMount(() => {
 
-    step1Element.main_artists = props.product.main_artists.map((e) => e.id) ?? [];
-    step1Element.featuring_artists = props.product.featured_artists.map((e) => e.id) ?? [];
+  step1Element.main_artists = props.product.main_artists.map((e) => e.id) ?? [];
+  step1Element.featuring_artists = props.product.featured_artists.map((e) => e.id) ?? [];
 });
 
 </script>
