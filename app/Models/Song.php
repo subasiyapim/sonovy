@@ -98,7 +98,7 @@ class Song extends Model implements HasMedia
     {
         parent::boot();
 
-        static::saving(function ($song) {
+        static::updated(function ($song) {
             self::updateIsCompleted($song);
         });
     }

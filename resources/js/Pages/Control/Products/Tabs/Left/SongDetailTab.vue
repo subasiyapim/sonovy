@@ -77,6 +77,7 @@
             </StatusBadge>
             <StatusBadge v-else type="pending">
               <p class="c-orange-700"> Bilgiler Eksik</p>
+
             </StatusBadge>
           </template>
         </AppTableColumn>
@@ -232,8 +233,10 @@ const openEditDialog = (song) => {
 
 const onComplete = (e) => {
   choosenSong.value = JSON.parse(JSON.stringify(e));
-  const findedIndex = form.value.songs.findIndex((e) => e.id == e.id);
+  const findedIndex = form.value.songs.findIndex((el) => el.id == e.id);
   isSongDialogOn.value = false;
+  console.log("GÜNCELLEME BİTTİ",findedIndex);
+
   if (findedIndex >= 0)
     form.value.songs[findedIndex] = e;
   choosenSong.value = null;
