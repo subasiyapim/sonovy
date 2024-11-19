@@ -41,7 +41,7 @@ class SongController extends Controller
         $this->musixmatch = $musixmatch;
     }
 
-    private static function updateArtists(SongUpdateRequest $request, Song $song)
+    private static function updateArtists(SongUpdateRequest $request, Song $song): void
     {
         $main_artists = $request->input('main_artists');
         $featuring_artists = $request->input('featuring_artists');
@@ -55,7 +55,7 @@ class SongController extends Controller
         }
     }
 
-    private static function updateLyricsWriters(SongUpdateRequest $request, Song $song)
+    private static function updateLyricsWriters(SongUpdateRequest $request, Song $song): void
     {
         $lyrics_writers = $request->input('lyrics_writers');
 
@@ -64,7 +64,7 @@ class SongController extends Controller
         }
     }
 
-    private static function updateMusicians(SongUpdateRequest $request, Song $song)
+    private static function updateMusicians(SongUpdateRequest $request, Song $song): void
     {
 
         $musicians = $request->input('musicians');
@@ -82,7 +82,7 @@ class SongController extends Controller
         }
     }
 
-    private static function updateParticipants(SongUpdateRequest $request, Song $song)
+    private static function updateParticipants(SongUpdateRequest $request, Song $song): void
     {
         $participants = $request->input('participants');
 
@@ -102,7 +102,7 @@ class SongController extends Controller
         }
     }
 
-    public function index(Request $request)
+    public function index(Request $request): \Inertia\Response|\Inertia\ResponseFactory
     {
         abort_if(Gate::denies('song_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -126,7 +126,7 @@ class SongController extends Controller
         return inertia('Control/Songs/Index', compact('songs', 'types'));
     }
 
-    public function show(Song $song)
+    public function show(Song $song): \Inertia\Response|\Inertia\ResponseFactory
     {
         abort_if(Gate::denies('song_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
@@ -158,7 +158,7 @@ class SongController extends Controller
 
         $isrcResult = MusicBrainzServices::lookupISRC($song->isrc);
         $response = new SongShowResource($song);
-        //dd($response->resolve());
+
         return inertia(
             'Control/Songs/Show',
             [
@@ -177,7 +177,7 @@ class SongController extends Controller
         return $this->musixmatch->searchTrackFromIsrc($song);
     }
 
-    public function edit(Song $song)
+    public function edit(Song $song): \Inertia\Response|\Inertia\ResponseFactory
     {
         abort_if(Gate::denies('song_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -199,11 +199,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                    [
-                        'type' => 'error',
-                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                        'model' => __('control.song.title_singular')
-                    ]
+                        [
+                            'type' => 'error',
+                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                            'model' => __('control.song.title_singular')
+                        ]
                 ]
             );
         }
@@ -215,7 +215,7 @@ class SongController extends Controller
         return redirect()->back();
     }
 
-    public function searchCatalog(Request $request)
+    public function searchCatalog(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'search' => 'required|string|min:1|max:255'
@@ -228,27 +228,12 @@ class SongController extends Controller
         return response()->json($labels, Response::HTTP_OK);
     }
 
-    // Yinelenen kodu fonksiyon içine alma
-
     public function uploadSong(Request $request)
     {
-        /*dd($request->input('file'));
-        $max_file_size = 1024 * 1024 * 1024;
-        $allowed_file_types = Setting::where('key', 'allowed_song_formats')->first()->value;
-        $validate = Validator::make($request->all(), [
-            'type' => ['in:1,2'],
-            'file' => ['required', 'mimes:' . $allowed_file_types, 'max:' . $max_file_size],
-        ]);
-
-        if ($validate->fails()) {
-            return response()->json(['errors' => $validate->errors()], 422);
-        }*/
-        $response = app('tus-server')->serve();
-
-        return $response;
+        return app('tus-server')->serve();
     }
 
-    public function checkISRC(Request $request)
+    public function checkISRC(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'search' => 'required|string|min:3|max:255'
@@ -258,18 +243,10 @@ class SongController extends Controller
 
         $labels = ISRCServices::search($search);
 
-        //        $labels->pluck('isrc')->map(function ($isrc) {
-        //            return [
-        //                'value' => $isrc,
-        //                'label' => $isrc
-        //            ];
-        //        });
-        //
-        //        dd($labels);
         return response()->json($labels, Response::HTTP_OK);
     }
 
-    public function search(Request $request)
+    public function search(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'search' => 'required|string|min:3|max:255'
@@ -282,15 +259,11 @@ class SongController extends Controller
         return response()->json($labels, Response::HTTP_OK);
     }
 
-    public function changeStatus(SongChangeStatusRequest $request)
+    public function changeStatus(SongChangeStatusRequest $request): \Illuminate\Http\RedirectResponse
     {
         $validated = $request->validated();
         $validated['status_changed_at'] = now();
         $validated['status_changed_by'] = auth()->id();
-
-        $song = Song::find($validated['id']);
-
-        self::updateIsCompleted($song, $validated);
 
         return redirect()->back()->with([
             'notification' => __('control.notification_updated', ['model' => __('control.song.title_singular')])
@@ -423,13 +396,13 @@ class SongController extends Controller
         }
     }
 
-    public function toggleFavorite(Request $request, Song $song)
+    public function toggleFavorite(Request $request, Song $song): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'product_id' => ['required', 'exists:products,id'],
         ]);
         $product = Product::find($request->product_id);
-        $currentStatus  = $product->songs()->where('id', $song->id)->first()->pivot->is_favorite;
+        $currentStatus = $product->songs()->where('id', $song->id)->first()->pivot->is_favorite;
 
         $product->songs()->update(['is_favorite' => 0]);
 
@@ -438,11 +411,11 @@ class SongController extends Controller
         return response()->json($song, Response::HTTP_OK);
     }
 
-    public function songsDelete(Request $request)
+    public function songsDelete(Request $request): \Illuminate\Http\RedirectResponse
     {
         $request->validate(
             [
-                'ids' => ['array', 'in:' . Song::pluck('id')->implode(',')],
+                'ids' => ['array', 'in:'.Song::pluck('id')->implode(',')],
                 'product_id' => ['required', 'exists:products,id']
             ]
         );

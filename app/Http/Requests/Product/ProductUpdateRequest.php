@@ -75,6 +75,7 @@ class ProductUpdateRequest extends FormRequest
 
     private static function stepOne(): array
     {
+
         $data = [
             'type' => ['required', Rule::enum(ProductTypeEnum::class)],
             'album_name' => ['required', 'string', 'min:3', 'max:100'],
@@ -92,9 +93,9 @@ class ProductUpdateRequest extends FormRequest
             'catalog_number' => ['nullable', 'string', 'min:3', 'max:100'],
             'language_id' => ['required', Rule::exists(Country::class, 'id')],
             'main_price' => ['nullable', 'numeric', 'min:0'],
-            'video_type' => ['required_if:type,'.ProductTypeEnum::VIDEO->value, Rule::enum(VideoTypeEnum::class)],
+            'video_type' => ['required_if:type,'.ProductTypeEnum::VIDEO->value],
             'description' => ['nullable'],
-            'is_for_kids' => ['required_if:type,'.ProductTypeEnum::VIDEO->value, 'boolean'],
+            'is_for_kids' => ['required_if:type,'.ProductTypeEnum::VIDEO->value],
         ];
 
         return array_merge($data, self::common());

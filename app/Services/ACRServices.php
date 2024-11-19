@@ -33,26 +33,26 @@ class ACRServices
         $access_key = config('settings.acr_access_key');
         $access_secret = config('settings.acr_access_secret');*/
 
-        $integrasion = Integration::where('id', 2)->first();
+        $integration = Integration::where('code', 'acr')->first();
 
-        $req_url = 'https://' . $integrasion->url . '/v1/identify';
-        $access_key = $integrasion->key;
-        $access_secret = $integrasion->secret;
+        $req_url = 'https://'.$integration->url.'/v1/identify';
+        $access_key = $integration->key;
+        $access_secret = $integration->secret;
 
-        $string_to_sign = $http_method . "\n" .
-            $http_uri . "\n" .
-            $access_key . "\n" .
-            $data_type . "\n" .
-            $signature_version . "\n" .
+        $string_to_sign = $http_method."\n".
+            $http_uri."\n".
+            $access_key."\n".
+            $data_type."\n".
+            $signature_version."\n".
             $timestamp;
         $signature = hash_hmac("sha1", $string_to_sign, $access_secret, true);
 
         $signature = base64_encode($signature);
 
         if (!Storage::exists($sample)) {
-            throw new \Exception('Sample file not found at location ' . $sample);
+            throw new \Exception('Sample file not found at location '.$sample);
         }
-        
+
         $sample_bytes = Storage::size($sample);
 
         $post_fields = array(

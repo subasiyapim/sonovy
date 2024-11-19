@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Control;
 
 use App\Enums\AlbumTypeEnum;
+use App\Enums\BroadcastStatusEnum;
 use App\Enums\MainPriceEnum;
 use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\VideoTypeEnum;
+use App\Events\NewBroadcastEvent;
+use App\Events\NewProductEvent;
 use App\Exports\ProductExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ProductStoreRequest;
@@ -39,6 +42,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Inertia\ResponseFactory;
+use Laravel\Reverb\Loggers\Log;
 use Symfony\Component\HttpFoundation\Response;
 use function Psy\debug;
 
@@ -73,7 +77,7 @@ class ProductController extends Controller
             'labels' => $this->getTopLabelsByProductCount(),
             'artists' => $this->getArtistsAddedLastMonth(),
         ];
-        
+
         $country_count = Country::count();
         $statuses = ProductStatusEnum::getTitles();
         $types = ProductTypeEnum::getTitles();
@@ -342,6 +346,11 @@ class ProductController extends Controller
     {
         $product->status = $request->status;
         $product->save();
+
+        if ($product->status != ProductStatusEnum::DRAFT->value && $product->details == null) {
+
+            event(new NewProductEvent($product));
+        }
 
         return response()->json(['success' => true]);
     }
