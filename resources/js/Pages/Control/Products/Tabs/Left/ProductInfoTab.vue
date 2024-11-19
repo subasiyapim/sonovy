@@ -13,7 +13,8 @@
       <FormElement v-if="form.type == 1" label-width="190px" :error="form.errors.version" v-model="form.version"
                    label="Sürüm"
                    placeholder="Lütfen giriniz"></FormElement>
-        <FormElement v-if="form.type == 2" :required="true" label-width="190px" type="select" placeholder="Seçiniz" :error="form.errors.video_type" v-model="form.video_type"
+
+        <FormElement v-if="form.type == 2" :required="true" :config="{data: usePage().props.video_types}" label-width="190px" type="select" placeholder="Seçiniz" :error="form.errors.video_type" v-model="form.video_type"
                    label="Video Türü">
 
         </FormElement>
