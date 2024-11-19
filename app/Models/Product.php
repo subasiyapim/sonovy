@@ -38,7 +38,7 @@ class Product extends Model implements HasMedia
         'created_by',
         'status',
 
-        //step 1
+        //Step 1 Music
         'mixed_album',
         'version',
         'genre_id',
@@ -51,6 +51,12 @@ class Product extends Model implements HasMedia
         'catalog_number',
         'language_id',
         'main_price',
+
+        //step 1 video
+        'video_type',
+        'description',
+        'is_for_kids',
+
         //step 2
         //step 3
         'production_year',

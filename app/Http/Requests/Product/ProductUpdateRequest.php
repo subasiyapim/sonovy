@@ -5,6 +5,7 @@ namespace App\Http\Requests\Product;
 use App\Enums\AlbumTypeEnum;
 use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductTypeEnum;
+use App\Enums\VideoTypeEnum;
 use App\Models\Product;
 use App\Models\System\Country;
 use Illuminate\Foundation\Http\FormRequest;
@@ -91,6 +92,9 @@ class ProductUpdateRequest extends FormRequest
             'catalog_number' => ['nullable', 'string', 'min:3', 'max:100'],
             'language_id' => ['required', Rule::exists(Country::class, 'id')],
             'main_price' => ['nullable', 'numeric', 'min:0'],
+            'video_type' => ['required_if:type,'.ProductTypeEnum::VIDEO->value, Rule::enum(VideoTypeEnum::class)],
+            'description' => ['nullable'],
+            'is_for_kids' => ['required_if:type,'.ProductTypeEnum::VIDEO->value, 'boolean'],
         ];
 
         return array_merge($data, self::common());
