@@ -3,6 +3,7 @@
 
 namespace App\Models\Scopes;
 
+use App\Models\Artist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -26,11 +27,27 @@ class FilterByUserRoleScope implements Scope
             $roles = $user->roles->pluck('code')->toArray();
 
             if (in_array('admin', $roles)) {
-                return $builder;
+                return;
             }
-            $builder->where('created_by', $user->id);
-        } else {
-            $builder->whereRaw('1 = 0');
+
+            if ($user && $user->roles) {
+                $roles = $user->roles->pluck('code')->toArray();
+
+                if (in_array('admin', $roles)) {
+                    return;
+                }
+
+                if ($builder->getModel() instanceof Artist) {
+                    $builder->where(function ($query) use ($user) {
+                        $query->where('artists.id', 1)
+                            ->orWhere('artists.created_by', $user->id);
+                    });
+                } else {
+                    $builder->where('created_by', $user->id);
+                }
+            } else {
+                $builder->whereRaw('1 = 0');
+            }
         }
     }
 

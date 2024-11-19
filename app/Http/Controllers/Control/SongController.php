@@ -289,7 +289,8 @@ class SongController extends Controller
         $validated['status_changed_by'] = auth()->id();
 
         $song = Song::find($validated['id']);
-        $song->update($validated);
+
+        self::updateIsCompleted($song, $validated);
 
         return redirect()->back()->with([
             'notification' => __('control.notification_updated', ['model' => __('control.song.title_singular')])
@@ -300,14 +301,42 @@ class SongController extends Controller
     {
         $excludedFields = $this->getExcludedFields();
 
-        $updateData = Arr::except($request->all(), $excludedFields);
+        $updateData = $request->validated();
+        $updateData['is_completed'] = 0;
 
-        $song->update($updateData);
+        $requiredFields = collect(Song::REQUIRED_FIELDS);
+
+        $mainArtistsExists = isset($updateData['main_artists']);
+        $lyricsWritersExists = isset($updateData['lyrics_writers']);
+        $isInstrumental = $updateData['is_instrumental'] ?? false;
+
+        $isCompleted = $requiredFields->every(function ($field) use (
+            $song,
+            $mainArtistsExists,
+            $lyricsWritersExists,
+            $updateData,
+            $isInstrumental
+        ) {
+            if ($field === 'main_artists') {
+                return $mainArtistsExists;
+            }
+
+            if ($field === 'lyrics_writers') {
+                return $isInstrumental ? true : $lyricsWritersExists;
+            }
+
+            return isset($updateData[$field]) && !is_null($updateData[$field]);
+        });
+
+        if ($updateData['is_completed'] != $isCompleted) {
+            $updateData['is_completed'] = $isCompleted;
+        }
+
+        $song->update(Arr::except($updateData, $excludedFields));
 
         $song->load($this->getRelationsToLoad());
 
         $this->updateSongDetails($request, $song);
-
 
         return redirect()->back()
             ->with([

@@ -7,6 +7,7 @@ use App\Enums\MainPriceEnum;
 use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
+use App\Enums\VideoTypeEnum;
 use App\Exports\ProductExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ProductStoreRequest;
@@ -98,7 +99,7 @@ class ProductController extends Controller
         $validated = $request->validated();
 
         $product = Product::create($validated);
-        
+
         return redirect()->route('control.catalog.products.form.edit', [1, $product->id])
             ->with([
                 'notification' => __('control.notification_created', ['model' => __('control.product.title_singular')])
@@ -156,7 +157,7 @@ class ProductController extends Controller
         $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
         $total_song_duration = totalDuration($product->songs);
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
-
+        $video_types = enumToSelectInputFormat(VideoTypeEnum::getTitles());
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
         $product->load(
@@ -195,6 +196,7 @@ class ProductController extends Controller
                 $props['main_prices'] = $main_prices;
                 $props['countries'] = $countries;
                 $props['artistBranches'] = $artistBranches;
+                $props['video_types'] = $video_types;
                 break;
             case 2:
                 $props['artistBranches'] = $artistBranches;
@@ -217,7 +219,6 @@ class ProductController extends Controller
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
     {
         $data = $request->validated();
-        //dd($data['mixed_album']);
         $step = $data['step'];
         $this->excepted_data = $this->getExceptedData($data, $step);
 
@@ -426,9 +427,9 @@ class ProductController extends Controller
         $product->artists()->detach();
 
         if ($data['mixed_album']) {
-            $variousArtistID = Artist::find(1)->id;
+            $variousArtistID = 1;
 
-            $product->mainArtists()->attach($variousArtistID, ['is_main' => true]);
+            $product->mainArtists()->attach([$variousArtistID], ['is_main' => true]);
 
         } else {
             $product->artists()->attach($data['main_artists'], ['is_main' => true]);

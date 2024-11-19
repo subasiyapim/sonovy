@@ -24,7 +24,7 @@ class Song extends Model implements HasMedia
     use InteractsWithMedia;
     use HasAdvancedFilter;
 
-    private const REQUIRED_FIELDS = [
+    public const REQUIRED_FIELDS = [
         'name',
         'genre_id',
         'main_artists',
@@ -98,45 +98,12 @@ class Song extends Model implements HasMedia
     {
         parent::boot();
 
-        static::updated(function ($song) {
-            self::updateIsCompleted($song);
-        });
+//        static::updated(function ($song) {
+//            self::updateIsCompleted($song);
+//        });
     }
 
-    private static function updateIsCompleted(Song $song): void
-    {
-        $requiredFields = collect(self::REQUIRED_FIELDS);
-
-        $mainArtistsExists = $song->mainArtists()->exists();
-        $lyricsWritersExists = $song->lyricsWriters()->exists();
-
-        $isCompleted = $requiredFields->every(function ($field) use ($song, $mainArtistsExists, $lyricsWritersExists) {
-
-            if ($field === 'main_artists') {
-                return $mainArtistsExists;
-            }
-
-            if ($field === 'lyrics_writers') {
-                if ($song->is_instrumental === 1) {
-                    return true;
-                }
-                return $lyricsWritersExists && $song->is_instrumental === 0;
-            }
-
-            if (!array_key_exists($field, $song->getAttributes())) {
-                return false;
-            }
-
-            $fieldValue = $song->$field;
-            return !is_null($fieldValue);
-        });
-
-        if ($song->is_completed !== $isCompleted) {
-            $song->is_completed = $isCompleted;
-            self::saveWithoutEvents($song);
-        }
-    }
-
+    //Deprecated
     protected static function saveWithoutEvents(Song $song): void
     {
         Song::withoutEvents(function () use ($song) {
