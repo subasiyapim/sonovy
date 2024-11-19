@@ -49,7 +49,7 @@ class ProductShowResource extends JsonResource
             'album_name' => $this->album_name,
             'image' => $this->image,
             'created_at' => Carbon::parse($this->created_at)->format('d-m-Y H:i'),
-            'song_count' => $this->songs->count() . ' parça',
+            'song_count' => $this->songs->count().' parça',
             'total_duration' => totalDuration($this->songs, true),
             'main_artists' => $this->mainArtists,
             'featured_platforms' => $this->downloadPlatforms(),
@@ -127,7 +127,7 @@ class ProductShowResource extends JsonResource
                 'participants' => $song->participants->map(function ($participant) {
                     return $participant->load('user');
                 }),
-                'analysis' => $song->analysis,
+                'analysis' => $song->acr_response,
                 'details' => $song->details,
             ];
         });
@@ -217,8 +217,8 @@ class ProductShowResource extends JsonResource
         return $country_type === ProductPublishedCountryTypeEnum::ALL->value
             ? Country::all()->pluck('id')->toArray()
             : DB::table('product_published_country')
-            ->where('product_id', $this->id)
-            ->get()->pluck('country_id')->toArray();
+                ->where('product_id', $this->id)
+                ->get()->pluck('country_id')->toArray();
     }
 
     private function getHistoriesFromPlatformId($id): array

@@ -11,12 +11,22 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use FFMpeg\Format\Video\X264;
 
 class FFMpegServices
 {
     private static function ffprobe(): FFProbe
     {
         return FFProbe::create([
+            'ffmpeg.binaries' => Config::get('services.ffmpeg.binaries'),
+            'ffprobe.binaries' => Config::get('services.ffmpeg.ffprobe'),
+        ]);
+
+    }
+
+    private static function ffmpeg(): FFMpeg
+    {
+        return FFMpeg::create([
             'ffmpeg.binaries' => Config::get('services.ffmpeg.binaries'),
             'ffprobe.binaries' => Config::get('services.ffmpeg.ffprobe'),
         ]);
@@ -96,19 +106,20 @@ class FFMpegServices
      */
     public static function trimMedia(string $file, string $fileName, int $start, int $end, bool $isAudio = true): array
     {
-        Log::info('trim edilecek dosya: '.$file);
         try {
+            $ffmpeg = self::ffmpeg(); // Güncellendi
+            $ffmpegFile = $ffmpeg->open($file);
+            $from = TimeCode::fromSeconds($start);
+            $to = TimeCode::fromSeconds($end - $start);
+
             if ($isAudio) {
-                $ffmpeg = FFMpeg::create();
-                $ffmpegFile = $ffmpeg->open($file);
-                $from = TimeCode::fromSeconds($start);
-                $to = TimeCode::fromSeconds($end);
                 $ffmpegFile->filters()->clip($from, $to);
                 $ffmpegFile->save(new Mp3(), $fileName);
             } else {
-                $command = "ffmpeg -i $file -ss $start -to $end -c copy $fileName";
-                exec($command, $output, $returnCode);
+                $ffmpegFile->filters()->clip($from, $to);
+                $ffmpegFile->save(new X264(), $fileName);
             }
+
             return ['status' => true];
         } catch (\Exception $e) {
             return ['status' => false, 'error' => $e->getMessage()];

@@ -82,7 +82,7 @@ class CheckACRJob
     private function processSong($song, $songPath): void
     {
         $filePath = $songPath.'/'.$song->path;
-        $outputPath = $songPath.self::PATH_SAMPLES;
+        $outputPath = $songPath.self::PATH_SAMPLES.'/'.$song->path;
 
         $trimmed = $this->trimMediaBasedOnType($song, $filePath, $outputPath);
 
@@ -105,6 +105,12 @@ class CheckACRJob
 
     private function identifyAndSaveACRResponse($song, $outputPath): void
     {
+        Log::info('ACR işlemine gönderilen dosya yolu: '.$outputPath);
+        if (!File::exists($outputPath)) {
+            Log::error('Dosya ACR işlemine başlamadan önce bulunamadı: '.$outputPath);
+            throw new \Exception('Sample file not found at location '.$outputPath);
+        }
+        
         $acrResponse = ACRServices::identify($outputPath);
         if ($acrResponse->ok()) {
             $song->acr_response = $acrResponse->json();
