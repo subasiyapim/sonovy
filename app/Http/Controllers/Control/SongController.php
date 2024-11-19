@@ -187,11 +187,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                        [
-                            'type' => 'error',
-                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                            'model' => __('control.song.title_singular')
-                        ]
+                    [
+                        'type' => 'error',
+                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                        'model' => __('control.song.title_singular')
+                    ]
                 ]
             );
         }
@@ -216,7 +216,7 @@ class SongController extends Controller
         return response()->json($labels, Response::HTTP_OK);
     }
 
-// Yinelenen kodu fonksiyon içine alma
+    // Yinelenen kodu fonksiyon içine alma
 
     public function uploadSong(Request $request)
     {
@@ -387,21 +387,21 @@ class SongController extends Controller
         $request->validate([
             'product_id' => ['required', 'exists:products,id'],
         ]);
-
         $product = Product::find($request->product_id);
+        $currentStatus  = $product->songs()->where('id', $song->id)->first()->pivot->is_favorite;
 
         $product->songs()->update(['is_favorite' => 0]);
 
-        $product->songs()->updateExistingPivot($song->id, ['is_favorite' => !$request->is_favorite]);
-
-        return redirect()->back();
+        $product->songs()->updateExistingPivot($song->id, ['is_favorite' => !$currentStatus]);
+        $song->pivot = ["is_favorite" => !$currentStatus];
+        return response()->json($song, Response::HTTP_OK);
     }
 
     public function songsDelete(Request $request)
     {
         $request->validate(
             [
-                'ids' => ['array', 'in:'.Song::pluck('id')->implode(',')],
+                'ids' => ['array', 'in:' . Song::pluck('id')->implode(',')],
                 'product_id' => ['required', 'exists:products,id']
             ]
         );
