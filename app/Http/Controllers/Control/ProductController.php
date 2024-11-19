@@ -32,6 +32,9 @@ use Illuminate\Http\Request;
 use App\Services\ProductServices;
 use App\Services\CountryServices;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -66,12 +69,11 @@ class ProductController extends Controller
             ->advancedFilter();
 
         $statistics = [
-            'product_count' => $products->count(),
-            'label_count' => Label::count(),
-            'artist_count' => Artist::count(),
+            'products' => $this->getProductsGroupedByMonth(),
+            'labels' => $this->getTopLabelsByProductCount(),
+            'artists' => $this->getArtistsAddedLastMonth(),
         ];
-
-
+        
         $country_count = Country::count();
         $statuses = ProductStatusEnum::getTitles();
         $types = ProductTypeEnum::getTitles();
@@ -132,7 +134,6 @@ class ProductController extends Controller
 
         $response = new ProductShowResource($product, $tab);
 
-        //dd($response->resolve());
         return inertia(
             'Control/Products/Show',
             [
@@ -552,5 +553,69 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             ProductServices::imageUpload($product, $request->file('image'));
         }
+    }
+
+    public function getProductsGroupedByMonth()
+    {
+        return Cache::remember('products_grouped_by_month', 12 * 60, function () {
+            $months = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $months[$i] = Carbon::createFromDate(null, $i, 1)->locale(App::currentLocale())->isoFormat('MMMM');
+            }
+
+            $productsByMonth = Product::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+                ->groupBy('month')
+                ->get();
+
+            $result = $productsByMonth->map(function ($item) use ($months) {
+                return [
+                    'label' => $months[$item->month],
+                    'value' => $item->count,
+                ];
+            });
+
+            return $result->toArray();
+        });
+    }
+
+    private function getTopLabelsByProductCount()
+    {
+        return Cache::remember('top_labels_by_product_count', 12 * 60, function () {
+            $labels = Label::with('products')
+                ->whereHas('products')
+                ->withCount('products')
+                ->orderBy('products_count', 'desc')
+                ->take(3)
+                ->get(['name']);
+
+            $result = $labels->map(function ($label) {
+                return [
+                    'label' => Str::limit($label->name, 3),
+                    'value' => $label->products_count,
+                ];
+            });
+
+            return $result->toArray();
+        });
+    }
+
+
+    public function getArtistsAddedLastMonth()
+    {
+        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth();
+        $endOfLastMonth = Carbon::now()->subMonth()->endOfMonth();
+
+        $artists = Artist::whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->get();
+
+        $result = $artists->map(function ($artist) {
+            return [
+                'id' => $artist->id,
+                'name' => $artist->name,
+                'image' => $artist->image
+            ];
+        });
+
+        return $result->toArray();
+
     }
 }
