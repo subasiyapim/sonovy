@@ -273,18 +273,23 @@ const submitStep = async () => {
 
   if (currentTab.value == 3) {
 
+    if(props.product.image) {
+        step4Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
-    step4Element.post(route('control.catalog.products.form.step.store', props.product.id), {
+          onError: (e) => {
+            console.log("HTAA", e);
 
-      onError: (e) => {
-        console.log("HTAA", e);
+          },
+          onSuccess: (e) => {
+            router.visit(route('control.catalog.products.show', props.product.id))
 
-      },
-      onSuccess: (e) => {
-        router.visit(route('control.catalog.products.show', props.product.id))
+          }
+        });
+    }else {
+        toast.error("Lütfen resim seçimi yapınız")
+    }
 
-      }
-    });
+
   }
 
 }
