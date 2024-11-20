@@ -94,7 +94,7 @@ class CountryServices
         $countries = self::get();
         $result = [];
         foreach ($countries as $country) {
-            $result[$country['region']][] = [
+            $result[$country['region'] == "" ? 'Diğer' : $country['region']][] = [
                 'value' => $country['id'],
                 'label' => $country['name'],
                 'iconKey' => $country['emoji']
