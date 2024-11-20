@@ -273,11 +273,14 @@ const submitStep = async () => {
 
   if (currentTab.value == 3) {
 
-    if(props.product.image) {
+
         step4Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
           onError: (e) => {
-            console.log("HTAA", e);
+
+            if(e.image){
+                  toast.error(e.image);
+            }
 
           },
           onSuccess: (e) => {
@@ -285,9 +288,7 @@ const submitStep = async () => {
 
           }
         });
-    }else {
-        toast.error("Lütfen resim seçimi yapınız")
-    }
+
 
 
   }
