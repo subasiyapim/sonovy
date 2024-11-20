@@ -11,13 +11,12 @@ const props = defineProps({
         Bölgeler
     </p>
     <p class="paragraph-sm c-sub-600">
-        Ut ut malesuada tempor vulputate venenatis eget vivamus elementum. Eget egestas vitae orci nulla nulla vestibulum maecenas eleifend.
+       {{usePage().props.product?.regions?.publishing_country_type}}
     </p>
     <div class="flex mt-9">
-
         <div class="flex flex-col w-full gap-3">
 
-            <div class="w-full" v-for="(value,key) in usePage().props.countriesGroupedByRegion">
+            <div class="w-full" v-for="(value,key) in usePage().props.product?.regions?.countries">
                     <AppAccordion :title="key" description="Tüm ülkeler seçildi">
 
                         <div class="flex items-center ">

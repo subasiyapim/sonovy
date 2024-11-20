@@ -7,6 +7,7 @@ const props = defineProps({
 </script>
 
 <template>
+
     <SectionHeader class="mb-4" :title="__('control.product.show.promotion_header')"/>
     <div class="border border-soft-200 p-4 rounded-lg mb-4" v-for="promotion in product.promotions">
         <div class="flex items-center gap-2">
