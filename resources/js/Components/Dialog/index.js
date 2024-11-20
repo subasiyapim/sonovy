@@ -7,6 +7,7 @@ import ConfirmDeleteDialog from './ConfirmDeleteDialog.vue';
 import SongParticipantModal from './Song/participants.vue';
 import SongDetailModal from './Song/details.vue';
 import SongAcrResponseModal from './Song/acrResponse.vue';
+import PlatformHistoryModal from './Platform/history.vue';
 
 export {
     ArtistDialog,
@@ -18,4 +19,6 @@ export {
     SongParticipantModal,
     SongDetailModal,
     SongAcrResponseModal,
+    PlatformHistoryModal,
+
 }

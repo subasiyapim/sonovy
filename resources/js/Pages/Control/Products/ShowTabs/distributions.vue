@@ -1,7 +1,17 @@
 <script setup>
+import {ref} from 'vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
+import {IconButton} from '@/Components/Buttons';
+import {PlatformHistoryModal} from '@/Components/Dialog';
 import {Icon,HistoryIcon,ScheduledIcon,WarningDocumentIcon} from '@/Components/Icons';
+import { usePage} from '@inertiajs/vue3';
+const isPlatformHistoryModalON = ref(false);
+const choosenPlatfom = ref(null);
+const openPlatformHistoryModal  = (row) => {
+    choosenPlatfom.value = row;
+        isPlatformHistoryModalON.value =  true;
+}
 const props = defineProps({
     product:{}
 });
@@ -18,7 +28,7 @@ const props = defineProps({
         </AppTableColumn>
          <AppTableColumn label="Oluşturulma Tarihi">
             <template #default="scope">
-
+                {{scope.row.crated_at}}
             </template>
         </AppTableColumn>
          <AppTableColumn label="Yayınlanma Tarihi">
@@ -33,13 +43,19 @@ const props = defineProps({
         <AppTableColumn label="Durum">
             <template #default="scope">
                 <div class="rounded border border-soft-200 px-2 py-1">
-                    <span class="label-xs c-sub-600">{{scope.row.status}}</span>
+                    <span class="label-xs c-sub-600">{{scope.row.status_text}}</span>
+
                 </div>
+
+                <!-- {{usePage().props.product.statuses}} -->
             </template>
         </AppTableColumn>
         <AppTableColumn label="Tarihçe" align="center">
             <template #default="scope">
-                <HistoryIcon color="var(--neutral-500)" />
+            <IconButton @click="openPlatformHistoryModal(scope.row)">
+                 <HistoryIcon color="var(--neutral-500)" />
+            </IconButton>
+
             </template>
         </AppTableColumn>
 
@@ -58,6 +74,7 @@ const props = defineProps({
             Dağıtım bulunamadı
         </template>
     </AppTable>
+    <PlatformHistoryModal v-if="isPlatformHistoryModalON" v-model="PlatformHistoryModal" :platform="choosenPlatfom"></PlatformHistoryModal>
 </template>
 
 <style scoped>

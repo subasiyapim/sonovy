@@ -55,6 +55,7 @@ class ProductShowResource extends JsonResource
             'featured_platforms' => $this->downloadPlatforms(),
             'platform_count' => $this->downloadPlatforms->count() > 3 ? $this->downloadPlatforms->count() - 3 : 0,
             'status' => $this->status,
+            'statuses' => enumToSelectInputFormat(PlatformStatusEnum::getTitles()),
             $this->tab => self::getTabContent()
         ];
     }
@@ -150,7 +151,7 @@ class ProductShowResource extends JsonResource
                 'pre_order_date' => $platform->pivot->pre_order_date,
                 'publish_date' => $platform->pivot->publish_date,
                 'status_text' => PlatformStatusEnum::from($platform->status)->title(),
-                'statuses' => enumToSelectInputFormat(PlatformStatusEnum::getTitles()),
+
                 'histories' => $this->getHistoriesFromPlatformId($platform->id),
                 'created_at' => Carbon::parse($platform->created_at)->format('d-m-Y H:i'),
             ];
