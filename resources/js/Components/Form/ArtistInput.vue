@@ -124,14 +124,32 @@
 
     })
     const chooseValue = async (item) => {
-        if(choosenPlatform.value == 'spotify'){ choosenSpotify.value = item}
-        if(choosenPlatform.value == 'itunes'){ choosenItunes.value = item}
+        if(choosenPlatform.value == 'spotify'){
+            if(item.url == choosenSpotify.value?.url){
+                 emits('onPlatformsChoosen', {...choosenSpotify.value,platform:'Spotify'})
+                choosenSpotify.value = null;
+
+            }else {
+                choosenSpotify.value = item
+                 submit();
+            }
+
+        }
+        if(choosenPlatform.value == 'itunes'){
+            if(item.url == choosenItunes.value?.url){
+                emits('onPlatformsChoosen', {...choosenItunes.value,platform:'Apple'})
+                choosenItunes.value = null;
+            }else {
+                choosenItunes.value = item
+                 submit();
+            }
+        }
 
         // if(props.artistId){
 
             // const response = await crudStore.post(route('control.artist-platform-detach',props.artistId));
         // }
-        submit();
+
     }
     const onClicked = (platform) => {
         if(element.value){
@@ -163,10 +181,14 @@
     }
     const submit = () => {
         let data = {};
-        if(choosenPlatform.value == 'spotify')
-            data ={...choosenSpotify.value,platform:'Spotify'};
-        else
+        if(choosenPlatform.value == 'spotify'){
+
+             data ={...choosenSpotify.value,platform:'Spotify'};
+        }
+        else{
             data = {...choosenItunes.value,platform:'Apple'};
+        }
+
 
         emits('onPlatformsChoosen',data)
         openSearchPlatform.value = false;

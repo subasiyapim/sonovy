@@ -125,7 +125,7 @@ const crudStore = useCrudStore();
 const onPlatformsChoosen = (e) => {
   console.log(usePage().props.platforms);
 
-  const finded = usePage().props.platforms.find((el) => el.label == e.platform)
+  const finded = usePage().props.platforms?.find((el) => el.label == e.platform)
   finded.url = e.url;
   const findedIndex = form.platforms.findIndex((el) => el.value == finded.value);
   if (findedIndex < 0)

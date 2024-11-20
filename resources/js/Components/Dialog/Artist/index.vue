@@ -151,13 +151,14 @@
 import BaseDialog from '../BaseDialog.vue';
 import {SectionHeader} from '@/Components/Widgets';
 import {AddIcon} from '@/Components/Icons'
+import {useCrudStore} from '@/Stores/useCrudStore'
 import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {computed, ref, onMounted} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
 
 import {FormElement, ArtistInput} from '@/Components/Form'
-
+const crudStore = useCrudStore();
 const props = defineProps({
   modelValue: {
     default: false,
@@ -188,14 +189,33 @@ const form = useForm({
   platforms: []
 });
 
-const onPlatformsChoosen = (e) => {
+const onPlatformsChoosen = async (e) => {
   const finded = usePage().props.platforms.find((el) => el.label == e.platform)
   finded.url = e.url;
   const findedIndex = form.platforms.findIndex((el) => el.value == finded.value);
-  if (findedIndex < 0)
-    form.platforms.push(finded);
-  else form.platforms[findedIndex] = finded;
 
+    console.log("FINDED INDEX",findedIndex);
+    console.log(form.platforms);
+
+
+  if (findedIndex < 0){
+    form.platforms.push(finded);
+  }
+  else {
+        if(form.platforms[findedIndex].url == e.url){
+
+            if(form.id){
+                console.log(form.platforms[findedIndex]);
+
+                const response = await crudStore.post(route('control.artist-platform-detach',form.id),{
+                    platform_id:form.platforms[findedIndex].id,
+                });
+            }
+             form.platforms.splice(findedIndex,1);
+        }else {
+            form.platforms[findedIndex] = finded;
+        }
+    }
 }
 const emits = defineEmits(['update:modelValue', 'done','update']);
 const isDialogOn = computed({

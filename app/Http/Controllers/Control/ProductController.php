@@ -202,6 +202,7 @@ class ProductController extends Controller
                 $props['countries'] = $countries;
                 $props['artistBranches'] = $artistBranches;
                 $props['video_types'] = $video_types;
+                $props['platforms'] = $platforms;
                 break;
             case 2:
                 $props['artistBranches'] = $artistBranches;
@@ -624,6 +625,5 @@ class ProductController extends Controller
         });
 
         return $result->toArray();
-
     }
 }
