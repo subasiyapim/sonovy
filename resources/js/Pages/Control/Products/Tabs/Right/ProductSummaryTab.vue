@@ -1,9 +1,5 @@
 <template>
-  <span v-if="usePage().props.errors && usePage().props.errors.image"
-        class="c-error-500 paragraph-xs flex items-center gap-1 mt-2">
-    <InfoFilledIcon color="var(--error-500)"/>
-    {{ usePage().props.errors.image }}
-  </span>
+
 
   <DragUploadInput @change="onChange" :image="product.image?.small" label="Albüm Kapağı"
                    note="JPEG, PNG"></DragUploadInput>
