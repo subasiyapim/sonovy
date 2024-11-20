@@ -475,13 +475,20 @@ const countryConfig = computed(() => {
   };
 })
 const onSubmit = async (e) => {
-  form.put(route('control.catalog.songs.update', props.song.id),
+
+    if(form.participants.length == 1){
+        if(Object.keys(form.participants[0]).length == 0) form.participants = [];
+    }
+    if(form.musicians.length == 1){
+        if(Object.keys(form.musicians[0]).length == 0) form.musicians = [];
+    }
+    form.put(route('control.catalog.songs.update', props.song.id),
       {
         onFinish: () => {
-
+            if(form.participants.length == 0) form.participants = [{}];
+            if(form.musicians.length == 0) form.musicians = [{}];
         },
         onSuccess: async (e) => {
-          console.log("EEE",);
 
           toast.success(e.props.notification.message);
           isDialogOn.value = false;

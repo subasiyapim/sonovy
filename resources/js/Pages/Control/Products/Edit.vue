@@ -125,7 +125,9 @@ const props = defineProps({
 
 const progress = ref(props.progress);
 const onChangeTab = (e) => {
-  console.log("DEĞİŞTİİİİ", e);
+    if(e < currentTab.value){
+        router.visit(route('control.catalog.products.form.edit', [e+1, props.product.id]))
+    }
 }
 
 const step1Element = useForm({

@@ -13,6 +13,9 @@ import PhoneIcon from './PhoneIcon.vue';
 import MessageIcon from './MessageIcon.vue';
 import MessageIcon2 from './MessageIcon2.vue';
 import CheckIcon from './CheckIcon.vue';
+import HistoryIcon from './HistoryIcon.vue';
+import WarningDocumentIcon from './WarningDocumentIcon.vue';
+import ScheduledIcon from './ScheduledIcon.vue';
 
 import ArrowDoubleRightIcon from './ArrowDoubleRightIcon.vue';
 import ArrowDoubleLeftIcon from './ArrowDoubleLeftIcon.vue';
@@ -95,6 +98,7 @@ export {
     NotificationIcon,
     StarIcon,
     AppLoadingIcon,
+    HistoryIcon,
     DraggableIcon,
     PlayCircleFillIcon,
     CheckIcon,
@@ -127,6 +131,8 @@ export {
     SupportCenterIcon,
     CmsIcon,
     EarningManagementIcon,
+    WarningDocumentIcon,
+    ScheduledIcon,
     PersonSettingsIcon,
     EyeOnIcon,
     EyeOffIcon,
