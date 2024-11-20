@@ -115,7 +115,8 @@
           </div>
         </template>
         <template #empty>
-          <TusUploadInput @error="onErrorOccured" :product_id="product.id" ref="tusUploadElement" @start="onTusStart"
+          <TusUploadInput @error="onErrorOccured" :type="product.type" :product_id="product.id" ref="tusUploadElement"
+                          @start="onTusStart"
                           @progress="onTusProgress"
                           @complete="onTusComplete"></TusUploadInput>
         </template>
@@ -212,7 +213,7 @@ const onTusProgress = (e) => {
 }
 const onTusComplete = (e) => {
 
-  const findedIndex = attemps.value.findIndex((el) => el.orignalName == e.name);
+  const findedIndex = attemps.value.findIndex((el) => el.originalName == e.name);
   console.log("EEE", e);
   console.log("ATTEMPTS", attemps.value);
 
@@ -235,7 +236,7 @@ const onComplete = (e) => {
   choosenSong.value = JSON.parse(JSON.stringify(e));
   const findedIndex = form.value.songs.findIndex((el) => el.id == e.id);
   isSongDialogOn.value = false;
-  console.log("GÜNCELLEME BİTTİ",findedIndex);
+  console.log("GÜNCELLEME BİTTİ", findedIndex);
 
   if (findedIndex >= 0)
     form.value.songs[findedIndex] = e;
@@ -275,7 +276,7 @@ const deleteChoosenSongs = () => {
   const tempIds = choosenSongs.value.map((e) => e.id);
 
   deleteSong(tempIds)
-onCancel();
+  onCancel();
 }
 const favoriteSong = async (song) => {
   const response = await crudStore.post(route('control.catalog.song.toggleFavorite', song.id), {

@@ -64,11 +64,10 @@ const props = defineProps({
   type: {
     default: 1
   },
-  product_id:{
+  product_id: {},
 
-  }
 })
-const emits = defineEmits(['start', 'progress', 'complete','error'])
+const emits = defineEmits(['start', 'progress', 'complete', 'error'])
 
 const csrf_token = ref('');
 const acceptedAudioExtensions = ['mp3', 'wav', 'aac'];
@@ -132,13 +131,13 @@ const handleFileInput = (e) => {
   let loadingPercent = 0;
 
   // File type validation
-  const file_extension = file.name.split('.').pop().toLowerCase();
-  if ((props.type === 1 && !acceptedAudioExtensions.includes(file_extension)) ||
-      (props.type === 2 && !acceptedVideoExtensions.includes(file_extension))) {
-    // popUp('Bu yayın tipi için dosya türü desteklenmiyor', 'error', false);
-    alert("Hata")
-    return;
-  }
+  // const file_extension = file.name.split('.').pop().toLowerCase();
+  // if ((props.type === 1 && !acceptedAudioExtensions.includes(file_extension)) ||
+  //     (props.type === 2 && !acceptedVideoExtensions.includes(file_extension))) {
+  //   // popUp('Bu yayın tipi için dosya türü desteklenmiyor', 'error', false);
+  //   alert("Hata")
+  //   return;
+  // }
 
   let currentIndex = 0;
 
@@ -148,11 +147,11 @@ const handleFileInput = (e) => {
   let metaData = {
     filename: tempFileName,
     mime_type: file.type,
-    orignalName: file.name,
+    originalName: file.name,
     type: props.type,
     size: file.size,
     percentage: 0,
-    product_id:props.product_id,
+    product_id: props.product_id,
   };
 
   emits('start', metaData)
@@ -192,21 +191,21 @@ const handleFileInput = (e) => {
     // Callback for once the upload is completed
     onSuccess: async function (payload) {
       const {lastResponse} = payload
-    let errorMessage = lastResponse.getHeader('error_message');
-    if(errorMessage){
-        emits('error', {...metaData,message:errorMessage})
+      let errorMessage = lastResponse.getHeader('error_message');
+      if (errorMessage) {
+        emits('error', {...metaData, message: errorMessage})
 
-    }else {
-         let response = await crudStore.post(route('control.find.songs'), {
+      } else {
+        let response = await crudStore.post(route('control.find.songs'), {
 
-            id: lastResponse.getHeader('upload_info')
+          id: lastResponse.getHeader('upload_info')
         });
 
-        console.log("RESPONSEE",response);
+        console.log("RESPONSEE", response);
 
         response.percentage = 100;
         emits('complete', response)
-    }
+      }
 
     },
   })

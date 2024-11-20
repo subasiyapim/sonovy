@@ -79,7 +79,7 @@ class ProductUpdateRequest extends FormRequest
             'mixed_album' => ['required', 'boolean'],
             'genre_id' => ['required', 'integer', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'integer', 'exists:genres,id'],
-            'format_id' => ['required', Rule::enum(AlbumTypeEnum::class)],
+            'format_id' => ['required_if:type,'.ProductTypeEnum::SOUND->value],
             'main_artists' => ['array', 'required_if:mixed_album,false'],
             'featuring_artists' => ['array'],
             'label_id' => ['required', 'exists:labels,id'],
