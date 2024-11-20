@@ -129,6 +129,7 @@ class ProductShowResource extends JsonResource
                 }),
                 'analysis' => $song->acr_response,
                 'details' => $song->details,
+                'activities' => $song->activities,
             ];
         });
     }

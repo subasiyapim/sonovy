@@ -9,7 +9,7 @@
   "license": "MIT",
   "require": {
     "php": "^8.2",
-    "php-ffmpeg/php-ffmpeg": "^1.2",
+    "ext-curl": "*",
     "ankitpokhrel/tus-php": "^2.4",
     "astrotomic/laravel-translatable": "^11.15",
     "inertiajs/inertia-laravel": "^1.0",
@@ -17,11 +17,12 @@
     "laravel/reverb": "^1.0",
     "laravel/sanctum": "^4.0",
     "laravel/tinker": "^2.9",
+    "php-ffmpeg/php-ffmpeg": "^1.2",
     "predis/predis": "^2.0",
+    "spatie/laravel-activitylog": "^4.9",
     "spatie/laravel-medialibrary": "^11.9",
     "stancl/tenancy": "^3.8",
     "tightenco/ziggy": "^2.0",
-    "ext-curl": "*",
     "twilio/sdk": "^8.1"
   },
   "require-dev": {

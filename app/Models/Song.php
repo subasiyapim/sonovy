@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 /**
  * @method static create(array $array)
@@ -23,6 +25,7 @@ class Song extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
     use HasAdvancedFilter;
+    use LogsActivity;
 
     public const REQUIRED_FIELDS = [
         'name',
@@ -101,6 +104,13 @@ class Song extends Model implements HasMedia
 //        static::updated(function ($song) {
 //            self::updateIsCompleted($song);
 //        });
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->fillable)
+            ->useLogName('song');
     }
 
     //Deprecated

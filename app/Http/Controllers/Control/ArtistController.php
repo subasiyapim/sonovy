@@ -17,6 +17,7 @@ use App\Services\MediaServices;
 use App\Services\SpotifyServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Spatie\Activitylog\Models\Activity;
 use Symfony\Component\HttpFoundation\Response;
 
 class ArtistController extends Controller
@@ -39,7 +40,7 @@ class ArtistController extends Controller
                 $query->whereBetween('created_at', [request('s_date'), request('e_date')]);
             })
             ->advancedFilter();
-
+        
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
         $countryCodes = CountryServices::getCountryPhoneCodes();
         $usedGenres = ArtistServices::usedGenres($artists);
@@ -122,6 +123,8 @@ class ArtistController extends Controller
             'message' => __('control.notification_created', ['model' => __('control.artist.title_singular')]),
             'data' => new ArtistResource($artist),
         ];
+
+
         if ($accept === 'application/json') {
             return response()->json($props, Response::HTTP_OK);
         } else {

@@ -6,13 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Artist;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\Activitylog\Models\Activity;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-       
-        $artists = Artist::all();
-        return Inertia::render('Dashboard', compact('artists'));
+        return Inertia::render('Dashboard');
     }
 }
