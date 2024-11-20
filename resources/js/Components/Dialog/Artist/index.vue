@@ -189,8 +189,6 @@ const form = useForm({
 });
 
 const onPlatformsChoosen = (e) => {
-  console.log(usePage().props.platforms);
-
   const finded = usePage().props.platforms.find((el) => el.label == e.platform)
   finded.url = e.url;
   const findedIndex = form.platforms.findIndex((el) => el.value == finded.value);

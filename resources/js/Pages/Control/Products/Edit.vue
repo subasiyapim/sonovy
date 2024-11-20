@@ -191,6 +191,9 @@ const submitStep = async () => {
       }
     });
   }
+   if (currentTab.value == 1) {
+     router.visit(route('control.catalog.products.form.edit', [3, props.product.id]))
+  }
   if (currentTab.value == 2) {
 
 

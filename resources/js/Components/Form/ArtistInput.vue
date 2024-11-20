@@ -79,6 +79,7 @@
     import {useQueryStore} from '@/Stores/useQueryStore';
     import {AppDivider} from '@/Components/Widgets';
     import {FormElement} from '@/Components/Form';
+    import {useCrudStore} from '@/Stores/useCrudStore';
     import {RegularButton,PrimaryButton} from '@/Components/Buttons';
     const openSearchPlatform = ref(false)
     const artists = ref([]);
@@ -86,6 +87,7 @@
     const choosenSpotify = ref();
     const choosenItunes = ref();
     const queryStore = useQueryStore();
+    const crudStore = useCrudStore();
     const searchingPlatformArtists = ref(false);
     const slots = useSlots()
     const props = defineProps({
@@ -98,7 +100,6 @@
         choosenItunesField:{
             default:null,
         },
-
     })
     const emits = defineEmits(['update:modelValue','change','input','onPlatformsChoosen']);
 
@@ -122,9 +123,14 @@
         }
 
     })
-    const chooseValue = (item) => {
-        if(choosenPlatform.value == 'spotify') choosenSpotify.value = item
-        if(choosenPlatform.value == 'itunes') choosenItunes.value = item
+    const chooseValue = async (item) => {
+        if(choosenPlatform.value == 'spotify'){ choosenSpotify.value = item}
+        if(choosenPlatform.value == 'itunes'){ choosenItunes.value = item}
+
+        // if(props.artistId){
+
+            // const response = await crudStore.post(route('control.artist-platform-detach',props.artistId));
+        // }
         submit();
     }
     const onClicked = (platform) => {
