@@ -125,9 +125,9 @@ const props = defineProps({
 
 const progress = ref(props.progress);
 const onChangeTab = (e) => {
-    if(e < currentTab.value){
-        router.visit(route('control.catalog.products.form.edit', [e+1, props.product.id]))
-    }
+  if (e < currentTab.value) {
+    router.visit(route('control.catalog.products.form.edit', [e + 1, props.product.id]))
+  }
 }
 
 const step1Element = useForm({
@@ -189,25 +189,25 @@ const submitStep = async () => {
 
       },
       onSuccess: (e) => {
-        console.log("EEE", e);
+        //console.log("EEE", e);
 
         router.visit(route('control.catalog.products.form.edit', [2, props.product.id]))
       }
     });
   }
-   if (currentTab.value == 1) {
+  if (currentTab.value == 1) {
     let isCompleted = true;
     step2Element.songs.forEach(element => {
 
-        if(element.is_completed == 0){
-                isCompleted = false;
-        }
+      if (element.is_completed == 0) {
+        isCompleted = false;
+      }
 
     });
-    if(isCompleted){
-        router.visit(route('control.catalog.products.form.edit', [3, props.product.id]))
-    }else {
-        toast.error("Eksik şarkı bilgilerini tamamlamalısınız");
+    if (isCompleted) {
+      router.visit(route('control.catalog.products.form.edit', [3, props.product.id]))
+    } else {
+      toast.error("Eksik şarkı bilgilerini tamamlamalısınız");
 
     }
 
@@ -276,21 +276,20 @@ const submitStep = async () => {
   if (currentTab.value == 3) {
 
 
-        step4Element.post(route('control.catalog.products.form.step.store', props.product.id), {
+    step4Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
-          onError: (e) => {
+      onError: (e) => {
 
-            if(e.image){
-                  toast.error(e.image);
-            }
+        if (e.image) {
+          toast.error(e.image);
+        }
 
-          },
-          onSuccess: (e) => {
-            router.visit(route('control.catalog.products.show', props.product.id))
+      },
+      onSuccess: (e) => {
+        router.visit(route('control.catalog.products.show', props.product.id))
 
-          }
-        });
-
+      }
+    });
 
 
   }

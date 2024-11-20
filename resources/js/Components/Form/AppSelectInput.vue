@@ -8,9 +8,10 @@
 
     <!-- <input v-if="!hasSlot('model')" @click="open" class="absolute inset-0 radius-8 border-none focus:ring-0 appSelectInput c-strong-950" :value="getShowLabel" :placeholder="placeholder"> -->
     <div @click="open"
-        :class="disabled ? 'bg-weak-50' : '' "
+         :class="disabled ? 'bg-weak-50' : '' "
          class="absolute inset-0 flex items-center px-3 radius-8 border-none focus:ring-0 appSelectInput c-strong-950">
-      <span class="label-sm !font-normal " :class="disabled ? 'c-soft-300' : 'c-soft-400' " v-if="!element">{{ placeholder }}</span>
+      <span class="label-sm !font-normal " :class="disabled ? 'c-soft-300' : 'c-soft-400' "
+            v-if="!element">{{ placeholder }}</span>
       <slot v-else-if="hasSlot('model')" name="model" :scope="element"/>
       <span v-else class="label-sm !font-normal">{{ getShowLabel }}</span>
     </div>
@@ -29,41 +30,45 @@
     </div>
 
     <transition name="dropdown">
-        <teleport to="body">
-            <div v-if="isOpen"
-                :class="dropdownDirection"
-                class="absolute dropdownWrapper left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-10"
-                :style="dropdownStyle">
-                 <AppTextInput v-if="config.hasSearch" v-model="searchTerm" @change="onSearchChange"  class="w-full mb-2" placeholder="Yayın, Artist ara...">
-                        <template #icon><SearchIcon color="var(--soft-400)" /></template>
-                    </AppTextInput>
-                <template v-if="config.data != null && config.data.length > 0">
-                <div v-if="hasSlot('first_child')" class="mb-2">
-                    <slot name="first_child"/>
-                </div>
-                </template>
-
-                <div  class="max-h-[250px] overflow-scroll">
-                    <div v-for="el in getFilteredData" :data-id="el[config.value ?? 'value']" @click="chooseValue(el)"
-                        :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'"
-                        class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
-
-                        <div class="w-4 h-4 flex items-center justify-center border border-soft-200 rounded-full  shadow">
-                        <div v-if="checkIfChecked(el[config.value ?? 'value'])"
-                            class="bg-dark-green-600 w-3 h-3 rounded-full border-dark-green-600">
-                        </div>
-                        </div>
-                        <slot v-if="hasSlot('option')" name="option" :scope="el"/>
-                        <span v-else class="paragraph-sm c-strong-950"> {{ el[config.label ?? 'label'] }}</span>
-                    </div>
-                </div>
-                <div v-if="getFilteredData?.length <= 0" class="flex flex-col gap-5 items-center justify-center min-h-[224px] ">
-                    <img src="@/assets/images/empty_state.png" class="w-16 h-16">
-                    <p class="label-medium c-strong-950">Maalesef sonuç bulunamadı:(</p>
-                    <slot name="empty"/>
-                </div>
+      <teleport to="body">
+        <div v-if="isOpen"
+             :class="dropdownDirection"
+             class="absolute dropdownWrapper left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-10"
+             :style="dropdownStyle">
+          <AppTextInput v-if="config.hasSearch" v-model="searchTerm" @change="onSearchChange" class="w-full mb-2"
+                        placeholder="Yayın, Artist ara...">
+            <template #icon>
+              <SearchIcon color="var(--soft-400)"/>
+            </template>
+          </AppTextInput>
+          <template v-if="config.data != null && config.data.length > 0">
+            <div v-if="hasSlot('first_child')" class="mb-2">
+              <slot name="first_child"/>
             </div>
-        </teleport>
+          </template>
+
+          <div class="max-h-[250px] overflow-scroll">
+            <div v-for="el in getFilteredData" :data-id="el[config.value ?? 'value']" @click="chooseValue(el)"
+                 :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'"
+                 class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
+
+              <div class="w-4 h-4 flex items-center justify-center border border-soft-200 rounded-full  shadow">
+                <div v-if="checkIfChecked(el[config.value ?? 'value'])"
+                     class="bg-dark-green-600 w-3 h-3 rounded-full border-dark-green-600">
+                </div>
+              </div>
+              <slot v-if="hasSlot('option')" name="option" :scope="el"/>
+              <span v-else class="paragraph-sm c-strong-950"> {{ el[config.label ?? 'label'] }}</span>
+            </div>
+          </div>
+          <div v-if="getFilteredData?.length <= 0"
+               class="flex flex-col gap-5 items-center justify-center min-h-[224px] ">
+            <img src="@/assets/images/empty_state.png" class="w-16 h-16">
+            <p class="label-medium c-strong-950">Maalesef sonuç bulunamadı:(</p>
+            <slot name="empty"/>
+          </div>
+        </div>
+      </teleport>
     </transition>
 
   </div>
@@ -85,11 +90,11 @@ const props = defineProps({
   modelValue: {},
   placeholder: {type: String},
   type: {},
-  disabled:{
-    default:false
+  disabled: {
+    default: false
   }
 })
-const emits = defineEmits(['update:modelValue','change'])
+const emits = defineEmits(['update:modelValue', 'change'])
 const element = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value),
@@ -100,13 +105,13 @@ const dropdownStyle = ref({});  // Inline style for dropdown (e.g., top or botto
 const selectContainer = ref(null);  // Reference to the select container element
 
 const getShowLabel = computed(() => {
-    const listOfOptions = remoteDatas.value ?? props.config?.data;
+  const listOfOptions = remoteDatas.value ?? props.config?.data;
   const findedElement = listOfOptions?.find((e) => e[props.config.value ?? 'value'] == element.value);
 
   return findedElement == null ? '' : findedElement[props.config.label ?? 'label'];
 })
 const open = async () => {
-    if(props.disabled) return;
+  if (props.disabled) return;
   isOpen.value = true;
   if (isOpen.value) {
 
@@ -120,25 +125,24 @@ const open = async () => {
 const remoteDatas = ref(null)
 const getFilteredData = computed(() => {
 
-    console.log("BURAYAA GELDİK");
+  //console.log("BURAYAA GELDİK");
 
-    if(searchTerm.value){
-
-
-        if(remoteDatas.value){
-            return remoteDatas.value;
-        }else {
-             if(props.config?.remote == null){
-                return  props.config?.data?.filter((el) => el[props.config.label ?? 'label'].toLocaleLowerCase('tr-TR').includes(searchTerm.value.toLocaleLowerCase('tr-TR')))
-            }
-        }
-
-    }else {
+  if (searchTerm.value) {
 
 
-
-        return props.config?.data
+    if (remoteDatas.value) {
+      return remoteDatas.value;
+    } else {
+      if (props.config?.remote == null) {
+        return props.config?.data?.filter((el) => el[props.config.label ?? 'label'].toLocaleLowerCase('tr-TR').includes(searchTerm.value.toLocaleLowerCase('tr-TR')))
+      }
     }
+
+  } else {
+
+
+    return props.config?.data
+  }
 })
 const checkIfChecked = computed(() => {
   return (rowValue) => {
@@ -150,13 +154,13 @@ const hasSlot = (name) => {
 }
 
 const handleClickOutside = (e) => {
-    if(e.target?.closest('.dropdownWrapper') ){
-           return;
-    }else {
-        if (isOpen.value) {
-            isOpen.value = false;
-        }
+  if (e.target?.closest('.dropdownWrapper')) {
+    return;
+  } else {
+    if (isOpen.value) {
+      isOpen.value = false;
     }
+  }
 }
 
 const adjustDropdownDirection = () => {
@@ -189,7 +193,7 @@ const adjustDropdownDirection = () => {
 const chooseValue = (val) => {
   element.value = val[props.config.value ?? 'value'];
   isOpen.value = false;
-  emits('change',val)
+  emits('change', val)
 }
 
 // Handle window resize event to recheck dropdown direction
@@ -202,13 +206,13 @@ const handleResize = () => {
 const onSearchChange = async (e) => {
 
 
-    if(props.config?.remote){
-       try {
-        remoteDatas.value = await props.config?.remote(e)
-       } catch (error) {
-        remoteDatas.value = null;
-       }
+  if (props.config?.remote) {
+    try {
+      remoteDatas.value = await props.config?.remote(e)
+    } catch (error) {
+      remoteDatas.value = null;
     }
+  }
 
 }
 

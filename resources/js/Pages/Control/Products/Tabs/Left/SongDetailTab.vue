@@ -214,10 +214,10 @@ const onTusProgress = (e) => {
 const onTusComplete = (e) => {
 
   const findedIndex = attemps.value.findIndex((el) => el.originalName == e.name);
-  console.log("EEE", e);
-  console.log("ATTEMPTS", attemps.value);
+  // console.log("EEE", e);
+//  console.log("ATTEMPTS", attemps.value);
 
-  console.log("FINDED INDEX", findedIndex);
+  //console.log("FINDED INDEX", findedIndex);
 
   if (findedIndex >= 0) {
     attemps.value.splice(findedIndex, 1);
@@ -236,7 +236,6 @@ const onComplete = (e) => {
   choosenSong.value = JSON.parse(JSON.stringify(e));
   const findedIndex = form.value.songs.findIndex((el) => el.id == e.id);
   isSongDialogOn.value = false;
-  console.log("GÜNCELLEME BİTTİ", findedIndex);
 
   if (findedIndex >= 0)
     form.value.songs[findedIndex] = e;

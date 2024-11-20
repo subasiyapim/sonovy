@@ -133,6 +133,9 @@ class ProductShowResource extends JsonResource
         });
     }
 
+    /**
+     *
+     */
     private function distribution(): array
     {
         return $this->downloadPlatforms->map(function ($platform) {
@@ -143,9 +146,12 @@ class ProductShowResource extends JsonResource
                 'price' => $platform->pivot->price,
                 'pre_order_date' => $platform->pivot->pre_order_date,
                 'publish_date' => $platform->pivot->publish_date,
-                'status' => PlatformStatusEnum::from($platform->status)->title(),
+                'status_text' => PlatformStatusEnum::from($platform->status)->title(),
+                'statuses' => enumToSelectInputFormat(PlatformStatusEnum::class),
                 'histories' => $this->getHistoriesFromPlatformId($platform->id),
+                'created_at' => Carbon::parse($platform->created_at)->format('d-m-Y H:i'),
             ];
+
         })->toArray();
     }
 

@@ -69,7 +69,6 @@ class TusServiceProvider extends ServiceProvider
                 $allowedExtension = $allowedExtensions['ringtone'];
                 break;
         }
-        Log::info("Dosya uzantısı: ".$fileExtension, $allowedExtension);
         if (!in_array($fileExtension, $allowedExtension)) {
             Log::error("Dosya türü desteklenmiyor: ".$fileExtension, $allowedExtension);
             $event->getResponse()->setHeaders(['error_message' => "Gecersiz dosya türü: ".$fileExtension]);
