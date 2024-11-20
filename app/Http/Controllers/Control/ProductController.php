@@ -346,6 +346,7 @@ class ProductController extends Controller
     public function changeStatus(Product $product, Request $request): JsonResponse
     {
         $product->status = $request->status;
+        $product->note = $request->note;
         $product->save();
 
         if ($product->status != ProductStatusEnum::DRAFT->value && $product->details == null) {

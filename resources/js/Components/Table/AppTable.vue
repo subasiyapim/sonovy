@@ -60,17 +60,28 @@
     </tr>
     </thead>
     <tbody>
-    <tr v-for="(row, rowIndex) in data" :key="rowIndex"
-        :class="selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''">
-      <td v-if="hasSelect">
+    <template v-for="(row, rowIndex) in data" :key="rowIndex">
+         <tr class="tableRow" :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf(row) ? '' : 'hasBorder') ">
+            <td v-if="hasSelect" class="tableCell">
 
-        <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''"
-                @click="onSelectRow(row)"></button>
-      </td>
-      <td v-for="(column, colIndex) in columns" :key="colIndex">
-        <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
-      </td>
-    </tr>
+                <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''"
+                        @click="onSelectRow(row)"></button>
+            </td>
+            <td v-for="(column, colIndex) in columns" :key="colIndex">
+                <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
+            </td>
+        </tr>
+        <tr class="hasBorder" v-if="showNoteIf(row)">
+            <td :colspan="columns.length+1">
+                <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
+                    <WarningIcon color="var(--error-500)" />
+                    <p class="paragraph-xs c-strong-950"> {{renderRowNoteText(row)}}</p>
+
+                </div>
+            </td>
+        </tr>
+    </template>
+
     <tr v-if="hasSlot('appends')">
       <td :colspan="columns.length+1" class="!p-0">
         <slot name="appends"/>
@@ -172,7 +183,8 @@ import {
   ChevronRightIcon,
   ArrowDoubleLeftIcon,
   ArrowDoubleRightIcon,
-  AddIcon
+  AddIcon,
+  WarningIcon
 } from '@/Components/Icons';
 import {AppTextInput} from '@/Components/Form';
 import {router, Link} from '@inertiajs/vue3';
@@ -205,6 +217,9 @@ const props = defineProps({
     type: Object,
     required: true
   },
+    showNoteIf:{
+
+    },
   isClient: {
     default: false,
   },
@@ -228,6 +243,9 @@ const props = defineProps({
   },
   hasSelect: {
     default: false,
+  },
+  renderRowNoteText:{
+
   }
 })
 const emits = defineEmits(['update:modelValue', 'addNewClicked', 'selectionChange']);

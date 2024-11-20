@@ -3,7 +3,7 @@
   <AdminLayout :showDatePicker="false" :title="__('control.product.show_header')" parentTitle="Katalog"
                subParent="Tüm Şarkılar" :hasPadding="false">
 
-    <div class="bg-white-400 h-56 p-5 flex  relative ">
+    <div class="bg-white-400 h-60 p-5 flex  relative ">
 
 
       <div
@@ -30,14 +30,13 @@
           </div>
           <p class="label-sm c-sub-600 me-1">{{ artist.name }}</p>
         </div>
-        <div class="flex items-center gap-2 w-96 mt-auto">
+        <div class="flex items-center gap-2 w-96" :class="product.status == 4 ? 'mt-5' :'mt-auto' ">
 
-          <AppSelectInput @change="onStatusChange" class="bg-white" v-model="product.status"
+          <AppSelectInput  class="bg-white" v-model="product.status"
                           :config="productStatusConfig">
 
           </AppSelectInput>
-          <RegularButton class="w-full"
-                         @click="router.visit(route('control.catalog.products.form.edit',[1,product.id]))">
+          <RegularButton @click="changeStatus" class="w-full">
             <template #icon>
               <EditLineIcon color="var(--sub-600)"/>
             </template>
@@ -46,9 +45,12 @@
           </RegularButton>
 
         </div>
+        <div v-if="product.status == 4" class="w-96  mt-2">
+            <FormElement v-model="product.note" direction="vertical" placeholder="Red Sebebi" :error="hasError"></FormElement>
+        </div>
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
-        <RegularButton>
+        <RegularButton @click="router.visit(route('control.catalog.products.form.edit',[1,product.id]))">
           Güncelle
 
         </RegularButton>
@@ -91,6 +93,7 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {ArtistDialog} from '@/Components/Dialog';
+import {FormElement} from '@/Components/Form';
 import {
   DocumentIcon,
   EditIcon,
@@ -125,7 +128,7 @@ import {useCrudStore} from '@/Stores/useCrudStore';
 
 const isModalOn = ref(false);
 import {toast} from 'vue3-toastify';
-
+const hasError = ref(null)
 const props = defineProps({
   product: {
     type: Object,
@@ -220,11 +223,26 @@ const onTabChange = (tab) => {
   });
 }
 
-const onStatusChange = async (e) => {
+const changeStatus = async () => {
 
+    if(props.product.status == 4){
+        console.log(props.product.note);
+
+        if(props.product.note == null || props.product.note == ''){
+            console.log("GELDİİİ");
+
+            toast.error("Ret sebebi için not girmeniz gerekmektedir");
+            hasError.value = 'Not Giriniz'
+            return;
+        }
+
+    }
   const response = await crudStore.post(route('control.catalog.products.changeStatus', props.product.id), {
-    status: e.value
+    status: props.product.status,
+    note:props.product.note,
   });
+  console.log("RESPONSE",response);
+
   if (response.success) {
     toast.success("Durum Başarıyla Değiştirildi");
 

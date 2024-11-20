@@ -37,7 +37,7 @@ class Product extends Model implements HasMedia
         'album_name',
         'created_by',
         'status',
-
+        'note',
         //Step 1 Music
         'mixed_album',
         'version',

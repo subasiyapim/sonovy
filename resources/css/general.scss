@@ -85,14 +85,14 @@
     border-bottom: 1px solid var(--white-600);
     border-right: 1px solid var(--white-600);
 }
-
 .appTable tbody tr{
+     position: relative;
+}
+.appTable tbody tr.tableRow{
     height: 64px;
-    position: relative;
-
 
 }
-.appTable tbody tr::after{
+.appTable tbody tr.hasBorder::after{
     content: "";
     position: absolute;
     width: 100%;
@@ -107,7 +107,7 @@
     position: absolute;
     height: 0px;
 }
-.appTable tbody td {
+.appTable tbody td.tableCell {
     padding: 12px;
 }
 

@@ -89,7 +89,7 @@
         </template>
       </AppCard>
     </div>
-    <AppTable :showAddButton="false" v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
+    <AppTable :showAddButton="false" :renderRowNoteText="renderRowNoteText" :showNoteIf="showNoteIfFn" v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
       <AppTableColumn label="Tür" sortable="type">
         <template #default="scope">
           <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
@@ -239,7 +239,16 @@ const defaultStore = useDefaultStore();
 const props = defineProps({
   statistics: Object,
 })
-
+const showNoteIfFn = (row) => {
+    if(row.note){
+        return true;
+    }else {
+        return false;
+    }
+}
+const renderRowNoteText = (row) => {
+    return row.note
+}
 const data = ref([
   {
     name: "asdasd"

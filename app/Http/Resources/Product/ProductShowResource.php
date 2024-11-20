@@ -55,6 +55,7 @@ class ProductShowResource extends JsonResource
             'featured_platforms' => $this->downloadPlatforms(),
             'platform_count' => $this->downloadPlatforms->count() > 3 ? $this->downloadPlatforms->count() - 3 : 0,
             'status' => $this->status,
+            'note' => $this->note,
             'statuses' => enumToSelectInputFormat(PlatformStatusEnum::getTitles()),
             $this->tab => self::getTabContent()
         ];
