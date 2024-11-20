@@ -14,19 +14,6 @@ use Illuminate\Validation\Rule;
 
 class ProductUpdateRequest extends FormRequest
 {
-    private static function stepFive(): array
-    {
-        $product = Product::find(request()->route('product')->id);
-
-        if ($product && !$product->image) {
-            return
-                [
-                    'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048']
-                ];
-        }
-
-    }
-
     private static function stepFour(): array
     {
         $data = [
@@ -35,6 +22,15 @@ class ProductUpdateRequest extends FormRequest
             'promotions.*.title' => ['required', 'string', 'min:3', 'max:100'],
             'promotions.*.description' => ['required', 'string', 'min:3'],
         ];
+
+        $product = Product::find(request()->route('product')->id);
+
+        if ($product && !$product->image) {
+            $data =
+                [
+                    'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048']
+                ];
+        }
 
         return array_merge($data, self::common());
     }
@@ -129,7 +125,6 @@ class ProductUpdateRequest extends FormRequest
             '2' => self::stepTwo(),
             '3' => self::stepThree($this->publishing_country_type),
             '4' => self::stepFour(),
-            '5' => self::stepFive(),
         };
     }
 
