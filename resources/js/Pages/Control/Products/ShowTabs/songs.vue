@@ -13,6 +13,9 @@ import {
   EyeOnIcon,
   EditIcon
 } from '@/Components/Icons'
+import {useDefaultStore} from "@/Stores/default";
+
+const defaultStore = useDefaultStore();
 
 const props = defineProps({
   product: {}
@@ -91,14 +94,17 @@ const openAcrResponseModal = (song) => {
     </AppTableColumn>
     <AppTableColumn label="Sanatçı">
       <template #default="scope">
-
         <div class="flex items-center gap-2">
-
           <div class="flex -space-x-3 rtl:space-x-reverse">
-            <img class="w-8 h-8 border-2 border-white rounded-full " v-for="a in scope.row.artists"
-                 src="https://picsum.photos/id/1/200/200" alt="">
-            <a class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full  "
-               href="#">+5</a>
+            <template v-for="artist in scope.row.artists">
+              <a class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full  "
+                 :href="route('control.catalog.artists.show', artist.id)">
+                <img :alt="artist.name"
+                     :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)"
+                     class="w-8 h-8 border-2 border-white rounded-full "
+                >
+              </a>
+            </template>
           </div>
         </div>
       </template>
