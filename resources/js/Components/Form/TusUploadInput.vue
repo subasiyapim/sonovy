@@ -98,6 +98,7 @@ const handleDrop = (event) => {
 
 const onChangeInput = (e) => {
 
+    console.log("DEĞİŞTİİİ");
 
   const files = Array.from(e.target.files);
   handleFiles(files);
@@ -201,11 +202,10 @@ const handleFileInput = (e) => {
           id: lastResponse.getHeader('upload_info')
         });
 
-        console.log("RESPONSEE", response);
-
         response.percentage = 100;
         emits('complete', response)
       }
+        fileInput.value.value = null;
 
     },
   })

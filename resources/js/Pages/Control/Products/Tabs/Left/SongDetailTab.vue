@@ -248,10 +248,11 @@ const getBody = computed(() => {
 })
 
 const onCancel = () => {
-  myTippy.value.hide();
+  myTippy.value?.hide();
 }
 const onDeleteSong = (row) => {
   deleteSong([row.id])
+    console.log("GELDİİİ");
 
   onCancel();
 

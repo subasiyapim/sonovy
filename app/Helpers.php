@@ -5,6 +5,7 @@ use Illuminate\Support\Number;
 if (!function_exists('enumToSelectInputFormat')) {
     function enumToSelectInputFormat($data, $capitalize = false): array
     {
+
         $result = [];
         foreach ($data as $key => $value) {
             $label = $capitalize ? ucfirst($value) : $value;
@@ -71,8 +72,8 @@ if (!function_exists('getDataFromInputFormat')) {
                     'label' => $item[$label],
                     'iconKey' => $iconKey
                         ? $iconKey === 'image'
-                            ? $item[$iconKey]['thumb']
-                            : $item[$iconKey]
+                        ? $item[$iconKey]['thumb']
+                        : $item[$iconKey]
                         : null
                 ];
             }
@@ -102,7 +103,7 @@ if (!function_exists('emailMasking')) {
         $masked_local = maskString($email_arr[0]);
         $masked_domain = maskString($email_arr[1]);
 
-        $masked_email = $masked_local.'@'.$masked_domain;
+        $masked_email = $masked_local . '@' . $masked_domain;
 
         $email = $masked_email;
 

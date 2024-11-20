@@ -49,7 +49,7 @@ class ProductShowResource extends JsonResource
             'album_name' => $this->album_name,
             'image' => $this->image,
             'created_at' => Carbon::parse($this->created_at)->format('d-m-Y H:i'),
-            'song_count' => $this->songs->count().' parça',
+            'song_count' => $this->songs->count() . ' parça',
             'total_duration' => totalDuration($this->songs, true),
             'main_artists' => $this->mainArtists,
             'featured_platforms' => $this->downloadPlatforms(),
@@ -139,7 +139,9 @@ class ProductShowResource extends JsonResource
      */
     private function distribution(): array
     {
+
         return $this->downloadPlatforms->map(function ($platform) {
+
             return [
                 'id' => $platform->id,
                 'name' => $platform->name,
@@ -148,11 +150,10 @@ class ProductShowResource extends JsonResource
                 'pre_order_date' => $platform->pivot->pre_order_date,
                 'publish_date' => $platform->pivot->publish_date,
                 'status_text' => PlatformStatusEnum::from($platform->status)->title(),
-                'statuses' => enumToSelectInputFormat(PlatformStatusEnum::class),
+                'statuses' => enumToSelectInputFormat(PlatformStatusEnum::getTitles()),
                 'histories' => $this->getHistoriesFromPlatformId($platform->id),
                 'created_at' => Carbon::parse($platform->created_at)->format('d-m-Y H:i'),
             ];
-
         })->toArray();
     }
 
@@ -224,8 +225,8 @@ class ProductShowResource extends JsonResource
         return $country_type === ProductPublishedCountryTypeEnum::ALL->value
             ? Country::all()->pluck('id')->toArray()
             : DB::table('product_published_country')
-                ->where('product_id', $this->id)
-                ->get()->pluck('country_id')->toArray();
+            ->where('product_id', $this->id)
+            ->get()->pluck('country_id')->toArray();
     }
 
     private function getHistoriesFromPlatformId($id): array
