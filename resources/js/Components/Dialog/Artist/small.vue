@@ -66,7 +66,42 @@
                    :placeholder="__('control.artist.fields.isni_code_placeholder')"/>
     </div>
 
-
+    <SectionHeader :title="__('control.artist.dialog.header_3')"/>
+    <div class="p-5 flex flex-col">
+      <div v-for="(platform,platformIndex) in form.platforms" class="flex gap-4">
+        <FormElement class="flex-1"
+                     direction="vertical"
+                     v-model="platform.value"
+                     label-width="190px"
+                     :label="__('control.artist.fields.platform_id')"
+                     type="select"
+                     :config="{data:usePage().props.platforms}"
+                     :placeholder="__('control.artist.fields.platform_id_placeholder')">
+          <template #option="scope">
+            <span class="paragraph-sm c-strong-950">
+              {{ scope.data.label }}
+            </span>
+          </template>
+          <template #model="scope">
+            <div v-if="scope.data" class="flex items-center gap-2">
+              <span>{{ usePage().props.platforms.find((el) => el.value == scope.data)?.label }}</span>
+            </div>
+          </template>
+        </FormElement>
+        <FormElement class="flex-1" direction="vertical" v-model="platform.url" label-width="190px"
+                     :label="__('control.artist.fields.platform_link')"
+                     :placeholder="__('control.artist.fields.platform_link_placeholder')"/>
+        <button @click="form.platforms.splice(platformIndex,1)" class="mt-2 c-error-500 label-sm">
+            sil
+        </button>
+      </div>
+      <button @click="form.platforms.push({})" class="flex items-center gap-2">
+        <AddIcon color="var(--blue-500)"/>
+        <p class="label-xs c-blue-500">
+          {{ __('control.artist.fields.platform_link_button') }}
+        </p>
+      </button>
+    </div>
     <div class="flex p-5 border-t border-soft-200 gap-4">
       <RegularButton @click="isDialogOn = false" class="flex-1">
         {{ __('control.general.cancel') }}
