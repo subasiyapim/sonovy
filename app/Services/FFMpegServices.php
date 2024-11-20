@@ -3,16 +3,30 @@
 namespace App\Services;
 
 use App\Enums\ProductTypeEnum;
+use FFMpeg\Coordinate\TimeCode;
+use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
+use FFMpeg\Format\Audio\Mp3;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use FFMpeg\Format\Video\X264;
 
 class FFMpegServices
 {
     private static function ffprobe(): FFProbe
     {
         return FFProbe::create([
+            'ffmpeg.binaries' => Config::get('services.ffmpeg.binaries'),
+            'ffprobe.binaries' => Config::get('services.ffmpeg.ffprobe'),
+        ]);
+
+    }
+
+    private static function ffmpeg(): FFMpeg
+    {
+        return FFMpeg::create([
             'ffmpeg.binaries' => Config::get('services.ffmpeg.binaries'),
             'ffprobe.binaries' => Config::get('services.ffmpeg.ffprobe'),
         ]);
@@ -75,5 +89,40 @@ class FFMpegServices
                 return ['status' => false, 'error' => $e->getMessage()];
             }
         });
+    }
+
+
+    /**
+     * Trims a media file, either audio or video, based on specified start and end times.
+     *
+     * @param  string  $file  The path of the input file to be trimmed.
+     * @param  string  $fileName  The name of the output file after trimming.
+     * @param  int  $start  The starting time in seconds from where the trimming should begin.
+     * @param  int  $end  The ending time in seconds where the trimming should stop.
+     * @param  bool  $isAudio  Indicates whether the file is an audio (default is true). If false, it is assumed to be video.
+     * @return array Status of the operation. Returns an array with 'status' key indicating success or failure,
+     * and 'error' key containing the error message in case of failure.
+     * @throws \Exception if an error occurs during the trimming process.
+     */
+    public static function trimMedia(string $file, string $fileName, int $start, int $end, bool $isAudio = true): array
+    {
+        try {
+            $ffmpeg = self::ffmpeg(); // Güncellendi
+            $ffmpegFile = $ffmpeg->open($file);
+            $from = TimeCode::fromSeconds($start);
+            $to = TimeCode::fromSeconds($end - $start);
+
+            if ($isAudio) {
+                $ffmpegFile->filters()->clip($from, $to);
+                $ffmpegFile->save(new Mp3(), $fileName);
+            } else {
+                $ffmpegFile->filters()->clip($from, $to);
+                $ffmpegFile->save(new X264(), $fileName);
+            }
+
+            return ['status' => true];
+        } catch (\Exception $e) {
+            return ['status' => false, 'error' => $e->getMessage()];
+        }
     }
 }

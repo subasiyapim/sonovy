@@ -6,6 +6,7 @@ use App\Events\NewProductEvent;
 use App\Jobs\CheckACRJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
 
 class CheckACRListener
 {
@@ -22,7 +23,6 @@ class CheckACRListener
      */
     public function handle(NewProductEvent $event): void
     {
-
-        CheckACRJob::dispatch($event->broadcast);
+        CheckACRJob::dispatch($event->product);
     }
 }

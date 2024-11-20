@@ -13,21 +13,10 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
+Schedule::job(new CreateSendAnnouncement())->everyMinute();
+Schedule::job(new SendAnnouncementJob())->everyMinute();
+Schedule::job(new QuartersIncomeJob())->everyMinute();
+Schedule::job(new EarningJob())->everyMinute();
+Schedule::job(new IncomeReportJob())->everyMinute();
 
-// eğer database ve  tablo varsa çalışsın
-
-//database var mı kontrol et
-
-if (tenancy()->initialized) {
-    if (Schema::hasTable('tenants') && Schema::hasTable('domains')) {
-        \App\Models\System\Tenant::all()->each(function ($tenant) {
-            tenancy()->initialize($tenant->id);
-            Schedule::job(new CreateSendAnnouncement())->everyMinute();
-            Schedule::job(new SendAnnouncementJob())->everyMinute();
-            Schedule::job(new QuartersIncomeJob())->everyMinute();
-            Schedule::job(new EarningJob())->everyMinute();
-            Schedule::job(new IncomeReportJob())->everyMinute();
-        });
-    }
-}
 

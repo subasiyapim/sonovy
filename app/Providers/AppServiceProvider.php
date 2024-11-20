@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\NewNotificationEvent;
+use App\Listeners\CheckACRListener;
 use App\Services\LocaleService;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -42,8 +45,8 @@ class AppServiceProvider extends ServiceProvider
         // Tenancy initialized event
         \Event::listen(TenancyInitialized::class, function () {
             config([
-                'media-library.temporary_directory_path' => storage_path('app/tenant_'.tenant('id').'/media-library/temp'),
-                'media-library.disk_name' => 'tenant_'.tenant('id'),
+                'media-library.temporary_directory_path' => storage_path('app/tenant_'.tenant('domain').'/media-library/temp'),
+                'media-library.disk_name' => 'tenant_'.tenant('domain'),
             ]);
         });
 
@@ -53,6 +56,10 @@ class AppServiceProvider extends ServiceProvider
                 'media-library.temporary_directory_path' => storage_path('app/media-library/temp'),
             ]);
         });
+        Event::listen(
+            NewNotificationEvent::class,
+            CheckACRListener::class
+        );
 
     }
 }
