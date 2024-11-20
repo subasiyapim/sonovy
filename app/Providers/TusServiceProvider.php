@@ -43,7 +43,7 @@ class TusServiceProvider extends ServiceProvider
     {
         //izin verilen dosya uzantıları
         $allowedExtensions = [
-            'sound' => ['wav', 'flac', 'mp3'],
+            'sound' => ['wav', 'flac'],
             'video' => ['mp4', 'avi', 'mkv', 'mov'],
         ];
 

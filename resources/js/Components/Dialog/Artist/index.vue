@@ -99,7 +99,7 @@
     </div>
     <SectionHeader :title="__('control.artist.dialog.header_3')"/>
     <div class="p-5 flex flex-col">
-      <div v-for="platform in form.platforms" class="flex gap-4">
+      <div v-for="(platform,platformIndex) in form.platforms" class="flex gap-4">
         <FormElement class="flex-1"
                      direction="vertical"
                      v-model="platform.value"
@@ -122,6 +122,9 @@
         <FormElement class="flex-1" direction="vertical" v-model="platform.url" label-width="190px"
                      :label="__('control.artist.fields.platform_link')"
                      :placeholder="__('control.artist.fields.platform_link_placeholder')"/>
+        <button @click="form.platforms.splice(platformIndex,1)" class="mt-2 c-error-500 label-sm">
+            sil
+        </button>
       </div>
       <button @click="form.platforms.push({})" class="flex items-center gap-2">
         <AddIcon color="var(--blue-500)"/>
