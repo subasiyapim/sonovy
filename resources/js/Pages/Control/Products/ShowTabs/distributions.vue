@@ -32,10 +32,9 @@ const props = defineProps({
         </AppTableColumn>
         <AppTableColumn label="Durum">
             <template #default="scope">
-            <div class="rounded border border-soft-200 px-2 py-1">
+                <div class="rounded border border-soft-200 px-2 py-1">
                     <span class="label-xs c-sub-600">{{scope.row.status}}</span>
-            </div>
-
+                </div>
             </template>
         </AppTableColumn>
         <AppTableColumn label="Tarihçe" align="center">
