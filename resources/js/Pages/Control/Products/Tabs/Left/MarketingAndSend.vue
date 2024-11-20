@@ -9,6 +9,7 @@
 <div class="flex flex-col gap-6">
     <div  v-for="(info,index) in form.promotions">
         <SectionHeader title="YAYIN VE TANITIM METNİ" class="mb-2"></SectionHeader>
+
         <div class="flex flex-col gap-6 px-1">
             <FormElement label-width="190px" :error="form.errors[`promotions.${index}.language_id`]" type="select" label="Tanıtım Dil" v-model="info.language_id" :required="true" placeholder="Lütfen Seçiniz" :config="selectConfig">
                     <template #option="scope">

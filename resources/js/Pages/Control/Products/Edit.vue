@@ -109,6 +109,7 @@ import PublishingDetailTab from './Tabs/Left/PublishingDetailTab.vue'
 import MarketingAndSend from './Tabs/Left/MarketingAndSend.vue'
 import {AppStepper, AppStepperElement} from '@/Components/Stepper';
 import {useCrudStore} from '@/Stores/useCrudStore';
+import {toast} from 'vue3-toastify';
 
 
 const crudStore = useCrudStore();
@@ -168,8 +169,9 @@ const step3Element = useForm({
 });
 const step4Element = useForm({
   step: props.step,
-  promotions: [{}]
+  promotions: props.product.promotions,
 });
+
 
 const currentTab = ref(props.step - 1);
 
@@ -192,7 +194,21 @@ const submitStep = async () => {
     });
   }
    if (currentTab.value == 1) {
-     router.visit(route('control.catalog.products.form.edit', [3, props.product.id]))
+    let isCompleted = true;
+    step2Element.songs.forEach(element => {
+
+        if(element.is_completed == 0){
+                isCompleted = false;
+        }
+
+    });
+    if(isCompleted){
+        router.visit(route('control.catalog.products.form.edit', [3, props.product.id]))
+    }else {
+        toast.error("Eksik şarkı bilgilerini tamamlamalısınız");
+
+    }
+
   }
   if (currentTab.value == 2) {
 

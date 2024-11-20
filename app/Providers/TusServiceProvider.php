@@ -19,7 +19,7 @@ class TusServiceProvider extends ServiceProvider
     {
         $this->app->singleton('tus-server', function ($app) {
             $server = new TusServer();
-            $storagePath = storage_path('app/public/tenant_'.tenant('domain').'_songs');
+            $storagePath = storage_path('app/public/tenant_' . tenant('domain') . '_songs');
 
             if (!File::exists($storagePath)) {
                 File::makeDirectory($storagePath, 0775, true, true);
@@ -48,16 +48,16 @@ class TusServiceProvider extends ServiceProvider
         ];
 
         $fileMeta = $event->getFile()->details();
-        Log::info("Upload tamamlandı: ".json_encode($fileMeta));
+        Log::info("Upload tamamlandı: " . json_encode($fileMeta));
 
-        $filePath = $storagePath.'/'.$fileMeta['name'];
+        $filePath = $storagePath . '/' . $fileMeta['name'];
 
         //Dosya uzantısı kontrolü
         $fileExtension = strtolower(File::extension($filePath));
 
         if (!in_array($fileExtension, $allowedExtensions['sound'])) {
-            Log::error("Dosya türü desteklenmiyor: ".$fileExtension);
-            $event->getResponse()->setHeaders(['error_message' => "Dosya türü desteklenmiyor: ".$fileExtension]);
+            Log::error("Dosya türü desteklenmiyor: " . $fileExtension);
+            $event->getResponse()->setHeaders(['error_message' => "Dosya türü desteklenmiyor: " . $fileExtension]);
 
             return;
         }
@@ -65,7 +65,7 @@ class TusServiceProvider extends ServiceProvider
         $details = FFMpegServices::getMediaDetails(file: $filePath);
 
         if (!$details['status']) {
-            Log::error("Dosya türü desteklenmiyor veya bir hata oluştu: ".json_encode($details));
+            Log::error("Dosya türü desteklenmiyor veya bir hata oluştu: " . json_encode($details));
             return;
         }
 
@@ -84,11 +84,11 @@ class TusServiceProvider extends ServiceProvider
         try {
             $file = Song::create($data);
             $file->products()->attach([$fileMeta['metadata']['product_id']]);
-            Log::info("IDD: ".$fileMeta['metadata']['product_id']);
+            Log::info("IDD: " . $fileMeta['metadata']['product_id']);
 
             $event->getResponse()->setHeaders(['upload_info' => $file->id]);
         } catch (Error $e) {
-            Log::info("HATA: ".$e);
+            Log::info("HATA: " . $e);
         }
     }
 
@@ -100,7 +100,5 @@ class TusServiceProvider extends ServiceProvider
         return sprintf('%02d:%02d', $minutes, $remainingSeconds);
     }
 
-    public function boot()
-    {
-    }
+    public function boot() {}
 }
