@@ -24,10 +24,10 @@
                 Video Açıklaması
             </template>
         </FormElement>
-      <FormElement :required="true" label-width="190px" :error="form.errors.main_artists || form.errors.mixed_album"
+      <FormElement ref="mainArtistSelect" :required="true" label-width="190px" :error="form.errors.main_artists || form.errors.mixed_album"
                    v-model="form.main_artists" :disabled="form.mixed_album" type="multiselect" label="Sanatçı"
                    placeholder="Sanatçı Seçiniz"
-                   :config="artistSelectConfig">
+                   :config="mainArtistSelectConfig">
 
         <template #disabled v-if="form.mixed_album">
           <p class="label-sm !font-normal">
@@ -36,13 +36,13 @@
 
         </template>
         <template #first_child>
-          <button @click="openArtistCreateDialog" class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
+          <button @click="openArtistCreateDialog('main_artists')" class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
             Sanatçı Oluştur
           </button>
         </template>
         <template #empty>
-          <button @click="openArtistCreateDialog"  class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
+          <button @click="openArtistCreateDialog('main_artists')"  class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
             <AddIcon color="var(--dark-green-600)"/>
             Sanatçı Oluştur
           </button>
@@ -71,8 +71,12 @@
               </div>
             </div>
             <p class="label-sm !font-normal" style="white-space:nowrap;">
-              <template v-for="artist in scope.data">
-                {{ artist.label }}, &nbsp;
+              <template v-for="(artist,artistIndex) in scope.data">
+                {{ artist.label }}
+                <template v-if="artistIndex < scope.data.length-1">
+                    , &nbsp;
+                </template>
+
               </template>
             </p>
 
@@ -80,17 +84,17 @@
         </template>
       </FormElement>
 
-      <FormElement label-width="190px" :error="form.errors.featuring_artists"
+      <FormElement ref="featuringArtistSelect" label-width="190px" :error="form.errors.featuring_artists"
                    v-model="form.featuring_artists"
-                   type="multiselect" label="Düet Sanatçı" placeholder="Seçiniz" :config="artistSelectConfig">
+                   type="multiselect" label="Düet Sanatçı" placeholder="Seçiniz" :config="featuringArtistSelectConfig">
         <template #first_child>
-          <button @click="openArtistCreateDialog"  class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
+          <button @click="openArtistCreateDialog('featuring_artists')"  class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
             Sanatçı Oluştur
           </button>
         </template>
         <template #empty>
-          <button @click="openArtistCreateDialog" class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
+          <button @click="openArtistCreateDialog('featuring_artists')" class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
             <AddIcon color="var(--dark-green-600)"/>
             Sanatçı Oluştur
           </button>
@@ -112,8 +116,11 @@
               </div>
             </div>
             <p class="label-sm !font-normal" style="white-space:nowrap;">
-              <template v-for="artist in scope.data">
-                {{ artist.label }}, &nbsp;
+              <template v-for="(artist,artistIndex) in scope.data">
+                {{ artist.label }}
+                  <template v-if="artistIndex < scope.data.length-1">
+                    , &nbsp;
+                </template>
               </template>
             </p>
 
@@ -183,7 +190,7 @@
       </FormElement>
     </div>
   </div>
-  <SmallArtistCreateDialog v-if="createArtistDialog" v-model="createArtistDialog"></SmallArtistCreateDialog>
+  <SmallArtistCreateDialog @done="onArtistCreated" v-if="createArtistDialog" v-model="createArtistDialog"></SmallArtistCreateDialog>
 </template>
 
 <script setup>
@@ -194,8 +201,11 @@ import {useCrudStore} from '@/Stores/useCrudStore';
 import {usePage} from '@inertiajs/vue3';
 import {SmallArtistCreateDialog} from '@/Components/Dialog';
 
-const openArtistCreateDialog = () => {
-        createArtistDialog.value = true;
+
+const whichSelectToAdd = ref(null);
+const openArtistCreateDialog = (artistSelectName) => {
+    whichSelectToAdd.value = artistSelectName;
+    createArtistDialog.value = true;
 }
 const createArtistDialog = ref(false);
 const crudStore = useCrudStore();
@@ -207,13 +217,56 @@ const props = defineProps({
   product: {}
 })
 
+const mainArtistSelect = ref();
+const featuringArtistSelect = ref();
 const emits = defineEmits(['update:modelValue']);
 
+
+const onArtistCreated = (e) => {
+  let row = {
+    label: e.name,
+    value: e.id,
+
+  };
+
+
+  if(whichSelectToAdd.value ==  'featuring_artists'){
+     featuringArtistSelect.value.appMultiSelect.insertData(row);
+
+    featuringArtistSelectConfig.value.data.push(row);
+  }else {
+     mainArtistSelect.value.appMultiSelect.insertData(row);
+    mainArtistSelectConfig.value.data.push(row);
+  }
+
+}
 const form = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value)
 })
-const artistSelectConfig = computed(() => {
+const featuringArtistSelectConfig = computed(() => {
+  return {
+    showTags: false,
+    hasSearch: true,
+    data: [],
+    remote: async (query) => {
+
+      const response = await crudStore.get(route('control.search.artists', {
+        search: query
+      }))
+      const formattedData = response.map(item => ({
+        value: item.id,
+        label: item.name,
+        image: item.image ? item.image.thumb || item.image.url : null  // Use `thumb` if available, fallback to `url`
+      }));
+
+
+      return formattedData;
+
+    }
+  }
+})
+const mainArtistSelectConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
@@ -295,7 +348,7 @@ onBeforeMount(() => {
     props.product.main_artists.forEach(element => {
       console.log("ELEENT", element);
 
-      artistSelectConfig.value.data.push({
+      mainArtistSelectConfig.value.data.push({
         "image": element.media[0]?.original_url,
         "value": element.id,
         "label": element.name,
@@ -308,7 +361,7 @@ onBeforeMount(() => {
     props.product.featured_artists.forEach(element => {
       console.log("ELEENT", element);
 
-      artistSelectConfig.value.data.push({
+      featuringArtistSelectConfig.value.data.push({
         "image": element.media[0]?.original_url,
         "value": element.id,
         "label": element.name,
