@@ -104,7 +104,8 @@ Route::group(
             );
 
             // Get ISRC
-            Route::post('changeStatus/{product}', [ProductController::class, 'changeStatus'])->name('products.changeStatus');
+            Route::post('changeStatus/{product}',
+                [ProductController::class, 'changeStatus'])->name('products.changeStatus');
             Route::get('getISRC', [ProductController::class, 'getISRC'])->name('products.get-isrc');
             // Check ISRC
             Route::get('checkISRC', [ProductController::class, 'checkISRC'])->name('products.check-isrc');
@@ -320,6 +321,9 @@ Route::group(
 
             Route::get('artists-platform-search', [ArtistController::class, 'searchPlatform'])
                 ->name('artists-platform-search');
+
+            Route::post('artist-platform-detach/{artist}',
+                [ArtistController::class, 'detachPlatform'])->name('artist-platform-detach');
 
             Route::get('labels', [LabelController::class, 'search'])->name('labels');
             //Route::get('countries', [CountryController::class, 'search'])->name('countries')->withoutMiddleware('auth:sanctum');

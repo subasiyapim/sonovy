@@ -95,7 +95,7 @@ class ArtistController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ArtistStoreRequest $request): \Illuminate\Http\RedirectResponse
+    public function store(ArtistStoreRequest $request)
     {
         $data = $request->validated();
         $accept = $request->header('Accept');
@@ -123,8 +123,6 @@ class ArtistController extends Controller
             'data' => new ArtistResource($artist),
         ];
         if ($accept === 'application/json') {
-
-
             return response()->json($props, Response::HTTP_OK);
         } else {
             return redirect()->route('control.catalog.artists.index')->with(
@@ -174,8 +172,9 @@ class ArtistController extends Controller
         $artist->update($request->validated());
 
         if (isset($request->validated()['platforms']) && $request->validated()['platforms']) {
+            $artist->platforms()->detach();
             foreach ($request->validated()['platforms'] as $platform) {
-                $artist->platforms()->syncWithoutDetaching([$platform['value'] => ['url' => $platform['url']]]);
+                $artist->platforms()->attach([$platform['value'] => ['url' => $platform['url']]]);
             }
         } else {
             $artist->platforms()->detach();
@@ -264,5 +263,16 @@ class ArtistController extends Controller
 
 
         return response()->json($data, Response::HTTP_OK);
+    }
+
+    public function detachPlatform(Request $request, Artist $artist)
+    {
+        $request->validate([
+            'platform_id' => 'required'
+        ]);
+
+        $artist->platforms()->detach($request->input('platform_id'));
+
+        return response()->json([], Response::HTTP_OK);
     }
 }
