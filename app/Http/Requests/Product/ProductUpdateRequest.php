@@ -56,7 +56,7 @@ class ProductUpdateRequest extends FormRequest
             ],
             'platforms' => ['array', 'required'],
             'platforms.*.id' => ['required', 'exists:platforms,id'],
-            'platforms.*.price' => ['required', 'numeric', 'min:0'],
+            'platforms.*.price' => ['nullable', 'numeric', 'min:0'],
             'platforms.*.pre_order_date' => ['nullable', 'date'],
             'platforms.*.publish_date' => ['required', 'date'],
         ];
@@ -74,7 +74,7 @@ class ProductUpdateRequest extends FormRequest
 
         $data = [
             'type' => ['required', Rule::enum(ProductTypeEnum::class)],
-            'album_name' => ['required', 'string', 'min:3', 'max:100'],
+            'album_name' => ['required', 'string', 'max:250'],
             'version' => ['nullable', 'string', 'min:3', 'max:100'],
             'mixed_album' => ['required', 'boolean'],
             'genre_id' => ['required', 'integer', 'exists:genres,id'],
