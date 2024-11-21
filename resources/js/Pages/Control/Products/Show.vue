@@ -36,13 +36,9 @@
                           :config="productStatusConfig">
 
           </AppSelectInput>
-          <RegularButton @click="changeStatus" class="w-full">
-            <template #icon>
-              <EditLineIcon color="var(--sub-600)"/>
-            </template>
-            Yayını Düzenle
-
-          </RegularButton>
+           <RegularButton :loading="changingStatus" @click="changeStatus" class="w-min">
+            Onayla
+            </RegularButton>
 
         </div>
         <div v-if="product.status == 4" class="w-96  mt-2">
@@ -51,7 +47,10 @@
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
         <RegularButton @click="router.visit(route('control.catalog.products.form.edit',[1,product.id]))">
-          Güncelle
+          <template #icon>
+              <EditLineIcon color="var(--sub-600)"/>
+            </template>
+            Yayını Düzenle
 
         </RegularButton>
 
@@ -126,6 +125,7 @@ import PromotionsTab from './ShowTabs/promotions.vue';
 import SongsTab from './ShowTabs/songs.vue';
 import {useCrudStore} from '@/Stores/useCrudStore';
 
+const changingStatus = ref(false);
 const isModalOn = ref(false);
 import {toast} from 'vue3-toastify';
 const hasError = ref(null)
@@ -224,7 +224,10 @@ const onTabChange = (tab) => {
 }
 
 const changeStatus = async () => {
-
+    if(changingStatus.value){
+        return;
+    }
+    changingStatus.value = true;
     if(props.product.status == 4){
         console.log(props.product.note);
 
@@ -233,6 +236,7 @@ const changeStatus = async () => {
 
             toast.error("Ret sebebi için not girmeniz gerekmektedir");
             hasError.value = 'Not Giriniz'
+            changingStatus.value = false;
             return;
         }
 
@@ -242,6 +246,7 @@ const changeStatus = async () => {
     note:props.product.note,
   });
   if (response.success) {
+      changingStatus.value = false;
     toast.success("Durum Başarıyla Değiştirildi");
 
   }

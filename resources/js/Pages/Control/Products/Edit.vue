@@ -261,7 +261,7 @@ const submitStep = async () => {
 
       onError: (e) => {
         console.log("HTAA", e);
-
+    toast.error(Object.values(e)[0])
       },
       onSuccess: (e) => {
         router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))

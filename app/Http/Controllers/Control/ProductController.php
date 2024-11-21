@@ -190,7 +190,7 @@ class ProductController extends Controller
             'songs.mainArtists',
             'songs.featuringArtists',
             'songs.writers',
-            'song.composers',
+            'songs.composers',
             'songs.musicians',
             'songs.participants.user',
             'media'

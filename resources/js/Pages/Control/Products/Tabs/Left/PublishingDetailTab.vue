@@ -46,7 +46,7 @@
 
       <SectionHeader title="ÜLKE VE BÖLGE TERCİHLERİ"></SectionHeader>
 
-      <FormElement label-width="190px" :error="form.errors.publishing_country_type"
+      <FormElement @change="onChangePublishCountryType" label-width="190px" :error="form.errors.publishing_country_type"
                    v-model="form.publishing_country_type" type="radio" label="Tercihler" :config="countryRadioConfig">
 
       </FormElement>
@@ -54,8 +54,8 @@
         <div class="w-[190px] label-sm c-strong-950">Yayınlanacak Ülkeler</div>
         <div class="flex flex-col w-full gap-3">
 
-          <div class="w-full" v-for="(value,key) in usePage().props.countriesGroupedByRegion.countries">
-            <AppAccordion :title="key" description="Tüm ülkeler seçildi">
+          <div class="w-full" v-for="(value,key) in usePage().props.countriesGroupedByRegion.countries.data">
+            <AppAccordion :title="key" :description="usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count+' Adet Seçildi'">
 
               <div class="flex items-center ">
                 <div class="flex-1">
@@ -221,7 +221,21 @@ const onChangeIsPublishedBefore = (e) => {
   }
 }
 
+const onChangePublishCountryType =  (e) => {
+    console.log(e);
+    if(e.value == 1){
+        Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
 
+            chooseAll(key);
+        })
+    }else {
+        Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
+
+            unChooseAll(key);
+        })
+    }
+
+}
 const onCountryCheck = (e) => {
   const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
   if (findedIndex >= 0) {
@@ -232,9 +246,9 @@ const onCountryCheck = (e) => {
 }
 
 const chooseAll = (key) => {
-    console.log(usePage().props.countriesGroupedByRegion);
 
-  usePage().props.countriesGroupedByRegion[key].countries.forEach((e) => {
+
+  usePage().props.countriesGroupedByRegion.countries.data[key].forEach((e) => {
     const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
     if (findedIndex < 0) {
       form.value.published_countries.push(e.value);
@@ -242,7 +256,7 @@ const chooseAll = (key) => {
   });
 }
 const unChooseAll = (key) => {
-  usePage().props.countriesGroupedByRegion[key].countries.forEach((e) => {
+  usePage().props.countriesGroupedByRegion.countries.data[key].forEach((e) => {
     const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
     if (findedIndex >= 0) {
       form.value.published_countries.splice(findedIndex, 1);
@@ -281,20 +295,18 @@ onBeforeMount(() => {
   form.value.platforms = usePage().props.platforms;
   if (form.value.publishing_country_type) {
     form.value.published_countries = [];
-    Object.keys(usePage().props.countriesGroupedByRegion.countries).forEach((key) => {
-        console.log("KEYY",key);
-    console.log("asdasd",usePage().props.countriesGroupedByRegion.countries[key]);
+    Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
 
-    //   usePage().props.countriesGroupedByRegion.countries[key].forEach((e) => {
-    //     console.log("EEEE",e);
-    //         if(e.selected){
-    //             const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
-    //             if (findedIndex < 0) {
-    //             form.value.published_countries.push(e.value);
-    //             }
-    //         }
+      usePage().props.countriesGroupedByRegion.countries.data[key].forEach((e) => {
 
-    //   });
+            if(e.selected){
+                const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
+                if (findedIndex < 0) {
+                form.value.published_countries.push(e.value);
+                }
+            }
+
+      });
     })
   }
   if (usePage().props.product.download_platforms) {

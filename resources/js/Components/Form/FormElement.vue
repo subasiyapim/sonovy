@@ -18,7 +18,7 @@
         <AppTextInput v-if="type=='text' || type=='web' || type=='phone'|| type=='password'" :config="config" :type="type" v-model="element" :placeholder="placeholder" :disabled="disabled"></AppTextInput>
         <AppFancyCheckInput v-if="type=='fancyCheck'" :type="type" :config="config" v-model="element" :placeholder="placeholder" :disabled="disabled" @change="change"></AppFancyCheckInput>
         <AppTextareaInput v-else-if="type=='textarea'" v-model="element" :placeholder="placeholder" :config="config" :disabled="disabled"></AppTextareaInput>
-        <AppRadioInput v-else-if="type=='radio'" v-model="element" :placeholder="placeholder" :config="config" :disabled="disabled"></AppRadioInput>
+        <AppRadioInput v-else-if="type=='radio'" v-model="element" @change="change" :placeholder="placeholder" :config="config" :disabled="disabled"></AppRadioInput>
         <AppUploadInput v-else-if="type=='upload'" :config="config" v-model="element" :placeholder="placeholder" :disabled="disabled"></AppUploadInput>
         <AppSliderInput v-else-if="type=='slider'" :config="config" :type="type" v-model="element" :placeholder="placeholder" :disabled="disabled"></AppSliderInput>
 
@@ -110,7 +110,7 @@ const props = defineProps({
   type: {type: String, default: "text"},
   config: {type: Object}
 })
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue','change']);
 
 const element = computed({
   get: () => props.modelValue,
