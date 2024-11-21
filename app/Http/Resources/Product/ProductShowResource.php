@@ -134,7 +134,8 @@ class ProductShowResource extends JsonResource
                         return $participant->load('user');
                     }),
                 'musicians' => $song->musicians,
-                'lyrics_writers' => $song->lyricsWriters,
+                'writers' => $song->writers,
+                'composers' => $song->composers,
                 'main_artists' => $song->mainArtists,
                 'featuring_artists' => $song->featuringArtists,
                 'analysis' => $song->acr_response,
