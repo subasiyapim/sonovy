@@ -32,12 +32,20 @@
 
       <AppTableColumn :label="'Süre'" sortable="name">
         <template #default="scope">
-          <div class="flex items-center gap-2">
+          <div v-if="currentSong !== scope.row"  @click="playSound(scope.row)" class="flex items-center gap-2 cursor-pointer">
             <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
               <PlayCircleFillIcon color="var(--dark-green-500)"/>
             </div>
             <p class="label-sm c-strong-950">
               {{ scope.row.duration ?? '2.35' }}
+            </p>
+          </div>
+          <div v-else  @click="pauseMusic(scope.row)" class="flex items-center gap-2 cursor-pointer">
+            <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+              <PlayCircleFillIcon color="var(--dark-green-500)"/>
+            </div>
+            <p class="label-sm c-strong-950">
+              Durdur
             </p>
           </div>
         </template>
@@ -83,6 +91,7 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton, IconButton} from '@/Components/Buttons'
 import {StatusBadge, BasicBadge} from '@/Components/Badges'
+import {Howl} from "howler";
 
 import {
   AddIcon,
@@ -112,6 +121,33 @@ const props = defineProps({
 })
 
 
+
+const currentSound = ref(null);
+const currentSong = ref(null);
+const playSound = (song) => {
+    if (currentSound.value) {
+        currentSound.value.pause();
+        currentSound.value = null;
+    }
+    currentSong.value = song;
+
+    currentSound.value = new Howl({
+        src: ['/storage/' + song.path],
+        html5: true,
+        onload: (e) => {
+            currentSound.value.play();
+        }
+    });
+};
+
+const pauseMusic = (song) => {
+    if (currentSound.value && currentSound.value.playing()) {
+        currentSound.value.pause();
+
+    }
+         currentSound.value = null;
+          currentSong.value = null;
+};
 const data = ref([])
 const choosenLabel = ref(null);
 const isModalOn = ref(false);

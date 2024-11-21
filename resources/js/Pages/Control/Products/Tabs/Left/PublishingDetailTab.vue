@@ -206,12 +206,6 @@ const countryRadioConfig = computed(() => {
   return {
     optionDirection: 'vertical',
     options: usePage().props.product_publish_country_types
-
-    // [
-    //     {value:1,label:"Tüm ülkelerde yayınlansın"},
-    //     {value:2,label:"Seçilenler hariç tüm ülkelerde yayınlansın"},
-    //     {value:3,label:"Sadece seçilen ülkelerde yayınlansın"},
-    // ]
   }
 })
 
@@ -225,11 +219,13 @@ const onChangePublishCountryType =  (e) => {
     console.log(e);
     if(e.value == 1){
         Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
+               usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
 
             chooseAll(key);
         })
     }else {
         Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
+               usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = 0;
 
             unChooseAll(key);
         })
@@ -243,6 +239,21 @@ const onCountryCheck = (e) => {
   } else {
     form.value.published_countries.push(e.value);
   }
+
+   Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
+
+        let total = 0;
+        usePage().props.countriesGroupedByRegion.countries.data[key].forEach(element => {
+            console.log("TEK TEK",element);
+            if(form.value.published_countries.includes(element.value)){
+                total++;
+            }
+
+        });
+
+        usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = total;
+
+    })
 }
 
 const chooseAll = (key) => {
@@ -254,14 +265,18 @@ const chooseAll = (key) => {
       form.value.published_countries.push(e.value);
     }
   });
+    usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
+
 }
 const unChooseAll = (key) => {
-  usePage().props.countriesGroupedByRegion.countries.data[key].forEach((e) => {
-    const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
-    if (findedIndex >= 0) {
-      form.value.published_countries.splice(findedIndex, 1);
-    }
-  });
+    usePage().props.countriesGroupedByRegion.countries.data[key].forEach((e) => {
+        const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
+        if (findedIndex >= 0) {
+            form.value.published_countries.splice(findedIndex, 1);
+        }
+    });
+    usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = 0;
+
 }
 
 const onPlatformSelected = (rows) => {
@@ -335,6 +350,8 @@ onBeforeMount(() => {
     if(form.value.publishing_country_type == 1){
             Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach(key => {
                chooseAll(key)
+
+               usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
             });
     }
 });
