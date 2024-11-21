@@ -125,10 +125,20 @@ class ProductShowResource extends JsonResource
                 'name' => $song->name,
                 'isrc' => $song->isrc,
                 'duration' => $song->duration,
+                'size' => $song->size,
+                'lyrics' => $song->lyrics,
+                'version' => $song->version,
+                'genre_id' => $song->genre_id,
+                'sub_genre_id' => $song->sub_genre_id,
                 'artists' => $song->artists,
                 'participants' => $song->participants->map(function ($participant) {
                     return $participant->load('user');
                 }),
+                'musicians' => $song->musicians,
+
+                'lyrics_writers' => $song->lyricsWriters,
+                'main_artists' => $song->mainArtists,
+                'featuring_artists' => $song->featuringArtists,
                 'analysis' => $song->acr_response,
                 'details' => $song->details,
                 'activities' => $song->activities,

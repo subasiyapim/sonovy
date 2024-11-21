@@ -16,7 +16,7 @@
                     <p class="label-sm c-strong-950">
                         {{participant.user?.name}}
                     </p>
-                    <p class="paragraph-sm c-neutral-500 flex-1">
+                    <p class="paragraph-xs c-neutral-500 flex-1">
                         {{participant.branch_names}}
                     </p>
                 </div>

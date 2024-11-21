@@ -120,7 +120,11 @@ class ProductController extends Controller
         abort_if(Gate::denies('product_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $product->load(
-            'songs',
+            'songs.mainArtists',
+            'songs.featuringArtists',
+            'songs.musicians.branch',
+            'songs.participants.user',
+            'songs.lyricsWriters',
             'label',
             'genre',
             'subGenre',
@@ -131,17 +135,22 @@ class ProductController extends Controller
             'mainArtists',
             'featuredArtists',
             'histories',
+
         );
 
         $tab = 'metadata';
         $tab = request()->input('slug') ?? $tab;
 
         $response = new ProductShowResource($product, $tab);
+        $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
+        $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
         return inertia(
             'Control/Products/Show',
             [
                 'product' => $response->resolve(),
+                'genres' => $genres,
+                'artistBranches' => $artistBranches,
                 'tab' => $tab,
             ]
         );
