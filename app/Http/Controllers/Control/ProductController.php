@@ -42,9 +42,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Inertia\ResponseFactory;
-use Laravel\Reverb\Loggers\Log;
 use Symfony\Component\HttpFoundation\Response;
-use function Psy\debug;
 
 /**
  * Class ProductController
@@ -588,6 +586,8 @@ class ProductController extends Controller
                 ->groupBy('month')
                 ->get();
 
+            $totalCount = $productsByMonth->sum('count');
+
             $result = $productsByMonth->map(function ($item) use ($months) {
                 return [
                     'label' => $months[$item->month],
@@ -595,7 +595,10 @@ class ProductController extends Controller
                 ];
             });
 
-            return $result->toArray();
+            return [
+                'total' => $totalCount,
+                'data' => $result->toArray(),
+            ];
         });
     }
 
