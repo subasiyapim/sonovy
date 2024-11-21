@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductShowResource extends JsonResource
 {
@@ -49,7 +50,7 @@ class ProductShowResource extends JsonResource
             'album_name' => $this->album_name,
             'image' => $this->image,
             'created_at' => Carbon::parse($this->created_at)->format('d-m-Y H:i'),
-            'song_count' => $this->songs->count() . ' parça',
+            'song_count' => $this->songs->count().' parça',
             'total_duration' => totalDuration($this->songs, true),
             'main_artists' => $this->mainArtists,
             'featured_platforms' => $this->downloadPlatforms(),
@@ -124,6 +125,7 @@ class ProductShowResource extends JsonResource
                 'sub_genre_id' => $song->sub_genre_id,
                 'artists' => $song->artists,
                 'is_instrumental' => $song->is_instrumental,
+                'path' => public_path('storage/tenant_'.tenant('domain').'_songs/'.$song->path),
                 'participants' => $song->participants
                     ->map(function ($participant) {
                         return $participant->load('user');
