@@ -228,11 +228,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                        [
-                            'type' => 'error',
-                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                            'model' => __('control.song.title_singular')
-                        ]
+                    [
+                        'type' => 'error',
+                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                        'model' => __('control.song.title_singular')
+                    ]
                 ]
             );
         }
@@ -447,7 +447,7 @@ class SongController extends Controller
     {
         $request->validate(
             [
-                'ids' => ['array', 'in:'.Song::pluck('id')->implode(',')],
+                'ids' => ['array', 'in:' . Song::pluck('id')->implode(',')],
                 'product_id' => ['required', 'exists:products,id']
             ]
         );

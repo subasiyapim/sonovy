@@ -289,7 +289,7 @@ import {SmallArtistCreateDialog} from '@/Components/Dialog';
 
 import {AddIcon, ISRCStarsIcon} from '@/Components/Icons'
 import {RegularButton, PrimaryButton} from '@/Components/Buttons'
-import {computed, ref, onBeforeMount} from 'vue';
+import {computed, ref, onMounted} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
 import {useCrudStore} from '@/Stores/useCrudStore';
@@ -515,6 +515,8 @@ const onSubmit = async (e) => {
 
           toast.success(e.props.notification.message);
           isDialogOn.value = false;
+          console.log("GELEENNN",e.props.notification.song);
+
           emits('done', e.props.notification.song)
 
         },
@@ -552,7 +554,7 @@ const roleConfig = computed(() => {
     data: usePage().props.artistBranches,
   }
 })
-onBeforeMount(() => {
+onMounted(() => {
   if (props.song) {
     form.featuring_artists = (props.song.featuring_artists ?? []).map((e) => e.id);
 
