@@ -143,12 +143,16 @@ class ProductController extends Controller
         $response = new ProductShowResource($product, $tab);
         $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
+        $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');
+        $users = getDataFromInputFormat(\App\Models\User::all(), 'id', 'name');
 
         return inertia(
             'Control/Products/Show',
             [
                 'product' => $response->resolve(),
                 'genres' => $genres,
+                'artists' => $artists,
+                'users' => $users,
                 'artistBranches' => $artistBranches,
                 'tab' => $tab,
             ]

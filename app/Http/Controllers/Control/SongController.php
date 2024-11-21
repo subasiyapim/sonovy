@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Song\SongChangeStatusRequest;
 use App\Http\Requests\Song\SongUpdateRequest;
 use App\Http\Resources\Song\SongShowResource;
+use App\Models\Artist;
 use App\Models\ArtistBranch;
 use App\Models\Participant;
 use App\Models\Product;
@@ -162,6 +163,8 @@ class SongController extends Controller
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
+        $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');
+        $users = getDataFromInputFormat(\App\Models\User::all(), 'id', 'name');
 
         $song->loadMissing(
             'genre',
@@ -195,6 +198,8 @@ class SongController extends Controller
 
                 'genres' => $genres,
                 'song' => $response->resolve(),
+                'artists' => $artists,
+                'users' => $users,
                 'isrcResult' => $isrcResult,
                 'artistBranches' => $artistBranches,
                 'countries' => $countries,
@@ -229,11 +234,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                        [
-                            'type' => 'error',
-                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                            'model' => __('control.song.title_singular')
-                        ]
+                    [
+                        'type' => 'error',
+                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                        'model' => __('control.song.title_singular')
+                    ]
                 ]
             );
         }
@@ -448,7 +453,7 @@ class SongController extends Controller
     {
         $request->validate(
             [
-                'ids' => ['array', 'in:'.Song::pluck('id')->implode(',')],
+                'ids' => ['array', 'in:' . Song::pluck('id')->implode(',')],
                 'product_id' => ['required', 'exists:products,id']
             ]
         );
