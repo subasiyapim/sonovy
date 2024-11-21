@@ -120,9 +120,10 @@ class ProductController extends Controller
         $product->load(
             'songs.mainArtists',
             'songs.featuringArtists',
-            'songs.musicians.branch',
+            'songs.musicians',
             'songs.participants.user',
-            'songs.lyricsWriters',
+            'songs.writers',
+            'songs.composers',
             'label',
             'genre',
             'subGenre',
