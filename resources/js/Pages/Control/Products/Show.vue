@@ -3,13 +3,13 @@
   <AdminLayout :showDatePicker="false" :title="__('control.product.show_header')" parentTitle="Katalog"
                subParent="Tüm Şarkılar" :hasPadding="false">
     <template #breadcrumb>
-            <span  class="label-xs c-soft-400">Katalog</span>
-            <span  class="label-xs c-soft-400">•</span>
-            <span  class="label-xs c-soft-400 cursor-pointer" @click="router.visit(route('control.catalog.products.index'))">Tüm Yayınlar</span>
-            <span  class="label-xs c-soft-400">•</span>
-            <span  class="label-xs c-soft-400">{{product.type_text}}</span>
-            <span  class="label-xs c-soft-400">•</span>
-            <span  class="label-xs c-soft-400">{{product.album_name}}</span>
+      <span class="label-xs c-soft-400">Katalog</span>
+      <span class="label-xs c-soft-400">•</span>
+      <span class="label-xs c-soft-400 cursor-pointer" @click="router.visit(route('control.catalog.products.index'))">Tüm Yayınlar</span>
+      <span class="label-xs c-soft-400">•</span>
+      <span class="label-xs c-soft-400">{{ product.type_text }}</span>
+      <span class="label-xs c-soft-400">•</span>
+      <span class="label-xs c-soft-400">{{ product.album_name }}</span>
     </template>
     <div class="bg-white-400 h-60 p-5 flex  relative ">
 
@@ -18,20 +18,20 @@
           class=" rounded-lg w-60 h-60 bg-blue-300 left-8 top-8 flex items-center justify-center overflow-hidden">
         <img v-if="product.image" class="w-full h-full object-cover"
              :alt="product.album_name"
-             :src="product.image?.original_url">
+             :src="product.image?.small">
       </div>
       <div class=" flex-1 ms-4 flex flex-col">
 
-       <div class="flex items-center gap-2 mb-2">
-         <h1 class="label-xl c-strong-950" v-text="product.album_name"/>
-         <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2 w-min">
+        <div class="flex items-center gap-2 mb-2">
+          <h1 class="label-xl c-strong-950" v-text="product.album_name"/>
+          <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2 w-min">
             <component :is="statusData.find((e) => e.value == usePage().props.product.status)?.icon"
                        :color="statusData.find((e) => e.value == usePage().props.product.status)?.color"></component>
             <p class="subheading-xs c-sub-600">
               {{ statusData.find((e) => e.value == usePage().props.product.status)?.label }}
             </p>
           </div>
-       </div>
+        </div>
         <div class="flex items-center gap-2">
           <span class="c-sub-600 paragraph-xs">{{ product.created_at }}</span>
           <span class="label-sm c-soft-300">•</span>
@@ -41,33 +41,37 @@
         </div>
 
         <div class="flex items-center mt-2" v-for="artist in product.main_artists">
-          <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-3">
-            <img class="w-full h-full image-fluid" :src="artist.image"/>
+          <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-2">
+            <img :alt="artist.name"
+                 :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)"
+                 class="border-2 border-white rounded-full "
+            >
           </div>
           <p class="label-sm c-sub-600 me-1">{{ artist.name }}</p>
         </div>
 
         <div class="flex items-center gap-2 w-96" :class="usePage().props.product.status == 4 ? 'mt-5' :'mt-auto' ">
 
-          <AppSelectInput  class="bg-white" v-model="productStatus"
+          <AppSelectInput class="bg-white" v-model="productStatus"
                           :config="productStatusConfig">
 
           </AppSelectInput>
-           <RegularButton :loading="changingStatus" @click="changeStatus" class="w-min">
+          <RegularButton :loading="changingStatus" @click="changeStatus" class="w-min">
             Onayla
-            </RegularButton>
+          </RegularButton>
 
         </div>
         <div v-if="productStatus == 4" class="w-96  mt-2">
-            <FormElement v-model="usePage().props.product.note" direction="vertical" placeholder="Red Sebebi" :error="hasError"></FormElement>
+          <FormElement v-model="usePage().props.product.note" direction="vertical" placeholder="Red Sebebi"
+                       :error="hasError"></FormElement>
         </div>
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
         <RegularButton @click="router.visit(route('control.catalog.products.form.edit',[1,product.id]))">
           <template #icon>
-              <EditLineIcon color="var(--sub-600)"/>
-            </template>
-            Yayını Düzenle
+            <EditLineIcon color="var(--sub-600)"/>
+          </template>
+          Yayını Düzenle
 
         </RegularButton>
 
@@ -97,14 +101,14 @@
     </div>
     <div class="mt-32 "></div>
     <div v-if="usePage().props.product.status == 4" class="my-3 px-8">
-         <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
-            <WarningIcon color="var(--error-500)" />
-            <p class="paragraph-xs c-strong-950"> {{usePage().props.product.note}}</p>
+      <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
+        <WarningIcon color="var(--error-500)"/>
+        <p class="paragraph-xs c-strong-950"> {{ usePage().props.product.note }}</p>
 
-        </div>
+      </div>
     </div>
     <!---APP TABS --->
-    <div >
+    <div>
       <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"></AppTabs>
     </div>
     <div class="px-8 pb-10">
@@ -131,7 +135,7 @@ import {
   TrashIcon,
   WorldIcon,
   EditLineIcon,
-    AddIcon,
+  AddIcon,
   LabelsIcon,
   CalendarIcon,
   WarningIcon,
@@ -165,6 +169,7 @@ import {useCrudStore} from '@/Stores/useCrudStore';
 const changingStatus = ref(false);
 const isModalOn = ref(false);
 import {toast} from 'vue3-toastify';
+
 const hasError = ref(null)
 const props = defineProps({
   product: {
@@ -261,30 +266,30 @@ const onTabChange = (tab) => {
 }
 
 const changeStatus = async () => {
-    if(changingStatus.value){
-        return;
+  if (changingStatus.value) {
+    return;
+  }
+  changingStatus.value = true;
+  if (productStatus.value == 4) {
+    if (props.product.note == null || props.product.note == '') {
+
+
+      toast.error("Ret sebebi için not girmeniz gerekmektedir");
+      hasError.value = 'Not Giriniz'
+      changingStatus.value = false;
+      return;
     }
-    changingStatus.value = true;
-    if(productStatus.value == 4){
-        if(props.product.note == null || props.product.note == ''){
 
-
-            toast.error("Ret sebebi için not girmeniz gerekmektedir");
-            hasError.value = 'Not Giriniz'
-            changingStatus.value = false;
-            return;
-        }
-
-    }
+  }
   const response = await crudStore.post(route('control.catalog.products.changeStatus', props.product.id), {
     status: productStatus.value,
-    note:props.product.note,
+    note: props.product.note,
   });
   if (response.success) {
-        props.product.status = productStatus.value;
+    props.product.status = productStatus.value;
 
-        changingStatus.value = false;
-        toast.success("Durum Başarıyla Değiştirildi");
+    changingStatus.value = false;
+    toast.success("Durum Başarıyla Değiştirildi");
 
   }
 
