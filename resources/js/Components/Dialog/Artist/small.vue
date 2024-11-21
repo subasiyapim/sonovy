@@ -25,7 +25,6 @@
 
 
       <FormElement label-width="190px"
-                   :required="true"
                    :error="form.errors.country_id"
                    v-model="form.country_id"
                    :label="__('control.artist.fields.country')"
@@ -46,7 +45,6 @@
       </FormElement>
 
         <FormElement label-width="190px"
-                :required="true"
                 :error="form.errors.artist_branches"
                 v-model="form.artist_branches"
                 :config="artistBranchesMultiSelect"

@@ -150,6 +150,7 @@
     </div>
 
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
+
       <FormElement :required="true" type="select" :error="form.errors.label_id" v-model="form.label_id"
                    label-width="190px"
                    label="Plak şirketi" placeholder="Şirket Seçiniz" :config="labelConfig"></FormElement>
@@ -248,7 +249,7 @@ const featuringArtistSelectConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
-    data: [],
+    data: usePage().props.artists,
     remote: async (query) => {
 
       const response = await crudStore.get(route('control.search.artists', {
@@ -270,7 +271,7 @@ const mainArtistSelectConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
-    data: [],
+    data: usePage().props.artists,
     remote: async (query) => {
 
       const response = await crudStore.get(route('control.search.artists', {
@@ -292,7 +293,7 @@ const labelConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
-    data: [],
+    data: usePage().props.labels,
     remote: async (query) => {
 
       const response = await crudStore.get(route('control.search.labels', {

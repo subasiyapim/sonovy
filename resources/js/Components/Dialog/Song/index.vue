@@ -362,19 +362,7 @@ const mainArtistSelectConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
-    data: [...(props.song?.featuring_artists ?? [])?.map((element) => {
-      return {
-        label: element.name,
-        value: element.id,
-        image: element.media[0]?.original_url,
-      };
-    }), ...(props.song?.main_artists ?? []).map((element) => {
-      return {
-        label: element.name,
-        value: element.id,
-        image: element.media[0]?.original_url,
-      };
-    })],
+    data: usePage().props.artists,
     remote: async (query) => {
 
       const response = await crudStore.get(route('control.search.artists', {
@@ -397,19 +385,7 @@ const featuringArtistSelectConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
-    data: [...(props.song?.featuring_artists ?? [])?.map((element) => {
-      return {
-        label: element.name,
-        value: element.id,
-        image: element.media[0]?.original_url,
-      };
-    }), ...(props.song?.main_artists ?? []).map((element) => {
-      return {
-        label: element.name,
-        value: element.id,
-        image: element.media[0]?.original_url,
-      };
-    })],
+    data:usePage().props.artists,
     remote: async (query) => {
 
       const response = await crudStore.get(route('control.search.artists', {
@@ -434,12 +410,12 @@ const participantSelectConfig = computed(() => {
   return {
 
     hasSearch: true,
-    data: (props.song?.participants ?? [])?.map((element) => {
+    data: [...(props.song?.participants ?? [])?.map((element) => {
       return {
         value: element.user_id,
         label: element.user?.name,
       };
-    }),
+    }),...usePage().props.users],
     remote: async (query) => {
       const response = await crudStore.get(route('control.search.users', {
         search: query
@@ -556,6 +532,8 @@ const roleConfig = computed(() => {
 })
 onMounted(() => {
   if (props.song) {
+    console.log("faetu",props.song.featuring_artists);
+
     form.featuring_artists = (props.song.featuring_artists ?? []).map((e) => e.id);
 
 
@@ -566,26 +544,27 @@ onMounted(() => {
     form.musicians = (props.song.musicians ?? []).map((e) => {
       return {name: e.name, role_id: e.role_id}
     }) ?? [{}];
+
     form.participants = (props.song.participants ?? []).map((e) => {
       return {id: e.user_id, tasks: e.tasks, rate: e.rate}
     }) ?? [{}];
-    console.log("lyric",props.song);
+    console.log("lyric",props.song.participants);
 
     form.lyrics_writers = props.song.writers;
     form.composers = props.song.composers;
     // console.log("COMPOSERS",props.song.composers);
 
 
-    if (form.lyrics_writers.length == 0) {
+    if (form.lyrics_writers?.length == 0) {
       form.lyrics_writers = [{name:''}];
     }
-    if (form.participants.length == 0) {
+    if (form.participants?.length == 0) {
       form.participants = [{}]
     }
-    if (form.composers.length == 0) {
+    if (form.composers?.length == 0) {
       form.composers = [{name:''}]
     }
-    if (form.musicians.length == 0) {
+    if (form.musicians?.length == 0) {
       form.musicians = [{name:''}]
     }
 

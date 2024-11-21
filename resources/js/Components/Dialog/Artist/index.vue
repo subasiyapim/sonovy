@@ -40,7 +40,6 @@
                    :placeholder="__('control.artist.fields.about_placeholder')"/>
 
       <FormElement label-width="190px"
-                   :required="true"
                    :error="form.errors.artist_branches"
                    v-model="form.artist_branches"
                    :config="artistBranchesMultiSelect"
@@ -50,7 +49,6 @@
 
       <FormElement label-width="190px"
                    :required="true"
-                   :error="form.errors.country_id"
                    v-model="form.country_id"
                    :label="__('control.artist.fields.country')"
                    :config="countryConfig"
