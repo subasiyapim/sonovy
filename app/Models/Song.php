@@ -178,12 +178,6 @@ class Song extends Model implements HasMedia
     }
 
 
-    public function musicians(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'song_musician', 'name', 'musician_id')
-            ->withPivot('branch_id')->with('branch');
-    }
-
     public function convertedSong(): HasOne
     {
         return $this->hasOne(ConvertAudio::class, 'song_id', 'id');
@@ -217,6 +211,11 @@ class Song extends Model implements HasMedia
     public function composers(): HasMany
     {
         return $this->hasMany(SongComposer::class);
+    }
+
+    public function musicians(): HasMany
+    {
+        return $this->hasMany(SongMusician::class);
     }
 
     protected function serializeDate(DateTimeInterface $date): string

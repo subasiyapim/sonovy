@@ -174,7 +174,7 @@ class ProductController extends Controller
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
         $video_types = enumToSelectInputFormat(VideoTypeEnum::getTitles());
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
-        dd($countriesGroupedByRegion);
+
         $product->load(
             'songs',
             'label',
@@ -189,9 +189,10 @@ class ProductController extends Controller
             'songs.artists',
             'songs.mainArtists',
             'songs.featuringArtists',
-            'songs.musicians.branch',
+            'songs.writers',
+            'song.composers',
+            'songs.musicians',
             'songs.participants.user',
-            'songs.lyricsWriters',
             'media'
         );
 
