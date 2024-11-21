@@ -88,8 +88,9 @@ const defaultStore = useDefaultStore();
               </div>
               <div>
                 <p class="paragraph-xs c-sub-600" v-text="__('control.product.show.type')"/>
-                <span class="label-sm c-strong-950"
-                      v-text="__(product.metadata.type)"/>
+                <span class="label-sm c-strong-950">
+                    {{product.metadata?.type}}
+                </span>
               </div>
             </div>
           </div>

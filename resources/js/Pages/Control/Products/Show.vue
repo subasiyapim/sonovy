@@ -22,8 +22,16 @@
       </div>
       <div class=" flex-1 ms-4 flex flex-col">
 
-        <h1 class="label-xl c-strong-950" v-text="product.album_name"/>
-
+       <div class="flex items-center gap-2 mb-2">
+         <h1 class="label-xl c-strong-950" v-text="product.album_name"/>
+         <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2 w-min">
+            <component :is="statusData.find((e) => e.value == product.status)?.icon"
+                       :color="statusData.find((e) => e.value == product.status)?.color"></component>
+            <p class="subheading-xs c-sub-600">
+              {{ statusData.find((e) => e.value == product.status)?.label }}
+            </p>
+          </div>
+       </div>
         <div class="flex items-center gap-2">
           <span class="c-sub-600 paragraph-xs">{{ product.created_at }}</span>
           <span class="label-sm c-soft-300">•</span>
@@ -38,6 +46,7 @@
           </div>
           <p class="label-sm c-sub-600 me-1">{{ artist.name }}</p>
         </div>
+
         <div class="flex items-center gap-2 w-96" :class="product.status == 4 ? 'mt-5' :'mt-auto' ">
 
           <AppSelectInput  class="bg-white" v-model="product.status"
@@ -86,8 +95,16 @@
 
 
     </div>
+    <div class="mt-32 "></div>
+    <div v-if="product.status == 4" class="my-3 px-8">
+         <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
+            <WarningIcon color="var(--error-500)" />
+            <p class="paragraph-xs c-strong-950"> {{product.note}}</p>
+
+        </div>
+    </div>
     <!---APP TABS --->
-    <div class="mt-32 ">
+    <div >
       <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"></AppTabs>
     </div>
     <div class="px-8 pb-10">
@@ -113,8 +130,20 @@ import {
   SpotifyIcon,
   TrashIcon,
   WorldIcon,
-  EditLineIcon
+  EditLineIcon,
+    AddIcon,
+  LabelsIcon,
+  CalendarIcon,
+  WarningIcon,
+  RetractedIcon,
+  ArtistsIcon,
+  AudioIcon,
+  MusicVideoIcon,
+  RingtoneIcon,
+  CheckFilledIcon
 } from '@/Components/Icons'
+
+
 import {PrimaryButton, RegularButton} from '@/Components/Buttons'
 import {AppSelectInput} from '@/Components/Form'
 import {AppTabs} from '@/Components/Widgets'
@@ -261,6 +290,46 @@ const changeStatus = async () => {
 
 
 }
+
+const statusData = ref([
+  {
+    label: "Taslak",
+    value: 1,
+    icon: EditLineIcon,
+    color: "#FF8447",
+
+  },
+  {
+    label: "İnceleniyor",
+    value: 2,
+    icon: EditLineIcon,
+    color: "#FF8447",
+  },
+  {
+    label: "Yayınlandı",
+    value: 3,
+    icon: CheckFilledIcon,
+    color: "#335CFF",
+  },
+  {
+    label: "Reddedildi",
+    value: 4,
+    icon: WarningIcon,
+    color: "#FB3748",
+  },
+  {
+    label: "Geri Çekildi",
+    value: 5,
+    icon: RetractedIcon,
+    color: "#717784",
+  },
+  {
+    label: "Planlandı",
+    value: 6,
+    icon: CheckFilledIcon,
+    color: "#FF8447",
+  }
+]);
 </script>
 
 <style lang="scss" scoped>
