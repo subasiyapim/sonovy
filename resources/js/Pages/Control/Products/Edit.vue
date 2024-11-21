@@ -186,7 +186,7 @@ const submitStep = async () => {
 
       onError: (e) => {
         console.log("HTAA", e);
-
+        toast.error(Object.values(e)[0])
       },
       onSuccess: (e) => {
         //console.log("EEE", e);
@@ -260,8 +260,7 @@ const submitStep = async () => {
     step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
       onError: (e) => {
-        console.log("HTAA", e);
-    toast.error(Object.values(e)[0])
+        toast.error(Object.values(e)[0])
       },
       onSuccess: (e) => {
         router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))

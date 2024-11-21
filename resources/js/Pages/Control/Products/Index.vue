@@ -1,5 +1,5 @@
 <template>
-  <AdminLayout class="">
+  <AdminLayout :showDatePicker="false" class="">
     <div class="flex items-start gap-4 mb-12">
       <AppCard class="flex-1">
         <template #header>

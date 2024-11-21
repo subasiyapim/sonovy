@@ -12,13 +12,16 @@
                        </IconButton>
                        <div class="flex flex-col flex-1">
                             <p class="label-lg c-strong-950">{{title}}</p>
-                            <div class="flex items-center gap-2">
+                            <div v-if="!hasSlot('breadcrumb')" class="flex items-center gap-2">
                                 <span v-if="parentTitle" class="label-xs c-soft-400">{{parentTitle}}</span>
                                 <span v-if="parentTitle" class="label-xs c-soft-400">•</span>
 
                                 <span v-if="subParent" class="label-xs c-soft-400">{{subParent}}</span>
                                 <span v-if="subParent" class="label-xs c-soft-400">•</span>
                                 <span class="label-xs c-soft-400">{{title}}</span>
+                            </div>
+                            <div v-else class="flex items-center gap-2">
+                                <slot name="breadcrumb" />
                             </div>
                        </div>
                          <IconButton>
@@ -65,7 +68,7 @@
 
 
 <script setup>
-import {computed, onMounted,ref,nextTick} from 'vue'
+import {computed, onMounted,ref,nextTick,useSlots} from 'vue'
 import Sidebar from '@/Layouts/Partials/Sidebar.vue';
 import {SecondaryButton,IconButton} from '@/Components/Buttons'
 import {ArrowLeftIcon,SearchIcon,NotificationIcon,CalendarIcon} from '@/Components/Icons';
@@ -87,6 +90,10 @@ const props = defineProps({
         default:null
     }
 })
+const slots = useSlots()
+const hasSlot = (name) => {
+    return !!slots[name];
+}
 let params = new URLSearchParams(window.location.search)
 
 if (params.get('e_date') && params.get('s_date')) {
