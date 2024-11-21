@@ -241,8 +241,6 @@ const changeStatus = async () => {
     status: props.product.status,
     note:props.product.note,
   });
-  console.log("RESPONSE",response);
-
   if (response.success) {
     toast.success("Durum Başarıyla Değiştirildi");
 

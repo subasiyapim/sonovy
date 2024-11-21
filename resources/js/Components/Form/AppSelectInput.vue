@@ -76,10 +76,12 @@
 </template>
 
 <script setup>
-import {useSlots, ref, computed, onMounted, onBeforeUnmount, nextTick} from 'vue'
+import {useSlots, ref, computed, onMounted, onBeforeUnmount, nextTick,getCurrentInstance} from 'vue'
 import {ChevronRightIcon, SearchIcon} from '@/Components/Icons'
 import AppTextInput from './AppTextInput.vue';
 import {StatusBadge} from '@/Components/Badges'
+
+const instance = getCurrentInstance()
 
 const searchTerm = ref(null);
 const slots = useSlots()
@@ -224,7 +226,14 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 })
-
+const insertData = (e) => {
+  chooseValue(e);
+  instance.update();
+  // const $forceUpdate = () => queueJob(instance.update)
+}
+defineExpose({
+  insertData,
+})
 </script>
 
 <style scoped>

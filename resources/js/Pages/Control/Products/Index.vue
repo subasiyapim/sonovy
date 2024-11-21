@@ -179,7 +179,7 @@
           <div class="flex flex-col items-start paragraph-xs c-sub-600">
             <p>
 
-              {{ scope.row.published_countries?.length ?? 0 }} Bölge
+              {{ scope.row.selected_count ?? 0 }} Bölge
             </p>
             <p>
               {{ scope.row.download_platforms?.length }} Mağaza

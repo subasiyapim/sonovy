@@ -54,7 +54,7 @@
         <div class="w-[190px] label-sm c-strong-950">Yayınlanacak Ülkeler</div>
         <div class="flex flex-col w-full gap-3">
 
-          <div class="w-full" v-for="(value,key) in usePage().props.countriesGroupedByRegion">
+          <div class="w-full" v-for="(value,key) in usePage().props.countriesGroupedByRegion.countries">
             <AppAccordion :title="key" description="Tüm ülkeler seçildi">
 
               <div class="flex items-center ">
@@ -105,7 +105,7 @@
         <AppTableColumn label="İndirme Fiyatı">
           <template #default="scope">
             <FormElement :error="form.errors[`platforms.${scope.index}.price`]" direction="vertical"
-                         :disabled="!scope.row.isSelected" v-model="scope.row.price" placeholder="0.00"></FormElement>
+                         :disabled="true" v-model="scope.row.price" placeholder="0.00"></FormElement>
 
           </template>
         </AppTableColumn>
@@ -117,7 +117,7 @@
                          direction="vertical">
 
               <VueDatePicker :disabled="!scope.row.isSelected" v-model="scope.row.pre_order_date" class="radius-8"
-                             auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+                             auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz (Opsiyonel)">
                 <template #input-icon>
                   <div class="p-3">
                     <CalendarIcon color="var(--sub-600)"/>
@@ -232,7 +232,9 @@ const onCountryCheck = (e) => {
 }
 
 const chooseAll = (key) => {
-  usePage().props.countriesGroupedByRegion[key].forEach((e) => {
+    console.log(usePage().props.countriesGroupedByRegion);
+
+  usePage().props.countriesGroupedByRegion[key].countries.forEach((e) => {
     const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
     if (findedIndex < 0) {
       form.value.published_countries.push(e.value);
@@ -240,7 +242,7 @@ const chooseAll = (key) => {
   });
 }
 const unChooseAll = (key) => {
-  usePage().props.countriesGroupedByRegion[key].forEach((e) => {
+  usePage().props.countriesGroupedByRegion[key].countries.forEach((e) => {
     const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
     if (findedIndex >= 0) {
       form.value.published_countries.splice(findedIndex, 1);
@@ -279,17 +281,20 @@ onBeforeMount(() => {
   form.value.platforms = usePage().props.platforms;
   if (form.value.publishing_country_type) {
     form.value.published_countries = [];
-    Object.keys(usePage().props.countriesGroupedByRegion).forEach((key) => {
-      usePage().props.countriesGroupedByRegion[key].forEach((e) => {
-        console.log("EEEE",e);
-    if(e.selected){
-         const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
-        if (findedIndex < 0) {
-          form.value.published_countries.push(e.value);
-        }
-    }
+    Object.keys(usePage().props.countriesGroupedByRegion.countries).forEach((key) => {
+        console.log("KEYY",key);
+    console.log("asdasd",usePage().props.countriesGroupedByRegion.countries[key]);
 
-      });
+    //   usePage().props.countriesGroupedByRegion.countries[key].forEach((e) => {
+    //     console.log("EEEE",e);
+    //         if(e.selected){
+    //             const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
+    //             if (findedIndex < 0) {
+    //             form.value.published_countries.push(e.value);
+    //             }
+    //         }
+
+    //   });
     })
   }
   if (usePage().props.product.download_platforms) {
