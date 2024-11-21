@@ -38,9 +38,9 @@
 
             <select id="options" name="options"
                     class="block w-full pl-3 pr-10  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
-                    <option>Haftalık</option>
-                    <option>Aylık</option>
-                    <option>Yıllık</option>
+              <option>Haftalık</option>
+              <option>Aylık</option>
+              <option>Yıllık</option>
             </select>
           </div>
         </template>
@@ -90,7 +90,8 @@
       </AppCard>
     </div>
 
-    <AppTable :showAddButton="false" :renderRowNoteText="renderRowNoteText" :showNoteIf="showNoteIfFn" v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
+    <AppTable :showAddButton="false" :renderRowNoteText="renderRowNoteText" :showNoteIf="showNoteIfFn"
+              v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
       <AppTableColumn label="Tür" sortable="type">
         <template #default="scope">
           <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
@@ -241,14 +242,14 @@ const props = defineProps({
   statistics: Object,
 })
 const showNoteIfFn = (row) => {
-    if(row.note){
-        return true;
-    }else {
-        return false;
-    }
+  if (row.note) {
+    return true;
+  } else {
+    return false;
+  }
 }
 const renderRowNoteText = (row) => {
-    return row.note
+  return row.note
 }
 const data = ref([
   {
@@ -353,7 +354,7 @@ const options = ref({
     },
   },
   xaxis: {
-    categories: usePage().props.statistics?.products.map((e) =>  e.label),
+    categories: usePage().props.statistics?.products.data.map((e) => e.label),
     axisBorder: {
       show: false,
     },
@@ -366,7 +367,7 @@ const options = ref({
 const series = ref([
   {
     name: "Yayın Sayısı",
-    data: usePage().props.statistics?.products.map((e) =>  e.value)
+    data: usePage().props.statistics?.products.data.map((e) => e.value)
   },
 ]);
 
@@ -392,7 +393,7 @@ const barOptions = ref({
     enabled: false, // Hide values on bars
   },
   xaxis: {
-    categories: usePage().props.statistics?.labels.map((e) =>  e.label), // Labels for the y-axis
+    categories: usePage().props.statistics?.labels.map((e) => e.label), // Labels for the y-axis
     labels: {
       enabled: false,  // Disable category labels under the bars
     },
@@ -435,7 +436,7 @@ const barOptions = ref({
 const barSeries = ref([
   {
     name: "Yayın Sayısı",
-    data: usePage().props.statistics?.labels.map((e) =>  e.value)
+    data: usePage().props.statistics?.labels.map((e) => e.value)
   },
 ]);
 
