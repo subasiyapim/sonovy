@@ -162,6 +162,9 @@ class ProductController extends Controller
         $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
         $formats = enumToSelectInputFormat(AlbumTypeEnum::getTitles());
         $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
+        $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');
+        $users = getDataFromInputFormat(\App\Models\User::all(), 'id', 'name');
+
         $languages = getDataFromInputFormat(Country::whereNotNull('language')->get(), 'id', 'language', 'emoji');
         $progress = ProductServices::progress($product);
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
@@ -209,6 +212,7 @@ class ProductController extends Controller
             case 1:
                 $props['genres'] = $genres;
                 $props['labels'] = $labels;
+                $props['artists'] = $artists;
                 $props['languages'] = $languages;
                 $props['formats'] = $formats;
                 $props['main_prices'] = $main_prices;
@@ -216,11 +220,14 @@ class ProductController extends Controller
                 $props['artistBranches'] = $artistBranches;
                 $props['video_types'] = $video_types;
                 $props['platforms'] = $platforms;
+
                 break;
             case 2:
                 $props['artistBranches'] = $artistBranches;
                 $props['genres'] = $genres;
                 $props['countries'] = $countries;
+                $props['artists'] = $artists;
+                $props['users'] = $users;
                 break;
             case 3:
                 $props['platforms'] = $platforms;
