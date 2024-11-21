@@ -12,10 +12,16 @@
                 <div class="w-6 h-6 rounded-full bg-blue-300 flex items-center justify-center">
 
                 </div>
-                <p class="label-sm c-strong-950">
-                    {{participant.user?.name}}
-                </p>
+                <div class="flex flex-col">
+                    <p class="label-sm c-strong-950">
+                        {{participant.user?.name}}
+                    </p>
+                    <p class="paragraph-sm c-neutral-500 flex-1">
+                        {{participant.tasks}}
+                    </p>
+                </div>
             </div>
+
             <p class="paragraph-sm c-neutral-500 flex-1">
                 {{participant.user?.name}}
             </p>

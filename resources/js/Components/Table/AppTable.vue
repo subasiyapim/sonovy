@@ -61,7 +61,7 @@
     </thead>
     <tbody>
     <template v-for="(row, rowIndex) in data" :key="rowIndex">
-         <tr class="tableRow" :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf(row) ? '' : 'hasBorder') ">
+         <tr class="tableRow" :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf != null && showNoteIf(row) ? '' : 'hasBorder') ">
             <td v-if="hasSelect" class="tableCell">
 
                 <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''"
@@ -71,7 +71,7 @@
                 <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
             </td>
         </tr>
-        <tr class="hasBorder" v-if="showNoteIf(row)">
+        <tr class="hasBorder" v-if="showNoteIf != null && showNoteIf(row)">
             <td :colspan="columns.length+1">
                 <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
                     <WarningIcon color="var(--error-500)" />
