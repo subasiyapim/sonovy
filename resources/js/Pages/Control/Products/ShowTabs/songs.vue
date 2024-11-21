@@ -5,7 +5,7 @@ import {IconButton} from '@/Components/Buttons';
 import {SongParticipantModal, SongDetailModal, SongAcrResponseModal,SongDialog} from '@/Components/Dialog';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import { usePage} from '@inertiajs/vue3';
-
+import {Howl} from "howler";
 import {
   AudioIcon,
   RingtoneIcon,
@@ -53,6 +53,33 @@ const onComplete = (e) => {
     //     props.product.songs[findedIndex] = e;
     // }
 }
+
+const currentSound = ref(null);
+const currentSong = ref(null);
+const playSound = (song) => {
+    if (currentSound.value) {
+        currentSound.value.pause();
+        currentSound.value = null;
+    }
+    currentSong.value = song;
+
+    currentSound.value = new Howl({
+        src: ['/storage/' + song.path],
+        html5: true,
+        onload: (e) => {
+            currentSound.value.play();
+        }
+    });
+};
+
+const pauseMusic = (song) => {
+    if (currentSound.value && currentSound.value.playing()) {
+        currentSound.value.pause();
+
+    }
+         currentSound.value = null;
+          currentSong.value = null;
+};
 </script>
 <template>
   <AppTable :hasSelect="true" v-model="product.songs" :isClient="true" :hasSearch="false" :showAddButton="false">
@@ -99,12 +126,20 @@ const onComplete = (e) => {
     </AppTableColumn>
     <AppTableColumn label="Süre">
       <template #default="scope">
-        <div class="flex items-center gap-2">
+        <div v-if="currentSong !== scope.row"  @click="playSound(scope.row)" class="cursor-pointer flex items-center gap-2">
           <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
             <PlayCircleFillIcon  color="var(--dark-green-500)"/>
           </div>
           <p class="label-sm c-strong-950">
             {{ scope.row.duration ?? '2.35' }}
+          </p>
+        </div>
+         <div v-else  @click="pauseMusic(scope.row)" class="cursor-pointer flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+            <PlayCircleFillIcon  color="var(--dark-green-500)"/>
+          </div>
+          <p class="label-sm c-strong-950">
+            Durdur
           </p>
         </div>
       </template>
