@@ -75,7 +75,7 @@ class SongController extends Controller
             foreach ($musicians as $musician) {
                 DB::table('song_musician')->insert([
                     'song_id' => $song->id,
-                    'musician_id' => $musician['id'],
+                    'name' => $musician['name'],
                     'branch_id' => $musician['role']
                 ]);
             }

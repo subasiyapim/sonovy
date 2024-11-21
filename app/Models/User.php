@@ -376,13 +376,6 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->belongsTo(ArtistBranch::class, 'branch_id', 'id');
     }
 
-    public function musicians(): BelongsToMany
-    {
-        return $this->belongsToMany(Song::class, 'song_musician', 'musician_id', 'song_id')
-            ->withPivot('branch_id')
-            ->with('branch');
-    }
-
     public function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('d-m-Y H:i');
