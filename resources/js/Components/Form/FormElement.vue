@@ -22,7 +22,7 @@
         <AppUploadInput v-else-if="type=='upload'" :config="config" v-model="element" :placeholder="placeholder" :disabled="disabled"></AppUploadInput>
         <AppSliderInput v-else-if="type=='slider'" :config="config" :type="type" v-model="element" :placeholder="placeholder" :disabled="disabled"></AppSliderInput>
 
-        <AppSelectInput v-else-if="type=='select'" :config="config" :type="type" v-model="element" :placeholder="placeholder" :disabled="disabled">
+        <AppSelectInput ref="appSelect" v-else-if="type=='select'" :config="config" :type="type" v-model="element" :placeholder="placeholder" :disabled="disabled">
             <template v-if="hasSlot('first_child')" #first_child>
                     <slot  name="first_child" />
             </template>
@@ -87,6 +87,7 @@ import AppSliderInput from './AppSliderInput.vue';
 import {useSlots} from 'vue';
 
 const appMultiSelect  =ref();
+const appSelect  =ref();
 const props = defineProps({
   direction: {
     default: 'horizontal', //vertical
@@ -123,7 +124,7 @@ const change = (e) => {
     emits('change',e)
 }
 
-defineExpose({appMultiSelect})
+defineExpose({appMultiSelect,appSelect})
 </script>
 
 <style lang="scss" scoped>

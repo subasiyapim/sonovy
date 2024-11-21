@@ -105,7 +105,7 @@
         <AppTableColumn label="İndirme Fiyatı">
           <template #default="scope">
             <FormElement :error="form.errors[`platforms.${scope.index}.price`]" direction="vertical"
-                         :disabled="!scope.row.isSelected" v-model="scope.row.price" placeholder="0.00"></FormElement>
+                         :disabled="true" v-model="scope.row.price" placeholder="0.00"></FormElement>
 
           </template>
         </AppTableColumn>
@@ -117,7 +117,7 @@
                          direction="vertical">
 
               <VueDatePicker :disabled="!scope.row.isSelected" v-model="scope.row.pre_order_date" class="radius-8"
-                             auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+                             auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz (Opsiyonel)">
                 <template #input-icon>
                   <div class="p-3">
                     <CalendarIcon color="var(--sub-600)"/>
@@ -232,6 +232,8 @@ const onCountryCheck = (e) => {
 }
 
 const chooseAll = (key) => {
+    console.log(usePage().props.countriesGroupedByRegion);
+
   usePage().props.countriesGroupedByRegion[key].countries.forEach((e) => {
     const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
     if (findedIndex < 0) {
