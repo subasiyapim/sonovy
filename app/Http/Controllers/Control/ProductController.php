@@ -164,7 +164,6 @@ class ProductController extends Controller
         $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
         $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');
         $users = getDataFromInputFormat(\App\Models\User::all(), 'id', 'name');
-
         $languages = getDataFromInputFormat(Country::whereNotNull('language')->get(), 'id', 'language', 'emoji');
         $progress = ProductServices::progress($product);
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');

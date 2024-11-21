@@ -27,14 +27,14 @@ class ArtistUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'about' => ['nullable', 'string', 'max:500'],
-            'country_id' => ['required', Rule::exists(Country::class, 'id')],
+            'country_id' => ['nullable', Rule::exists(Country::class, 'id')],
             'ipi_code' => ['nullable'],
             'isni_code' => ['nullable'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg'],
             'website' => ['nullable'],
             'phone' => ['nullable', 'string'],
             'platforms' => ['nullable', 'array'],
-            'artist_branches' => ['required', 'array'],
+            'artist_branches' => ['nullable', 'array'],
         ];
     }
 
