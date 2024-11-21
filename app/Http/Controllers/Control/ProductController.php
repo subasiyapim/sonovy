@@ -159,7 +159,9 @@ class ProductController extends Controller
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
         $product_publish_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());
         $main_prices = enumToSelectInputFormat(MainPriceEnum::getTitles());
-        $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
+        $countriesGroupedByRegion = CountryServices::getSelectedCountries(
+            $product->id,
+            $product->publishing_country_type);
         $total_song_duration = totalDuration($product->songs);
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
         $video_types = enumToSelectInputFormat(VideoTypeEnum::getTitles());

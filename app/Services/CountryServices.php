@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Enums\ProductPublishedCountryTypeEnum;
 use App\Http\Resources\Panel\CountryResource;
 use App\Models\Country;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -101,5 +103,35 @@ class CountryServices
             ];
         }
         return $result;
+    }
+
+    public static function getSelectedCountries($productId, $countryType): array
+    {
+        $groupedCountries = self::getCountriesGroupedByRegion();
+        $selectedCountryIds = self::extractSelectedCountryIds($productId, $countryType);
+
+        return self::markCountriesAsSelected($groupedCountries, $selectedCountryIds);
+    }
+
+    private static function extractSelectedCountryIds($productId, $countryType): array
+    {
+        return $countryType === ProductPublishedCountryTypeEnum::ALL->value
+            ? self::get()
+            : DB::table('product_published_country')
+                ->where('product_id', $productId)
+                ->get()
+                ->pluck('country_id')
+                ->toArray();
+    }
+
+    private static function markCountriesAsSelected(&$groupedCountries, $selectedCountryIds): array
+    {
+        foreach ($groupedCountries as $region => &$countries) {
+            foreach ($countries as &$country) {
+                $country['selected'] = in_array($country['value'], $selectedCountryIds);
+            }
+        }
+
+        return $groupedCountries;
     }
 }

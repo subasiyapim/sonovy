@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class ProductShowResource extends JsonResource
 {
-    protected $tab;
+    protected mixed $tab;
 
     public function __construct($resource, $tab = 'metadata')
     {
@@ -49,7 +49,7 @@ class ProductShowResource extends JsonResource
             'album_name' => $this->album_name,
             'image' => $this->image,
             'created_at' => Carbon::parse($this->created_at)->format('d-m-Y H:i'),
-            'song_count' => $this->songs->count() . ' parça',
+            'song_count' => $this->songs->count().' parça',
             'total_duration' => totalDuration($this->songs, true),
             'main_artists' => $this->mainArtists,
             'featured_platforms' => $this->downloadPlatforms(),
@@ -97,17 +97,8 @@ class ProductShowResource extends JsonResource
 
     private function regions(): array
     {
-        $groupedCountries = CountryServices::getCountriesGroupedByRegion();
+        $groupedCountries = CountryServices::getSelectedCountries($this->id, $this->publishing_country_type);
         $country_type = $this->publishing_country_type;
-
-        foreach ($groupedCountries as $region => $countries) {
-            foreach ($countries as $key => $country) {
-                $groupedCountries[$region][$key]['selected'] = in_array(
-                    $country['value'],
-                    $this->selectedCountryIds($country_type)
-                );
-            }
-        }
 
         return [
             'publishing_country_type' => ProductPublishedCountryTypeEnum::from($country_type->value ?? 1)->title(),
@@ -120,15 +111,17 @@ class ProductShowResource extends JsonResource
         return $this->songs->map(function ($song) {
             return [
                 'id' => $song->id,
-                'type' => SongTypeEnum::from($song->type)->title(),
+                'type_text' => SongTypeEnum::from($song->type)->title(),
+                'type' => $song->type,
                 'status' => $song->status,
                 'name' => $song->name,
                 'isrc' => $song->isrc,
                 'duration' => $song->duration,
                 'artists' => $song->artists,
-                'participants' => $song->participants->map(function ($participant) {
-                    return $participant->load('user');
-                }),
+                'participants' => $song->participants
+                    ->map(function ($participant) {
+                        return $participant->load('user');
+                    }),
                 'analysis' => $song->acr_response,
                 'details' => $song->details,
                 'activities' => $song->activities,
@@ -220,15 +213,6 @@ class ProductShowResource extends JsonResource
     private function type()
     {
         return ProductTypeEnum::from($this->type->value)->title();
-    }
-
-    private function selectedCountryIds($country_type): array
-    {
-        return $country_type === ProductPublishedCountryTypeEnum::ALL->value
-            ? Country::all()->pluck('id')->toArray()
-            : DB::table('product_published_country')
-            ->where('product_id', $this->id)
-            ->get()->pluck('country_id')->toArray();
     }
 
     private function getHistoriesFromPlatformId($id): array
