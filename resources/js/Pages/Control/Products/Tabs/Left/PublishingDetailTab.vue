@@ -332,7 +332,11 @@ onBeforeMount(() => {
       platformTable.value?.selectRows(tempPlatformsTofill);
     })
   }
-
+    if(form.value.publishing_country_type == 1){
+            Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach(key => {
+               chooseAll(key)
+            });
+    }
 });
 
 
