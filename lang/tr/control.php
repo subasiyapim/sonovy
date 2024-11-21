@@ -1613,7 +1613,7 @@ return [
             "participants_placeholder" => "Katılımcı Seç",
             "roles" => "Görevler",
             "roles_placeholder" => "Rol Seç",
-            "share" => "Teklif Payı",
+            "share" => "Telif Payı",
         ],
         'dialog' => [
             'header_1' => "TEMEL BİLGİLER",

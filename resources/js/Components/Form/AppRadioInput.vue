@@ -1,11 +1,11 @@
 <template>
 
 
-    <div class="w-full flex  items-start justify-center radius-8 c-white-500 p-3  gap-3 appRadioInput" :class="config?.optionDirection == 'vertical' ? 'flex-col' : 'flex-row'" @click="isChecked = !isChecked">
-        <label v-for="option in config?.options" @click="element = option.value" class="cursor-pointer paragraph-sm c-strong-950 flex items-center gap-3" >
+    <div class="w-full flex  items-start justify-center radius-8 c-white-500 p-3  gap-3 appRadioInput" :class="config?.optionDirection == 'vertical' ? 'flex-col' : 'flex-row'" >
+        <div v-for="option in config?.options" @click="onClick(option)" class="cursor-pointer paragraph-sm c-strong-950 flex items-center gap-3" >
             <input type="radio" :checked="element == option.value" class="focus:ring-0">
             {{option.label}}
-        </label>
+        </div>
     </div>
 
 
@@ -30,7 +30,12 @@
         get:() => props.modelValue,
         set:(value) => emits('update:modelValue',value)
     })
+    const onClick = (option) => {
+        element.value = option.value
+        emits('change',option);
 
+
+    }
 
 </script>
 
