@@ -11,12 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::dropIfExists('song_lyrics_writer');
-
-        Schema::create('song_lyrics_writer', function (Blueprint $table) {
-            $table->foreignIdFor(\App\Models\Song::class, 'song_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
-        });
+        Schema::dropIfExists('song_musician');
     }
-
 
 };

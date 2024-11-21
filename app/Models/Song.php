@@ -209,9 +209,14 @@ class Song extends Model implements HasMedia
         return $this->hasOne(MusixMatach::class);
     }
 
-    public function lyricsWriters(): BelongsToMany
+    public function writers(): HasMany
     {
-        return $this->belongsToMany(User::class, 'song_lyrics_writer', 'song_id', 'name');
+        return $this->hasMany(SongWriter::class)->with('role');
+    }
+
+    public function composers(): HasMany
+    {
+        return $this->hasMany(SongComposer::class);
     }
 
     protected function serializeDate(DateTimeInterface $date): string

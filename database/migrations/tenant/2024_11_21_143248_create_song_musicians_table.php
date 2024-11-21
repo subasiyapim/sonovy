@@ -10,12 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::dropIfExists('song_musician');
-
-        Schema::create('song_musician', function (Blueprint $table) {
-            $table->foreignIdFor(\App\Models\Song::class, 'song_id')->constrained()->cascadeOnDelete();
+        Schema::create('song_musicians', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(\App\Models\Song::class, 'song_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->foreignIdFor(\App\Models\ArtistBranch::class, 'role_id')->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\ArtistBranch::class, 'role_id')->constrained()->onDelete('cascade');
         });
     }
 
@@ -24,6 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('song_musician');
+        Schema::dropIfExists('song_musicians');
     }
 };

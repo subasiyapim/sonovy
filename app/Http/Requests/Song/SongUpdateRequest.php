@@ -37,13 +37,18 @@ class SongUpdateRequest extends FormRequest
                 'min:1',
             ],
             'lyrics_writers.*' => ['required_if:is_instrumental,false', 'required_if:is_instrumental,0'],
+            'lyrics_writers.*.name' => ['required'],
+
             'lyrics' => ['nullable'],
             'preview_start' => ['nullable'],
 
             'musicians' => ['nullable', 'array'],
             'musicians.*.name' => ['required'],
-            'musicians.*.role' => ['required'],
+            'musicians.*.role_id' => ['required', 'exists:artist_branches,id'],
 
+            'composers' => ['nullable', 'array'],
+            'composers.*.name' => ['required'],
+            
             'participants' => ['nullable', 'array',],
             'participants.*.id' => ['required', 'exists:users,id'],
             'participants.*.tasks' => ['required'],

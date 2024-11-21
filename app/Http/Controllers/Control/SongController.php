@@ -11,6 +11,9 @@ use App\Http\Resources\Song\SongShowResource;
 use App\Models\ArtistBranch;
 use App\Models\Participant;
 use App\Models\Product;
+use App\Models\SongComposer;
+use App\Models\SongMusician;
+use App\Models\SongWriter;
 use App\Services\MusicBrainzServices;
 use App\Services\MusixmatchService;
 use Exception;
@@ -59,8 +62,33 @@ class SongController extends Controller
     {
         $lyrics_writers = $request->input('lyrics_writers');
 
-        if (!empty($lyrics_writers) && is_array($lyrics_writers) && $lyrics_writers[0] !== null && $lyrics_writers[0] !== array()) {
-            $song->lyricsWriters()->sync($lyrics_writers);
+        if (!empty($lyrics_writers)) {
+
+            SongWriter::where('song_id')->get()->each()->delete();
+
+            foreach ($lyrics_writers as $writer) {
+                SongMusician::create([
+                    'song_id' => $song->id,
+                    'name' => $writer['name'],
+                ]);
+            }
+        }
+    }
+
+    private static function updateComposers(SongUpdateRequest $request, Song $song): void
+    {
+        $composers = $request->input('composers');
+
+        if (!empty($composers)) {
+
+            SongComposer::where('song_id')->get()->each()->delete();
+
+            foreach ($composers as $composer) {
+                SongComposer::create([
+                    'song_id' => $song->id,
+                    'name' => $composer['name'],
+                ]);
+            }
         }
     }
 
@@ -70,13 +98,14 @@ class SongController extends Controller
         $musicians = $request->input('musicians');
 
         if (!empty($musicians)) {
-            DB::table('song_musician')->where('song_id', $song->id)->delete();
+
+            SongMusician::where('song_id')->get()->each()->delete();
 
             foreach ($musicians as $musician) {
-                DB::table('song_musician')->insert([
+                SongMusician::create([
                     'song_id' => $song->id,
                     'name' => $musician['name'],
-                    'branch_id' => $musician['role']
+                    'role_id' => $musician['role_id']
                 ]);
             }
         }
@@ -351,7 +380,8 @@ class SongController extends Controller
             'updateParticipants',
             'updateMusicians',
             'updateLyricsWriters',
-            'updateArtists'
+            'updateArtists',
+            'updateComposers'
         ];
 
         foreach ($updateFunctions as $function) {
