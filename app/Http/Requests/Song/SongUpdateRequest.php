@@ -41,7 +41,7 @@ class SongUpdateRequest extends FormRequest
             'preview_start' => ['nullable'],
 
             'musicians' => ['nullable', 'array'],
-            'musicians.*.id' => ['required', 'exists:users,id'],
+            'musicians.*.name' => ['required'],
             'musicians.*.role' => ['required'],
 
             'participants' => ['nullable', 'array',],
