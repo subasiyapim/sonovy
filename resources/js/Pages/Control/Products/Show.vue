@@ -25,10 +25,10 @@
        <div class="flex items-center gap-2 mb-2">
          <h1 class="label-xl c-strong-950" v-text="product.album_name"/>
          <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2 w-min">
-            <component :is="statusData.find((e) => e.value == product.status)?.icon"
-                       :color="statusData.find((e) => e.value == product.status)?.color"></component>
+            <component :is="statusData.find((e) => e.value == usePage().props.product.status)?.icon"
+                       :color="statusData.find((e) => e.value == usePage().props.product.status)?.color"></component>
             <p class="subheading-xs c-sub-600">
-              {{ statusData.find((e) => e.value == product.status)?.label }}
+              {{ statusData.find((e) => e.value == usePage().props.product.status)?.label }}
             </p>
           </div>
        </div>
@@ -47,9 +47,9 @@
           <p class="label-sm c-sub-600 me-1">{{ artist.name }}</p>
         </div>
 
-        <div class="flex items-center gap-2 w-96" :class="product.status == 4 ? 'mt-5' :'mt-auto' ">
+        <div class="flex items-center gap-2 w-96" :class="usePage().props.product.status == 4 ? 'mt-5' :'mt-auto' ">
 
-          <AppSelectInput  class="bg-white" v-model="product.status"
+          <AppSelectInput  class="bg-white" v-model="productStatus"
                           :config="productStatusConfig">
 
           </AppSelectInput>
@@ -58,8 +58,8 @@
             </RegularButton>
 
         </div>
-        <div v-if="product.status == 4" class="w-96  mt-2">
-            <FormElement v-model="product.note" direction="vertical" placeholder="Red Sebebi" :error="hasError"></FormElement>
+        <div v-if="productStatus == 4" class="w-96  mt-2">
+            <FormElement v-model="usePage().props.product.note" direction="vertical" placeholder="Red Sebebi" :error="hasError"></FormElement>
         </div>
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
@@ -96,10 +96,10 @@
 
     </div>
     <div class="mt-32 "></div>
-    <div v-if="product.status == 4" class="my-3 px-8">
+    <div v-if="usePage().props.product.status == 4" class="my-3 px-8">
          <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
             <WarningIcon color="var(--error-500)" />
-            <p class="paragraph-xs c-strong-950"> {{product.note}}</p>
+            <p class="paragraph-xs c-strong-950"> {{usePage().props.product.note}}</p>
 
         </div>
     </div>
@@ -189,7 +189,7 @@ const remove = () => {
 
 }
 
-
+const productStatus = ref(props.product.status);
 const productStatusConfig = computed(() => {
   return {
     data: [
@@ -265,11 +265,9 @@ const changeStatus = async () => {
         return;
     }
     changingStatus.value = true;
-    if(props.product.status == 4){
-        console.log(props.product.note);
-
+    if(productStatus.value == 4){
         if(props.product.note == null || props.product.note == ''){
-            console.log("GELDİİİ");
+
 
             toast.error("Ret sebebi için not girmeniz gerekmektedir");
             hasError.value = 'Not Giriniz'
@@ -279,12 +277,14 @@ const changeStatus = async () => {
 
     }
   const response = await crudStore.post(route('control.catalog.products.changeStatus', props.product.id), {
-    status: props.product.status,
+    status: productStatus.value,
     note:props.product.note,
   });
   if (response.success) {
-      changingStatus.value = false;
-    toast.success("Durum Başarıyla Değiştirildi");
+        props.product.status = productStatus.value;
+
+        changingStatus.value = false;
+        toast.success("Durum Başarıyla Değiştirildi");
 
   }
 
