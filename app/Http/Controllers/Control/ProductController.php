@@ -190,11 +190,12 @@ class ProductController extends Controller
             'songs.artists',
             'songs.mainArtists',
             'songs.featuringArtists',
-            'songs.writers',
             'songs.composers',
             'songs.musicians',
+            'songs.writers',
             'songs.participants.user',
-            'media'
+            'media',
+
         );
 
         $props = [

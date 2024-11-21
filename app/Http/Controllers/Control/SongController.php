@@ -67,7 +67,7 @@ class SongController extends Controller
             SongWriter::where('song_id')->get()->each(fn($writer) => $writer->delete());
 
             foreach ($lyrics_writers as $writer) {
-                SongMusician::create([
+                SongWriter::create([
                     'song_id' => $song->id,
                     'name' => $writer['name'],
                 ]);
@@ -368,7 +368,7 @@ class SongController extends Controller
             'artists',
             'mainArtists',
             'featuringArtists',
-            'musicians.branch',
+            'musicians',
             'participants.user',
             'writers',
             'composers',

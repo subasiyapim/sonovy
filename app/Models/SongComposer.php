@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class SongComposer extends Model
 {
     protected $table = 'song_composers';
-
+    public $timestamps = false;
     protected $fillable = [
         'song_id',
         'name',

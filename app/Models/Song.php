@@ -205,7 +205,7 @@ class Song extends Model implements HasMedia
 
     public function writers(): HasMany
     {
-        return $this->hasMany(SongWriter::class)->with('role');
+        return $this->hasMany(SongWriter::class);
     }
 
     public function composers(): HasMany

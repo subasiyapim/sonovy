@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class SongWriter extends Model
 {
     protected $table = 'song_writers';
-
+    public $timestamps = false;
     protected $fillable = [
         'song_id',
         'name',
     ];
+    
 
     public function songs(): HasMany
     {
