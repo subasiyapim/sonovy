@@ -126,20 +126,21 @@ class CountryServices
 
     private static function markCountriesAsSelected(&$groupedCountries, $selectedCountryIds): array
     {
-        $selectedAllCount = 0;
-
+        $selectedAllCountryCount = 0;
         foreach ($groupedCountries as $region => &$countries) {
             $selectedCount = 0;
             foreach ($countries as &$country) {
                 $country['selected'] = in_array($country['value'], $selectedCountryIds);
                 if ($country['selected']) {
                     $selectedCount++;
-                    $selectedAllCount++;
+                    $selectedAllCountryCount++;
                 }
             }
             $groupedCountries[$region]['selected_count'] = $selectedCount;
         }
-        $groupedCountries['selected_all_count'] = $selectedAllCount;
-        return $groupedCountries;
+        return [
+            'selected_country_count' => $selectedAllCountryCount,
+            'countries' => $groupedCountries
+        ];
     }
 }
