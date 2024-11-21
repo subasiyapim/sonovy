@@ -4,16 +4,16 @@
       <AppCard class="flex-1">
         <template #header>
           <p class="font-normal leading-3 text-sm">Toplam Yayın Sayısı</p>
-          <span class="font-semibold leading-8 text-2xl">{{ statistics.product_count }} Yayın</span>
+          <span class="font-semibold leading-8 text-2xl">{{ statistics.product_count ?? 0 }} Yayın</span>
         </template>
         <template #tool>
           <div class="w-28 max-w-xs mx-auto">
 
             <select id="options" name="options"
                     class="block w-full pl-3 pr-10  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
-              <option>7. Sayfa</option>
-              <option>8. Sayfa</option>
-              <option>9. Sayfa</option>
+              <option>Haftalık</option>
+              <option>Aylık</option>
+              <option>Yıllık</option>
             </select>
           </div>
         </template>
@@ -38,9 +38,9 @@
 
             <select id="options" name="options"
                     class="block w-full pl-3 pr-10  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
-              <option>7. Sayfa</option>
-              <option>8. Sayfa</option>
-              <option>9. Sayfa</option>
+                    <option>Haftalık</option>
+                    <option>Aylık</option>
+                    <option>Yıllık</option>
             </select>
           </div>
         </template>
@@ -75,7 +75,7 @@
         <template #body>
           <hr class="my-3">
           <div class="flex flex-col items-start">
-            <p class="label-medium c-strong-950 !font-semibold">{{ statistics.artist_count }}</p>
+            <p class="label-medium c-strong-950 !font-semibold">{{ statistics.artist_count ?? 0 }}</p>
             <span class="paragraph-xs c-sub-600 mb-4">Toplam Sanatçılar</span>
             <div class="flex items-center gap-2">
               <div class="flex -space-x-3 rtl:space-x-reverse">
@@ -89,6 +89,7 @@
         </template>
       </AppCard>
     </div>
+
     <AppTable :showAddButton="false" :renderRowNoteText="renderRowNoteText" :showNoteIf="showNoteIfFn" v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
       <AppTableColumn label="Tür" sortable="type">
         <template #default="scope">
@@ -352,7 +353,7 @@ const options = ref({
     },
   },
   xaxis: {
-    categories: ['O', 'Ş', 'M', 'N', 'M', 'H'],
+    categories: usePage().props.statistics?.products.map((e) =>  e.label),
     axisBorder: {
       show: false,
     },
@@ -365,7 +366,7 @@ const options = ref({
 const series = ref([
   {
     name: "Yayın Sayısı",
-    data: [44, 55, 41, 17, 15],
+    data: usePage().props.statistics?.products.map((e) =>  e.value)
   },
 ]);
 
@@ -391,7 +392,7 @@ const barOptions = ref({
     enabled: false, // Hide values on bars
   },
   xaxis: {
-    categories: ['ABC', 'XYZ', 'TYZ'], // Labels for the y-axis
+    categories: usePage().props.statistics?.labels.map((e) =>  e.label), // Labels for the y-axis
     labels: {
       enabled: false,  // Disable category labels under the bars
     },
@@ -434,7 +435,7 @@ const barOptions = ref({
 const barSeries = ref([
   {
     name: "Yayın Sayısı",
-    data: [30, 70, 50], // Data points for the bars
+    data: usePage().props.statistics?.labels.map((e) =>  e.value)
   },
 ]);
 
