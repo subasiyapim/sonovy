@@ -370,7 +370,9 @@ class SongController extends Controller
             'featuringArtists',
             'musicians.branch',
             'participants.user',
-            'lyricsWriters',
+            'writers',
+            'composers',
+            'musicians'
         ];
     }
 
