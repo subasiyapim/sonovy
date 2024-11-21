@@ -113,7 +113,7 @@
 
       <FormElement :required="!form.is_instrumental" v-for="(lyric_writer,i) in form.lyrics_writers"
                    :error="form.errors[`lyrics_writers.${i}`]" :disabled="form.is_instrumental" label-width="190px"
-                   v-model="form.lyrics_writers[i]" :label="__('control.song.fields.lyrics_writer')"
+                   v-model="form.lyrics_writers[i].name" :label="__('control.song.fields.lyrics_writer')"
                    :placeholder="__('control.song.fields.lyrics_writer_placeholder')"
                    >
         <template #description>
@@ -128,7 +128,7 @@
       <div class="flex">
         <div style="width:144px;"></div>
         <div class="text-start flex-1">
-          <button :disabled="form.is_instrumental" @click="form.lyrics_writers.push(null)"
+          <button :disabled="form.is_instrumental" @click="form.lyrics_writers.push({name:''})"
                   class="flex items-center gap-2">
             <AddIcon color="var(--blue-500)"/>
             <span class="c-blue-500 label-xs">Yeni Ekle</span>
@@ -138,7 +138,7 @@
 
       <FormElement :required="!form.is_instrumental" v-for="(_,i) in form.composers"
                    :error="form.errors[`composers.${i}`]" :disabled="form.is_instrumental" label-width="190px"
-                   v-model="form.composers[i]" :label="'Besteci'"
+                   v-model="form.composers[i].name" :label="'Besteci'"
                    :placeholder="'Besteci giriniz'"
                    >
         <template #description>
@@ -153,7 +153,7 @@
       <div class="flex">
         <div style="width:144px;"></div>
         <div class="text-start flex-1">
-          <button :disabled="form.is_instrumental" @click="form.composers.push(null)"
+          <button :disabled="form.is_instrumental" @click="form.composers.push({name:''})"
                   class="flex items-center gap-2">
             <AddIcon color="var(--blue-500)"/>
             <span class="c-blue-500 label-xs">Yeni Ekle</span>
@@ -189,8 +189,8 @@
 
             </div>
             <div class="flex-1">
-              <FormElement direction="vertical" :error="form.errors[`musicians.${musicanIndex}.role`]" type="custom">
-                <AppSelectInput v-model="musician.role" :config="roleConfig"
+              <FormElement direction="vertical" :error="form.errors[`musicians.${musicanIndex}.role_id`]" type="custom">
+                <AppSelectInput v-model="musician.role_id" :config="roleConfig"
                                 :placeholder="__('control.song.fields.roles_placeholder')"></AppSelectInput>
               </FormElement>
 
@@ -350,8 +350,8 @@ const form = useForm({
   sub_genre_id: props.song.sub_genre_id,
   is_instrumental: props.song.is_instrumental,
   isrc: props.song.isrc,
-  lyrics_writers: [null],
-  composers: props.song.composers ?? [null],
+  lyrics_writers: [{name:''}],
+  composers: props.song.composers ?? [{name:''}],
   lyrics: props.song.lyrics,
   musicians: [{}],
   participants: [{}],
@@ -519,9 +519,7 @@ const onSubmit = async (e) => {
 
         },
         onError: (e) => {
-          if (e.lyrics_writers) {
-            // console.log("EEE", e);
-          }
+
         }
       });
 
@@ -563,23 +561,29 @@ onBeforeMount(() => {
 
 
     form.musicians = (props.song.musicians ?? []).map((e) => {
-      return {name: e.name, role: e.pivot?.branch_id}
+      return {name: e.name, role_id: e.pivot?.branch_id}
     }) ?? [{}];
     form.participants = (props.song.participants ?? []).map((e) => {
       return {id: e.user_id, tasks: e.tasks, rate: e.rate}
     }) ?? [{}];
-    form.lyrics_writers = (props.song.lyrics_writers ?? []).map((e) => e.id) ?? [1];
+    // form.lyrics_writers = (props.song.lyrics_writers ?? [{name:''}]).map((e) => e.id) ?? [{name:''}];
+
+    console.log("COMPOSERS",props.song.composers);
 
 
     if (form.lyrics_writers.length == 0) {
-      form.lyrics_writers = [null];
+      form.lyrics_writers = [{name:''}];
     }
     if (form.participants.length == 0) {
       form.participants = [{}]
     }
-    if (form.musicians.length == 0) {
-      form.musicians = [{}]
+    if (form.composers.length == 0) {
+      form.composers = [{name:''}]
     }
+    if (form.musicians.length == 0) {
+      form.musicians = [{name:''}]
+    }
+    console.log("FORM ",form.lyric_writers);
 
   }
 });

@@ -90,17 +90,7 @@
 
 
             </IconButton>
-            <tippy :maxWidth="440" ref="myTippy" theme="light" :allowHtml="true" :sticky="true" trigger="click"
-                   :interactive="true" :appendTo="getBody">
-              <IconButton>
-                <TrashIcon color="var(--sub-600)"/>
-              </IconButton>
-              <template #content>
-                <ConfirmDeleteDialog @confirm="onDeleteSong(scope.row)" @cancel="onCancel"
-                                     title="Parçayı silmek istediğinze emin misin"
-                                     description="Yüklediğiniz parçalardan albümden silenecektir. Daha sonra tekrar yayınlanma öncesi albüme parça ekleyebilirsiniz."/>
-              </template>
-            </tippy>
+            <DeleteAction @onDeleteSong="onDeleteSong(scope.row)"></DeleteAction>
 
             <IconButton @click="openEditDialog(scope.row)">
               <EditIcon color="var(--sub-600)"/>
@@ -138,6 +128,7 @@ import {AddIcon} from '@/Components/Icons'
 import {TusUploadInput} from '@/Components/Form'
 import {SongLoadingCard} from '@/Components/Cards';
 import {StatusBadge} from '@/Components/Badges';
+import DeleteAction from './Components/DeleteAction.vue';
 import {SongDialog, ConfirmDeleteDialog} from '@/Components/Dialog';
 import {RegularButton, PrimaryButton, IconButton} from '@/Components/Buttons'
 import {
@@ -236,6 +227,7 @@ const onComplete = (e) => {
   choosenSong.value = JSON.parse(JSON.stringify(e));
   const findedIndex = form.value.songs.findIndex((el) => el.id == e.id);
   isSongDialogOn.value = false;
+    console.log("EEE",e);
 
   if (findedIndex >= 0)
     form.value.songs[findedIndex] = e;
@@ -252,9 +244,7 @@ const onCancel = () => {
 }
 const onDeleteSong = (row) => {
   deleteSong([row.id])
-    console.log("GELDİİİ");
 
-  onCancel();
 
 }
 const onErrorOccured = (e) => {
@@ -284,8 +274,14 @@ const favoriteSong = async (song) => {
   })
 
   console.log("SONG", response);
+
+
   form.value.songs.forEach(element => {
+    console.log("ELEMENT",element);
     if (song.id == element.id) {
+        if(!element.pivot){
+            element.pivot = {is_favorite:0};
+        }
       element.pivot.is_favorite = response.pivot.is_favorite;
     } else {
       if (element.pivot) {
