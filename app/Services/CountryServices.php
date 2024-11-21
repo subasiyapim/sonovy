@@ -94,14 +94,17 @@ class CountryServices
     public static function getCountriesGroupedByRegion(): array
     {
         $countries = self::get();
-        $result = [];
+        $result = ['data' => []];
+
         foreach ($countries as $country) {
-            $result[$country['region'] == "" ? 'Diğer' : $country['region']][] = [
+            $region = $country['region'] == "" ? 'Diğer' : $country['region'];
+            $result['data'][$region][] = [
                 'value' => $country['id'],
                 'label' => $country['name'],
-                'iconKey' => $country['emoji']
+                'iconKey' => $country['emoji'],
             ];
         }
+
         return $result;
     }
 
@@ -127,17 +130,21 @@ class CountryServices
     private static function markCountriesAsSelected(&$groupedCountries, $selectedCountryIds): array
     {
         $selectedAllCountryCount = 0;
-        foreach ($groupedCountries as $region => &$countries) {
-            $selectedCount = 0;
-            foreach ($countries as &$country) {
-                $country['selected'] = in_array($country['value'], $selectedCountryIds);
-                if ($country['selected']) {
-                    $selectedCount++;
-                    $selectedAllCountryCount++;
+
+        if (isset($groupedCountries['data']) && is_array($groupedCountries['data'])) {
+            foreach ($groupedCountries['data'] as $region => &$countries) {
+                $selectedCount = 0;
+                foreach ($countries as &$country) {
+                    $country['selected'] = in_array($country['value'], $selectedCountryIds);
+                    if ($country['selected']) {
+                        $selectedCount++;
+                        $selectedAllCountryCount++;
+                    }
                 }
+                $groupedCountries['counts'][$region]['selected_count'] = $selectedCount;
             }
-            $groupedCountries[$region]['selected_count'] = $selectedCount;
         }
+
         return [
             'selected_country_count' => $selectedAllCountryCount,
             'countries' => $groupedCountries
