@@ -64,7 +64,7 @@ class SongController extends Controller
 
         if (!empty($lyrics_writers)) {
 
-            SongWriter::where('song_id')->get()->each()->delete();
+            SongWriter::where('song_id')->get()->each(fn($writer) => $writer->delete());
 
             foreach ($lyrics_writers as $writer) {
                 SongMusician::create([
@@ -81,7 +81,7 @@ class SongController extends Controller
 
         if (!empty($composers)) {
 
-            SongComposer::where('song_id')->get()->each()->delete();
+            SongComposer::where('song_id')->get()->each(fn($composer) => $composer->delete());
 
             foreach ($composers as $composer) {
                 SongComposer::create([
@@ -99,7 +99,7 @@ class SongController extends Controller
 
         if (!empty($musicians)) {
 
-            SongMusician::where('song_id')->get()->each()->delete();
+            SongMusician::where('song_id')->get()->each(fn($musician) => $musician->delete());
 
             foreach ($musicians as $musician) {
                 SongMusician::create([
