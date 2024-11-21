@@ -563,7 +563,7 @@ class ProductController extends Controller
                 $product->downloadPlatforms()->attach(
                     $platform['id'],
                     [
-                        'price' => $platform['price'],
+                        'price' => isset($platform['price']),
                         'pre_order_date' => !empty($platform['pre_order_date']) ? $platform['pre_order_date'] : null,
                         'publish_date' => $platform['publish_date'],
                     ]
