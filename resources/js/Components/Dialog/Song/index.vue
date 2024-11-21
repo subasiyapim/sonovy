@@ -550,8 +550,10 @@ onMounted(() => {
     }) ?? [{}];
     console.log("lyric",props.song.participants);
 
-    form.lyrics_writers = props.song.writers;
-    form.composers = props.song.composers;
+    form.lyrics_writers = props.song.writers ?? [{name:''}];
+    form.composers = props.song.composers ?? [{name:''}];
+    console.log("PROPS SONG",props.song.composers);
+
     // console.log("COMPOSERS",props.song.composers);
 
 
