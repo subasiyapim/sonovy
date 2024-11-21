@@ -49,7 +49,7 @@ class ProductShowResource extends JsonResource
             'album_name' => $this->album_name,
             'image' => $this->image,
             'created_at' => Carbon::parse($this->created_at)->format('d-m-Y H:i'),
-            'song_count' => $this->songs->count().' parça',
+            'song_count' => $this->songs->count() . ' parça',
             'total_duration' => totalDuration($this->songs, true),
             'main_artists' => $this->mainArtists,
             'featured_platforms' => $this->downloadPlatforms(),
@@ -123,6 +123,7 @@ class ProductShowResource extends JsonResource
                 'genre_id' => $song->genre_id,
                 'sub_genre_id' => $song->sub_genre_id,
                 'artists' => $song->artists,
+                'is_instrumental' => $song->is_instrumental,
                 'participants' => $song->participants
                     ->map(function ($participant) {
                         return $participant->load('user');

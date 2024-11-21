@@ -72,7 +72,7 @@
                 <div v-for="country in value">
                   <label @click.stop class="flex items-center gap-2">
                     <input type="checkbox" @click="onCountryCheck(country)"
-                           :checked="form.published_countries?.find((el) => el ==country.value)"
+                           :checked="form.published_countries?.find((el) => el == country.value)"
                            class="focus:ring-0 rounded appCheckbox border border-soft-200"/>
 
                     {{ country.iconKey }}
@@ -281,10 +281,14 @@ onBeforeMount(() => {
     form.value.published_countries = [];
     Object.keys(usePage().props.countriesGroupedByRegion).forEach((key) => {
       usePage().props.countriesGroupedByRegion[key].forEach((e) => {
-        const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
+        console.log("EEEE",e);
+    if(e.selected){
+         const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
         if (findedIndex < 0) {
           form.value.published_countries.push(e.value);
         }
+    }
+
       });
     })
   }

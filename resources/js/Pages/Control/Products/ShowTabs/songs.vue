@@ -43,6 +43,16 @@ const openEditDialog = (song) => {
     isSongEditModalOn.value = true;
     choosenSong.value = song;
 }
+
+const onComplete = (e) => {
+    location.reload();
+    // console.log("EEE",e);
+
+    // const findedIndex = props.product.songs.findIndex((el) => el.id == e.id );
+    // if(findedIndex >= 0){
+    //     props.product.songs[findedIndex] = e;
+    // }
+}
 </script>
 <template>
   <AppTable :hasSelect="true" v-model="product.songs" :isClient="true" :hasSearch="false" :showAddButton="false">
