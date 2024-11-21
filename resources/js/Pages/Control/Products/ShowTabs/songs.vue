@@ -2,8 +2,10 @@
 import {ref} from 'vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import {IconButton} from '@/Components/Buttons';
-import {SongParticipantModal, SongDetailModal, SongAcrResponseModal} from '@/Components/Dialog';
+import {SongParticipantModal, SongDetailModal, SongAcrResponseModal,SongDialog} from '@/Components/Dialog';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
+import { usePage} from '@inertiajs/vue3';
+
 import {
   AudioIcon,
   RingtoneIcon,
@@ -18,11 +20,12 @@ import {useDefaultStore} from "@/Stores/default";
 const defaultStore = useDefaultStore();
 
 const props = defineProps({
-  product: {}
+  product: {},
 });
 const isSongParticipantModalOn = ref(false);
 const isSongDetailModalOn = ref(false);
 const isAcrResponseModalOn = ref(false);
+const isSongEditModalOn = ref(false);
 const choosenSong = ref(null);
 const openParticipantModal = (song) => {
   isSongParticipantModalOn.value = true;
@@ -36,6 +39,10 @@ const openAcrResponseModal = (song) => {
   isAcrResponseModalOn.value = true;
   choosenSong.value = song;
 };
+const openEditDialog = (song) => {
+    isSongEditModalOn.value = true;
+    choosenSong.value = song;
+}
 </script>
 <template>
   <AppTable :hasSelect="true" v-model="product.songs" :isClient="true" :hasSearch="false" :showAddButton="false">
@@ -147,6 +154,8 @@ const openAcrResponseModal = (song) => {
       Şarkı bulunamadı
     </template>
   </AppTable>
+<SongDialog v-if="isSongEditModalOn" :product_id="product.id" @done="onComplete" v-model="isSongEditModalOn"
+              :genres="usePage().props.genres" :song="choosenSong"></SongDialog>
   <SongParticipantModal v-if="isSongParticipantModalOn" v-model="isSongParticipantModalOn"
                         :song="choosenSong"></SongParticipantModal>
   <SongDetailModal v-if="isSongDetailModalOn" v-model="isSongDetailModalOn" :song="choosenSong"></SongDetailModal>

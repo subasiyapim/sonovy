@@ -117,11 +117,20 @@ class ProductShowResource extends JsonResource
                 'name' => $song->name,
                 'isrc' => $song->isrc,
                 'duration' => $song->duration,
+                'size' => $song->size,
+                'lyrics' => $song->lyrics,
+                'version' => $song->version,
+                'genre_id' => $song->genre_id,
+                'sub_genre_id' => $song->sub_genre_id,
                 'artists' => $song->artists,
                 'participants' => $song->participants
                     ->map(function ($participant) {
                         return $participant->load('user');
                     }),
+                'musicians' => $song->musicians,
+                'lyrics_writers' => $song->lyricsWriters,
+                'main_artists' => $song->mainArtists,
+                'featuring_artists' => $song->featuringArtists,
                 'analysis' => $song->acr_response,
                 'details' => $song->details,
                 'activities' => $song->activities,
@@ -145,7 +154,6 @@ class ProductShowResource extends JsonResource
                 'pre_order_date' => $platform->pivot->pre_order_date,
                 'publish_date' => $platform->pivot->publish_date,
                 'status_text' => PlatformStatusEnum::from($platform->status)->title(),
-
                 'histories' => $this->getHistoriesFromPlatformId($platform->id),
                 'created_at' => Carbon::parse($platform->created_at)->format('d-m-Y H:i'),
             ];
