@@ -48,6 +48,8 @@ class ProductShowResource extends JsonResource
         return [
             'id' => $this->id,
             'album_name' => $this->album_name,
+            'type' => $this->type->value,
+            'type_text' => $this->type(),
             'image' => $this->image,
             'created_at' => Carbon::parse($this->created_at)->format('d-m-Y H:i'),
             'song_count' => $this->songs->count().' parça',
@@ -84,7 +86,8 @@ class ProductShowResource extends JsonResource
             'genres' => $this->genres(),
             'sub_genres' => $this->subGenres(),
             'format' => $this->format(),
-            'type' => $this->type(),
+            'type' => $this->type->value,
+            'type_text' => $this->type(),
             'p_line' => $this->p_line,
             'c_line' => $this->c_line,
             'upc_code' => $this->upc_code,

@@ -141,6 +141,7 @@ class ProductController extends Controller
         $tab = request()->input('slug') ?? $tab;
 
         $response = new ProductShowResource($product, $tab);
+        dd($response->resolve());
         $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
