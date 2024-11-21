@@ -84,10 +84,11 @@ const openAcrResponseModal = (song) => {
       <template #default="scope">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
-            <PlayCircleFillIcon color="var(--dark-green-500)"/>
+            <PlayCircleFillIcon  color="var(--dark-green-500)"/>
           </div>
           <p class="label-sm c-strong-950">
             {{ scope.row.duration ?? '2.35' }}
+
           </p>
         </div>
       </template>

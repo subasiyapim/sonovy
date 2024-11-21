@@ -1,5 +1,6 @@
 <script setup>
 import {AppAccordion} from '@/Components/Widgets';
+import {CheckIcon} from '@/Components/Icons';
 import { usePage} from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -27,7 +28,11 @@ const props = defineProps({
                         </div>
                         <hr class="my-2">
                         <div class="grid grid-cols-3 gap-2 ">
-                            <div v-for="country in value">
+                            <div v-for="country in value" class="flex items-center gap-2">
+
+                                <div class="w-4 h-4 rounded  border border-dark-green-500 flex items-center justify-center" :class="country.selected ? 'bg-dark-green-500' : 'bg-white'">
+                                    <CheckIcon v-if="country.selected" color="#fff" />
+                                </div>
                                 <label @click.stop class="flex items-center gap-2 items-center">
                                      {{country.iconKey}}
                                     <span class="paragraph-xs c-strong-950">{{country.label}}</span>
