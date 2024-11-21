@@ -88,7 +88,6 @@ const openAcrResponseModal = (song) => {
           </div>
           <p class="label-sm c-strong-950">
             {{ scope.row.duration ?? '2.35' }}
-
           </p>
         </div>
       </template>

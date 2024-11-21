@@ -17,7 +17,7 @@
                         {{participant.user?.name}}
                     </p>
                     <p class="paragraph-sm c-neutral-500 flex-1">
-                        {{participant.tasks}}
+                        {{participant.branch_names}}
                     </p>
                 </div>
             </div>
