@@ -2,7 +2,15 @@
 
   <AdminLayout :showDatePicker="false" :title="__('control.product.show_header')" parentTitle="Katalog"
                subParent="Tüm Şarkılar" :hasPadding="false">
-
+    <template #breadcrumb>
+            <span  class="label-xs c-soft-400">Katalog</span>
+            <span  class="label-xs c-soft-400">•</span>
+            <span  class="label-xs c-soft-400 cursor-pointer" @click="router.visit(route('control.catalog.products.index'))">Tüm Yayınlar</span>
+            <span  class="label-xs c-soft-400">•</span>
+            <span  class="label-xs c-soft-400">{{product.type_text}}</span>
+            <span  class="label-xs c-soft-400">•</span>
+            <span  class="label-xs c-soft-400">{{product.album_name}}</span>
+    </template>
     <div class="bg-white-400 h-60 p-5 flex  relative ">
 
 

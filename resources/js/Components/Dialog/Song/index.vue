@@ -559,16 +559,19 @@ onBeforeMount(() => {
 
     form.main_artists = props.song.main_artists?.length > 0 ? props.song.main_artists[0].id : null;
 
+    console.log(props.song.musicians);
 
     form.musicians = (props.song.musicians ?? []).map((e) => {
-      return {name: e.name, role_id: e.pivot?.branch_id}
+      return {name: e.name, role_id: e.role_id}
     }) ?? [{}];
     form.participants = (props.song.participants ?? []).map((e) => {
       return {id: e.user_id, tasks: e.tasks, rate: e.rate}
     }) ?? [{}];
-    // form.lyrics_writers = (props.song.lyrics_writers ?? [{name:''}]).map((e) => e.id) ?? [{name:''}];
+    console.log("lyric",props.song);
 
-    console.log("COMPOSERS",props.song.composers);
+    form.lyrics_writers = props.song.writers;
+    form.composers = props.song.composers;
+    // console.log("COMPOSERS",props.song.composers);
 
 
     if (form.lyrics_writers.length == 0) {
@@ -583,7 +586,7 @@ onBeforeMount(() => {
     if (form.musicians.length == 0) {
       form.musicians = [{name:''}]
     }
-    console.log("FORM ",form.lyric_writers);
+
 
   }
 });
