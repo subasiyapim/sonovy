@@ -335,7 +335,7 @@ class SongController extends Controller
         }
 
         $song->update(Arr::except($updateData, $excludedFields));
-
+        $song->refresh();
         $song->load($this->getRelationsToLoad());
 
         $this->updateSongDetails($request, $song);
