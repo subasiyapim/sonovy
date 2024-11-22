@@ -201,7 +201,6 @@ class ProductController extends Controller
             'songs.writers',
             'songs.participants.user',
             'media',
-
         );
 
         $props = [

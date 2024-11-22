@@ -63,9 +63,11 @@ class SongController extends Controller
     {
         $lyrics_writers = $request->input('lyrics_writers');
 
+//        dd($lyrics_writers);
         if (!empty($lyrics_writers)) {
 
             SongWriter::where('song_id', $song->id)->get()->each(fn($writer) => $writer->delete());
+
 
             foreach ($lyrics_writers as $writer) {
                 SongWriter::create([
@@ -116,7 +118,8 @@ class SongController extends Controller
     {
         $participants = $request->input('participants');
 
-
+        Participant::where('song_id', $song->id)->get()->each(fn($participant) => $participant->delete());
+        
         if (!empty($participants)) {
             $song->participants()->delete();
 
