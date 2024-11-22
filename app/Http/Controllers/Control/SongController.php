@@ -117,12 +117,9 @@ class SongController extends Controller
     private static function updateParticipants(SongUpdateRequest $request, Song $song): void
     {
         $participants = $request->input('participants');
+        $song->participants()->delete();
 
-        Participant::where('song_id', $song->id)->get()->each(fn($participant) => $participant->delete());
-        
         if (!empty($participants)) {
-            $song->participants()->delete();
-
             foreach ($participants as $participant) {
                 Participant::create([
                     'product_id' => $request->product_id,
