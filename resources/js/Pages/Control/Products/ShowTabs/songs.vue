@@ -64,7 +64,7 @@ const playSound = (song) => {
     currentSong.value = song;
 
     currentSound.value = new Howl({
-        src: ['/storage/' + song.path],
+        src: ['storage/' + song.path],
         html5: true,
         onload: (e) => {
             currentSound.value.play();

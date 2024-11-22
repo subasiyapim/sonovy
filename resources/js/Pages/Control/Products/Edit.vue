@@ -53,7 +53,13 @@
             </div>
           </div>
           <PrimaryButton @click="submitStep">
-            Devam Et
+            <template v-if="currentTab < 3">
+                Devam Et
+            </template>
+            <template v-else>
+                Yayına Gönder
+            </template>
+
           </PrimaryButton>
         </div>
       </div>

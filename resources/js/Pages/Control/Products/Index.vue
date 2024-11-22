@@ -242,7 +242,7 @@ const props = defineProps({
   statistics: Object,
 })
 const showNoteIfFn = (row) => {
-  if (row.note) {
+  if (row.note && row.status == 4) {
     return true;
   } else {
     return false;

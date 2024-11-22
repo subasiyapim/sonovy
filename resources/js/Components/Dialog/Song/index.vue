@@ -214,7 +214,7 @@
       </div>
       <div class="flex items-center gap-2">
         <div class="flex-1">
-          <FormElement label-width="190px" v-model="form.isrc" label="ISRC" placeholder="Lütfen giriniz" type="text">
+          <FormElement :required="true" label-width="190px" v-model="form.isrc" label="ISRC" placeholder="Lütfen giriniz" type="text">
           </FormElement>
         </div>
         <RegularButton class="w-min" @click="generateISRCCode">
@@ -231,11 +231,11 @@
 
         <FormElement class="flex-1" type="select" :error="form.errors[`participants.${i}.id`]" v-model="participant.id"
                      :config="participantSelectConfig"
-                     :label="__('control.song.fields.participants')" direction="vertical" :required="true"
+                     :label="__('control.song.fields.participants')" direction="vertical"
                      :placeholder="__('control.song.fields.participants_placeholder')"/>
         <FormElement class="flex-1" type="multiselect" :error="form.errors[`participants.${i}.tasks`]"
                      v-model="participant.tasks" :config="roleConfig"
-                     :label="__('control.song.fields.roles')" direction="vertical" :required="true"
+                     :label="__('control.song.fields.roles')" direction="vertical"
                      :placeholder="__('control.song.fields.roles_placeholder')"/>
         <div class="flex flex-col item-start mb-0.5">
           <FormElement direction="vertical" :error="form.errors[`participants.${i}.rate`]"
