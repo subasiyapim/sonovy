@@ -40,9 +40,11 @@ class ProductUpdateRequest extends FormRequest
         $data = [
             'production_year' => ['required', 'integer', 'min:1900', 'max:'.date('Y')],
             'previously_released' => ['required', 'boolean'],
-            'previous_release_date' => ['required_if:previously_released,true', 'nullable', 'date'],
+            'previous_release_date' => [
+                'required_if:previously_released,true', 'nullable', 'date', 'before:'.date('d-m-Y')
+            ],
             'publishing_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
-            'physical_release_date' => ['required', 'date'],
+            'physical_release_date' => ['required', 'date', 'after_or_equal:'.date('d-m-Y')],
             'published_countries' => [
                 'required',
                 'array',
@@ -153,6 +155,9 @@ class ProductUpdateRequest extends FormRequest
             'publishing_country_type' => __('control.product.fields.publishing_country_type'),
             'published_countries' => __('control.product.fields.published_countries'),
             'published_countries.*.id' => __('control.product.fields.published_countries'),
+            'physical_release_date' => __('control.product.fields.physical_release_date'),
+            'previous_release_date' => __('control.product.fields.previous_release_date'),
+            'previously_released' => __('control.product.fields.previously_released'),
         ];
     }
 }
