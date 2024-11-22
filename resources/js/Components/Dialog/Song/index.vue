@@ -113,7 +113,7 @@
 
       <FormElement :required="!form.is_instrumental" v-for="(lyric_writer,i) in form.lyrics_writers"
                    :error="form.errors[`lyrics_writers.${i}`]" :disabled="form.is_instrumental" label-width="190px"
-                   v-model="form.lyrics_writers[i].name" :label="__('control.song.fields.lyrics_writer')"
+                   v-model="form.lyrics_writers[i]" :label="__('control.song.fields.lyrics_writer')"
                    :placeholder="__('control.song.fields.lyrics_writer_placeholder')"
                    >
         <template #description>
@@ -128,7 +128,7 @@
       <div class="flex">
         <div style="width:144px;"></div>
         <div class="text-start flex-1">
-          <button :disabled="form.is_instrumental" @click="form.lyrics_writers.push({name:''})"
+          <button :disabled="form.is_instrumental" @click="form.lyrics_writers.push('')"
                   class="flex items-center gap-2">
             <AddIcon color="var(--blue-500)"/>
             <span class="c-blue-500 label-xs">Yeni Ekle</span>
@@ -138,7 +138,7 @@
 
       <FormElement :required="!form.is_instrumental" v-for="(_,i) in form.composers"
                    :error="form.errors[`composers.${i}`]" :disabled="form.is_instrumental" label-width="190px"
-                   v-model="form.composers[i].name" :label="'Besteci'"
+                   v-model="form.composers[i]" :label="'Besteci'"
                    :placeholder="'Besteci giriniz'"
                    >
         <template #description>
@@ -153,7 +153,7 @@
       <div class="flex">
         <div style="width:144px;"></div>
         <div class="text-start flex-1">
-          <button :disabled="form.is_instrumental" @click="form.composers.push({name:''})"
+          <button :disabled="form.is_instrumental" @click="form.composers.push('')"
                   class="flex items-center gap-2">
             <AddIcon color="var(--blue-500)"/>
             <span class="c-blue-500 label-xs">Yeni Ekle</span>
@@ -195,7 +195,6 @@
               </FormElement>
 
               <button @click="form.musicians.splice(musicanIndex,1)" class="flex items-center ms-auto gap-2 mt-2">
-
                 <span class="c-error-500 label-xs">Temizle</span>
               </button>
             </div>
@@ -350,8 +349,8 @@ const form = useForm({
   sub_genre_id: props.song.sub_genre_id,
   is_instrumental: props.song.is_instrumental,
   isrc: props.song.isrc,
-  lyrics_writers: [{name:''}],
-  composers: props.song.composers ?? [{name:''}],
+  lyrics_writers: props.song.writers,
+  composers: props.song.composers,
   lyrics: props.song.lyrics,
   musicians: [{}],
   participants: [{}],
@@ -403,8 +402,6 @@ const featuringArtistSelectConfig = computed(() => {
     }
   }
 })
-
-
 
 const participantSelectConfig = computed(() => {
   return {
@@ -475,21 +472,23 @@ const countryConfig = computed(() => {
 })
 const onSubmit = async (e) => {
 
-  if (form.participants?.length == 1) {
-    if (Object.keys(form.participants[0]).length == 0) form.participants = null;
-  }
-  if (form.musicians?.length == 1) {
-    if (Object.keys(form.musicians[0]).length == 0) form.musicians = null;
-  }
-  if (form.lyrics_writer?.length == 1 || form.is_instrumental) {
-    if (Object.keys(form.lyrics_writer[0]).length == 0) form.lyrics_writer = null;
-  }
+
+    if(form.musicians.length == 1) form.musicians = null;
+    if(form.lyrics_writers.length == 1) form.lyrics_writers = null;
+    if(form.composers.length == 1) form.composers = null;
+
+    if (form.participants?.length == 1) {
+        if (Object.values(form.participants[0]).length == 0) form.participants = null;
+    }
+
+
+
   form.put(route('control.catalog.songs.update', props.song.id),
       {
         onFinish: () => {
-          if (!form.participants) form.participants = [{}];
-          if (!form.musicians) form.musicians = [{}];
-          if (!form.lyrics_writer) form.lyrics_writer = [{}];
+            if(!form.composers) form.composers = [''];
+            if(!form.musicians) form.musicians = [''];
+            if(!form.lyrics_writers) form.lyrics_writers = [''];
         },
         onSuccess: async (e) => {
 
@@ -536,14 +535,13 @@ const roleConfig = computed(() => {
 })
 onMounted(() => {
   if (props.song) {
-    console.log("faetu",props.song.featuring_artists);
 
     form.featuring_artists = (props.song.featuring_artists ?? []).map((e) => e.id);
 
 
     form.main_artists = props.song.main_artists?.length > 0 ? props.song.main_artists[0].id : null;
 
-    console.log(props.song.musicians);
+
 
     form.musicians = (props.song.musicians ?? []).map((e) => {
       return {name: e.name, role_id: e.role_id}
@@ -552,28 +550,16 @@ onMounted(() => {
     form.participants = (props.song.participants ?? []).map((e) => {
       return {id: e.user_id, tasks: e.tasks, rate: e.rate}
     }) ?? [{}];
-    console.log("lyric",props.song.participants);
 
-    form.lyrics_writers = props.song.writers ?? [{name:''}];
-    form.composers = props.song.composers ?? [{name:''}];
-    console.log("PROPS SONG",props.song.composers);
+    form.lyrics_writers = props.song.writers;
+    form.composers = props.song.composers;
+    if(form.lyrics_writers.length == 0)
 
-    // console.log("COMPOSERS",props.song.composers);
-
-
-    if (form.lyrics_writers?.length == 0) {
-      form.lyrics_writers = [{name:''}];
-    }
-    if (form.participants?.length == 0) {
-      form.participants = [{}]
-    }
-    if (form.composers?.length == 0) {
-      form.composers = [{name:''}]
-    }
-    if (form.musicians?.length == 0) {
-      form.musicians = [{name:''}]
-    }
-
+        form.lyrics_writers = [''];
+    if(form.composers.length == 0)
+        form.composers = [''];
+    if(form.musicians.length == 0)
+        form.musicians = [{}];
 
   }
 });
