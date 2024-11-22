@@ -292,7 +292,6 @@ const submitStep = async () => {
       },
       onSuccess: (e) => {
         router.visit(route('control.catalog.products.show', props.product.id))
-
       }
     });
 

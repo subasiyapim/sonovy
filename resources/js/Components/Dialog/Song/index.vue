@@ -476,16 +476,20 @@ const countryConfig = computed(() => {
 const onSubmit = async (e) => {
 
   if (form.participants.length == 1) {
-    if (Object.keys(form.participants[0]).length == 0) form.participants = [];
+    if (Object.keys(form.participants[0]).length == 0) form.participants = null;
   }
   if (form.musicians.length == 1) {
-    if (Object.keys(form.musicians[0]).length == 0) form.musicians = [];
+    if (Object.keys(form.musicians[0]).length == 0) form.musicians = null;
+  }
+  if (form.lyrics_writer.length == 1 || form.is_instrumental) {
+    if (Object.keys(form.lyrics_writer[0]).length == 0) form.lyrics_writer = null;
   }
   form.put(route('control.catalog.songs.update', props.song.id),
       {
         onFinish: () => {
-          if (form.participants.length == 0) form.participants = [{}];
-          if (form.musicians.length == 0) form.musicians = [{}];
+          if (!form.participants) form.participants = [{}];
+          if (!form.musicians) form.musicians = [{}];
+          if (!form.lyrics_writer) form.lyrics_writer = [{}];
         },
         onSuccess: async (e) => {
 
@@ -497,7 +501,7 @@ const onSubmit = async (e) => {
 
         },
         onError: (e) => {
-
+            toast.error(Object.values(e)[0])
         }
       });
 
