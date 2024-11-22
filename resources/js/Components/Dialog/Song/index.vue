@@ -349,8 +349,8 @@ const form = useForm({
   sub_genre_id: props.song.sub_genre_id,
   is_instrumental: props.song.is_instrumental,
   isrc: props.song.isrc,
-  lyrics_writers: [''],
-  composers: [''],
+  lyrics_writers: null,
+  composers: null,
   lyrics: props.song.lyrics,
   musicians: [{}],
   participants: [{}],
@@ -562,7 +562,10 @@ onMounted(() => {
             form.composers.push([element.name])
         }
     });
-
+    if(form.composers.length == 0)
+        form.composers = [''];
+    if(form.lyrics_writers.length == 0)
+        form.lyrics_writers = [''];
     if(form.musicians.length == 0)
         form.musicians = [{}];
 
