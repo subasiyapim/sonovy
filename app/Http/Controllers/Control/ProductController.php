@@ -40,7 +40,9 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Inertia\ResponseFactory;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,9 +59,25 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): \Inertia\Response|ResponseFactory
+    public function index(Request $request)
     {
         abort_if(Gate::denies('product_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $validator = Validator::make($request->all(), [
+            'status' => ['nullable', Rule::enum(ProductStatusEnum::class)],
+            'type' => ['nullable', Rule::enum(ProductTypeEnum::class)],
+            'period' => ['nullable', 'in:[day,week,month,year]'],
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->route('control.catalog.products.index')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $validated = $validator->validated();
+
 
         $products = Product::with('artists', 'mainArtists', 'label', 'songs', 'downloadPlatforms')
             ->when($request->input('status'), function ($query) use ($request) {
@@ -587,23 +605,35 @@ class ProductController extends Controller
         }
     }
 
-    public function getProductsGroupedByMonth()
+    public function getProductsGroupedByMonth($request)
     {
-        return Cache::remember('products_grouped_by_month', 12 * 60, function () {
-            $months = [];
-            for ($i = 1; $i <= 12; $i++) {
-                $months[$i] = Carbon::createFromDate(null, $i, 1)->locale(App::currentLocale())->isoFormat('MMMM');
-            }
+        $period = $request->input('period', 'month');
+        $cacheKey = "products_grouped_by_{$period}";
+        $cacheTime = match ($period) {
+            'day' => 24 * 60,
+            'week' => 7 * 24 * 60,
+            'year' => 365 * 24 * 60,
+            default => 12 * 60,
+        };
 
-            $productsByMonth = Product::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
-                ->groupBy('month')
+        return Cache::remember($cacheKey, $cacheTime, function () use ($period) {
+            $startDate = match ($period) {
+                'day' => Carbon::now()->subDays(6),
+                'week' => Carbon::now()->subWeeks(6),
+                'year' => Carbon::now()->subYears(6),
+                default => Carbon::now()->subMonths(6),
+            };
+
+            $products = Product::where('created_at', '>=', $startDate)
+                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as period, COUNT(*) as count")
+                ->groupBy('period')
                 ->get();
 
-            $totalCount = $productsByMonth->sum('count');
+            $totalCount = $products->sum('count');
 
-            $result = $productsByMonth->map(function ($item) use ($months) {
+            $result = $products->map(function ($item) {
                 return [
-                    'label' => $months[$item->month],
+                    'label' => $item->period,
                     'value' => $item->count,
                 ];
             });

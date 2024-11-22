@@ -14,17 +14,21 @@
                    label="Sürüm"
                    placeholder="Lütfen giriniz"></FormElement>
 
-        <FormElement v-if="form.type == 2" :required="true" :config="{data: usePage().props.video_types}" label-width="190px" type="select" placeholder="Seçiniz" :error="form.errors.video_type" v-model="form.video_type"
+      <FormElement v-if="form.type == 2" :required="true" :config="{data: usePage().props.video_types}"
+                   label-width="190px" type="select" placeholder="Seçiniz" :error="form.errors.video_type"
+                   v-model="form.video_type"
                    label="Video Türü">
 
-        </FormElement>
-        <FormElement v-if="form.type == 2" :required="true" :config="{letter:5000}"  label-width="190px" type="textarea" placeholder="Açıklama giriniz" :error="form.errors.description" v-model="form.description"
+      </FormElement>
+      <FormElement v-if="form.type == 2" :required="true" :config="{letter:5000}" label-width="190px" type="textarea"
+                   placeholder="Açıklama giriniz" :error="form.errors.description" v-model="form.description"
                    label="Açıklama">
-            <template #tooltip>
-                Video Açıklaması
-            </template>
-        </FormElement>
-      <FormElement ref="mainArtistSelect" :required="true" label-width="190px" :error="form.errors.main_artists || form.errors.mixed_album"
+        <template #tooltip>
+          Video Açıklaması
+        </template>
+      </FormElement>
+      <FormElement ref="mainArtistSelect" :required="true" label-width="190px"
+                   :error="form.errors.main_artists || form.errors.mixed_album"
                    v-model="form.main_artists" :disabled="form.mixed_album" type="multiselect" label="Sanatçı"
                    placeholder="Sanatçı Seçiniz"
                    :config="mainArtistSelectConfig">
@@ -36,13 +40,15 @@
 
         </template>
         <template #first_child>
-          <button @click="openArtistCreateDialog('main_artists')" class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
+          <button @click="openArtistCreateDialog('main_artists')"
+                  class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
             Sanatçı Oluştur
           </button>
         </template>
         <template #empty>
-          <button @click="openArtistCreateDialog('main_artists')"  class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
+          <button @click="openArtistCreateDialog('main_artists')"
+                  class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
             <AddIcon color="var(--dark-green-600)"/>
             Sanatçı Oluştur
           </button>
@@ -60,9 +66,9 @@
               <img :src="scope.data.image"/>
             </div>
             <p>{{ scope.data.label }}</p>
-            <div v-if="scope.data.platforms">
-                var
-            </div>
+            <!--            <div v-if="scope.data.platforms">-->
+            <!--                var-->
+            <!--            </div>-->
           </div>
         </template>
         <template #model="scope">
@@ -77,7 +83,7 @@
               <template v-for="(artist,artistIndex) in scope.data">
                 {{ artist.label }}
                 <template v-if="artistIndex < scope.data.length-1">
-                    , &nbsp;
+                  , &nbsp;
                 </template>
 
               </template>
@@ -91,13 +97,15 @@
                    v-model="form.featuring_artists"
                    type="multiselect" label="Düet Sanatçı" placeholder="Seçiniz" :config="featuringArtistSelectConfig">
         <template #first_child>
-          <button @click="openArtistCreateDialog('featuring_artists')"  class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
+          <button @click="openArtistCreateDialog('featuring_artists')"
+                  class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
             Sanatçı Oluştur
           </button>
         </template>
         <template #empty>
-          <button @click="openArtistCreateDialog('featuring_artists')" class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
+          <button @click="openArtistCreateDialog('featuring_artists')"
+                  class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
             <AddIcon color="var(--dark-green-600)"/>
             Sanatçı Oluştur
           </button>
@@ -121,8 +129,8 @@
             <p class="label-sm !font-normal" style="white-space:nowrap;">
               <template v-for="(artist,artistIndex) in scope.data">
                 {{ artist.label }}
-                  <template v-if="artistIndex < scope.data.length-1">
-                    , &nbsp;
+                <template v-if="artistIndex < scope.data.length-1">
+                  , &nbsp;
                 </template>
               </template>
             </p>
@@ -140,15 +148,16 @@
                    placeholder="Seçiniz" type="select" :config="genreConfig">
       </FormElement>
 
-      <FormElement v-if="form.type == 1" label-width="190px" :error="form.errors.format_id" v-model="form.format_id" label="Biçim"
+      <FormElement v-if="form.type == 1" label-width="190px" :error="form.errors.format_id" v-model="form.format_id"
+                   label="Biçim"
                    placeholder="Seçiniz" type="select" :config="formatConfig">
 
       </FormElement>
 
-        <FormElement  v-if="form.type == 2" label-width="190px" :error="form.errors.is_for_kids" v-model="form.is_for_kids"
-                    placeholder="Bu video çocuklar için yapıldı" type="fancyCheck">
+      <FormElement v-if="form.type == 2" label-width="190px" :error="form.errors.is_for_kids" v-model="form.is_for_kids"
+                   placeholder="Bu video çocuklar için yapıldı" type="fancyCheck">
 
-        </FormElement>
+      </FormElement>
 
     </div>
 
@@ -194,7 +203,8 @@
       </FormElement>
     </div>
   </div>
-  <SmallArtistCreateDialog @done="onArtistCreated" v-if="createArtistDialog" v-model="createArtistDialog"></SmallArtistCreateDialog>
+  <SmallArtistCreateDialog @done="onArtistCreated" v-if="createArtistDialog"
+                           v-model="createArtistDialog"></SmallArtistCreateDialog>
 </template>
 
 <script setup>
@@ -208,8 +218,8 @@ import {SmallArtistCreateDialog} from '@/Components/Dialog';
 
 const whichSelectToAdd = ref(null);
 const openArtistCreateDialog = (artistSelectName) => {
-    whichSelectToAdd.value = artistSelectName;
-    createArtistDialog.value = true;
+  whichSelectToAdd.value = artistSelectName;
+  createArtistDialog.value = true;
 }
 const createArtistDialog = ref(false);
 const crudStore = useCrudStore();
@@ -234,12 +244,12 @@ const onArtistCreated = (e) => {
   };
 
 
-  if(whichSelectToAdd.value ==  'featuring_artists'){
-     featuringArtistSelect.value.appMultiSelect.insertData(row);
+  if (whichSelectToAdd.value == 'featuring_artists') {
+    featuringArtistSelect.value.appMultiSelect.insertData(row);
 
     featuringArtistSelectConfig.value.data.push(row);
-  }else {
-     mainArtistSelect.value.appMultiSelect.insertData(row);
+  } else {
+    mainArtistSelect.value.appMultiSelect.insertData(row);
     mainArtistSelectConfig.value.data.push(row);
   }
 
@@ -284,7 +294,7 @@ const mainArtistSelectConfig = computed(() => {
         value: item.id,
         label: item.name,
         image: item.image ? item.image.thumb || item.image.url : null,  // Use `thumb` if available, fallback to `url`
-        platforms:item.platforms
+        platforms: item.platforms
       }));
 
 
@@ -352,15 +362,15 @@ onBeforeMount(() => {
 
     props.product.main_artists.forEach(element => {
       console.log("ELEENT", element);
-        const findedIndex = mainArtistSelectConfig.value.data.findIndex((art) => art.value == element.id);
-        if(findedIndex < 0){
-            mainArtistSelectConfig.value.data.push({
-                "image": element.media[0]?.original_url,
-                "value": element.id,
-                "label": element.name,
-                "platforms" : element.platforms,
-            });
-        }
+      const findedIndex = mainArtistSelectConfig.value.data.findIndex((art) => art.value == element.id);
+      if (findedIndex < 0) {
+        mainArtistSelectConfig.value.data.push({
+          "image": element.media[0]?.original_url,
+          "value": element.id,
+          "label": element.name,
+          "platforms": element.platforms,
+        });
+      }
 
     });
 
@@ -369,14 +379,14 @@ onBeforeMount(() => {
 
     props.product.featured_artists.forEach(element => {
       console.log("ELEENT", element);
-        const findedIndex = featuringArtistSelectConfig.value.data.findIndex((art) => art.value == element.id);
-        if(findedIndex < 0){
-            featuringArtistSelectConfig.value.data.push({
-                "image": element.media[0]?.original_url,
-                "value": element.id,
-                "label": element.name,
-            });
-        }
+      const findedIndex = featuringArtistSelectConfig.value.data.findIndex((art) => art.value == element.id);
+      if (findedIndex < 0) {
+        featuringArtistSelectConfig.value.data.push({
+          "image": element.media[0]?.original_url,
+          "value": element.id,
+          "label": element.name,
+        });
+      }
     });
 
   }
