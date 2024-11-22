@@ -39,6 +39,7 @@
           </button>
         </template>
         <template #option="scope">
+
           <div class="flex items-center  gap-2">
             <div class="w-3 h-3 rounded-full overflow-hidden">
               <img :src="scope.data.image"/>
@@ -407,12 +408,7 @@ const participantSelectConfig = computed(() => {
   return {
 
     hasSearch: true,
-    data: [...(props.song?.participants ?? [])?.map((element) => {
-      return {
-        value: element.user_id,
-        label: element.user?.name,
-      };
-    }),...usePage().props.users],
+    data: usePage().props.users,
     remote: async (query) => {
       const response = await crudStore.get(route('control.search.users', {
         search: query
