@@ -349,8 +349,8 @@ const form = useForm({
   sub_genre_id: props.song.sub_genre_id,
   is_instrumental: props.song.is_instrumental,
   isrc: props.song.isrc,
-  lyrics_writers: props.song.writers,
-  composers: props.song.composers,
+  lyrics_writers: [''],
+  composers: [''],
   lyrics: props.song.lyrics,
   musicians: [{}],
   participants: [{}],
@@ -494,7 +494,6 @@ const onSubmit = async (e) => {
 
           toast.success(e.props.notification.message);
           isDialogOn.value = false;
-          console.log("GELEENNN",e.props.notification.song);
 
           emits('done', e.props.notification.song)
 
@@ -551,13 +550,19 @@ onMounted(() => {
       return {id: e.user_id, tasks: e.tasks, rate: e.rate}
     }) ?? [{}];
 
-    form.lyrics_writers = props.song.writers;
-    form.composers = props.song.composers;
-    if(form.lyrics_writers.length == 0)
 
-        form.lyrics_writers = [''];
-    if(form.composers.length == 0)
-        form.composers = [''];
+
+    props.song.writers.forEach(element => {
+        if(element.name){
+            form.lyrics_writers.push([element.name])
+        }
+    });
+    props.song.composers.forEach(element => {
+        if(element.name){
+            form.composers.push([element.name])
+        }
+    });
+
     if(form.musicians.length == 0)
         form.musicians = [{}];
 
