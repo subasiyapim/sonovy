@@ -18,9 +18,11 @@ class ArtistServices
 
     public static function search($search): mixed
     {
+        $defaultArtistImage = asset('assets/images/avatar.png');
+
         return Artist::with('platforms')
             ->whereNot('name', 'Various Artists')
-            ->where('name', 'like', '%' . $search . '%')
+            ->where('name', 'like', '%'.$search.'%')
             ->get();
     }
 

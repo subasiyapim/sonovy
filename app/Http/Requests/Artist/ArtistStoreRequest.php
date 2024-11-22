@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Artist;
 
 use App\Models\System\Country;
+use App\Rules\UniquePlatformURL;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -33,7 +34,7 @@ class ArtistStoreRequest extends FormRequest
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg'],
             'website' => ['nullable'],
             'phone' => ['nullable', 'string'],
-            'platforms' => ['nullable', 'array'],
+            'platforms' => ['nullable', 'array', new UniquePlatformURL()],
             'artist_branches' => ['nullable', 'array'],
         ];
     }

@@ -160,6 +160,7 @@ return [
             'genre' => 'Tarz',
             'genres' => 'Tarzlar',
             'tracks_count' => 'Top. Parça Sayısı',
+            'similar_record' => 'Platforma ekli benzer bir sanatçı mevcut.',
         ],
         'dialog' => [
             "description" => "Temel bilgileri girerek sanatçı oluşturabilirsiniz.",

@@ -15,57 +15,70 @@
     <div class="w-full" :class="error ? 'hasError' : ''">
 
 
-        <AppTextInput v-if="type=='text' || type=='web' || type=='phone'|| type=='password'" :config="config" :type="type" v-model="element" :placeholder="placeholder" :disabled="disabled"></AppTextInput>
-        <AppFancyCheckInput v-if="type=='fancyCheck'" :type="type" :config="config" v-model="element" :placeholder="placeholder" :disabled="disabled" @change="change"></AppFancyCheckInput>
-        <AppTextareaInput v-else-if="type=='textarea'" v-model="element" :placeholder="placeholder" :config="config" :disabled="disabled"></AppTextareaInput>
-        <AppRadioInput v-else-if="type=='radio'" v-model="element" @change="change" :placeholder="placeholder" :config="config" :disabled="disabled"></AppRadioInput>
-        <AppUploadInput v-else-if="type=='upload'" :config="config" v-model="element" :placeholder="placeholder" :disabled="disabled"></AppUploadInput>
-        <AppSliderInput v-else-if="type=='slider'" :config="config" :type="type" v-model="element" :placeholder="placeholder" :disabled="disabled"></AppSliderInput>
+      <AppTextInput v-if="type=='text' || type=='web' || type=='phone'|| type=='password'" :config="config" :type="type"
+                    v-model="element" :placeholder="placeholder" :disabled="disabled"></AppTextInput>
+      <AppFancyCheckInput v-if="type=='fancyCheck'" :type="type" :config="config" v-model="element"
+                          :placeholder="placeholder" :disabled="disabled" @change="change"></AppFancyCheckInput>
+      <AppTextareaInput v-else-if="type=='textarea'" v-model="element" :placeholder="placeholder" :config="config"
+                        :disabled="disabled"></AppTextareaInput>
+      <AppRadioInput v-else-if="type=='radio'" v-model="element" @change="change" :placeholder="placeholder"
+                     :config="config" :disabled="disabled"></AppRadioInput>
+      <AppUploadInput v-else-if="type=='upload'" :config="config" v-model="element" :placeholder="placeholder"
+                      :disabled="disabled"></AppUploadInput>
+      <AppSliderInput v-else-if="type=='slider'" :config="config" :type="type" v-model="element"
+                      :placeholder="placeholder" :disabled="disabled"></AppSliderInput>
 
-        <AppSelectInput ref="appSelect" v-else-if="type=='select'" :config="config" :type="type" v-model="element" :placeholder="placeholder" :disabled="disabled">
-            <template v-if="hasSlot('first_child')" #first_child>
-                    <slot  name="first_child" />
-            </template>
-            <template v-if="hasSlot('empty')" #empty>
-                    <slot name="empty" />
-            </template>
-            <template v-if="hasSlot('option')" #option="scope">
+      <AppSelectInput ref="appSelect" v-else-if="type=='select'" :config="config" :type="type" v-model="element"
+                      :placeholder="placeholder" :disabled="disabled">
+        <template v-if="hasSlot('first_child')" #first_child>
+          <slot name="first_child"/>
+        </template>
+        <template v-if="hasSlot('empty')" #empty>
+          <slot name="empty"/>
+        </template>
+        <template v-if="hasSlot('option')" #option="scope">
 
-                    <slot name="option" :data="scope.scope" />
-            </template>
-            <template v-if="hasSlot('model')" #model="scope">
-                    <slot name="model" :data="scope.scope" />
-            </template>
-        </AppSelectInput>
+          <slot name="option" :data="scope.scope"/>
+        </template>
+        <template v-if="hasSlot('model')" #model="scope">
+          <slot name="model" :data="scope.scope"/>
+        </template>
+      </AppSelectInput>
 
-        <slot v-if="type=='custom'" />
+      <slot v-if="type=='custom'"/>
 
-        <AppMultiSelectInput ref="appMultiSelect" v-else-if="type=='multiselect'" :config="config" :type="type" v-model="element"
-                            :placeholder="placeholder" :disabled="disabled">
-            <template v-if="hasSlot('first_child')" #first_child>
-                    <slot  name="first_child" />
-            </template>
-            <template v-if="hasSlot('empty')" #empty>
-                    <slot name="empty" />
-            </template>
-            <template v-if="hasSlot('option')" #option="scope">
+      <AppMultiSelectInput ref="appMultiSelect" v-else-if="type=='multiselect'" :config="config" :type="type"
+                           v-model="element"
+                           :placeholder="placeholder" :disabled="disabled">
+        <template v-if="hasSlot('first_child')" #first_child>
+          <slot name="first_child"/>
+        </template>
+        <template v-if="hasSlot('empty')" #empty>
+          <slot name="empty"/>
+        </template>
+        <template v-if="hasSlot('option')" #option="scope">
 
-                    <slot name="option" :data="scope.scope" />
-            </template>
-            <template v-if="hasSlot('model')" #model="scope">
-                    <slot name="model" :data="scope.scope" />
-            </template>
-              <template v-if="hasSlot('disabled')" #disabled>
-                    <slot name="disabled"  />
-            </template>
-        </AppMultiSelectInput>
+          <slot name="option" :data="scope.scope"/>
+        </template>
+        <template v-if="hasSlot('model')" #model="scope">
+          <slot name="model" :data="scope.scope"/>
+        </template>
+        <template v-if="hasSlot('disabled')" #disabled>
+          <slot name="disabled"/>
+        </template>
+      </AppMultiSelectInput>
 
 
       <slot name="description"/>
       <span v-if="error" class="c-error-500 paragraph-xs flex items-center gap-1 mt-2">
-                <InfoFilledIcon color="var(--error-500)"/>
-                {{ error }}
-            </span>
+        <InfoFilledIcon color="var(--error-500)"/>
+        {{ error }}
+      </span>
+      <span v-if="additionError" class="c-error-500 paragraph-xs flex items-center gap-1 mt-2">
+        <InfoFilledIcon color="var(--error-500)"/>
+        {{ additionError }}
+      </span>
+
     </div>
 
   </div>
@@ -73,7 +86,7 @@
 </template>
 
 <script setup>
-import {computed,ref} from 'vue';
+import {computed, ref} from 'vue';
 import {InfoFilledIcon} from '@/Components/Icons'
 import AppTextInput from './AppTextInput.vue';
 import AppTextareaInput from './AppTextareaInput.vue';
@@ -86,8 +99,8 @@ import AppSliderInput from './AppSliderInput.vue';
 
 import {useSlots} from 'vue';
 
-const appMultiSelect  =ref();
-const appSelect  =ref();
+const appMultiSelect = ref();
+const appSelect = ref();
 const props = defineProps({
   direction: {
     default: 'horizontal', //vertical
@@ -98,19 +111,22 @@ const props = defineProps({
   error: {
     default: null,
   },
+  additionError: {
+    default: null,
+  },
   label: {},
   labelWidth: {
     default: '120px'
   },
-  disabled:{
-    default:false,
+  disabled: {
+    default: false,
   },
   placeholder: {},
   modelValue: {},
   type: {type: String, default: "text"},
   config: {type: Object}
 })
-const emits = defineEmits(['update:modelValue','change']);
+const emits = defineEmits(['update:modelValue', 'change']);
 
 const element = computed({
   get: () => props.modelValue,
@@ -121,10 +137,10 @@ const hasSlot = (name) => {
   return !!slots[name];
 }
 const change = (e) => {
-    emits('change',e)
+  emits('change', e)
 }
 
-defineExpose({appMultiSelect,appSelect})
+defineExpose({appMultiSelect, appSelect})
 </script>
 
 <style lang="scss" scoped>

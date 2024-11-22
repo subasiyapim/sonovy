@@ -27,6 +27,7 @@
           Video Açıklaması
         </template>
       </FormElement>
+
       <FormElement ref="mainArtistSelect" :required="true" label-width="190px"
                    :error="form.errors.main_artists || form.errors.mixed_album"
                    v-model="form.main_artists" :disabled="form.mixed_album" type="multiselect" label="Sanatçı"
@@ -61,14 +62,22 @@
           </label>
         </template>
         <template #option="scope">
-          <div class="flex items-center  gap-2">
-            <div class="w-3 h-3 rounded-full overflow-hidden">
-              <img :src="scope.data.image"/>
+          <div class="w-full flex justify-between gap-2">
+            <div class="flex gap-2">
+              <div class="w-6 h-6 rounded-lg overflow-hidden">
+                <img :src="scope.data.image"/>
+              </div>
+              <p>{{ scope.data.label }}</p>
             </div>
-            <p>{{ scope.data.label }}</p>
-            <!--            <div v-if="scope.data.platforms">-->
-            <!--                var-->
-            <!--            </div>-->
+            <div v-if="scope.data.platforms">
+              <div v-for="platform in scope.data.platforms">
+                <a v-if="platform.code == 'spotify' || platform.code == 'apple'"
+                   :href="platform.pivot.url"
+                   target="_blank">
+                  <icon :icon="platform.icon"/>
+                </a>
+              </div>
+            </div>
           </div>
         </template>
         <template #model="scope">
@@ -92,7 +101,6 @@
           </div>
         </template>
       </FormElement>
-
       <FormElement ref="featuringArtistSelect" label-width="190px" :error="form.errors.featuring_artists"
                    v-model="form.featuring_artists"
                    type="multiselect" label="Düet Sanatçı" placeholder="Seçiniz" :config="featuringArtistSelectConfig">
@@ -111,9 +119,10 @@
           </button>
         </template>
         <template #option="scope">
-          <div class="flex items-center  gap-2">
-            <div class="w-3 h-3 rounded-full overflow-hidden">
-              <img :src="scope.data.image"/>
+          <div class="flex items-center gap-2">
+            <div class="w-5 h-5 rounded-md overflow-hidden">
+              <img v-if="scope.data.image" alt=""
+                   :src="scope.data.image"/>
             </div>
             <p>{{ scope.data.label }}</p>
           </div>
@@ -214,6 +223,8 @@ import {AddIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {usePage} from '@inertiajs/vue3';
 import {SmallArtistCreateDialog} from '@/Components/Dialog';
+import {Icon, PersonIcon} from "@/Components/Icons/index.js";
+import InputError from "@/Components/InputError.vue";
 
 
 const whichSelectToAdd = ref(null);

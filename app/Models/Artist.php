@@ -42,14 +42,12 @@ class Artist extends Model implements HasMedia
 
     protected array $filterable = [
         'name',
-        'country.name',
         'ipi_code',
         'isni_code',
     ];
 
     protected array $orderable = [
         'name',
-        'country.name',
         'ipi_code',
         'isni_code',
     ];

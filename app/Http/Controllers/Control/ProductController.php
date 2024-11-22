@@ -89,7 +89,7 @@ class ProductController extends Controller
             ->advancedFilter();
 
         $statistics = [
-            'products' => $this->getProductsGroupedByMonth(),
+            'products' => $this->getProductsGroupedByMonth($request->input('period')),
             'labels' => $this->getTopLabelsByProductCount(),
             'artists' => $this->getArtistsAddedLastMonth(),
         ];
@@ -605,9 +605,8 @@ class ProductController extends Controller
         }
     }
 
-    public function getProductsGroupedByMonth($request)
+    public function getProductsGroupedByMonth($period)
     {
-        $period = $request->input('period', 'month');
         $cacheKey = "products_grouped_by_{$period}";
         $cacheTime = match ($period) {
             'day' => 24 * 60,

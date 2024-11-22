@@ -1,5 +1,6 @@
 <template>
-  <BaseDialog v-model="isDialogOn" height="min-content" align="center" :title="artist ? __('control.artist.edit') : __('control.artist.add')"
+  <BaseDialog v-model="isDialogOn" height="min-content" align="center"
+              :title="artist ? __('control.artist.edit') : __('control.artist.add')"
               :description="__('control.artist.dialog.description')">
     <template #icon>
       <AddIcon color="var(--dark-green-950)"/>
@@ -12,15 +13,14 @@
       <FormElement label-width="190px"
                    :required="true"
                    :error="form.errors.name"
+                   :addition-error="form.errors.similar_record[0]"
                    :label="__('control.artist.fields.name')"
                    type="custom">
-
         <ArtistInput @onPlatformsChoosen="onPlatformsChoosen"
                      :choosenItunesField="choosenItunesField"
                      :choosenSpotifyField="choosenSpotifyField"
                      v-model="form.name"
                      :placeholder="__('control.artist.fields.name_placeholder')"/>
-
       </FormElement>
 
 
@@ -44,13 +44,13 @@
         </template>
       </FormElement>
 
-        <FormElement label-width="190px"
-                :error="form.errors.artist_branches"
-                v-model="form.artist_branches"
-                :config="artistBranchesMultiSelect"
-                :label="__('control.artist.fields.artist_branches')"
-                type="multiselect"
-                :placeholder="__('control.artist.fields.artist_branches_placeholder')"/>
+      <FormElement label-width="190px"
+                   :error="form.errors.artist_branches"
+                   v-model="form.artist_branches"
+                   :config="artistBranchesMultiSelect"
+                   :label="__('control.artist.fields.artist_branches')"
+                   type="multiselect"
+                   :placeholder="__('control.artist.fields.artist_branches_placeholder')"/>
 
       <FormElement label-width="190px"
                    :error="form.errors.ipi_code"
@@ -90,7 +90,7 @@
                      :label="__('control.artist.fields.platform_link')"
                      :placeholder="__('control.artist.fields.platform_link_placeholder')"/>
         <button @click="form.platforms.splice(platformIndex,1)" class="mt-2 c-error-500 label-sm">
-            sil
+          sil
         </button>
       </div>
       <button @click="form.platforms.push({})" class="flex items-center gap-2">
@@ -124,6 +124,7 @@ import {useForm, usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
 import {useCrudStore} from '@/Stores/useCrudStore'
 import {FormElement, ArtistInput} from '@/Components/Form'
+import InputError from "@/Components/InputError.vue";
 
 const props = defineProps({
   modelValue: {
@@ -166,7 +167,7 @@ const onPlatformsChoosen = (e) => {
   else form.platforms[findedIndex] = finded;
 
 }
-const emits = defineEmits(['update:modelValue', 'done','update']);
+const emits = defineEmits(['update:modelValue', 'done', 'update']);
 const isDialogOn = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value)
@@ -185,47 +186,46 @@ const countryConfig = computed(() => {
   };
 })
 const onSubmit = async (e) => {
-    console.log("SUBMİTTEYİZZZ");
+  console.log("SUBMİTTEYİZZZ");
 
 
   adding.value = true;
   if (image.value) {
     form.image = image.value?.file;
   }
-    try {
-        const response = await crudStore.post(route('control.catalog.artists.store'),form);
+  try {
+    const response = await crudStore.post(route('control.catalog.artists.store'), form);
 
 
-        if(response.type == 'success'){
-            toast.success(response.message);
-            emits('done', response.data)
-            isDialogOn.value = false;
-        }
-    } catch (error) {
-        console.log("ERERR",error);
-        if(error.response){
-            form.errors = error.response?.data?.errors;
-
-        }
+    if (response.type == 'success') {
+      toast.success(response.message);
+      emits('done', response.data)
+      isDialogOn.value = false;
     }
+  } catch (error) {
+    console.log("ERERR", error);
+    if (error.response) {
+      form.errors = error.response?.data?.errors;
+
+    }
+  }
 
 
-    // form.post(route('control.catalog.artists.store'), {
-    //     onFinish: () => {
-    //         adding.value = false;
-    //     },
-    //     onSuccess: async (e) => {
-    //         console.log("BAŞARILIIII");
+  // form.post(route('control.catalog.artists.store'), {
+  //     onFinish: () => {
+  //         adding.value = false;
+  //     },
+  //     onSuccess: async (e) => {
+  //         console.log("BAŞARILIIII");
 
-    //         // toast.success(e.props.notification.message);
-    //         // emits('done', e.props.notification.data)
-    //         // isDialogOn.value = false;
-    //     },
-    //     onError: (e) => {
-    //         console.log("HATAAAA", e);
-    //     },
-    // },{ headers: { 'accept': 'application/json' }});
-
+  //         // toast.success(e.props.notification.message);
+  //         // emits('done', e.props.notification.data)
+  //         // isDialogOn.value = false;
+  //     },
+  //     onError: (e) => {
+  //         console.log("HATAAAA", e);
+  //     },
+  // },{ headers: { 'accept': 'application/json' }});
 
 
 }
