@@ -60,6 +60,9 @@
               <img :src="scope.data.image"/>
             </div>
             <p>{{ scope.data.label }}</p>
+            <div v-if="scope.data.platforms">
+                var
+            </div>
           </div>
         </template>
         <template #model="scope">
@@ -280,7 +283,8 @@ const mainArtistSelectConfig = computed(() => {
       const formattedData = response.map(item => ({
         value: item.id,
         label: item.name,
-        image: item.image ? item.image.thumb || item.image.url : null  // Use `thumb` if available, fallback to `url`
+        image: item.image ? item.image.thumb || item.image.url : null,  // Use `thumb` if available, fallback to `url`
+        platforms:item.platforms
       }));
 
 
@@ -348,12 +352,16 @@ onBeforeMount(() => {
 
     props.product.main_artists.forEach(element => {
       console.log("ELEENT", element);
+        const findedIndex = mainArtistSelectConfig.value.data.findIndex((art) => art.value == element.id);
+        if(findedIndex < 0){
+            mainArtistSelectConfig.value.data.push({
+                "image": element.media[0]?.original_url,
+                "value": element.id,
+                "label": element.name,
+                "platforms" : element.platforms,
+            });
+        }
 
-      mainArtistSelectConfig.value.data.push({
-        "image": element.media[0]?.original_url,
-        "value": element.id,
-        "label": element.name,
-      });
     });
 
   }
@@ -361,12 +369,14 @@ onBeforeMount(() => {
 
     props.product.featured_artists.forEach(element => {
       console.log("ELEENT", element);
-
-      featuringArtistSelectConfig.value.data.push({
-        "image": element.media[0]?.original_url,
-        "value": element.id,
-        "label": element.name,
-      });
+        const findedIndex = featuringArtistSelectConfig.value.data.findIndex((art) => art.value == element.id);
+        if(findedIndex < 0){
+            featuringArtistSelectConfig.value.data.push({
+                "image": element.media[0]?.original_url,
+                "value": element.id,
+                "label": element.name,
+            });
+        }
     });
 
   }
