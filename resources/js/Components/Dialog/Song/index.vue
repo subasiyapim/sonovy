@@ -554,12 +554,12 @@ onMounted(() => {
 
     props.song.writers.forEach(element => {
         if(element.name){
-            form.lyrics_writers.push([element.name])
+            form.lyrics_writers.push(element.name)
         }
     });
     props.song.composers.forEach(element => {
         if(element.name){
-            form.composers.push([element.name])
+            form.composers.push(element.name)
         }
     });
     if(form.composers.length == 0)
