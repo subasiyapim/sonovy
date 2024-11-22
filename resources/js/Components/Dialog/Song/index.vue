@@ -473,7 +473,8 @@ const countryConfig = computed(() => {
 const onSubmit = async (e) => {
 
 
-    if(form.musicians.length == 1){ if(form.musicians[0].name == '') form.musicians = null;}
+    if(form.musicians.length == 1){ console.log(form.musicians[0]);
+     if(form.musicians[0].name == '') form.musicians = null;}
     if(form.lyrics_writers.length == 1) if(form.lyrics_writers[0] == '') form.lyrics_writers = null;
     if(form.composers.length == 1) { if(form.composers[0] == '') form.composers = null};
 
@@ -567,7 +568,7 @@ onMounted(() => {
     if(form.lyrics_writers.length == 0)
         form.lyrics_writers = [''];
     if(form.musicians.length == 0)
-        form.musicians = [{}];
+        form.musicians = [{name:''}];
 
   }
 });
