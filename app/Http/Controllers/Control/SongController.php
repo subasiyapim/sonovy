@@ -59,7 +59,7 @@ class SongController extends Controller
         }
     }
 
-    private static function updateLyricsWriters(SongUpdateRequest $request, Song $song): void
+    private static function updateWriters(SongUpdateRequest $request, Song $song): void
     {
         $lyrics_writers = $request->input('lyrics_writers');
 
@@ -70,7 +70,7 @@ class SongController extends Controller
             foreach ($lyrics_writers as $writer) {
                 SongWriter::create([
                     'song_id' => $song->id,
-                    'name' => $writer['name'],
+                    'name' => $writer
                 ]);
             }
         }
@@ -87,7 +87,7 @@ class SongController extends Controller
             foreach ($composers as $composer) {
                 SongComposer::create([
                     'song_id' => $song->id,
-                    'name' => $composer['name'],
+                    'name' => $composer,
                 ]);
             }
         }
@@ -234,11 +234,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                    [
-                        'type' => 'error',
-                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                        'model' => __('control.song.title_singular')
-                    ]
+                        [
+                            'type' => 'error',
+                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                            'model' => __('control.song.title_singular')
+                        ]
                 ]
             );
         }
@@ -387,7 +387,7 @@ class SongController extends Controller
         $updateFunctions = [
             'updateParticipants',
             'updateMusicians',
-            'updateLyricsWriters',
+            'updateWriters',
             'updateArtists',
             'updateComposers'
         ];
@@ -453,7 +453,7 @@ class SongController extends Controller
     {
         $request->validate(
             [
-                'ids' => ['array', 'in:' . Song::pluck('id')->implode(',')],
+                'ids' => ['array', 'in:'.Song::pluck('id')->implode(',')],
                 'product_id' => ['required', 'exists:products,id']
             ]
         );

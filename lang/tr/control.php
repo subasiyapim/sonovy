@@ -3,6 +3,7 @@ return [
     'notification_created' => ':model başarıyla oluşturuldu.',
     'notification_updated' => ':model başarıyla güncellendi.',
     'notification_deleted' => ':model başarıyla silindi.',
+
     'status_code' => [
         '200' => 'İşlem başarılı',
         '201' => 'İşlem başarılı',
@@ -521,6 +522,10 @@ return [
             'format_id' => 'Format',
             'language_id' => 'Albüm Dili',
             'mixed_album' => 'Derleme Albüm',
+            'production_year' => 'Yapım yılı',
+            'physical_release_date' => 'Genel yayın tarihi',
+            'previous_release_date' => 'Önceki yayın tarihi',
+            'previously_released' => 'Daha önce yayınlandı mı?'
         ],
     ],
     'products-apply' => [

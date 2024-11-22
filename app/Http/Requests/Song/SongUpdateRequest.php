@@ -32,12 +32,8 @@ class SongUpdateRequest extends FormRequest
             'genre_id' => ['required', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'exists:genres,id'],
             'is_instrumental' => ['required', 'boolean'],
-            'lyrics_writers' => [
-                'array',
-                'min:1',
-            ],
-            'lyrics_writers.*' => ['required_if:is_instrumental,false', 'required_if:is_instrumental,0'],
-            'lyrics_writers.*.name' => ['required'],
+
+            'lyrics_writers' => ['required_if:is_instrumental,false'],
 
             'lyrics' => ['nullable'],
             'preview_start' => ['nullable'],
@@ -47,8 +43,7 @@ class SongUpdateRequest extends FormRequest
             'musicians.*.role_id' => ['required', 'exists:artist_branches,id'],
 
             'composers' => ['nullable', 'array'],
-            'composers.*.name' => ['required'],
-            
+
             'participants' => ['nullable', 'array',],
             'participants.*.id' => ['required', 'exists:users,id'],
             'participants.*.tasks' => ['required'],
