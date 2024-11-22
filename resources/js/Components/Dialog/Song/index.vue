@@ -473,9 +473,9 @@ const countryConfig = computed(() => {
 const onSubmit = async (e) => {
 
 
-    if(form.musicians.length == 1) form.musicians = null;
-    if(form.lyrics_writers.length == 1) form.lyrics_writers = null;
-    if(form.composers.length == 1) form.composers = null;
+    if(form.musicians.length == 1){ if(form.musicians[0].name == '') form.musicians = null;}
+    if(form.lyrics_writers.length == 1) if(form.lyrics_writers[0] == '') form.lyrics_writers = null;
+    if(form.composers.length == 1) { if(form.composers[0] == '') form.composers = null};
 
     if (form.participants?.length == 1) {
         if (Object.values(form.participants[0]).length == 0) form.participants = null;
