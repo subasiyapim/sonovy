@@ -473,8 +473,7 @@ const countryConfig = computed(() => {
 const onSubmit = async (e) => {
 
 
-    if(form.musicians.length == 1){ console.log(form.musicians[0]);
-     if(form.musicians[0].name == '') form.musicians = null;}
+    if(form.musicians.length == 1){ if(form.musicians[0].name == '') form.musicians = null;}
     if(form.lyrics_writers.length == 1) if(form.lyrics_writers[0] == '') form.lyrics_writers = null;
     if(form.composers.length == 1) { if(form.composers[0] == '') form.composers = null};
 
@@ -488,8 +487,9 @@ const onSubmit = async (e) => {
       {
         onFinish: () => {
             if(!form.composers) form.composers = [''];
-            if(!form.musicians) form.musicians = [''];
+            if(!form.musicians) form.musicians = [{name:''}];
             if(!form.lyrics_writers) form.lyrics_writers = [''];
+            if(!form.participants) form.participants = [{}];
         },
         onSuccess: async (e) => {
 
@@ -569,7 +569,8 @@ onMounted(() => {
         form.lyrics_writers = [''];
     if(form.musicians.length == 0)
         form.musicians = [{name:''}];
-
+    if(form.participants.length == 0)
+        form.participants = [{}]
   }
 });
 const openArtistCreateDialog = (whichArtistConfigToAdString) => {
