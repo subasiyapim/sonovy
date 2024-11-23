@@ -5,6 +5,7 @@ namespace App\Http\Resources\Product;
 use App\Enums\AlbumTypeEnum;
 use App\Enums\PlatformStatusEnum;
 use App\Enums\ProductPublishedCountryTypeEnum;
+use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SongTypeEnum;
 use App\Models\Platform;
@@ -50,6 +51,7 @@ class ProductShowResource extends JsonResource
             'album_name' => $this->album_name,
             'type' => $this->type->value,
             'type_text' => $this->type(),
+            'status_text' => $this->status->title(),
             'image' => $this->image,
             'created_at' => Carbon::parse($this->created_at)->format('d-m-Y H:i'),
             'song_count' => $this->songs->count().' parça',

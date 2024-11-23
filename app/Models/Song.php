@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SongTypeEnum;
 use App\Models\System\Country;
 use App\Traits\DataTables\HasAdvancedFilter;
 use DateTimeInterface;
@@ -67,34 +68,21 @@ class Song extends Model implements HasMedia
     protected array $filterable = [
         'name',
         'isrc',
-        'is_instrumental',
-        'is_explicit',
-        'lyrics',
         'iswc',
-        'preview_start',
-        'is_cover',
-        'remixer_artis',
-        'released_before',
-        'original_release_date',
+        'artists.name'
     ];
     protected array $orderable = [
         'name',
         'isrc',
-        'is_instrumental',
-        'is_explicit',
-        'lyrics',
         'iswc',
-        'preview_start',
-        'is_cover',
-        'remixer_artis',
-        'released_before',
-        'original_release_date',
+        'artists.name'
     ];
     protected $casts = [
         'acr_response' => 'array',
         'details' => 'array',
         'preview_start' => 'array',
-        'name' => 'string'
+        'name' => 'string',
+        'type' => SongTypeEnum::class,
     ];
 
     protected static function booted(): void

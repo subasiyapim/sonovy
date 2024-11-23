@@ -7,15 +7,16 @@
         <template #default="scope">
           <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
             <RingtoneIcon color="var(--sub-600)" v-if="scope.row.type == 1"/>
-            <MusicVideoIcon color="var(--sub-600)" v-if="scope.row.type == 2"/>
+            <MusicVideoIcon color="var(--sub-600)" v-if="scope.row.type.value == 2"/>
           </div>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="'Durum'" sortable="name" width="140">
         <template #default="scope">
-          <StatusBadge>
-            Yayında
+          <StatusBadge v-text="props.statuses[scope.row.status]"
+                       :type="scope.status === 1 ? 'success': 'pending'">
           </StatusBadge>
+
         </template>
       </AppTableColumn>
 
@@ -32,7 +33,8 @@
 
       <AppTableColumn :label="'Süre'" sortable="name">
         <template #default="scope">
-          <div v-if="currentSong !== scope.row"  @click="playSound(scope.row)" class="flex items-center gap-2 cursor-pointer">
+          <div v-if="currentSong !== scope.row" @click="playSound(scope.row)"
+               class="flex items-center gap-2 cursor-pointer">
             <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
               <PlayCircleFillIcon color="var(--dark-green-500)"/>
             </div>
@@ -40,7 +42,7 @@
               {{ scope.row.duration ?? '2.35' }}
             </p>
           </div>
-          <div v-else  @click="pauseMusic(scope.row)" class="flex items-center gap-2 cursor-pointer">
+          <div v-else @click="pauseMusic(scope.row)" class="flex items-center gap-2 cursor-pointer">
             <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
               <PlayCircleFillIcon color="var(--dark-green-500)"/>
             </div>
@@ -89,24 +91,14 @@ import {ref, computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {PrimaryButton, IconButton} from '@/Components/Buttons'
-import {StatusBadge, BasicBadge} from '@/Components/Badges'
+import {StatusBadge} from '@/Components/Badges'
 import {Howl} from "howler";
 
 import {
-  AddIcon,
-  LabelsIcon,
-  ArtistsIcon,
-  TrashIcon,
   PlayCircleFillIcon,
-  EditIcon,
-  PhoneIcon,
-  LabelEmailIcon,
-  AudioIcon,
   MusicVideoIcon,
   RingtoneIcon
 } from '@/Components/Icons'
-import {AppCard} from '@/Components/Cards'
 import {LabelDialog} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 
@@ -116,37 +108,46 @@ const props = defineProps({
   filters: {
     type: Array,
     default: () => [],
-    required: true
+    required: false
+  },
+  product_statuses: {
+    type: Object,
+    default: () => [],
+    required: false
+  },
+  statuses: {
+    type: Object,
+    default: () => [],
+    required: false
   }
 })
-
 
 
 const currentSound = ref(null);
 const currentSong = ref(null);
 const playSound = (song) => {
-    if (currentSound.value) {
-        currentSound.value.pause();
-        currentSound.value = null;
-    }
-    currentSong.value = song;
+  if (currentSound.value) {
+    currentSound.value.pause();
+    currentSound.value = null;
+  }
+  currentSong.value = song;
 
-    currentSound.value = new Howl({
-        src: ['storage/' + song.path],
-        html5: true,
-        onload: (e) => {
-            currentSound.value.play();
-        }
-    });
+  currentSound.value = new Howl({
+    src: ['storage/' + song.path],
+    html5: true,
+    onload: (e) => {
+      currentSound.value.play();
+    }
+  });
 };
 
 const pauseMusic = (song) => {
-    if (currentSound.value && currentSound.value.playing()) {
-        currentSound.value.pause();
+  if (currentSound.value && currentSound.value.playing()) {
+    currentSound.value.pause();
 
-    }
-         currentSound.value = null;
-          currentSong.value = null;
+  }
+  currentSound.value = null;
+  currentSong.value = null;
 };
 const data = ref([])
 const choosenLabel = ref(null);
@@ -159,7 +160,6 @@ const deleteRow = (row) => {
   pageTable.value.removeRowDataFromRemote(row);
 }
 const editRow = (label) => {
-
   choosenLabel.value = label;
   isModalOn.value = !isModalOn.value;
 }

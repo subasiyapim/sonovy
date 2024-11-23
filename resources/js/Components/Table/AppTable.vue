@@ -61,25 +61,26 @@
     </thead>
     <tbody>
     <template v-for="(row, rowIndex) in data" :key="rowIndex">
-         <tr class="tableRow" :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf != null && showNoteIf(row) ? '' : 'hasBorder') ">
-            <td v-if="hasSelect" class="tableCell">
+      <tr class="tableRow"
+          :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf != null && showNoteIf(row) ? '' : 'hasBorder') ">
+        <td v-if="hasSelect" class="tableCell">
 
-                <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''"
-                        @click="onSelectRow(row)"></button>
-            </td>
-            <td v-for="(column, colIndex) in columns" :key="colIndex">
-                <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
-            </td>
-        </tr>
-        <tr class="hasBorder" v-if="showNoteIf != null && showNoteIf(row)">
-            <td :colspan="columns.length+1">
-                <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
-                    <WarningIcon color="var(--error-500)" />
-                    <p class="paragraph-xs c-strong-950"> {{renderRowNoteText(row)}}</p>
+          <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''"
+                  @click="onSelectRow(row)"></button>
+        </td>
+        <td v-for="(column, colIndex) in columns" :key="colIndex">
+          <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
+        </td>
+      </tr>
+      <tr class="hasBorder" v-if="showNoteIf != null && showNoteIf(row)">
+        <td :colspan="columns.length+1">
+          <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
+            <WarningIcon color="var(--error-500)"/>
+            <p class="paragraph-xs c-strong-950"> {{ renderRowNoteText(row) }}</p>
 
-                </div>
-            </td>
-        </tr>
+          </div>
+        </td>
+      </tr>
     </template>
 
     <tr v-if="hasSlot('appends')">
@@ -217,9 +218,7 @@ const props = defineProps({
     type: Object,
     required: true
   },
-    showNoteIf:{
-
-    },
+  showNoteIf: {},
   isClient: {
     default: false,
   },
@@ -244,9 +243,7 @@ const props = defineProps({
   hasSelect: {
     default: false,
   },
-  renderRowNoteText:{
-
-  }
+  renderRowNoteText: {}
 })
 const emits = defineEmits(['update:modelValue', 'addNewClicked', 'selectionChange']);
 

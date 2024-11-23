@@ -76,6 +76,7 @@ class Product extends Model implements HasMedia
     ];
     protected $casts = [
         'type' => ProductTypeEnum::class,
+        'status' => ProductStatusEnum::class,
         'is_for_children' => 'boolean',
         'has_audiovisual_rights' => 'boolean',
         'is_compilation_publication' => 'boolean',
@@ -98,7 +99,7 @@ class Product extends Model implements HasMedia
     ];
 
 
-    protected $appends = ['image', 'status_text', 'status_class'];
+    protected $appends = ['image'];
 
     public function registerMediaCollections(): void
     {
@@ -141,15 +142,6 @@ class Product extends Model implements HasMedia
     protected static function updateCreatedBy($model): void
     {
         $model->update(['created_by' => auth()->id()]);
-    }
-
-    protected function statusText(): Attribute
-    {
-        return Attribute::make(
-            get: fn(): mixed => $this->status !== null
-                ? ProductStatusEnum::getTitles()[$this->status]
-                : 'Default Status Text'
-        );
     }
 
     protected function statusClass(): Attribute

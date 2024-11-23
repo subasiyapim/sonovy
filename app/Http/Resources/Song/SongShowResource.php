@@ -43,6 +43,7 @@ class SongShowResource extends JsonResource
             'preview_start' => $this->preview_start,
             'other_songs' => $this->otherSongs(),
             'product_status' => ProductStatusEnum::from($this->products[0]->status)->title(),
+            'status' => $this->status,
         ];
     }
 

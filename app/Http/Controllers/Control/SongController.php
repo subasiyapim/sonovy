@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Control;
 
 use App\Enums\ProductStatusEnum;
+use App\Enums\SongStatusEnum;
 use App\Enums\SongTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Song\SongChangeStatusRequest;
 use App\Http\Requests\Song\SongUpdateRequest;
+use App\Http\Resources\Song\SongResource;
 use App\Http\Resources\Song\SongShowResource;
 use App\Models\Artist;
 use App\Models\ArtistBranch;
@@ -142,7 +144,8 @@ class SongController extends Controller
             'participants',
             'remixer',
             'mainArtists',
-            'featuringArtists'
+            'featuringArtists',
+            'products'
         )
             ->when($request->type, function ($query) use ($request) {
                 $query->where('type', $request->type);
@@ -153,7 +156,12 @@ class SongController extends Controller
 
         $types = array_merge([['label' => 'Tümü', 'value' => null]], SongTypeEnum::getTitlesFromInputFormat());
 
-        return inertia('Control/Songs/Index', compact('songs', 'types'));
+        return inertia('Control/Songs/Index',
+            [
+                'songs' => $songs,
+                'types' => $types,
+                'statuses' => SongStatusEnum::getTitles(),
+            ]);
     }
 
     public function show(Song $song): \Inertia\Response|\Inertia\ResponseFactory
