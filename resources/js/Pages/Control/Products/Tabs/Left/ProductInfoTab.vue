@@ -63,21 +63,21 @@
         </template>
         <template #option="scope">
           <div class="w-full flex justify-between gap-2">
-            <div class="flex gap-2">
+            <div class="flex flex-1 gap-2">
               <div class="w-6 h-6 rounded-lg overflow-hidden">
                 <img :src="scope.data.image"/>
               </div>
               <p>{{ scope.data.label }}</p>
             </div>
-            <div v-if="scope.data.platforms">
-              <div v-for="platform in scope.data.platforms">
+            <template v-if="scope.data.platforms">
+              <div class="flex" v-for="platform in scope.data.platforms">
                 <a v-if="platform.code == 'spotify' || platform.code == 'apple'"
                    :href="platform.pivot.url"
                    target="_blank">
                   <icon :icon="platform.icon"/>
                 </a>
               </div>
-            </div>
+            </template>
           </div>
         </template>
         <template #model="scope">
@@ -224,8 +224,9 @@ import {useCrudStore} from '@/Stores/useCrudStore';
 import {usePage} from '@inertiajs/vue3';
 import {SmallArtistCreateDialog} from '@/Components/Dialog';
 import {Icon, PersonIcon} from "@/Components/Icons/index.js";
-import InputError from "@/Components/InputError.vue";
+import {useDefaultStore} from "@/Stores/default";
 
+const defaultStore = useDefaultStore();
 
 const whichSelectToAdd = ref(null);
 const openArtistCreateDialog = (artistSelectName) => {
@@ -282,7 +283,7 @@ const featuringArtistSelectConfig = computed(() => {
       const formattedData = response.map(item => ({
         value: item.id,
         label: item.name,
-        image: item.image ? item.image.thumb || item.image.url : null  // Use `thumb` if available, fallback to `url`
+        image: item.image ? item.image.thumb || item.image.url : defaultStore.profileImage(item.name)  // Use `thumb` if available, fallback to `url`
       }));
 
 
@@ -304,7 +305,7 @@ const mainArtistSelectConfig = computed(() => {
       const formattedData = response.map(item => ({
         value: item.id,
         label: item.name,
-        image: item.image ? item.image.thumb || item.image.url : null,  // Use `thumb` if available, fallback to `url`
+        image: item.image ? item.image.thumb || item.image.url : defaultStore.profileImage(item.name),  // Use `thumb` if available, fallback to `url`
         platforms: item.platforms
       }));
 
