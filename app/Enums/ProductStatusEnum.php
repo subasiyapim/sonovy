@@ -4,16 +4,15 @@ namespace App\Enums;
 
 use ReflectionClass;
 
-enum ProductStatusEnum: string
+enum ProductStatusEnum: int
 {
-    case NEW = '0';
-    case WAITING_FOR_APPROVAL = '1';
-    case APPROVED = '2';
-    case REJECTED = '3';
-    case NOT_BROADCASTING = '4';
-
-    case DRAFT = '5';
-    case PLANNED = '6';
+    case NEW = 1;
+    case WAITING_FOR_APPROVAL = 2;
+    case APPROVED = 3;
+    case REJECTED = 4;
+    case NOT_BROADCASTING = 5;
+    case PLANNED = 6;
+    case DRAFT = 7;
 
     public static function getTitles(): array
     {

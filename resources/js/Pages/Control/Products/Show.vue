@@ -175,6 +175,10 @@ const props = defineProps({
   product: {
     type: Object,
     required: true
+  },
+  statuses: {
+    type: Array,
+    required: true
   }
 });
 
@@ -197,32 +201,7 @@ const remove = () => {
 const productStatus = ref(props.product.status);
 const productStatusConfig = computed(() => {
   return {
-    data: [
-      {
-        label: "Taslak",
-        value: 1,
-      },
-      {
-        label: "İnceleniyor",
-        value: 2,
-      },
-      {
-        label: "Yayınlandı",
-        value: 3,
-      },
-      {
-        label: "Reddedildi",
-        value: 4,
-      },
-      {
-        label: "Geri Çekildi",
-        value: 5,
-      },
-      {
-        label: "Planlandı",
-        value: 6,
-      }
-    ],
+    data: props.statuses,
   };
 })
 const tabs = ref([

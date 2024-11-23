@@ -36,7 +36,6 @@ use App\Services\ProductServices;
 use App\Services\CountryServices;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -45,6 +44,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\ResponseFactory;
 use Symfony\Component\HttpFoundation\Response;
+use function Symfony\Component\String\s;
 
 /**
  * Class ProductController
@@ -89,7 +89,7 @@ class ProductController extends Controller
             ->advancedFilter();
 
         $statistics = [
-            'products' => $this->getProductsGroupedByMonth($request->input('period')),
+            'products' => $this->getProductsGroupedByPeriod($request->input('period')),
             'labels' => $this->getTopLabelsByProductCount(),
             'artists' => $this->getArtistsAddedLastMonth(),
         ];
@@ -163,6 +163,7 @@ class ProductController extends Controller
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
         $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');
         $users = getDataFromInputFormat(\App\Models\User::all(), 'id', 'name');
+        $statuses = enumToSelectInputFormat(ProductStatusEnum::getTitles());
 
         return inertia(
             'Control/Products/Show',
@@ -173,6 +174,7 @@ class ProductController extends Controller
                 'users' => $users,
                 'artistBranches' => $artistBranches,
                 'tab' => $tab,
+                'statuses' => $statuses
             ]
         );
     }
@@ -320,6 +322,7 @@ class ProductController extends Controller
 
     private function handleStepFour(Product $product, array $data): void
     {
+        $product->update(['status' => ProductStatusEnum::WAITING_FOR_APPROVAL->value]);
         self::createPromotions($product, $data);
     }
 
@@ -605,7 +608,7 @@ class ProductController extends Controller
         }
     }
 
-    public function getProductsGroupedByMonth($period)
+    public function getProductsGroupedByPeriod($period)
     {
         $cacheKey = "products_grouped_by_{$period}";
         $cacheTime = match ($period) {
