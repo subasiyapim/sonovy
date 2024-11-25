@@ -2,6 +2,9 @@
 
 
     <div class="p-4 border-text-input flex items-start radius-8 c-white-500 p-3 cursor-pointer" >
+        <div @click="playMusic">
+            <PlayCircleFillIcon color="var(--dark-green-500)" />
+        </div>
         <VueSlider :minRange="config?.range" :maxRange="config?.range" :tooltip-formatter="config?.formatter" :processStyle="config?.railStyle" class="!w-full" v-model="element"  contained></VueSlider>
     </div>
 
@@ -10,6 +13,7 @@
 
 <script setup>
     import VueSlider from 'vue-slider-component'
+    import {PlayCircleFillIcon} from '@/Components/Icons'
     import { useSlots,ref,computed } from 'vue'
     const isChecked = ref(false)
     const slots = useSlots()
@@ -20,12 +24,15 @@
         config:{},
 
     })
-    const emits = defineEmits(['update:modelValue','change','input']);
+    const emits = defineEmits(['update:modelValue','change','input','play']);
 
     const element = computed({
         get:() => props.modelValue,
         set:(value) => emits('update:modelValue',value)
     })
+    const playMusic = () => {
+        emits('play')
+    }
 
 
 </script>

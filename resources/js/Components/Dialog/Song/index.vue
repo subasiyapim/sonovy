@@ -157,8 +157,9 @@
                    type="textarea">
       </FormElement>
 
-      <FormElement label-width="190px" :config="sliderConfig" v-model="form.preview_start"
-                   :label="__('control.song.fields.preview_start')" type="slider">
+      <FormElement label-width="190px"
+                   :label="__('control.song.fields.preview_start')" type="custom">
+                   <AppSliderInput @play="onPlaySong" :config="sliderConfig" v-model="form.preview_start"> </AppSliderInput>
       </FormElement>
     </div>
     <SectionHeader :title="__('control.song.dialog.header_3')"/>
@@ -282,13 +283,55 @@ import {computed, ref, onMounted} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
 import {useCrudStore} from '@/Stores/useCrudStore';
+import {Howl} from "howler";
+
+const currentSound = ref();
+const isPlaying = ref(false);
+const onPlaySong = () => {
+
+    if(props.song.path){
+
+        if(isPlaying.value){
+            pauseMusic(props.song);
+        }else {
+            playSound(props.song);
+        }
+    }
+
+}
+
+const playSound = (song) => {
+  if (currentSound.value) {
+    currentSound.value.pause();
+    currentSound.value = null;
+  }
 
 
+  currentSound.value = new Howl({
+    src: ['storage/' + song.path],
+    html5: true,
+    onload: (e) => {
+      currentSound.value.play();
+    }
+  });
+
+   isPlaying.value = true;
+};
+
+const pauseMusic = (song) => {
+  if (currentSound.value && currentSound.value.playing()) {
+    currentSound.value.pause();
+
+  }
+  currentSound.value = null;
+  isPlaying.value = false;
+
+};
 const featuringArtistMultiselect = ref();
 const mainArtistSelect = ref();
 
 
-import {FormElement, ArtistInput, AppIncrementer, AppSelectInput} from '@/Components/Form'
+import {FormElement, ArtistInput, AppIncrementer, AppSelectInput,AppSliderInput} from '@/Components/Form'
 import InputError from "@/Components/InputError.vue";
 
 const createArtistDialog = ref(false);
