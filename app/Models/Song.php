@@ -16,6 +16,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * @method static create(array $array)
@@ -99,6 +100,16 @@ class Song extends Model implements HasMedia
         return LogOptions::defaults()
             ->logOnly($this->fillable)
             ->useLogName('song');
+    }
+
+    public function path(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                return asset('storage/tenant_'.tenant('domain').'_songs/'.$value);
+            },
+        );
+
     }
 
     //Deprecated

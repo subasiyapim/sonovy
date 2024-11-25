@@ -242,7 +242,6 @@ class ProductController extends Controller
                 $props['artistBranches'] = $artistBranches;
                 $props['video_types'] = $video_types;
                 $props['platforms'] = $platforms;
-
                 break;
             case 2:
                 $props['artistBranches'] = $artistBranches;
@@ -338,16 +337,28 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product): RedirectResponse
+    public function destroy(Product $product)
     {
         abort_if(Gate::denies('product_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        $product->songs()->detach();
+        $product->artists()->detach();
+        $product->downloadPlatforms()->detach();
+        $product->promotions()->delete();
+        $product->hashtags()->delete();
+        $product->histories()->delete();
+        $product->media()->delete();
+        $product->participants()->delete();
+        $product->publishedCountries()->detach();
+
         $product->delete();
 
-        return to_route('control.roles.index')
-            ->with([
-                'notification' => __('control.notification_deleted', ['model' => __('control.product.title_singular')])
-            ]);
+        return response()->json(
+            [
+                'success' => true,
+                'message' => __('control.notification_deleted', ['model' => __('control.product.title_singular')]),
+            ]
+        );
     }
 
 

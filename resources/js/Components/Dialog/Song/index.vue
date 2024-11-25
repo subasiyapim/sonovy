@@ -23,17 +23,20 @@
                    type="text"
                    :placeholder="__('control.song.fields.version_placeholder')"/>
 
-      <FormElement ref="mainArtistSelect" label-width="190px" v-model="form.main_artists" :error="form.errors.main_artists" type="select"
+      <FormElement ref="mainArtistSelect" label-width="190px" v-model="form.main_artists"
+                   :error="form.errors.main_artists" type="select"
                    :label="__('control.song.fields.main_artists')"
                    :placeholder="__('control.song.fields.main_artists_placeholder')" :config="mainArtistSelectConfig">
         <template #first_child>
-          <button @click="openArtistCreateDialog('main_artists')" class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
+          <button @click="openArtistCreateDialog('main_artists')"
+                  class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
             Sanatçı Oluştur
           </button>
         </template>
         <template #empty>
-          <button @click="openArtistCreateDialog('main_artists')" class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
+          <button @click="openArtistCreateDialog('main_artists')"
+                  class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
             <AddIcon color="var(--dark-green-600)"/>
             Sanatçı Oluştur
           </button>
@@ -52,15 +55,18 @@
       <FormElement ref="featuringArtistMultiselect" label-width="190px" v-model="form.featuring_artists"
                    :error="form.errors.featuring_artists"
                    type="multiselect" :label="__('control.song.fields.featuring_artists')"
-                   :placeholder="__('control.song.fields.featuring_artists_placeholder')" :config="featuringArtistSelectConfig">
+                   :placeholder="__('control.song.fields.featuring_artists_placeholder')"
+                   :config="featuringArtistSelectConfig">
         <template #first_child>
-          <button @click="openArtistCreateDialog('featuring_artists')" class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
+          <button @click="openArtistCreateDialog('featuring_artists')"
+                  class="flex items-center gap-2 paragraph-sm c-sub-600 p-2">
             <AddIcon color="var(--sub-600)"/>
             Sanatçı Oluştur
           </button>
         </template>
         <template #empty>
-          <button @click="openArtistCreateDialog('featuring_artists')" class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
+          <button @click="openArtistCreateDialog('featuring_artists')"
+                  class="flex items-center gap-2 label-xs c-dark-green-600 p-2">
             <AddIcon color="var(--dark-green-600)"/>
             Sanatçı Oluştur
           </button>
@@ -116,13 +122,14 @@
                    :error="form.errors[`lyrics_writers.${i}`]" :disabled="form.is_instrumental" label-width="190px"
                    v-model="form.lyrics_writers[i]" :label="__('control.song.fields.lyrics_writer')"
                    :placeholder="__('control.song.fields.lyrics_writer_placeholder')"
-                   >
+      >
         <template #description>
           <div class="flex justify-between items-center">
-            <button v-if="i == form.lyrics_writers.length-1" :disabled="form.is_instrumental" @click="form.lyrics_writers.push('')"
+            <button v-if="i == form.lyrics_writers.length-1" :disabled="form.is_instrumental"
+                    @click="form.lyrics_writers.push('')"
                     class="flex items-center gap-2">
-                <AddIcon color="var(--blue-500)"/>
-                <span class="c-blue-500 label-xs">Yeni Ekle</span>
+              <AddIcon color="var(--blue-500)"/>
+              <span class="c-blue-500 label-xs">Yeni Ekle</span>
             </button>
             <button :disabled="form.is_instrumental" @click="form.lyrics_writers.splice(i,1)" class="mt-1 ms-auto">
               <span class="c-error-500 label-xs">Temizle</span>
@@ -136,13 +143,14 @@
                    :error="form.errors[`composers.${i}`]" :disabled="form.is_instrumental" label-width="190px"
                    v-model="form.composers[i]" :label="'Besteci'"
                    :placeholder="'Besteci giriniz'"
-                   >
+      >
         <template #description>
           <div class="flex justify-between items-center">
-             <button v-if="i == form.composers.length-1" :disabled="form.is_instrumental" @click="form.composers.push('')"
+            <button v-if="i == form.composers.length-1" :disabled="form.is_instrumental"
+                    @click="form.composers.push('')"
                     class="flex items-center gap-2">
-                <AddIcon color="var(--blue-500)"/>
-                <span class="c-blue-500 label-xs">Yeni Ekle</span>
+              <AddIcon color="var(--blue-500)"/>
+              <span class="c-blue-500 label-xs">Yeni Ekle</span>
             </button>
             <button :disabled="form.is_instrumental" @click="form.composers.splice(i,1)" class="ms-auto mt-1">
               <span class="c-error-500 label-xs">Temizle</span>
@@ -159,7 +167,7 @@
 
       <FormElement label-width="190px"
                    :label="__('control.song.fields.preview_start')" type="custom">
-                   <AppSliderInput @play="onPlaySong" :config="sliderConfig" v-model="form.preview_start"> </AppSliderInput>
+        <AppSliderInput @play="onPlaySong" :config="sliderConfig" v-model="form.preview_start"></AppSliderInput>
       </FormElement>
     </div>
     <SectionHeader :title="__('control.song.dialog.header_3')"/>
@@ -175,13 +183,16 @@
           <div class="flex items-start justify-center gap-3" v-for="(musician,musicanIndex) in form.musicians">
 
             <div class="flex-1">
-              <FormElement direction="vertical" v-model="musician.name" :placeholder="__('control.song.fields.musicians_placeholder')"  :error="form.errors[`musicians.${musicanIndex}.id`]">
-                    <template #description>
-                         <button v-if="musicanIndex == form.musicians.length-1" @click="form.musicians.push({})" class="flex items-center mt-2 gap-2">
-                            <AddIcon color="var(--blue-500)"/>
-                            <span class="c-blue-500 label-xs">Yeni Ekle</span>
-                        </button>
-                    </template>
+              <FormElement direction="vertical" v-model="musician.name"
+                           :placeholder="__('control.song.fields.musicians_placeholder')"
+                           :error="form.errors[`musicians.${musicanIndex}.id`]">
+                <template #description>
+                  <button v-if="musicanIndex == form.musicians.length-1" @click="form.musicians.push({})"
+                          class="flex items-center mt-2 gap-2">
+                    <AddIcon color="var(--blue-500)"/>
+                    <span class="c-blue-500 label-xs">Yeni Ekle</span>
+                  </button>
+                </template>
               </FormElement>
 
             </div>
@@ -201,7 +212,8 @@
 
       <div class="flex items-center gap-2">
         <div class="flex-1">
-          <FormElement :required="true" label-width="190px" v-model="form.isrc" label="ISRC" placeholder="Lütfen giriniz" type="text">
+          <FormElement :required="true" label-width="190px" v-model="form.isrc" label="ISRC"
+                       placeholder="Lütfen giriniz" type="text">
           </FormElement>
         </div>
         <RegularButton class="w-min" @click="generateISRCCode">
@@ -221,12 +233,13 @@
                      :label="__('control.song.fields.participants')" direction="vertical"
                      :placeholder="__('control.song.fields.participants_placeholder')">
 
-            <template #description>
-                <button v-if=" i == form.participants.length-1" @click="form.participants.push({})" class="flex items-center gap-2  mt-2">
-                    <AddIcon color="var(--blue-500)"/>
-                    <span class="c-blue-500 label-xs">Yeni Katılımcı Ekle</span>
-                </button>
-            </template>
+          <template #description>
+            <button v-if=" i == form.participants.length-1" @click="form.participants.push({})"
+                    class="flex items-center gap-2  mt-2">
+              <AddIcon color="var(--blue-500)"/>
+              <span class="c-blue-500 label-xs">Yeni Katılımcı Ekle</span>
+            </button>
+          </template>
         </FormElement>
         <FormElement class="flex-1" type="multiselect" :error="form.errors[`participants.${i}.tasks`]"
                      v-model="participant.tasks" :config="roleConfig"
@@ -249,8 +262,6 @@
 
         </div>
       </div>
-
-
 
 
     </div>
@@ -289,14 +300,14 @@ const currentSound = ref();
 const isPlaying = ref(false);
 const onPlaySong = () => {
 
-    if(props.song.path){
+  if (props.song.path) {
 
-        if(isPlaying.value){
-            pauseMusic(props.song);
-        }else {
-            playSound(props.song);
-        }
+    if (isPlaying.value) {
+      pauseMusic(props.song);
+    } else {
+      playSound(props.song);
     }
+  }
 
 }
 
@@ -308,14 +319,14 @@ const playSound = (song) => {
 
 
   currentSound.value = new Howl({
-    src: ['storage/' + song.path],
+    src: [song.path],
     html5: true,
     onload: (e) => {
       currentSound.value.play();
     }
   });
 
-   isPlaying.value = true;
+  isPlaying.value = true;
 };
 
 const pauseMusic = (song) => {
@@ -331,7 +342,7 @@ const featuringArtistMultiselect = ref();
 const mainArtistSelect = ref();
 
 
-import {FormElement, ArtistInput, AppIncrementer, AppSelectInput,AppSliderInput} from '@/Components/Form'
+import {FormElement, ArtistInput, AppIncrementer, AppSelectInput, AppSliderInput} from '@/Components/Form'
 import InputError from "@/Components/InputError.vue";
 
 const createArtistDialog = ref(false);
@@ -417,7 +428,7 @@ const featuringArtistSelectConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
-    data:usePage().props.artists,
+    data: usePage().props.artists,
     remote: async (query) => {
 
       const response = await crudStore.get(route('control.search.artists', {
@@ -501,23 +512,27 @@ const countryConfig = computed(() => {
 const onSubmit = async (e) => {
 
 
-    if(form.musicians.length == 1){ if(form.musicians[0].name == '') form.musicians = null;}
-    if(form.lyrics_writers.length == 1) if(form.lyrics_writers[0] == '') form.lyrics_writers = null;
-    if(form.composers.length == 1) { if(form.composers[0] == '') form.composers = null};
+  if (form.musicians.length == 1) {
+    if (form.musicians[0].name == '') form.musicians = null;
+  }
+  if (form.lyrics_writers.length == 1) if (form.lyrics_writers[0] == '') form.lyrics_writers = null;
+  if (form.composers.length == 1) {
+    if (form.composers[0] == '') form.composers = null
+  }
+  ;
 
-    if (form.participants?.length == 1) {
-        if (Object.values(form.participants[0]).length == 0) form.participants = null;
-    }
-
+  if (form.participants?.length == 1) {
+    if (Object.values(form.participants[0]).length == 0) form.participants = null;
+  }
 
 
   form.put(route('control.catalog.songs.update', props.song.id),
       {
         onFinish: () => {
-            if(!form.composers) form.composers = [''];
-            if(!form.musicians) form.musicians = [{name:''}];
-            if(!form.lyrics_writers) form.lyrics_writers = [''];
-            if(!form.participants) form.participants = [{}];
+          if (!form.composers) form.composers = [''];
+          if (!form.musicians) form.musicians = [{name: ''}];
+          if (!form.lyrics_writers) form.lyrics_writers = [''];
+          if (!form.participants) form.participants = [{}];
         },
         onSuccess: async (e) => {
 
@@ -528,7 +543,7 @@ const onSubmit = async (e) => {
 
         },
         onError: (e) => {
-            toast.error(Object.values(e)[0])
+          toast.error(Object.values(e)[0])
         }
       });
 
@@ -546,13 +561,12 @@ const onArtistCreated = (e) => {
   };
 
 
-
-  if(whichArtistConfigToAdd.value == 'featuring_artists'){
+  if (whichArtistConfigToAdd.value == 'featuring_artists') {
     featuringArtistMultiselect.value.appMultiSelect.insertData(row);
     featuringArtistSelectConfig.value.data.push(row);
-  }else {
-      mainArtistSelect.value.appSelect.insertData(row);
-      mainArtistSelectConfig.value.data.push(row);
+  } else {
+    mainArtistSelect.value.appSelect.insertData(row);
+    mainArtistSelectConfig.value.data.push(row);
   }
 
 }
@@ -570,7 +584,6 @@ onMounted(() => {
     form.main_artists = props.song.main_artists?.length > 0 ? props.song.main_artists[0].id : null;
 
 
-
     form.musicians = (props.song.musicians ?? []).map((e) => {
       return {name: e.name, role_id: e.role_id}
     }) ?? [{}];
@@ -580,30 +593,29 @@ onMounted(() => {
     }) ?? [{}];
 
 
-
     props.song?.writers?.forEach(element => {
-        if(element.name){
-            form.lyrics_writers.push(element.name)
-        }
+      if (element.name) {
+        form.lyrics_writers.push(element.name)
+      }
     });
     props.song?.composers?.forEach(element => {
-        if(element.name){
-            form.composers.push(element.name)
-        }
+      if (element.name) {
+        form.composers.push(element.name)
+      }
     });
-    if(form.composers.length == 0)
-        form.composers = [''];
-    if(form.lyrics_writers.length == 0)
-        form.lyrics_writers = [''];
-    if(form.musicians.length == 0)
-        form.musicians = [{name:''}];
-    if(form.participants.length == 0)
-        form.participants = [{}]
+    if (form.composers.length == 0)
+      form.composers = [''];
+    if (form.lyrics_writers.length == 0)
+      form.lyrics_writers = [''];
+    if (form.musicians.length == 0)
+      form.musicians = [{name: ''}];
+    if (form.participants.length == 0)
+      form.participants = [{}]
   }
 });
 const openArtistCreateDialog = (whichArtistConfigToAdString) => {
-    whichArtistConfigToAdd.value = whichArtistConfigToAdString;
-    createArtistDialog.value = true;
+  whichArtistConfigToAdd.value = whichArtistConfigToAdString;
+  createArtistDialog.value = true;
 }
 
 </script>

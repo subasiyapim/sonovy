@@ -117,7 +117,7 @@ class ProductShowResource extends JsonResource
         return $this->songs->map(function ($song) {
             return [
                 'id' => $song->id,
-                'type_text' => SongTypeEnum::from($song->type)->title(),
+                'type_text' => SongTypeEnum::from($song->type->value)->title(),
                 'type' => $song->type,
                 'status' => $song->status,
                 'name' => $song->name,
@@ -130,7 +130,7 @@ class ProductShowResource extends JsonResource
                 'sub_genre_id' => $song->sub_genre_id,
                 'artists' => $song->artists,
                 'is_instrumental' => $song->is_instrumental,
-                'path' => public_path('storage/tenant_'.tenant('domain').'_songs/'.$song->path),
+                'path' => $song->path,
                 'participants' => $song->participants
                     ->map(function ($participant) {
                         return $participant->load('user');

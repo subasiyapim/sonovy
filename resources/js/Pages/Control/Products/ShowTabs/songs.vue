@@ -2,9 +2,9 @@
 import {ref} from 'vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import {IconButton} from '@/Components/Buttons';
-import {SongParticipantModal, SongDetailModal, SongAcrResponseModal,SongDialog} from '@/Components/Dialog';
+import {SongParticipantModal, SongDetailModal, SongAcrResponseModal, SongDialog} from '@/Components/Dialog';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import { usePage} from '@inertiajs/vue3';
+import {usePage} from '@inertiajs/vue3';
 import {Howl} from "howler";
 import {
   AudioIcon,
@@ -40,45 +40,45 @@ const openAcrResponseModal = (song) => {
   choosenSong.value = song;
 };
 const openEditDialog = (song) => {
-    isSongEditModalOn.value = true;
-    choosenSong.value = song;
+  isSongEditModalOn.value = true;
+  choosenSong.value = song;
 }
 
 const onComplete = (e) => {
-    location.reload();
-    // console.log("EEE",e);
+  location.reload();
+  // console.log("EEE",e);
 
-    // const findedIndex = props.product.songs.findIndex((el) => el.id == e.id );
-    // if(findedIndex >= 0){
-    //     props.product.songs[findedIndex] = e;
-    // }
+  // const findedIndex = props.product.songs.findIndex((el) => el.id == e.id );
+  // if(findedIndex >= 0){
+  //     props.product.songs[findedIndex] = e;
+  // }
 }
 
 const currentSound = ref(null);
 const currentSong = ref(null);
 const playSound = (song) => {
-    if (currentSound.value) {
-        currentSound.value.pause();
-        currentSound.value = null;
-    }
-    currentSong.value = song;
+  if (currentSound.value) {
+    currentSound.value.pause();
+    currentSound.value = null;
+  }
+  currentSong.value = song;
 
-    currentSound.value = new Howl({
-        src: ['storage/' + song.path],
-        html5: true,
-        onload: (e) => {
-            currentSound.value.play();
-        }
-    });
+  currentSound.value = new Howl({
+    src: [song.path],
+    html5: true,
+    onload: (e) => {
+      currentSound.value.play();
+    }
+  });
 };
 
 const pauseMusic = (song) => {
-    if (currentSound.value && currentSound.value.playing()) {
-        currentSound.value.pause();
+  if (currentSound.value && currentSound.value.playing()) {
+    currentSound.value.pause();
 
-    }
-         currentSound.value = null;
-          currentSong.value = null;
+  }
+  currentSound.value = null;
+  currentSong.value = null;
 };
 </script>
 <template>
@@ -126,17 +126,18 @@ const pauseMusic = (song) => {
     </AppTableColumn>
     <AppTableColumn label="Süre">
       <template #default="scope">
-        <div v-if="currentSong !== scope.row"  @click="playSound(scope.row)" class="cursor-pointer flex items-center gap-2">
+        <div v-if="currentSong !== scope.row" @click="playSound(scope.row)"
+             class="cursor-pointer flex items-center gap-2">
           <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
-            <PlayCircleFillIcon  color="var(--dark-green-500)"/>
+            <PlayCircleFillIcon color="var(--dark-green-500)"/>
           </div>
           <p class="label-sm c-strong-950">
             {{ scope.row.duration ?? '2.35' }}
           </p>
         </div>
-         <div v-else  @click="pauseMusic(scope.row)" class="cursor-pointer flex items-center gap-2">
+        <div v-else @click="pauseMusic(scope.row)" class="cursor-pointer flex items-center gap-2">
           <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
-            <PlayCircleFillIcon  color="var(--dark-green-500)"/>
+            <PlayCircleFillIcon color="var(--dark-green-500)"/>
           </div>
           <p class="label-sm c-strong-950">
             Durdur
@@ -199,7 +200,7 @@ const pauseMusic = (song) => {
       Şarkı bulunamadı
     </template>
   </AppTable>
-<SongDialog v-if="isSongEditModalOn" :product_id="product.id" @done="onComplete" v-model="isSongEditModalOn"
+  <SongDialog v-if="isSongEditModalOn" :product_id="product.id" @done="onComplete" v-model="isSongEditModalOn"
               :genres="usePage().props.genres" :song="choosenSong"></SongDialog>
   <SongParticipantModal v-if="isSongParticipantModalOn" v-model="isSongParticipantModalOn"
                         :song="choosenSong"></SongParticipantModal>

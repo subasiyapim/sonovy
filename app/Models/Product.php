@@ -266,7 +266,7 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsToMany(
             \App\Models\System\Country::class,
-            'product_published_country',
+            tenant('tenancy_db_name').'.product_published_country',
             'product_id',
             'country_id'
         );
