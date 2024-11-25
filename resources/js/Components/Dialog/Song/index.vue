@@ -181,7 +181,6 @@
                             <span class="c-blue-500 label-xs">Yeni Ekle</span>
                         </button>
                     </template>
-
               </FormElement>
 
             </div>

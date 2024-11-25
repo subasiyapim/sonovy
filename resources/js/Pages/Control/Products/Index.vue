@@ -189,8 +189,9 @@
       </AppTableColumn>
       <AppTableColumn label="Aksiyonlar" align="end">
         <template #default="scope">
-            <IconButton @click="deleteProduct(scope.row)">
+            <IconButton :confirmDelete="true" @confirm="deleteProduct(scope.row)" title="Ürünü Silmek İstediğine Emin misin?" description="">
                 <TrashIcon color="var(--sub-600)" />
+
             </IconButton>
         </template>
       </AppTableColumn>
@@ -242,7 +243,6 @@ import {
 } from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
-
 const productTable  = ref();
 const defaultStore = useDefaultStore();
 

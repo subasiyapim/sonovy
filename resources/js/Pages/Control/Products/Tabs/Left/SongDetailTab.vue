@@ -35,7 +35,7 @@
 
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
 
-      <AppTable ref="songsTable" :hasSelect="true" v-model="form.songs" :showEmptyImage="false"
+      <AppTable @dragenter="onDragEnter"  :showEmptyOnDrag="isDraggingOn" ref="songsTable" :hasSelect="true" v-model="form.songs" :showEmptyImage="false"
                 @selectionChange="onSelectChange" :isClient="true" :hasSearch="false" :showAddButton="false">
         <AppTableColumn label="#">
           <template #default="scope">
@@ -105,7 +105,7 @@
           </div>
         </template>
         <template #empty>
-          <TusUploadInput @error="onErrorOccured" :type="product.type" :product_id="product.id" ref="tusUploadElement"
+          <TusUploadInput @dragleave="onDragLeave" @drop="onDropElement" @error="onErrorOccured" :type="product.type" :product_id="product.id" ref="tusUploadElement"
                           @start="onTusStart"
                           @progress="onTusProgress"
                           @complete="onTusComplete"></TusUploadInput>
@@ -149,6 +149,22 @@ const props = defineProps({
   modelValue: {},
 })
 
+const onDragEnter = (e) => {
+    isDraggingOn.value = true;
+
+
+}
+
+const onDragLeave = (e) => {
+    console.log("ÇIKI");
+
+    isDraggingOn.value = false;
+
+}
+
+const onDropElement = () => {
+    isDraggingOn.value = false;
+}
 const crudStore = useCrudStore();
 const choosenSongs = ref([]);
 const songsTable = ref();
@@ -156,7 +172,7 @@ const form = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value)
 })
-
+const isUploadShown = ref(true);
 const myTippy = ref();
 const tusUploadElement = ref();
 const showAttempt = ref(false);
@@ -217,7 +233,7 @@ const onTusComplete = (e) => {
 
 
 }
-
+const isDraggingOn = ref(false);
 const openEditDialog = (song) => {
   isSongDialogOn.value = true
   choosenSong.value = song

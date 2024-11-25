@@ -2,7 +2,7 @@
 
   <div v-if="hasSearch || config?.filters">
 
-    <div class="flex items-center mb-4">
+    <div class="flex items-center mb-4 ">
       <div class="flex-1 flex items-center gap-7">
         <div v-for="(filter,index) in config?.filters" class="flex items-end">
           <span class="label-xs c-sub-600"> {{ filter.title }}:</span>
@@ -38,7 +38,8 @@
       </div>
     </div>
   </div>
-  <table class="w-full appTable">
+ <div class="relative" @dragenter="emits('dragenter',$e)" @dragleave="emits('dragleave',e)">
+     <table class="w-full appTable">
     <thead>
     <tr class="border border-white-600">
 
@@ -111,7 +112,7 @@
       </svg>
     </div>
   </div>
-  <div v-else>
+  <div v-else >
     <template v-if="!(data == null || data.length <= 0)">
       <div v-if="!isClient" class="flex items-center  c-sub-600">
         <p class="w-28">
@@ -162,12 +163,13 @@
       </div>
     </template>
 
-    <div v-show="(data == null || data.length <= 0) && !hasSlot('appends')"
-         class="h-[300px] flex flex-col items-center justify-center gap-8">
+    <div v-show="(showEmptyOnDrag || (data == null || data.length <= 0) && !hasSlot('appends'))"
+         class="h-[300px] flex flex-col items-center justify-center gap-8 absolute inset-0 bg-white">
       <img v-if="showEmptyImage" src="@/assets/images/empty_state.png" class="w-32 h-32">
       <slot name="empty"/>
     </div>
   </div>
+ </div>
 
 </template>
 
@@ -243,9 +245,12 @@ const props = defineProps({
   hasSelect: {
     default: false,
   },
-  renderRowNoteText: {}
+  renderRowNoteText: {},
+  showEmptyOnDrag:{
+    default:false
+  }
 })
-const emits = defineEmits(['update:modelValue', 'addNewClicked', 'selectionChange']);
+const emits = defineEmits(['update:modelValue', 'addNewClicked', 'selectionChange','dragenter','dragleave']);
 
 const tableData = computed({
   get: () => props.modelValue,
@@ -401,7 +406,10 @@ const removeRowData = (row) => {
 
 const selectedRowIndexes = ref([]);
 const removeRowDataFromRemote = async (row) => {
+
   const path = props.slug ?? route(route().current());
+  console.log("PATHH",path);
+
   if (row.id) {
     try {
       const response = await crudStore.del(`${path}/${row.id}`);
