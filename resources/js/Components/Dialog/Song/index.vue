@@ -322,6 +322,8 @@ const playSound = (song) => {
     src: [song.path],
     html5: true,
     onload: (e) => {
+    console.log(form.preview_start);
+      currentSound.value.seek(form.preview_start[0]);
       currentSound.value.play();
     }
   });
