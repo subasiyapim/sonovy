@@ -9,7 +9,7 @@
           <div class="flex items-center gap-2 ">
             <div class="w-12 h-12 rounded-full overflow-hidden">
               <img :alt="scope.row.name"
-                   :src="scope.row.image ? scope.row.image : defaultStore.profileImage(scope.row.name)"
+                   :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.name)"
               >
             </div>
             <a :href="route('control.catalog.labels.show',scope.row.id)"

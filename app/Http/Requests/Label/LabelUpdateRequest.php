@@ -24,11 +24,12 @@ class LabelUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        //dd($this->all()['image']);
         return [
             'name' => ['required', 'string'],
             'country_id' => ['required', Rule::exists(Country::class, 'id')],
             'address' => ['nullable', 'string'],
-            'image' => ['nullable', 'max:2048'],
+            'image' => ['nullable'],
             'phone' => ['nullable'],
             'web' => ['nullable'],
             'email' => ['nullable', 'email'],
