@@ -1,5 +1,5 @@
 <template>
-    <div :class="width" class="w-min flex flex-col p-5 radius-16 border border-soft-200">
+    <div :class="width" class="w-full flex flex-col p-5 radius-16 border border-soft-200">
         <div class="flex items-start ">
             <div class="flex-1">
                 <slot name="header" />

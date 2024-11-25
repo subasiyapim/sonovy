@@ -1,7 +1,8 @@
 <template>
   <AdminLayout :showDatePicker="false" class="">
-    <div class="flex items-start gap-4 mb-12">
-      <AppCard class="flex-1">
+
+    <div class="flex grid grid-cols-3 gap-3 mb-5" >
+      <AppCard class="flex-1 w-full">
         <template #header>
           <p class="font-normal leading-3 text-sm">Toplam Yayın Sayısı</p>
           <span class="font-semibold leading-8 text-2xl">{{ statistics.product_count ?? 0 }} Yayın</span>
@@ -24,7 +25,7 @@
         </template>
       </AppCard>
 
-      <AppCard class="flex-1">
+      <AppCard class="flex-1 w-full">
         <template #header>
           <div class="flex items-center gap-2">
             <LabelsIcon color="var(--sub-600)"/>
@@ -57,7 +58,7 @@
         </template>
       </AppCard>
 
-      <AppCard class="flex-1 ">
+      <AppCard class="flex-1 w-full">
         <template #header>
           <div class="flex mt-2 items-center gap-2">
             <ArtistsIcon color="var(--sub-600)"/>
@@ -75,17 +76,17 @@
         <template #body>
           <hr class="my-3">
           <div class="flex flex-col items-start">
-            <p class="label-medium c-strong-950 !font-semibold">{{ statistics.artist_count ?? 0 }}</p>
+            <p class="label-medium c-strong-950 !font-semibold">{{ statistics.artists.length }}</p>
             <span class="paragraph-xs c-sub-600 mb-4">Toplam Sanatçılar</span>
             <div class="flex items-center gap-2">
               <div class="flex -space-x-3 rtl:space-x-reverse">
-                <img class="w-8 h-8 border-2 border-white rounded-full " v-for="a in 3"
-                     src="/docs/images/people/profile-picture-5.jpg" alt="">
+                <img class="w-8 h-8 border-2 border-white rounded-full " v-for="a in statistics.artists"
+                     :src="a.image" alt="">
+
               </div>
-              <span class="paragraph-xs c-sub-600">12 Yeni eklendi</span>
+              <span class="paragraph-xs c-sub-600">{{statistics.artists.length}} Yeni eklendi</span>
             </div>
           </div>
-
         </template>
       </AppCard>
     </div>
