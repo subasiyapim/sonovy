@@ -164,7 +164,7 @@
     </template>
 
     <div v-show="(showEmptyOnDrag || (data == null || data.length <= 0) && !hasSlot('appends'))"
-         class="h-[300px] flex flex-col items-center justify-center gap-8 absolute inset-0 bg-white">
+         class="h-[300px] flex flex-col items-center justify-center gap-8  " :class="(showEmptyOnDrag &&  data.length > 0) ?  'absolute inset-0 bg-white' : ''">
       <img v-if="showEmptyImage" src="@/assets/images/empty_state.png" class="w-32 h-32">
       <slot name="empty"/>
     </div>
