@@ -4,7 +4,9 @@
       <MinusIcon color="var(--sub-600)"/>
     </button>
     <input @input="onInput"
-           class="pointer-events-none w-10 appIncrementerButton bg-white  text-center paragragraph-sm c-strong-950 border-none focus:ring-0"
+    type="number"
+            :class="config?.isKeyboardOn ? 'pointer-events-auto' : 'pointer-events-none'"
+           class="p-0 w-10 appIncrementerButton bg-white  text-center paragragraph-sm c-strong-950 border-none focus:ring-0"
            v-model="formattedValue"/>
     <button class="bg-white  w-10  flex items-center justify-center" @click="onIncrement">
       <AddIcon color="var(--sub-600)"/>
@@ -22,7 +24,9 @@ const props = defineProps({
     type: Number,
     default: 0
   },
-  config: {}
+  config: {
+
+  },
 })
 
 const emits = defineEmits(['update:modelValue', 'change', 'input']);
@@ -42,7 +46,6 @@ const formattedValue = computed({
     }
   },
   set: (value) => {
-    console.log("LOOOG", value);
     return element.value = value;
   }
 })

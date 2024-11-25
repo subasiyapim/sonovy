@@ -118,24 +118,19 @@
                    :placeholder="__('control.song.fields.lyrics_writer_placeholder')"
                    >
         <template #description>
-          <div class="flex justify-end items-center">
-            <button :disabled="form.is_instrumental" @click="form.lyrics_writers.splice(i,1)" class="mt-1">
+          <div class="flex justify-between items-center">
+            <button v-if="i == form.lyrics_writers.length-1" :disabled="form.is_instrumental" @click="form.lyrics_writers.push('')"
+                    class="flex items-center gap-2">
+                <AddIcon color="var(--blue-500)"/>
+                <span class="c-blue-500 label-xs">Yeni Ekle</span>
+            </button>
+            <button :disabled="form.is_instrumental" @click="form.lyrics_writers.splice(i,1)" class="mt-1 ms-auto">
               <span class="c-error-500 label-xs">Temizle</span>
             </button>
           </div>
         </template>
       </FormElement>
 
-      <div class="flex">
-        <div style="width:144px;"></div>
-        <div class="text-start flex-1">
-          <button :disabled="form.is_instrumental" @click="form.lyrics_writers.push('')"
-                  class="flex items-center gap-2">
-            <AddIcon color="var(--blue-500)"/>
-            <span class="c-blue-500 label-xs">Yeni Ekle</span>
-          </button>
-        </div>
-      </div>
 
       <FormElement :required="!form.is_instrumental" v-for="(_,i) in form.composers"
                    :error="form.errors[`composers.${i}`]" :disabled="form.is_instrumental" label-width="190px"
@@ -143,24 +138,20 @@
                    :placeholder="'Besteci giriniz'"
                    >
         <template #description>
-          <div class="flex justify-end items-center">
-            <button :disabled="form.is_instrumental" @click="form.composers.splice(i,1)" class="mt-1">
+          <div class="flex justify-between items-center">
+             <button v-if="i == form.composers.length-1" :disabled="form.is_instrumental" @click="form.composers.push('')"
+                    class="flex items-center gap-2">
+                <AddIcon color="var(--blue-500)"/>
+                <span class="c-blue-500 label-xs">Yeni Ekle</span>
+            </button>
+            <button :disabled="form.is_instrumental" @click="form.composers.splice(i,1)" class="ms-auto mt-1">
               <span class="c-error-500 label-xs">Temizle</span>
             </button>
           </div>
         </template>
       </FormElement>
 
-      <div class="flex">
-        <div style="width:144px;"></div>
-        <div class="text-start flex-1">
-          <button :disabled="form.is_instrumental" @click="form.composers.push('')"
-                  class="flex items-center gap-2">
-            <AddIcon color="var(--blue-500)"/>
-            <span class="c-blue-500 label-xs">Yeni Ekle</span>
-          </button>
-        </div>
-      </div>
+
       <FormElement :disabled="form.is_instrumental" label-width="190px" v-model="form.lyrics"
                    :label="__('control.song.fields.lyrics')" :placeholder="__('control.song.fields.lyrics_placeholder')"
                    type="textarea">
@@ -184,7 +175,12 @@
 
             <div class="flex-1">
               <FormElement direction="vertical" v-model="musician.name" :placeholder="__('control.song.fields.musicians_placeholder')"  :error="form.errors[`musicians.${musicanIndex}.id`]">
-
+                    <template #description>
+                         <button v-if="musicanIndex == form.musicians.length-1" @click="form.musicians.push({})" class="flex items-center mt-2 gap-2">
+                            <AddIcon color="var(--blue-500)"/>
+                            <span class="c-blue-500 label-xs">Yeni Ekle</span>
+                        </button>
+                    </template>
 
               </FormElement>
 
@@ -202,16 +198,7 @@
           </div>
         </div>
       </div>
-      <div class="flex">
-        <div style="width:150px;"></div>
-        <div class="flex-1">
-          <button @click="form.musicians.push({})" class="flex items-center gap-2">
-            <AddIcon color="var(--blue-500)"/>
-            <span class="c-blue-500 label-xs">Yeni Ekle</span>
-          </button>
-        </div>
 
-      </div>
       <div class="flex items-center gap-2">
         <div class="flex-1">
           <FormElement :required="true" label-width="190px" v-model="form.isrc" label="ISRC" placeholder="Lütfen giriniz" type="text">
@@ -232,7 +219,15 @@
         <FormElement class="flex-1" type="select" :error="form.errors[`participants.${i}.id`]" v-model="participant.id"
                      :config="participantSelectConfig"
                      :label="__('control.song.fields.participants')" direction="vertical"
-                     :placeholder="__('control.song.fields.participants_placeholder')"/>
+                     :placeholder="__('control.song.fields.participants_placeholder')">
+
+            <template #description>
+                <button v-if=" i == form.participants.length-1" @click="form.participants.push({})" class="flex items-center gap-2  mt-2">
+                    <AddIcon color="var(--blue-500)"/>
+                    <span class="c-blue-500 label-xs">Yeni Katılımcı Ekle</span>
+                </button>
+            </template>
+        </FormElement>
         <FormElement class="flex-1" type="multiselect" :error="form.errors[`participants.${i}.tasks`]"
                      v-model="participant.tasks" :config="roleConfig"
                      :label="__('control.song.fields.roles')" direction="vertical"
@@ -242,7 +237,7 @@
                        :label=" __('control.song.fields.share')" type="custom">
 
 
-            <AppIncrementer v-model="participant.rate" class="h-9"></AppIncrementer>
+            <AppIncrementer v-model="participant.rate" :config="{isKeyboardOn:true}" class="h-9"></AppIncrementer>
             <template #description>
               <div>
                 <button @click="form.participants.splice(i,1)" class="flex items-center ms-auto gap-2 mt-2">
@@ -256,12 +251,7 @@
       </div>
 
 
-      <div>
-        <button @click="form.participants.push({})" class="flex items-center gap-2">
-          <AddIcon color="var(--blue-500)"/>
-          <span class="c-blue-500 label-xs">Yeni Katılımcı Ekle</span>
-        </button>
-      </div>
+
 
     </div>
     <div class="flex p-5 border-t border-soft-200 gap-4">
@@ -549,12 +539,12 @@ onMounted(() => {
 
 
 
-    props.song.writers.forEach(element => {
+    props.song?.writers?.forEach(element => {
         if(element.name){
             form.lyrics_writers.push(element.name)
         }
     });
-    props.song.composers.forEach(element => {
+    props.song?.composers?.forEach(element => {
         if(element.name){
             form.composers.push(element.name)
         }
