@@ -80,18 +80,21 @@
             <span class="paragraph-xs c-sub-600 mb-4">Toplam Sanatçılar</span>
             <div class="flex items-center gap-2">
               <div class="flex -space-x-3 rtl:space-x-reverse">
-                <img class="w-8 h-8 border-2 border-white rounded-full " v-for="a in statistics.artists"
-                     :src="a.image" alt="">
-
+                <template v-for="artist in statistics.artists">
+                  <img class="w-8 h-8 border-2 border-white rounded-full "
+                       :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)" alt="">
+                </template>
               </div>
               <span class="paragraph-xs c-sub-600">{{statistics.artists.length}} Yeni eklendi</span>
             </div>
+            <span class="paragraph-xs c-sub-600">{{ statistics.artists.length }} Yeni eklendi</span>
           </div>
         </template>
       </AppCard>
     </div>
 
-    <AppTable ref="productTable" :showAddButton="false" :renderRowNoteText="renderRowNoteText" :showNoteIf="showNoteIfFn"
+    <AppTable ref="productTable" :showAddButton="false" :renderRowNoteText="renderRowNoteText"
+              :showNoteIf="showNoteIfFn"
               v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
       <AppTableColumn label="Tür" sortable="type">
         <template #default="scope">
@@ -190,10 +193,11 @@
       </AppTableColumn>
       <AppTableColumn label="Aksiyonlar" align="end">
         <template #default="scope">
-            <IconButton :confirmDelete="true" @confirm="deleteProduct(scope.row)" title="Ürünü Silmek İstediğine Emin misin?" description="">
-                <TrashIcon color="var(--sub-600)" />
+          <IconButton :confirmDelete="true" @confirm="deleteProduct(scope.row)"
+                      title="Ürünü Silmek İstediğine Emin misin?" description="">
+            <TrashIcon color="var(--sub-600)"/>
 
-            </IconButton>
+          </IconButton>
         </template>
       </AppTableColumn>
       <template #empty>
@@ -225,7 +229,7 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import {ProductDialog} from '@/Components/Dialog';
 import {RegularButton} from '@/Components/Buttons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {PrimaryButton,IconButton} from '@/Components/Buttons'
+import {PrimaryButton, IconButton} from '@/Components/Buttons'
 import Vue3Apexcharts from 'vue3-apexcharts'
 import {useDefaultStore} from "@/Stores/default";
 import {
@@ -244,7 +248,8 @@ import {
 } from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
-const productTable  = ref();
+
+const productTable = ref();
 const defaultStore = useDefaultStore();
 
 const props = defineProps({

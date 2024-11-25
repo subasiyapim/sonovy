@@ -650,7 +650,7 @@ class ProductController extends Controller
                     'value' => $item->count,
                 ];
             });
-
+           
             return [
                 'total' => $totalCount,
                 'data' => $result->toArray(),
@@ -687,10 +687,12 @@ class ProductController extends Controller
 
         $artists = Artist::with('products')
             ->whereHas('products', function ($query) use ($startOfLastMonth, $endOfLastMonth) {
-                $query->whereBetween('products.created_at', [$startOfLastMonth, $endOfLastMonth]);
+                $query->where('status', ProductStatusEnum::APPROVED->value)
+                    ->whereBetween('products.created_at', [$startOfLastMonth, $endOfLastMonth]);
             })
+            ->distinct()
             ->get();
-       
+
         $result = $artists->map(function ($artist) {
             return [
                 'id' => $artist->id,
@@ -699,6 +701,7 @@ class ProductController extends Controller
             ];
         });
 
+        // dd($result);
         return $result->toArray();
     }
 }
