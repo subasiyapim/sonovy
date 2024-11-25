@@ -1,7 +1,7 @@
 <template>
   <AdminLayout :showDatePicker="false" class="">
 
-    <div class="flex grid grid-cols-3 gap-3 mb-5" >
+    <div class="flex grid grid-cols-3 gap-3 mb-5">
       <AppCard class="flex-1 w-full">
         <template #header>
           <p class="font-normal leading-3 text-sm">Toplam Yayın Sayısı</p>
@@ -85,9 +85,8 @@
                        :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)" alt="">
                 </template>
               </div>
-              <span class="paragraph-xs c-sub-600">{{statistics.artists.length}} Yeni eklendi</span>
+              <span class="paragraph-xs c-sub-600">{{ statistics.artists.length }} Yeni eklendi</span>
             </div>
-            <span class="paragraph-xs c-sub-600">{{ statistics.artists.length }} Yeni eklendi</span>
           </div>
         </template>
       </AppCard>
