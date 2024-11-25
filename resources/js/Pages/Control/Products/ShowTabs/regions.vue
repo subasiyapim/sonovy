@@ -16,8 +16,7 @@ const props = defineProps({
     </p>
     <div class="flex mt-9">
         <div class="flex flex-col w-full gap-3">
-
-            <div class="w-full" v-for="(value,key) in usePage().props.product?.regions?.countries">
+            <div class="w-full" v-for="(value,key) in usePage().props.product?.regions?.countries.countries.data">
                     <AppAccordion :title="key" description="Tüm ülkeler seçildi">
 
                         <div class="flex items-center ">

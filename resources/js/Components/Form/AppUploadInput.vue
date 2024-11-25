@@ -3,6 +3,7 @@
 
     <div class="flex items-start gap-5 ">
         <div class="w-16 h-16 bg-weak-50 rounded-full overflow-hidden">
+
             <img v-if="(!image?.url || !config?.image) && !isImageExist" src="@/assets/images/avatar.png">
             <img v-else :src="getImageView">
         </div>
@@ -52,7 +53,7 @@ const props = defineProps({
 
 })
 const rendered = ref(true);
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue','onImageDelete']);
 const fileInput = ref(null);
 const isDragging = ref(false);
 const image = computed({
@@ -88,15 +89,18 @@ const handleFiles = (files) => {
 };
 
 const removeImage = () => {
-   isImageExist.value = false;
+    isImageExist.value = false;
     rendered.value = false;
+    console.log("EEE",image.value);
 
+    emits('onImageDelete',image.value)
 
-  image.value = {};
-  console.log(fileInput.value.target);
-  nextTick(() => {
-    rendered.value = true;
-  })
+    image.value = {};
+
+    nextTick(() => {
+        rendered.value = true;
+    })
+
 };
 
 const getImageView = computed(() => {

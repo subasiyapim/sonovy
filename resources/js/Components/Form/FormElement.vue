@@ -23,7 +23,7 @@
                         :disabled="disabled"></AppTextareaInput>
       <AppRadioInput v-else-if="type=='radio'" v-model="element" @change="change" :placeholder="placeholder"
                      :config="config" :disabled="disabled"></AppRadioInput>
-      <AppUploadInput v-else-if="type=='upload'" :config="config" v-model="element" :placeholder="placeholder"
+      <AppUploadInput @onImageDelete="$emit('onImageDelete',$event)" v-else-if="type=='upload'" :config="config" v-model="element" :placeholder="placeholder"
                       :disabled="disabled"></AppUploadInput>
       <AppSliderInput v-else-if="type=='slider'" :config="config" :type="type" v-model="element"
                       :placeholder="placeholder" :disabled="disabled"></AppSliderInput>
@@ -126,7 +126,7 @@ const props = defineProps({
   type: {type: String, default: "text"},
   config: {type: Object}
 })
-const emits = defineEmits(['update:modelValue', 'change']);
+const emits = defineEmits(['update:modelValue', 'change','onImageDelete']);
 
 const element = computed({
   get: () => props.modelValue,

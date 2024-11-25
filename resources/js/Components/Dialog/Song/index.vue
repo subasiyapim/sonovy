@@ -249,7 +249,6 @@
           <FormElement direction="vertical" :error="form.errors[`participants.${i}.rate`]"
                        :label=" __('control.song.fields.share')" type="custom">
 
-
             <AppIncrementer v-model="participant.rate" :config="{isKeyboardOn:true}" class="h-9"></AppIncrementer>
             <template #description>
               <div>

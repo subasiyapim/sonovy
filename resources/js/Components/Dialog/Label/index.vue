@@ -7,7 +7,9 @@
     <SectionHeader :title="__('control.label.dialog.header_1')"/>
 
     <div class="p-5 flex flex-col gap-6">
+
       <FormElement label-width="190px" :required="true" :error="form.errors.image" v-model="form.image"
+                    @onImageDelete="onImageDelete"
                    :label="__('control.label.fields.image')" type="upload"
                    :config="{label:__('control.label.fields.image_description'),note:'Min 400x400px, PNG or JPEG',image:label?.image?.thumb}"></FormElement>
       <FormElement label-width="190px" :required="true" :error="form.errors.name" v-model="form.name"
@@ -68,6 +70,7 @@ import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {computed, ref, onMounted} from 'vue';
 import {FormElement} from '@/Components/Form'
 import {useForm, usePage} from '@inertiajs/vue3';
+import {useCrudStore} from '@/Stores/useCrudStore';
 import {toast} from 'vue3-toastify';
 
 const props = defineProps({
@@ -78,6 +81,7 @@ const props = defineProps({
     default: null
   }
 })
+const crudStore = useCrudStore();
 const isUpdating = computed(() => {
   return !!props.label;
 });
@@ -93,7 +97,7 @@ const form = useForm({
   website: "",
 
 });
-const emits = defineEmits(['update:modelValue', 'done']);
+const emits = defineEmits(['update:modelValue', 'done','update']);
 const isDialogOn = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value)
@@ -106,12 +110,14 @@ const countryConfig = computed(() => {
     data: usePage().props.countries,
   };
 })
-
-
+const onImageDelete = async (e) => {
+   var response = await  crudStore.del(route('control.media.destroy',props.label?.image?.id))
+}
 const onSubmit = (e) => {
   adding.value = true;
   if (image.value) {
     form.image = image.value?.file;
+
   }
   if (isUpdating.value) {
     form
@@ -122,13 +128,9 @@ const onSubmit = (e) => {
         .post(route('control.catalog.labels.update', props.label.id), {
           preserveScroll: true,
           onSuccess: (e) => {
-            toast.success(e.props.notification.message);
-            emits('done', e.props.notification.data)
+           toast.success(e.props.notification.message);
+            emits('update', e.props.notification.data)
             isDialogOn.value = false;
-
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
           },
           onError: (e) => {
             console.log("HATAAA", e);

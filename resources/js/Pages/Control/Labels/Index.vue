@@ -90,7 +90,7 @@
       </template>
     </AppTable>
 
-    <LabelDialog :label="choosenLabel" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
+    <LabelDialog :label="choosenLabel" @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -124,7 +124,8 @@ const data = ref([])
 const choosenLabel = ref(null);
 const isModalOn = ref(false);
 const openDialog = () => {
-  isModalOn.value = !isModalOn.value;
+    choosenLabel.value = null;
+    isModalOn.value = !isModalOn.value;
 }
 
 const deleteRow = (row) => {
@@ -144,6 +145,9 @@ const appTableConfig = computed(() => {
     filters: props.filters,
   }
 })
+const onUpdate = (e) => {
+  pageTable.value.editRow(e);
+}
 </script>
 
 <style lang="scss" scoped>
