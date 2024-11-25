@@ -135,7 +135,7 @@ class ProductController extends Controller
     {
         abort_if(Gate::denies('product_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $product->load(
+        $product->loadMissing(
             'songs.mainArtists',
             'songs.featuringArtists',
             'songs.musicians',
@@ -650,7 +650,7 @@ class ProductController extends Controller
                     'value' => $item->count,
                 ];
             });
-           
+
             return [
                 'total' => $totalCount,
                 'data' => $result->toArray(),

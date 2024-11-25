@@ -94,7 +94,7 @@
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.artist.fields.country')"/>
-                  <span class="label-sm c-strong-950" v-text="artist.country.native"/>
+                  <span class="label-sm c-strong-950" v-text="artist?.country?.name"/>
                 </div>
               </div>
               <div class="flex gap-3.5 items-center">

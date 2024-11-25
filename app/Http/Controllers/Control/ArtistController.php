@@ -29,7 +29,7 @@ class ArtistController extends Controller
     {
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $artists = Artist::with('artistBranches', 'platforms', 'country', 'products')
+        $artists = Artist::with('artistBranches', 'platforms', 'products')
             ->when(request('status') == 1, function ($query) {
                 $query->whereDoesntHave('products');
             })
@@ -40,9 +40,9 @@ class ArtistController extends Controller
                 $query->whereBetween('created_at', [request('s_date'), request('e_date')]);
             })
             ->advancedFilter();
-        
-        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
-        $countryCodes = CountryServices::getCountryPhoneCodes();
+
+        // $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        // $countryCodes = CountryServices::getCountryPhoneCodes();
         $usedGenres = ArtistServices::usedGenres($artists);
 
         $filters = [
@@ -71,11 +71,9 @@ class ArtistController extends Controller
 
         return inertia('Control/Artists/Index', [
             'artists' => ArtistResource::collection($artists)->resource,
-            'countries' => $countries,
             'filters' => $filters,
             "artistBranches" => $artistBranches,
             "platforms" => $platforms,
-            'countryCodes' => $countryCodes,
         ]);
     }
 
@@ -143,12 +141,9 @@ class ArtistController extends Controller
     {
         abort_if(Gate::denies('artist_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $artist->load('artistBranches', 'platforms', 'country', 'products.songs');
-        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
-        $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
-        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
+        $artist->loadMissing('artistBranches', 'platforms', 'country', 'products.songs');
 
-        return inertia('Control/Artists/Show', compact('artist', 'countries', 'artistBranches', 'platforms'));
+        return inertia('Control/Artists/Show', compact('artist'));
     }
 
     /**
