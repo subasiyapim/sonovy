@@ -41,8 +41,8 @@ class ArtistController extends Controller
             })
             ->advancedFilter();
 
-        // $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
-        // $countryCodes = CountryServices::getCountryPhoneCodes();
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        $countryCodes = CountryServices::getCountryPhoneCodes();
         $usedGenres = ArtistServices::usedGenres($artists);
 
         $filters = [
@@ -74,6 +74,8 @@ class ArtistController extends Controller
             'filters' => $filters,
             "artistBranches" => $artistBranches,
             "platforms" => $platforms,
+            "countries" => $countries,
+            "countryCodes" => $countryCodes
         ]);
     }
 
