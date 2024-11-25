@@ -12,6 +12,7 @@ use App\Services\LocalizationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -40,11 +41,17 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $translations = LocaleService::getLanguageFile(session('appLocale',
-            $request->user()
-                ? $request->user()->interface_language
-                : config('app.locale')),
-            ['client', 'control', 'sidebar', 'auth']);
+        $translations = Cache::rememberForever('translations', function () use ($request) {
+            return LocaleService::getLanguageFile(session('appLocale',
+                $request->user()
+                    ? $request->user()->interface_language
+                    : config('app.locale')),
+                ['client', 'control', 'sidebar', 'auth']);
+        });
+
+        $settings = Cache::rememberForever('settings', function () {
+            return Setting::get(['value', 'key', 'value']);
+        });
 
         $data = [
             'ziggy' => fn() => [
@@ -72,12 +79,11 @@ class HandleInertiaRequests extends Middleware
             'maintenance' => null,
         ];
         if (tenant()) {
-            $data['verification_code_expire'] = intval(Setting::where('key',
+            $data['verification_code_expire'] = intval($settings->where('key',
                 'verification_code_expire')->first()->value ?? 1);
 
-            $data['site_settings'] = function () {
+            $data['site_settings'] = function () use ($settings) {
                 $settings_arr = [];
-                $settings = \App\Models\Setting::get(['value', 'key', 'value']);
 
                 foreach ($settings as $setting) {
                     $settings_arr[$setting->key] = $setting->value;
