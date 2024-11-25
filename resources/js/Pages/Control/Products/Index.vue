@@ -90,7 +90,7 @@
       </AppCard>
     </div>
 
-    <AppTable :showAddButton="false" :renderRowNoteText="renderRowNoteText" :showNoteIf="showNoteIfFn"
+    <AppTable ref="productTable" :showAddButton="false" :renderRowNoteText="renderRowNoteText" :showNoteIf="showNoteIfFn"
               v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
       <AppTableColumn label="Tür" sortable="type">
         <template #default="scope">
@@ -187,6 +187,13 @@
           </div>
         </template>
       </AppTableColumn>
+      <AppTableColumn label="Aksiyonlar" align="end">
+        <template #default="scope">
+            <IconButton @click="deleteProduct(scope.row)">
+                <TrashIcon color="var(--sub-600)" />
+            </IconButton>
+        </template>
+      </AppTableColumn>
       <template #empty>
         <div class="flex flex-col items-center justify-center gap-8">
           <div>
@@ -216,7 +223,7 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import {ProductDialog} from '@/Components/Dialog';
 import {RegularButton} from '@/Components/Buttons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {PrimaryButton} from '@/Components/Buttons'
+import {PrimaryButton,IconButton} from '@/Components/Buttons'
 import Vue3Apexcharts from 'vue3-apexcharts'
 import {useDefaultStore} from "@/Stores/default";
 import {
@@ -230,17 +237,23 @@ import {
   AudioIcon,
   MusicVideoIcon,
   RingtoneIcon,
-  CheckFilledIcon
+  CheckFilledIcon,
+  TrashIcon
 } from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
 
-
+const productTable  = ref();
 const defaultStore = useDefaultStore();
 
 const props = defineProps({
   statistics: Object,
 })
+
+const deleteProduct = (row) => {
+  productTable.value.removeRowDataFromRemote(row);
+
+}
 const showNoteIfFn = (row) => {
   if (row.note && row.status == 4) {
     return true;
