@@ -682,11 +682,15 @@ class ProductController extends Controller
 
     public function getArtistsAddedLastMonth()
     {
-        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth();
-        $endOfLastMonth = Carbon::now()->subMonth()->endOfMonth();
+        $startOfLastMonth = Carbon::now()->startOfMonth();
+        $endOfLastMonth = Carbon::now()->endOfMonth();
 
-        $artists = Artist::whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->get();
-
+        $artists = Artist::with('products')
+            ->whereHas('products', function ($query) use ($startOfLastMonth, $endOfLastMonth) {
+                $query->whereBetween('products.created_at', [$startOfLastMonth, $endOfLastMonth]);
+            })
+            ->get();
+       
         $result = $artists->map(function ($artist) {
             return [
                 'id' => $artist->id,
