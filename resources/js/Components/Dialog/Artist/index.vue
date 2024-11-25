@@ -12,6 +12,7 @@
                    :required="true"
                    :error="form.errors.image"
                    v-model="image"
+                   @onImageDelete="onImageDelete"
                    :label="__('control.artist.fields.image')"
                    type="upload"
                    :config="{label:__('control.artist.fields.image_desc'),note:'Min 400x400px, PNG or JPEG',image:artist?.image?.thumb}"/>
@@ -313,6 +314,9 @@ onMounted(() => {
 
   }
 });
+const onImageDelete = async (e) => {
+   var response = await  crudStore.del(route('control.media.destroy',props.artist?.image?.id))
+}
 </script>
 
 <style scoped>

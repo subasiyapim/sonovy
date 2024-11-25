@@ -1,7 +1,7 @@
 <template>
 
 
-  <DragUploadInput @change="onChange" :image="product.image?.small" label="Albüm Kapağı"
+  <DragUploadInput @onImageDelete="onImageDelete" @change="onChange" :image="product.image?.small" label="Albüm Kapağı"
                    note="JPEG, PNG"></DragUploadInput>
   <div class="flex gap-3.5 items-center">
     <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
@@ -111,6 +111,11 @@ const onChange = (e) => {
       console.log(response);
     }
   }
+}
+
+const onImageDelete = async () => {
+   var response = await  crudStore.del(route('control.media.destroy',props.product?.image?.id))
+
 }
 </script>
 

@@ -52,7 +52,7 @@
 import { ref, reactive,onBeforeMount } from 'vue';
 import {CloudIcon} from '@/Components/Icons'
 import {RegularButton} from '@/Components/Buttons'
-const emits = defineEmits(['change'])
+const emits = defineEmits(['change','onImageDelete'])
 const props = defineProps({
     label:{},
     note:{},
@@ -103,6 +103,7 @@ const handleFiles = (files) => {
 
 const removeImage = (index) => {
   images.splice(index, 1);
+  emits('onImageDelete')
 };
 onBeforeMount(() => {
     if(props.image){
