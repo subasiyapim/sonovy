@@ -28,7 +28,13 @@ class ProductUpdateRequest extends FormRequest
         if ($product && !$product->image) {
             $data =
                 [
-                    'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048']
+                    //image,mimes:jpeg olacak ve min. 14440 px olabilir max: 3000px olabilir
+
+                    'image' => [
+                        'required', 'image', 'mimes:jpeg',
+                        'aspect_ratio:1',
+                        'min:1440', 'max:3000'
+                    ]
                 ];
         }
 

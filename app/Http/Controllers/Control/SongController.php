@@ -160,7 +160,7 @@ class SongController extends Controller
             [
                 'songs' => $songs,
                 'types' => $types,
-                'statuses' => SongStatusEnum::getTitles(),
+                'statuses' => ProductStatusEnum::getTitles(),
             ]);
     }
 
