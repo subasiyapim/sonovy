@@ -51,6 +51,20 @@ class SettingSeeder extends Seeder
                 'input_type' => $input_types->filter(fn($input_type) => $input_type === 'text')->keys()->implode(','),
             ],
             [
+                'key' => 'allowed_ringtone_formats',
+                'name' => 'Allow Ringtone Formats',
+                'description' => 'İzin verilen zil sesi formatları',
+                'value' => 'mp3,wav,webm,aif,aiff',
+                'input_type' => $input_types->filter(fn($input_type) => $input_type === 'text')->keys()->implode(','),
+            ],
+            [
+                'key' => 'allowed_video_formats',
+                'name' => 'Allow Video Formats',
+                'description' => 'İzin verilen video dosyası formatları',
+                'value' => 'mp3,wav,webm,aif,aiff',
+                'input_type' => $input_types->filter(fn($input_type) => $input_type === 'text')->keys()->implode(','),
+            ],
+            [
                 'key' => 'save_cards',
                 'name' => 'Kredi kartı bilgilerini kaydet',
                 'description' => null,

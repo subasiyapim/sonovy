@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\SongTypeEnum;
+use App\Models\Setting;
 use App\Models\Song;
 use App\Services\FFMpegServices;
 use App\Services\SongServices;
@@ -20,7 +21,7 @@ class TusServiceProvider extends ServiceProvider
     {
         $this->app->singleton('tus-server', function ($app) {
             $server = new TusServer();
-            $storagePath = storage_path('app/public/tenant_' . tenant('domain') . '_songs');
+            $storagePath = storage_path('app/public/tenant_'.tenant('domain').'_songs');
 
             if (!File::exists($storagePath)) {
                 File::makeDirectory($storagePath, 0775, true, true);
@@ -43,15 +44,23 @@ class TusServiceProvider extends ServiceProvider
     protected function handleFileUploadComplete($event, $storagePath): void
     {
         //izin verilen dosya uzantıları
+
+        $settings = Cache::remember('settings', 60 * 60 * 24, function () {
+            return Setting::whereIn('code',
+                ['allowed_song_formats', 'allowed_ringtone_formats', 'allowed_video_formats'])->get(
+                ['code', 'value']
+            )->toArray();
+        });
+
         $allowedExtensions = [
-            'sound' => ['wav', 'flac', 'mp3'],
-            'ringtone' => ['wav', 'flac', 'mp3'],
-            'video' => ['mp4', 'avi', 'mkv', 'mov'],
+            'sound' => explode(',', $settings[0]['value'] ?? 'wav,flac'),
+            'ringtone' => explode(',', $settings[1]['value'] ?? 'wav ,mp3'),
+            'video' => explode(',', $settings[2]['value'] ?? 'mp4,avi,flv'),
         ];
 
         $fileMeta = $event->getFile()->details();
         $metaType = $fileMeta['metadata']['type'];
-        $filePath = $storagePath . '/' . $fileMeta['name'];
+        $filePath = $storagePath.'/'.$fileMeta['name'];
 
         //Dosya uzantısı kontrolü
         $fileExtension = strtolower(File::extension($filePath));
@@ -70,8 +79,8 @@ class TusServiceProvider extends ServiceProvider
                 break;
         }
         if (!in_array($fileExtension, $allowedExtension)) {
-            Log::error("Dosya türü desteklenmiyor: " . $fileExtension, $allowedExtension);
-            $event->getResponse()->setHeaders(['error_message' => "Gecersiz dosya türü: " . $fileExtension]);
+            Log::error("Dosya türü desteklenmiyor: ".$fileExtension, $allowedExtension);
+            $event->getResponse()->setHeaders(['error_message' => "Gecersiz dosya türü: ".$fileExtension]);
 
             return;
         }
@@ -79,7 +88,7 @@ class TusServiceProvider extends ServiceProvider
         $details = FFMpegServices::getMediaDetails(file: $filePath);
 
         if (!$details['status']) {
-            Log::error("Bir hata oluştu: " . json_encode($details));
+            Log::error("Bir hata oluştu: ".json_encode($details));
             return;
         }
 
@@ -99,7 +108,7 @@ class TusServiceProvider extends ServiceProvider
             $file->products()->attach([$fileMeta['metadata']['product_id']]);
             $event->getResponse()->setHeaders(['upload_info' => $file->id]);
         } catch (Error $e) {
-            Log::info("HATA: " . $e);
+            Log::info("HATA: ".$e);
         }
     }
 
@@ -111,5 +120,7 @@ class TusServiceProvider extends ServiceProvider
         return sprintf('%02d:%02d', $minutes, $remainingSeconds);
     }
 
-    public function boot() {}
+    public function boot()
+    {
+    }
 }
