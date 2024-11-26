@@ -80,7 +80,7 @@ class TusServiceProvider extends ServiceProvider
         }
         if (!in_array($fileExtension, $allowedExtension)) {
             Log::error("Dosya türü desteklenmiyor: ".$fileExtension, $allowedExtension);
-            $event->getResponse()->setHeaders(['error_message' => "Gecersiz dosya türü: ".$fileExtension]);
+            $event->getResponse()->setHeaders(['error_message' => 'Gecersiz dosya tipi: '.$fileExtension]);
 
             return;
         }
