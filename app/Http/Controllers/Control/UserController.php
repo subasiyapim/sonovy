@@ -65,14 +65,11 @@ class UserController extends Controller
         $hasAdmin = $user->roles()->pluck('code')->contains('admin');
         $query = User::with('roles', 'sub_users', 'parent_user', 'country', 'district', 'city');
 
-        // If 'sub_users' is present in the request, get users with sub_user IDs
         $subUserId = $request->get('sub_users');
 
         if ($hasAdmin) {
-            // Admin: get all users or filter by sub_user ID
             $users = $subUserId ? $query->where('parent_id', $subUserId)->advancedFilter() : $query->advancedFilter();
         } else {
-            // Non-admin: filter by parent_id
             $users = $query->where('parent_id', $subUserId ?? $user->id)->advancedFilter();
         }
 
@@ -81,11 +78,11 @@ class UserController extends Controller
             'active_users' => UserServices::statistics('active_users', $validated['period'] ?? 'month'),
         ];
 
-        dd($statistics);
-        // Resource kullanarak kullanıcıları döndür
         return inertia('Control/Users/Index', [
             'users' => UserResource::collection($users),
-            'roles' => RoleService::getRolesFromInputFormat()
+            'roles' => RoleService::getRolesFromInputFormat(),
+            'statuses' => UserStatusEnum::getTitles(),
+            'statistics' => $statistics,
         ]);
     }
 

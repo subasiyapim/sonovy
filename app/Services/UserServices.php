@@ -101,6 +101,7 @@ class UserServices
             return [
                 'total' => $totalCount,
                 'data' => $result,
+                'last_three_users' => $users->take(3)->map(fn($item) => $item->name)->toArray()
             ];
         });
     }
