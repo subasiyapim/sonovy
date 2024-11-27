@@ -89,7 +89,7 @@ class ProductController extends Controller
             ->advancedFilter();
 
         $statistics = [
-            'products' => $this->getProductsGroupedByPeriod($request->input('period')),
+            'products' => $this->getProductsGroupedByPeriod($validated['period'] ?? 'month'),
             'labels' => $this->getTopLabelsByProductCount(),
             'artists' => $this->getArtistsAddedLastMonth(),
         ];

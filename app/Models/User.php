@@ -119,6 +119,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'credit_cards' => 'array',
         'bill_info' => 'array',
         'last_login_at' => 'datetime',
+        'status' => UserStatusEnum::class
     ];
 
     protected $appends = ['image', 'balance', 'status_text', 'status_class'];
@@ -226,14 +227,13 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     protected function statusText(): Attribute
     {
-        //eğer status null ise default değeri döndür aksi halde status değerini döndür
         if ($this->status === null) {
             return Attribute::make(
                 get: fn() => UserStatusEnum::getTitles()[UserStatusEnum::PENDING_APPROVAL->value]
             );
         } else {
             return Attribute::make(
-                get: fn() => UserStatusEnum::getTitles()[$this->status]
+                get: fn() => UserStatusEnum::getTitles()[$this->status->value]
             );
         }
     }
@@ -248,7 +248,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
                     UserStatusEnum::ACTIVE->value => 'green-badge',
                 ];
 
-                $statusValue = $this->status ?? 'default';
+                $statusValue = $this->status->value ?? 'default';
                 $class = $styles[$statusValue] ?? 'default-style';
 
                 return $class;
@@ -374,6 +374,11 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function branch(): BelongsTo
     {
         return $this->belongsTo(ArtistBranch::class, 'branch_id', 'id');
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class, 'created_by');
     }
 
     public function serializeDate(DateTimeInterface $date): string

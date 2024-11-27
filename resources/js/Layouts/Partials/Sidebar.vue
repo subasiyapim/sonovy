@@ -49,7 +49,8 @@
         <div class="mt-4 p-2">
           <p class="subheading-xs c-soft-400">Diğer</p>
         </div>
-        <MenuItem title="Kullanıcı Yönetimi" :icon="PersonSettingsIcon"/>
+        <MenuItem title="Kullanıcı Yönetimi" :icon="PersonSettingsIcon"
+                  :path="route('control.user-management.users.index')"/>
         <MenuItem title="CMS" :icon="CmsIcon"/>
         <MenuItem title="Yönetici Ayarları" :icon="SettingsIcon"/>
         <MenuItem title="Destek Merkezi" :icon="SupportCenterIcon"/>

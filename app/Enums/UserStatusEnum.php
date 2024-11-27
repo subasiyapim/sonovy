@@ -10,20 +10,18 @@ enum UserStatusEnum: int
     case ACTIVE = 2;
     case PASSIVE = 3;
 
-
     public static function getTitles(): array
     {
         return array_map(
             fn(UserStatusEnum $enum) => $enum->title(),
-            array_combine(array_column(self::cases(), 'value'), self::cases())
+            self::cases()
         );
     }
 
     public static function getKeys(): array
     {
-        return array_keys(self::cases());
+        return array_column(self::cases(), 'name');
     }
-
 
     public function title()
     {
