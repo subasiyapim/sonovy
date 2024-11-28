@@ -100,6 +100,7 @@ class ProductUpdateRequest extends FormRequest
             'video_type' => ['required_if:type,'.ProductTypeEnum::VIDEO->value],
             'description' => ['nullable'],
             'is_for_kids' => ['required_if:type,'.ProductTypeEnum::VIDEO->value],
+            'grid_code' => ['required_if:type,'.ProductTypeEnum::RINGTONE->value],
         ];
 
         return array_merge($data, self::common());
@@ -164,6 +165,7 @@ class ProductUpdateRequest extends FormRequest
             'physical_release_date' => __('control.product.fields.physical_release_date'),
             'previous_release_date' => __('control.product.fields.previous_release_date'),
             'previously_released' => __('control.product.fields.previously_released'),
+            'grid_code' => __('control.product.fields.grid_code'),
         ];
     }
 }

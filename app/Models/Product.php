@@ -57,6 +57,9 @@ class Product extends Model implements HasMedia
         'description',
         'is_for_kids',
 
+        //step1 ringtone
+        'grid_code',
+
         //step 2
         //step 3
         'production_year',
