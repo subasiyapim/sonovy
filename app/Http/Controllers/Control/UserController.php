@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Control;
 
 use App\Enums\PaymentProcessTypeEnum;
+use App\Enums\ProductStatusEnum;
+use App\Enums\ProductTypeEnum;
 use App\Enums\UserGenderEnum;
+use App\Enums\UserStatusEnum;
 use App\Enums\UserTitleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UserCompetencyRequest;
@@ -25,8 +28,11 @@ use App\Services\TimezoneService;
 use App\Services\UserServices;
 use App\Services\UserVerifyService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 use function PHPUnit\Framework\isEmpty;
 
@@ -38,38 +44,56 @@ class UserController extends Controller
     public function index(Request $request)
     {
         abort_if(Gate::denies('user_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $validator = Validator::make($request->all(), [
+            'status' => ['nullable', Rule::enum(UserStatusEnum::class)],
+            'role' => ['nullable', 'exists:roles,id'],
+            'period' => ['nullable', 'in:[day,week,month,year]'],
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->route('control.catalog.products.index')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $validated = $validator->validated();
+
+
         $user = Auth::user();
         $hasAdmin = $user->roles()->pluck('code')->contains('admin');
         $query = User::with('roles', 'sub_users', 'parent_user', 'country', 'district', 'city');
 
-        // If 'sub_users' is present in the request, get users with sub_user IDs
         $subUserId = $request->get('sub_users');
 
         if ($hasAdmin) {
-            // Admin: get all users or filter by sub_user ID
             $users = $subUserId ? $query->where('parent_id', $subUserId)->advancedFilter() : $query->advancedFilter();
         } else {
-            // Non-admin: filter by parent_id
             $users = $query->where('parent_id', $subUserId ?? $user->id)->advancedFilter();
         }
 
-        // Resource kullanarak kullanıcıları döndür
+        $statistics = [
+            'users' => UserServices::statistics('users', $validated['period'] ?? 'month'),
+            'active_users' => UserServices::statistics('active_users', $validated['period'] ?? 'month'),
+        ];
+
         return inertia('Control/Users/Index', [
             'users' => UserResource::collection($users),
-            'roles' => RoleService::getRolesFromInputFormat()
+            'roles' => RoleService::getRolesFromInputFormat(),
+            'statuses' => UserStatusEnum::getTitles(),
+            'statistics' => $statistics,
         ]);
     }
 
     public function create()
     {
         abort_if(Gate::denies('user_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $countries = CountryServices::get();
 
-        $permissions = PermissionService::getGroupedPermissions();
+        $countries = getDataFromInputFormat(CountryServices::get(), 'id', 'name', 'emoji');
+        $languages = getDataFromInputFormat(CountryServices::get(), 'id', 'language', 'emoji');
 
-        $roles = RoleService::getRolesFromInputFormat();
-
-        return inertia('Control/Users/Create', compact('countries', 'permissions', 'roles'));
+        return inertia('Control/Users/Create', compact('countries', 'languages'));
     }
 
 
@@ -78,8 +102,9 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
-        $data = $request->except(['role_id', 'password', 'artists', 'labels', 'platforms', 'commission_rate']);
-        $data['parent_id'] = auth()->id();
+        $data = $request->except(['password', 'artists', 'labels', 'platforms', 'commission_rate']);
+
+
         $data['password'] = bcrypt($request->password);
         $data['commission_rate'] = $request->commission_rate ? preg_replace('/\s+/', '',
             $request->commission_rate) : null;
@@ -87,18 +112,6 @@ class UserController extends Controller
         $user = User::create($data);
 
         $user->roles()->sync($request->role_id);
-
-//        if ($request->access_all_artists == 0 && $request->artists) {
-//            $user->permittedArtists()->sync($request->artists);
-//        }
-//        if ($request->access_all_labels == 0 && $request->labels) {
-//            $user->permittedLabels()->sync($request->labels);
-//        }
-//        if ($request->access_all_platforms == 0 && $request->platforms) {
-//            $user->permittedPlatforms()->sync($request->platforms);
-//        }
-
-        UserVerifyService::generate($user);
 
         return to_route('dashboard.users.index')
             ->with([

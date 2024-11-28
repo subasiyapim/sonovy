@@ -19,6 +19,7 @@ class CountryResource extends JsonResource
             'name' => $this->translations[app()->getLocale()] ?? $this->name,
             'iso2' => $this->iso2,
             'iso3' => $this->iso3,
+            'language' => $this->language ?? $this->name,
             'numeric_code' => $this->numeric_code,
             'phone_code' => $this->phone_code,
             'capital' => $this->capital,

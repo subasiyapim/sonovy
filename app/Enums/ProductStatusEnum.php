@@ -28,7 +28,7 @@ enum ProductStatusEnum: int
             self::DRAFT => 'Taslak',
             self::WAITING_FOR_APPROVAL => 'İnceleniyor',
             self::APPROVED => 'Yayınlandı',
-            self::REJECTED => 'Red edildi',
+            self::REJECTED => 'Reddedildi',
             self::NOT_BROADCASTING => 'Geri çekildi',
             self::PLANNED => 'Planlandı'
         };

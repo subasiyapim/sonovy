@@ -141,7 +141,10 @@ Route::group(
 
         Route::resource('roles', RoleController::class)->names('roles');
 
-        Route::resource('users', UserController::class)->names('users');
+        Route::group(['prefix' => 'user-management', 'as' => 'user-management.'], function () {
+            Route::resource('users', UserController::class)->names('users');
+        });
+
         Route::post('user/competency/{user}', [UserController::class, 'competency'])->name('users.competency');
 
         Route::resource('settings', SettingController::class)->names('settings')->only(['index', 'edit', 'update']);
@@ -259,50 +262,6 @@ Route::group(
         )->name('earning-report-delete');
 
 
-        Route::group(
-            ['prefix' => 'profile', 'as' => 'profile.'],
-            function () {
-                Route::get('/', [ProfileController::class, 'index'])->name('detail');
-                Route::post('/update', [ProfileController::class, 'update'])->name('update');
-                Route::post('/updateBillInfo', [ProfileController::class, 'updateBillInfo'])->name('updateBillInfo');
-                Route::post(
-                    '/updateUserBillInfo',
-                    [ProfileController::class, 'updateUserBillInfo']
-                )->name('updateUserBillInfo');
-
-                Route::get('/bank-accounts', [BankController::class, 'index'])->name('bank-accounts.index');
-                Route::get('/bank-account/create', [BankController::class, 'create'])->name('bank-account.create');
-                Route::post('/bank-account/store', [BankController::class, 'store'])->name('bank-account.store');
-                Route::get(
-                    '/bank-account/edit/{bankAccount}',
-                    [BankController::class, 'edit']
-                )->name('bank-account.edit');
-                Route::post(
-                    '/bank-account/update/{bankAccount}',
-                    [BankController::class, 'update']
-                )->name('bank-account.update');
-                Route::delete(
-                    '/bank-account/delete/{bankAccount}',
-                    [BankController::class, 'delete']
-                )->name('bank-account.delete');
-
-                Route::post('/site/store', [SiteController::class, 'store'])->name('site.store');
-                Route::post('credit-card', [ProfileController::class, 'addCreditCard'])->name('credit-card.store');
-                Route::post(
-                    'credit-card/delete',
-                    [ProfileController::class, 'deleteCreditCard']
-                )->name('credit-card.delete');
-                Route::post(
-                    'credit-card/set-default',
-                    [ProfileController::class, 'setDefaultCreditCard']
-                )->name('credit-card.set-default');
-                Route::post(
-                    'credit-card/update',
-                    [ProfileController::class, 'updateCreditCard']
-                )->name('credit-card.update');
-            }
-        );
-
         //Artist Branches
         Route::get('list', [ArtistBranchController::class, 'getBranches'])->name('artist-branches.from-input-format');
 
@@ -322,65 +281,6 @@ Route::group(
             [ArtistController::class, 'detachPlatform']
         )->name('artist-platform-detach');
 
-        //Search routes
-        Route::group(['prefix' => 'search', 'as' => 'search.',], function () {
-            Route::get('products', [ProductController::class, 'search'])->name('products');
-            Route::get('artists', [ArtistController::class, 'search'])->name('artists');
-
-            Route::get('artists-platform-search', [ArtistController::class, 'searchPlatform'])
-                ->name('artists-platform-search');
-
-
-            Route::get('labels', [LabelController::class, 'search'])->name('labels');
-            //Route::get('countries', [CountryController::class, 'search'])->name('countries')->withoutMiddleware('auth:sanctum');
-            //Route::get('states', [CountryController::class, 'search'])->name('states')->withoutMiddleware('auth:sanctum');
-            Route::get('cities', [
-                CityController::class,
-                'search'
-            ])->name('cities')->withoutMiddleware('auth:sanctum');
-            Route::get('songs', [SongController::class, 'search'])->name('songs');
-            Route::get('catalog-songs', [SongController::class, 'searchCatalog'])->name('catalog.songs');
-            Route::get('platforms', [PlatformController::class, 'search'])->name('platforms');
-            Route::get('users', [UserController::class, 'search'])->name('users');
-            Route::get('announcement-templates', [AnnouncementTemplateController::class, 'search'])
-                ->name('announcement-templates');
-            Route::get('upc', [ProductController::class, 'checkUPC'])->name('upc');
-            Route::get('isrc', [SongController::class, 'checkISRC'])->name('isrc');
-            Route::get('services', [ServiceController::class, 'search'])->name('services');
-        });
-
-        Route::group(['prefix' => 'last', 'as' => 'last.'], function () {
-            Route::get('artist', [PubController::class, 'lastArtist'])->name('artists');
-            Route::get('label', [PubController::class, 'lastLabel'])->name('labels');
-            Route::get('song', [PubController::class, 'lastSong'])->name('songs');
-            Route::get('titles', [PubController::class, 'lastTitle'])->name('titles');
-            Route::get('features', [PubController::class, 'lastFeature'])->name('features');
-            Route::get('plans', [PubController::class, 'lastPlan'])->name('plans');
-            Route::get(
-                'announcement-template',
-                [PubController::class, 'lastAnnouncementTemplate']
-            )->name('announcement-template');
-            Route::get('artist-branches', [PubController::class, 'lastArtistBranch'])->name('artist-branches');
-            Route::get('service', [PubController::class, 'lastService'])->name('service');
-        });
-
-        Route::group(['prefix' => 'find', 'as' => 'find.'], function () {
-            Route::post('product', [PubController::class, 'findBroadcast'])->name('products');
-            Route::post('song', [PubController::class, 'findSong'])->name('songs');
-            Route::post('label', [PubController::class, 'findLabel'])->name('labels');
-            Route::post('plan', [PubController::class, 'findPlan'])->name('plans');
-            Route::post('user', [PubController::class, 'findUser'])->name('users');
-            Route::post('artist', [PubController::class, 'findArtist'])->name('artist');
-            Route::post(
-                'announcement-templates',
-                [PubController::class, 'findAnnouncementTemplates']
-            )->name('announcement-templates');
-        });
-        Route::group(['prefix' => 'findall', 'as' => 'findall.'], function () {
-            Route::post('artists', [PubController::class, 'findAllArtists'])->name('artists');
-            Route::post('cities', [PubController::class, 'findAllCities'])->name('cities');
-            Route::post('states', [PubController::class, 'findAllStates'])->name('states');
-        });
 
         //Excel Import Export
         Route::group(['excel', 'as' => 'excel.'], function () {
@@ -424,5 +324,11 @@ Route::group(
         //        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         //        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
         //    });
+
+        require __DIR__.'/control/modules/search.php';
+        require __DIR__.'/control/modules/last.php';
+        require __DIR__.'/control/modules/find.php';
+
+
     }
 );

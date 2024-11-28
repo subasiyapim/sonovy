@@ -4,6 +4,8 @@ namespace App\Http\Resources\Panel;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 
 class UserResource extends JsonResource
 {
@@ -30,11 +32,14 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'commission_rate' => number_format($commission_rate * 100, 2), // Yüzdelik değer olarak
             'real_commission_rate' => number_format($real_commission_rate, 2), // Yüzdelik değer olarak
-            'earnings' => $total_earnings,
-            'earnings_after_commission' => number_format($total_earnings - ($total_earnings * $commission_rate), 2),
+            //'earnings' => $total_earnings,
+            //'earnings_after_commission' => number_format($total_earnings - ($total_earnings * $commission_rate), 2),
             // Kazanç üzerinden komisyon sonrası miktar
-            'roles' => $this->roles,
-            'sub_users' => $this->sub_users,
+            'roles' => $this->whenLoaded('roles', $this->roles),
+            'sub_users' => $this->whenLoaded('sub_users', $this->sub_users),
+            'status' => $this->status->value,
+            'status_text' => $this->status->title(),
+            'created_at' => Carbon::parse($this->created_at)->locale(App::currentLocale())->translatedFormat('d F Y H:i'),
         ];
     }
 }

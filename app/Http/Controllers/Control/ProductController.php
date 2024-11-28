@@ -89,7 +89,7 @@ class ProductController extends Controller
             ->advancedFilter();
 
         $statistics = [
-            'products' => $this->getProductsGroupedByPeriod($request->input('period')),
+            'products' => $this->getProductsGroupedByPeriod($validated['period'] ?? 'month'),
             'labels' => $this->getTopLabelsByProductCount(),
             'artists' => $this->getArtistsAddedLastMonth(),
         ];
@@ -135,7 +135,7 @@ class ProductController extends Controller
     {
         abort_if(Gate::denies('product_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $product->load(
+        $product->loadMissing(
             'songs.mainArtists',
             'songs.featuringArtists',
             'songs.musicians',
@@ -687,10 +687,12 @@ class ProductController extends Controller
 
         $artists = Artist::with('products')
             ->whereHas('products', function ($query) use ($startOfLastMonth, $endOfLastMonth) {
-                $query->whereBetween('products.created_at', [$startOfLastMonth, $endOfLastMonth]);
+                $query->where('status', ProductStatusEnum::APPROVED->value)
+                    ->whereBetween('products.created_at', [$startOfLastMonth, $endOfLastMonth]);
             })
+            ->distinct()
             ->get();
-       
+
         $result = $artists->map(function ($artist) {
             return [
                 'id' => $artist->id,
@@ -699,6 +701,7 @@ class ProductController extends Controller
             ];
         });
 
+        // dd($result);
         return $result->toArray();
     }
 }

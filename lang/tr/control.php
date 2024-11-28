@@ -526,7 +526,8 @@ return [
             'production_year' => 'Yapım yılı',
             'physical_release_date' => 'Genel yayın tarihi',
             'previous_release_date' => 'Önceki yayın tarihi',
-            'previously_released' => 'Daha önce yayınlandı mı?'
+            'previously_released' => 'Daha önce yayınlandı mı?',
+            'grid_code' => 'Grid Kodu'
         ],
     ],
     'products-apply' => [
