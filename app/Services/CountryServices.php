@@ -60,22 +60,6 @@ class CountryServices
         return CountryResource::collection(\App\Models\System\Country::get())->resolve();
     }
 
-    public static function getActiveCountriesFromInputFormat()
-    {
-        $countries = self::get();
-
-        $result = [];
-        foreach ($countries as $country) {
-            $result[] = [
-                'value' => $country['id'],
-                'label' => $country['name'],
-                'iconKey' => $country['emoji']
-            ];
-        }
-        return $result;
-    }
-
-
     public static function getCountryPhoneCodes()
     {
         $countries = self::get();

@@ -36,7 +36,6 @@ class ProfileController extends Controller
 
         $languages = LanguageServices::getActiveLanguagesFromInputFormat();
         $localize_list = LocaleService::getLocalizationListFromInputFormat();
-        $countries = CountryServices::getActiveCountriesFromInputFormat();
         $timezones = TimezoneService::getFromInputFormat();
         $titles = enumToSelectInputFormat(UserTitleEnum::getTitles(), true);
         $plans = Plan::active()->with('items')->get();

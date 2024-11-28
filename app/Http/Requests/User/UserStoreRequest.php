@@ -2,11 +2,14 @@
 
 namespace App\Http\Requests\User;
 
+use App\Models\System\City;
+use App\Models\System\Country;
+use App\Models\System\District;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-use Laravel\Jetstream\Jetstream;
 
 class UserStoreRequest extends FormRequest
 {
@@ -26,29 +29,20 @@ class UserStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'role_id' => ['required', 'exists:roles,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'country_id' => ['required', Rule::exists(Country::class, 'id')],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'language_id' => ['required', Rule::exists(Country::class, 'id')],
+            'city_id' => ['required', Rule::exists(City::class, 'id')],
+            'district_id' => ['required', Rule::exists(District::class, 'id')],
+            'address' => ['required', 'string', 'max:255'],
             'commission_rate' => ['nullable', 'numeric', 'min:0.1', 'max:99.99'],
-            'gender' => ['nullable', 'in:1,0'],
-            'country_id' => 'required|exists:countries,id',
-            'state_id' => 'required|exists:states,id',
-            'city_id' => 'required|exists:cities,id',
-            'birth_date' => ['nullable', 'date'],
-
-            'access_all_artist' => ['nullable', 'boolean'],
-            'artists' => ['required_if:access_all_artist,0', 'array'],
-            'artists.*.id' => ['required_if:access_all_artist,0', 'exists:artists,id'],
-
-            'access_all_labels' => ['nullable', 'boolean'],
-            'labels' => ['required_if:access_all_labels,0', 'array'],
-            'labels.*.id' => ['required_if:access_all_labels,0', 'exists:labels,id'],
-
-            'access_all_platforms' => ['nullable', 'boolean'],
-            'platforms' => ['required_if:access_all_platforms,0', 'array'],
-            'platforms.*.id' => ['required_if:access_all_platforms,0', 'exists:platforms,id'],
-
-            'phone' => 'required|string|unique:users,phone',
+            'is_company' => ['required', 'boolean'],
+            'company_info' => ['required_if:is_company,1', 'array'],
+            'company_info.name' => ['required_if:is_company,1', 'string'],
+            'company_info.tax_number' => ['required_if:is_company,1', 'integer'],
+            'company_info.tax_office' => ['required_if:is_company,1', 'string'],
+            'company_info.phone' => ['required_if:is_company,1', 'string'],
             'password' => [
                 'required', 'string',
                 Password::min(8)
@@ -57,31 +51,28 @@ class UserStoreRequest extends FormRequest
                     ->symbols()
                     ->uncompromised()
             ],
-
-            //'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
+            'password_confirmation' => ['required', 'string', 'same:password'],
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'name' => __('control.user.form.name.label'),
-            'email' => __('control.user.form.email.label'),
-            'role_id' => __('control.user.form.role_id.label'),
-            'commission_rate' => __('control.user.form.commission_rate.label'),
-            'gender' => __('control.user.form.gender.label'),
-            'country_id' => __('control.user.form.country_id.label'),
-            'state_id' => __('control.user.form.state_id.label'),
-            'city_id' => __('control.user.form.city_id.label'),
-            'birth_date' => __('control.user.form.birth_date.label'),
-            'access_all_artist' => __('control.user.form.access_all_artist.label'),
-            'artists' => __('control.user.form.artists.label'),
-            'access_all_labels' => __('control.user.form.access_all_labels.label'),
-            'labels' => __('control.user.form.labels.label'),
-            'access_all_platforms' => __('control.user.form.access_all_platforms.label'),
-            'platforms' => __('control.user.form.platforms.label'),
-            'phone' => __('control.user.form.phone.label'),
+            'name' => __('control.user.form.name'),
+            'country_id' => __('control.user.form.country_id'),
+            'email' => __('control.user.form.email'),
+            'language_id' => __('control.user.form.language_id'),
+            'city_id' => __('control.user.form.city_id'),
+            'district_id' => __('control.user.form.district_id'),
+            'address' => __('control.user.form.address'),
+            'commission_rate' => __('control.user.form.commission_rate'),
+            'is_company' => __('control.user.form.is_company'),
+            'company_info.name' => __('control.user.form.company_info.name'),
+            'company_info.tax_number' => __('control.user.form.company_info.tax_number'),
+            'company_info.tax_office' => __('control.user.form.company_info.tax_office'),
+            'company_info.phone' => __('control.user.form.company_info.phone'),
             'password' => __('control.user.form.password.label'),
+            'password_confirmation' => __('control.user.form.password_confirmation'),
         ];
     }
 }

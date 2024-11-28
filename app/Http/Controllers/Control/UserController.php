@@ -89,13 +89,11 @@ class UserController extends Controller
     public function create()
     {
         abort_if(Gate::denies('user_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $countries = CountryServices::get();
 
-        $permissions = PermissionService::getGroupedPermissions();
+        $countries = getDataFromInputFormat(CountryServices::get(), 'id', 'name', 'emoji');
+        $languages = getDataFromInputFormat(CountryServices::get(), 'id', 'language', 'emoji');
 
-        $roles = RoleService::getRolesFromInputFormat();
-
-        return inertia('Control/Users/Create', compact('countries', 'permissions', 'roles'));
+        return inertia('Control/Users/Create', compact('countries', 'languages'));
     }
 
 
@@ -104,8 +102,9 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
-        $data = $request->except(['role_id', 'password', 'artists', 'labels', 'platforms', 'commission_rate']);
-        $data['parent_id'] = auth()->id();
+        $data = $request->except(['password', 'artists', 'labels', 'platforms', 'commission_rate']);
+
+
         $data['password'] = bcrypt($request->password);
         $data['commission_rate'] = $request->commission_rate ? preg_replace('/\s+/', '',
             $request->commission_rate) : null;
@@ -113,18 +112,6 @@ class UserController extends Controller
         $user = User::create($data);
 
         $user->roles()->sync($request->role_id);
-
-//        if ($request->access_all_artists == 0 && $request->artists) {
-//            $user->permittedArtists()->sync($request->artists);
-//        }
-//        if ($request->access_all_labels == 0 && $request->labels) {
-//            $user->permittedLabels()->sync($request->labels);
-//        }
-//        if ($request->access_all_platforms == 0 && $request->platforms) {
-//            $user->permittedPlatforms()->sync($request->platforms);
-//        }
-
-        UserVerifyService::generate($user);
 
         return to_route('dashboard.users.index')
             ->with([
