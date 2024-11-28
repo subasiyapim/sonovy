@@ -106,7 +106,7 @@
       </RegularButton>
       <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
         <template #icon>
-          <AddIcon/>
+          <AddIcon  color="var(--dark-green-500)"/>
         </template>
         {{ __('control.general.save') }}
       </PrimaryButton>

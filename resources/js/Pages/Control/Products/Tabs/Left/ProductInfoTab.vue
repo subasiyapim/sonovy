@@ -10,7 +10,7 @@
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
       <FormElement :required="true" label-width="190px" :error="form.errors.album_name" v-model="form.album_name"
                    label="Albüm Adı"></FormElement>
-      <FormElement v-if="form.type == 1" label-width="190px" :error="form.errors.version" v-model="form.version"
+      <FormElement v-if="form.type != 2" label-width="190px" :error="form.errors.version" v-model="form.version"
                    label="Sürüm"
                    placeholder="Lütfen giriniz"></FormElement>
 
@@ -82,14 +82,19 @@
         </template>
         <template #model="scope">
           <div class="flex items-center relative gap-2">
-            <div class="flex items-center relative" :style="{'width' : scope.data.length * 20+'px'}">
-              <div v-for="(artist,index) in scope.data" :style="{'left': 14*index+'px'}"
-                   class="absolute w-5 h-5 rounded-full border border-white flex items-center justify-center bg-blue-300">
-                <span class="label-xs "> {{ artist.label[0] }}</span>
-              </div>
+            <div class="flex -space-x-3 rtl:space-x-reverse">
+                <template v-for="artist in scope.data.slice(0,2)">
+                    <span class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                          {{ artist.label[0] }}
+                    </span>
+                </template>
+                <span v-if="scope.data.length > 2" class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                    +{{scope.data.length-2}}
+                </span>
             </div>
+
             <p class="label-sm !font-normal" style="white-space:nowrap;">
-              <template v-for="(artist,artistIndex) in scope.data">
+              <template v-for="(artist,artistIndex) in scope.data.slice(0,2)">
                 {{ artist.label }}
                 <template v-if="artistIndex < scope.data.length-1">
                   , &nbsp;
@@ -97,7 +102,6 @@
 
               </template>
             </p>
-
           </div>
         </template>
       </FormElement>
@@ -129,11 +133,15 @@
         </template>
         <template #model="scope">
           <div class="flex items-center relative gap-2">
-            <div class="flex items-center relative" :style="{'width' : scope.data.length * 20+'px'}">
-              <div v-for="(artist,index) in scope.data" :style="{'left': 14*index+'px'}"
-                   class="absolute w-5 h-5 rounded-full border border-white flex items-center justify-center bg-blue-300">
-                <span class="label-xs"> {{ artist.label[0] }}</span>
-              </div>
+             <div class="flex -space-x-3 rtl:space-x-reverse">
+                <template v-for="artist in scope.data.slice(0,2)">
+                    <span class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                          {{ artist.label[0] }}
+                    </span>
+                </template>
+                <span v-if="scope.data.length > 2" class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                    +{{scope.data.length-2}}
+                </span>
             </div>
             <p class="label-sm !font-normal" style="white-space:nowrap;">
               <template v-for="(artist,artistIndex) in scope.data">
@@ -183,11 +191,42 @@
           düzenleme ve ticari olarak değerlendirme yetkisi verir.
         </template>
       </FormElement>
-      <FormElement :required="true" label-width="190px" :error="form.errors.c_line" v-model="form.c_line"
+        <FormElement :required="true" label-width="190px" :error="form.errors.c_line" v-model="form.c_line"
                    label="C Satırı"
-                   placeholder="Lütfen giriniz"></FormElement>
-      <FormElement label-width="190px" :error="form.errors.upc_code" v-model="form.upc_code" label="UPC/EAN Kodu"
-                   placeholder="Lütfen giriniz"></FormElement>
+                   placeholder="Lütfen giriniz">
+                  <template #tooltip>
+                    Yayın görselleri telif hakkı
+                </template>
+        </FormElement>
+        <FormElement label-width="190px" :error="form.errors.upc_code" v-model="form.upc_code" label="UPC/EAN Kodu"
+                   placeholder="Lütfen giriniz">
+            <template #tooltip>
+                <div class="flex items-start gap-2 p-2">
+                    <div>
+                       <WWWIcon color="var(--dark-green-500)" />
+                    </div>
+                    <div>
+                        <h1 class="label-sm text-white ">
+                            Universal Product Code
+                        </h1>
+                        <p class="paragraph-xs c-soft-400">UPC, bir ürünün benzersiz bir tanımlayıcısıdır müzik endüstrisinde albümler için kullanılır.
+                            <a href="https://app.muzikdagitim.com/login" target="_blank" class=" underline text-white">Nasıl öğrenirim?</a>
+                        </p>
+                    </div>
+                </div>
+            </template>
+        </FormElement>
+        <FormElement label-width="190px" :error="form.errors.grid" v-model="form.grid" label="Grid Kodu"
+                   placeholder="Lütfen giriniz">
+            <template #tooltip>
+                <div class="flex items-start gap-2 p-2">
+                      <p class="paragraph-xs c-soft-400">
+                        Grid Kodu
+
+                    </p>
+                </div>
+            </template>
+        </FormElement>
       <FormElement label-width="190px" :error="form.errors.catalog_number" v-model="form.catalog_number"
                    label="Katalog No" placeholder="Lütfen giriniz"></FormElement>
       <FormElement :required="true" type="select" label-width="190px" :error="form.errors.language_id"
@@ -219,7 +258,7 @@
 <script setup>
 import {computed, onBeforeMount, ref} from 'vue';
 import {FormElement} from '@/Components/Form';
-import {AddIcon} from '@/Components/Icons'
+import {AddIcon,WWWIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {usePage} from '@inertiajs/vue3';
 import {SmallArtistCreateDialog} from '@/Components/Dialog';
@@ -272,7 +311,7 @@ const form = computed({
 })
 const featuringArtistSelectConfig = computed(() => {
   return {
-    showTags: false,
+    showTags: true,
     hasSearch: true,
     data: usePage().props.artists,
     remote: async (query) => {
@@ -294,7 +333,7 @@ const featuringArtistSelectConfig = computed(() => {
 })
 const mainArtistSelectConfig = computed(() => {
   return {
-    showTags: false,
+    showTags: true,
     hasSearch: true,
     data: usePage().props.artists,
     remote: async (query) => {

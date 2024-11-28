@@ -62,28 +62,28 @@
 // // Tables
 .appTable{
     border-collapse: separate;
-    border-spacing: 0 5px;
+    border-spacing: 0px;
 }
 
 .appTable thead th {
     padding: 8px 12px;
-    border-top: 1px solid var(--white-600);
+    // border-top: 1px solid var(--white-600);
     border-bottom: 1px solid var(--white-600);
 }
 
 .appTable thead th:first-child{
-    border-radius: 8px 0 0 8px;
-    border-top: 1px solid var(--white-600);
-    border-bottom: 1px solid var(--white-600);
-    border-left: 1px solid var(--white-600);
+    // border-radius: 8px 0 0 8px;
+    // border-top: 1px solid var(--white-600);
+    // border-bottom: 1px solid var(--white-600);
+    // border-left: 1px solid var(--white-600);
 }
 
 
 .appTable thead th:last-child{
-    border-radius:0 8px 8px 0;
-    border-top: 1px solid var(--white-600);
-    border-bottom: 1px solid var(--white-600);
-    border-right: 1px solid var(--white-600);
+    // border-radius:0 8px 8px 0;
+    // border-top: 1px solid var(--white-600);
+    // border-bottom: 1px solid var(--white-600);
+    // border-right: 1px solid var(--white-600);
 }
 .appTable tbody tr{
      position: relative;
@@ -91,6 +91,9 @@
 .appTable tbody tr.tableRow{
     height: 64px;
 
+}
+.appTable tbody tr.tableRow:hover{
+   background: var(--white-500);
 }
 .appTable tbody tr.hasBorder::after{
     content: "";
@@ -109,6 +112,8 @@
 }
 .appTable tbody td.tableCell {
     padding: 12px;
+    vertical-align:middle;
+
 }
 
 

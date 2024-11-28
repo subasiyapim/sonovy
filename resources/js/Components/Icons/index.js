@@ -16,6 +16,7 @@ import CheckIcon from './CheckIcon.vue';
 import HistoryIcon from './HistoryIcon.vue';
 import WarningDocumentIcon from './WarningDocumentIcon.vue';
 import ScheduledIcon from './ScheduledIcon.vue';
+import WWWIcon from './WWWIcon.vue';
 
 import ArrowDoubleRightIcon from './ArrowDoubleRightIcon.vue';
 import ArrowDoubleLeftIcon from './ArrowDoubleLeftIcon.vue';
@@ -121,6 +122,7 @@ export {
     VerifiedFilledIcon,
     TrashIcon,
     WorldIcon,
+    WWWIcon,
     PersonCardIcon,
     EditIcon,
     TeklifManagementIcon,

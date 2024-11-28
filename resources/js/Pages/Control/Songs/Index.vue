@@ -3,7 +3,7 @@
 
     <AppTable :showAddButton="false" ref="pageTable" :config="appTableConfig"
               v-model="usePage().props.songs" @addNewClicked="openDialog">
-      <AppTableColumn :label="'Tür'" align="left" sortable="name" width="50">
+      <AppTableColumn :label="'Tür'" align="left" sortable="name" width="64">
         <template #default="scope">
           <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
             <RingtoneIcon color="var(--sub-600)" v-if="scope.row.type == 1"/>
@@ -11,7 +11,8 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn :label="'Durum'" sortable="name" width="140">
+
+      <AppTableColumn :label="'Durum'" sortable="name" >
         <template #default="scope">
           <StatusBadge v-text="props.statuses[scope.row.status]"
                        :type="scope.status === 1 ? 'success': 'pending'">

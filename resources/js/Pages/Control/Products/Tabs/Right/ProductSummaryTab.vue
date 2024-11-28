@@ -17,11 +17,11 @@
     <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
       <PersonIcon color="var(--sub-600)"/>
     </div>
-    <div>
+    <div class="flex-1">
       <p class="paragraph-xs c-sub-600">Sanatçılar</p>
       <span class="label-sm c-strong-950">
-            <template v-for="artist in product.main_artists ">
-                {{ artist.name }}
+            <template v-for="(artist,artistIndex) in product.main_artists ">
+                {{ artist.name }} <template v-if="artistIndex != product.main_artists.length-1"> , </template>
             </template>
         </span>
     </div>
@@ -30,11 +30,11 @@
     <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
       <PersonIcon color="var(--sub-600)"/>
     </div>
-    <div>
+    <div class="flex-1">
       <p class="paragraph-xs c-sub-600">Düet</p>
       <span class="label-sm c-strong-950">
-            <template v-for="artist in product.featured_artists">
-                {{ artist.name }}
+            <template v-for="(artist,artistIndex) in product.featured_artists">
+                {{ artist.name }} <template v-if="artistIndex != product.main_artists.length-1"> , </template>
             </template>
         </span>
     </div>

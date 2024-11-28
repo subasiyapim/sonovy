@@ -132,13 +132,13 @@
         </p>
       </button>
     </div>
-    <div class="flex p-5 border-t border-soft-200 gap-4">
+    <div class="flex p-5 border-t border-soft-200 gap-4 sticky bottom-0 bg-white">
       <RegularButton @click="isDialogOn = false" class="flex-1">
         {{ __('control.general.cancel') }}
       </RegularButton>
       <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
         <template #icon>
-          <AddIcon/>
+          <AddIcon color="var(--dark-green-500)"/>
         </template>
         {{ __('control.general.save') }}
       </PrimaryButton>

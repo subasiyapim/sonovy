@@ -2,7 +2,7 @@
 import {ref} from 'vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import {IconButton} from '@/Components/Buttons';
-import {SongParticipantModal, SongDetailModal, SongAcrResponseModal, SongDialog} from '@/Components/Dialog';
+import {SongParticipantModal, SongDetailModal, SongAcrResponseModal, SongDialog,SongMusiciansModal} from '@/Components/Dialog';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {usePage} from '@inertiajs/vue3';
 import {Howl} from "howler";
@@ -26,9 +26,14 @@ const isSongParticipantModalOn = ref(false);
 const isSongDetailModalOn = ref(false);
 const isAcrResponseModalOn = ref(false);
 const isSongEditModalOn = ref(false);
+const isMusiciansModalON = ref(false);
 const choosenSong = ref(null);
 const openParticipantModal = (song) => {
   isSongParticipantModalOn.value = true;
+  choosenSong.value = song;
+};
+const openMusicansModal = (song) => {
+  isMusiciansModalON.value = true;
   choosenSong.value = song;
 };
 const openSongDetailModal = (song) => {
@@ -111,7 +116,7 @@ const pauseMusic = (song) => {
       </template>
     </AppTableColumn>
 
-    <AppTableColumn label="Parça Adı">
+    <AppTableColumn label="Parça Adı" width="304">
       <template #default="scope">
 
         <div class="flex items-center gap-3">
@@ -177,6 +182,16 @@ const pauseMusic = (song) => {
 
       </template>
     </AppTableColumn>
+    <AppTableColumn label="Katkı Sağlayanlar"  width="140">
+      <template #default="scope">
+        <button @click="openMusicansModal(scope.row)">
+          <div class="flex items-center gap-2 label-xs c-sub-600 border border-soft-200 px-2 py-1 rounded-lg">
+            <p class="w-max"> {{ scope.row.musicians?.length ?? 0 }} Katılımcı</p>
+          </div>
+        </button>
+
+      </template>
+    </AppTableColumn>
     <AppTableColumn label="Analiz">
       <template #default="scope">
         <button @click="openAcrResponseModal(scope.row)" class="flex items-center gap-2">
@@ -204,6 +219,8 @@ const pauseMusic = (song) => {
               :genres="usePage().props.genres" :song="choosenSong"></SongDialog>
   <SongParticipantModal v-if="isSongParticipantModalOn" v-model="isSongParticipantModalOn"
                         :song="choosenSong"></SongParticipantModal>
+  <SongMusiciansModal v-if="isMusiciansModalON" v-model="isMusiciansModalON"
+                        :song="choosenSong"></SongMusiciansModal>
   <SongDetailModal v-if="isSongDetailModalOn" v-model="isSongDetailModalOn" :song="choosenSong"></SongDetailModal>
   <SongAcrResponseModal v-if="isAcrResponseModalOn" v-model="isAcrResponseModalOn" :product="product"
                         :song="choosenSong"></SongAcrResponseModal>

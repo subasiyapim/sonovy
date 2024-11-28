@@ -39,59 +39,75 @@
     </div>
   </div>
  <div class="relative" @dragenter="emits('dragenter',$e)" @dragleave="emits('dragleave',e)">
-     <table class="w-full appTable">
-    <thead>
-    <tr class="border border-white-600">
+  <div class="relative">
+     <div class="overflow-x-scroll w-full border border-soft-200 rounded-lg tableWrapper ">
+        <table class="w-full appTable">
+            <thead>
+                <tr class="border-b border-white-600">
 
-      <th v-if="hasSelect" class="bg-white-500 w-6">
-        <button class="appCheckBox " @click="selectAll"
-                :class="selectedRowIndexes?.length == data?.length  ? 'checked' : (selectedRowIndexes?.length == 0 ? '' : 'half') "></button>
-      </th>
-      <th @click="onClickHeader(column)"
-          :style="column?.props.width ? {'width' : `${column?.props.width}px`} :{'width' : 'auto'}"
-          :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns"
-          :key="index">
+                <th v-if="hasSelect" class="bg-white-500 w-6">
 
-        <div class="flex items-center gap-2 paragraph-xs c-sub-600"
-             :class="column.props.align == 'center' ? 'justify-center' : (column.props.align == 'right' ? 'justify-end' : 'justify-start' )">
-          {{ column.props.label }}
-          <TableOrderIcon v-if="column.props.sortable" color="var(--sub-600)"/>
+
+                    <button class="appCheckBox " @click="selectAll"
+                            :class="selectedRowIndexes?.length == data?.length  ? 'checked' : ''">
+                        <CheckIcon color="#fff" />
+                    </button>
+                </th>
+                <th @click="onClickHeader(column)"
+                    :style="column?.props.width ? {'width' : `${column?.props.width}px`} :{'width' : 'auto'}"
+                    :class="column.props.sortable ? 'cursor-pointer' :''" class="bg-white-500" v-for="(column, index) in columns"
+                    :key="index">
+
+                    <div class="flex items-center gap-2 paragraph-xs c-sub-600"
+                        :class="column.props.align == 'center' ? 'justify-center' : (column.props.align == 'right' ? 'justify-end' : 'justify-start' )">
+                    {{ column.props.label }}
+                    <TableOrderIcon v-if="column.props.sortable" color="var(--sub-600)"/>
+                    </div>
+                </th>
+                </tr>
+                </thead>
+                <tbody>
+                <template v-for="(row, rowIndex) in data" :key="rowIndex">
+                <tr class="tableRow"
+                    :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf != null && showNoteIf(row) ? '' : 'hasBorder') ">
+                    <td v-if="hasSelect" class="tableCell">
+
+                    <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''"
+                            @click="onSelectRow(row)">
+                            <CheckIcon color="#fff" />
+                    </button>
+                    </td>
+                    <td v-for="(column, colIndex) in columns" :key="colIndex" class="tableCell" :style="column.props.width ? {width:`${column.props.width}px`,display:'inline-block'} :{}">
+                        <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
+                    </td>
+                </tr>
+                <tr class="hasBorder" v-if="showNoteIf != null && showNoteIf(row)">
+                    <td :colspan="columns.length+1">
+                    <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
+                        <WarningIcon color="var(--error-500)"/>
+                        <p class="paragraph-xs c-strong-950"> {{ renderRowNoteText(row) }}</p>
+
+                    </div>
+                    </td>
+                </tr>
+                </template>
+
+                <tr v-if="hasSlot('appends')">
+                <td :colspan="columns.length+1" class="!p-0">
+                    <slot name="appends"/>
+                </td>
+
+                </tr>
+                </tbody>
+        </table>
+        <div @click="scrollTable('left')" class="side-indicator left-indicator">
+            <div class="w-5 h-5 rounded flex items-center justify-center border border-soft-200 bg-white"><ChevronLeftIcon color="var(--sub-600)" /> </div>
         </div>
-      </th>
-    </tr>
-    </thead>
-    <tbody>
-    <template v-for="(row, rowIndex) in data" :key="rowIndex">
-      <tr class="tableRow"
-          :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf != null && showNoteIf(row) ? '' : 'hasBorder') ">
-        <td v-if="hasSelect" class="tableCell">
-
-          <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''"
-                  @click="onSelectRow(row)"></button>
-        </td>
-        <td v-for="(column, colIndex) in columns" :key="colIndex">
-          <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
-        </td>
-      </tr>
-      <tr class="hasBorder" v-if="showNoteIf != null && showNoteIf(row)">
-        <td :colspan="columns.length+1">
-          <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
-            <WarningIcon color="var(--error-500)"/>
-            <p class="paragraph-xs c-strong-950"> {{ renderRowNoteText(row) }}</p>
-
-          </div>
-        </td>
-      </tr>
-    </template>
-
-    <tr v-if="hasSlot('appends')">
-      <td :colspan="columns.length+1" class="!p-0">
-        <slot name="appends"/>
-      </td>
-
-    </tr>
-    </tbody>
-  </table>
+        <div @click="scrollTable('right')" class="side-indicator right-indicator">
+            <div class="w-5 h-5 rounded flex items-center justify-center border border-soft-200 bg-white "> <ChevronRightIcon color="var(--sub-600)" /> </div>
+        </div>
+    </div>
+  </div>
   <div v-if="searching" class="h-[300px] flex flex-col items-center justify-center">
     <div class="w-12 h-12">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
@@ -175,7 +191,7 @@
 
 <script setup>
 
-import {computed, useSlots, ref, onMounted, h} from 'vue';
+import {computed, useSlots, ref, onMounted, h,nextTick} from 'vue';
 import {useCrudStore} from '@/Stores/useCrudStore';
 
 
@@ -187,7 +203,8 @@ import {
   ArrowDoubleLeftIcon,
   ArrowDoubleRightIcon,
   AddIcon,
-  WarningIcon
+  WarningIcon,
+  CheckIcon
 } from '@/Components/Icons';
 import {AppTextInput} from '@/Components/Form';
 import {router, Link} from '@inertiajs/vue3';
@@ -258,7 +275,19 @@ const tableData = computed({
 })
 
 const term = ref();
+const scrollTable = (direction) => {
+    const wrapper = document.querySelector(".tableWrapper");
 
+    let scrollOption = {  behavior: "smooth" }
+    if(direction == 'left'){
+        scrollOption['left'] = -100;
+    }else {
+          scrollOption['left'] = 100;
+    }
+    console.log("SCROOOLLL OOPTİON",scrollOption);
+
+     wrapper.scrollBy(scrollOption);
+}
 if (params.get('s')) {
   term.value = params.get('s');
 }
@@ -446,6 +475,42 @@ const selectRows = (arr) => {
 }
 onMounted(() => {
   getFilterSelects();
+
+    nextTick(() => {
+        const wrapper = document.querySelector(".tableWrapper");
+
+        // Create the side indicators
+        const leftIndicator = wrapper.querySelector('.left-indicator');
+
+        const rightIndicator = wrapper.querySelector('.right-indicator');
+        console.log("GELDİİİ");
+
+
+        const updateIndicators = () => {
+            const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
+
+            // Show/hide indicators based on the scroll position
+            leftIndicator.style.display = wrapper.scrollLeft > 0 ? "flex" : "none";
+            rightIndicator.style.display = wrapper.scrollLeft < maxScrollLeft ? "flex" : "none";
+
+            const rows = wrapper.querySelectorAll('tr.tableRow');
+            console.log("ROESS",rows);
+            rows.forEach(element => {
+                element.querySelectorAll('td').forEach(td => {
+                    td.style.height = `${element.clientHeight}px`
+                });
+            });
+        };
+
+
+
+        // Initial check
+        updateIndicators();
+
+        // Update indicators on scroll and resize
+        wrapper.addEventListener("scroll", updateIndicators);
+        window.addEventListener("resize", updateIndicators);
+    })
 });
 defineExpose({
   removeRowByIndex,
@@ -463,23 +528,26 @@ defineExpose({
 .appCheckBox {
   width: 14px;
   height: 14px;
+  padding:1px;
   border-radius: 2.6px;
   background: white;
   box-shadow: 0px 2px 2px 0px #1B1C1D1F;
   border: 1px solid var(--soft-200);
   position: relative;
-
+    display:flex;
+    items:center;
+    justify-content:center;
 }
 
-.appCheckBox.checked:after {
-  content: "";
-  inset: 0;
-  margin: auto;
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 2.6px;
-  background: var(--dark-green-500);
+.appCheckBox.checked {
+    background:var(--dark-green-500);
+    border: 1px solid var(--dark-green-500);
+
+}
+.appCheckBox.checked .svg {
+    display:block;
+    width:12px;
+    height:12px;
 }
 
 .appCheckBox.half:after {
@@ -491,6 +559,32 @@ defineExpose({
   height: 3px;
   border-radius: 2.6px;
   background: var(--dark-green-500);
+}
+.side-indicator{
+    position:absolute;
+    width:48px;
+    height:100%;
+      border-radius:8px;
+    justify-content:center;
+    padding-top:10px;
+    cursor:pointer;
+}
+.left-indicator{
+    left:0px;
+    top:0px;
+    bottom:0px;
+    margin-left:1px;
+    margin-top:1px;
+    background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 100%);
+}
+.right-indicator{
+    right:0px;
+    top:0px;
+    bottom:0px;
+    margin-right:1px;
+    margin-top:1px;
+
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 100%);
 }
 </style>
 

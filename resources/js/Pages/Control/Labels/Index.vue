@@ -82,7 +82,7 @@
           </div>
           <PrimaryButton>
             <template #icon>
-              <AddIcon/>
+              <AddIcon  color="var(--dark-green-500)" />
             </template>
             {{ __('control.label.table.empty_button') }}
           </PrimaryButton>

@@ -95,7 +95,7 @@
           </div>
           <PrimaryButton @click="openAddDialog">
             <template #icon>
-              <AddIcon/>
+              <AddIcon  color="var(--dark-green-500)" />
             </template>
             {{ __('control.artist.first_create_btn') }}
           </PrimaryButton>

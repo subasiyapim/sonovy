@@ -27,7 +27,7 @@
           <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2 w-min">
             <component :is="statusData.find((e) => e.value == usePage().props.product.status)?.icon"
                        :color="statusData.find((e) => e.value == usePage().props.product.status)?.color"></component>
-            <p class="subheading-xs c-sub-600">
+            <p class="subheading-xs w-max c-sub-600">
               {{ statusData.find((e) => e.value == usePage().props.product.status)?.label }}
             </p>
           </div>
@@ -40,14 +40,22 @@
           <span class="c-sub-600 paragraph-xs">{{ product.total_duration }}</span>
         </div>
 
-        <div class="flex items-center mt-2" v-for="artist in product.main_artists">
-          <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-2">
-            <img :alt="artist.name"
-                 :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)"
-                 class="border-2 border-white rounded-full "
-            >
-          </div>
-          <p class="label-sm c-sub-600 me-1">{{ artist.name }}</p>
+        <div class="flex flex-1 items-center justify-start gap-2 flex-wrap  py-4">
+            <div class="flex items-center" v-for="artist in filterMainArtists ">
+                <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-2">
+                    <img :alt="artist.name"
+                        :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)"
+                        class="border-2 border-white rounded-full "
+                    >
+                </div>
+                <p class="label-sm c-sub-600 me-1">{{ artist.name }}</p>
+               <span class="label-sm c-neutral-500"> •</span>
+            </div>
+
+            <button @click="showAllArtists = !showAllArtists" class="c-neutral-500 label-xs hover:underline" v-if="props.product.main_artists.length > 2">
+              <template v-if="!showAllArtists">  +5 Sanatçı Daha </template>
+              <template v-else>  Daha az göster </template>
+            </button>
         </div>
 
         <div class="flex items-center gap-2 w-96" :class="usePage().props.product.status == 4 ? 'mt-5' :'mt-auto' ">
@@ -147,7 +155,7 @@ import {
   CheckFilledIcon
 } from '@/Components/Icons'
 
-
+const showAllArtists = ref(false);
 import {PrimaryButton, RegularButton} from '@/Components/Buttons'
 import {AppSelectInput} from '@/Components/Form'
 import {AppTabs} from '@/Components/Widgets'
@@ -187,6 +195,19 @@ const crudStore = useCrudStore();
 const defaultStore = useDefaultStore();
 let params = new URLSearchParams(window.location.search)
 
+const filterMainArtists = computed(() => {
+    if(props.product.main_artists.length <= 2){
+          return props.product.main_artists;
+    }else {
+        if(showAllArtists.value){
+            return props.product.main_artists;
+        }else {
+            return props.product.main_artists.slice(0, 2);
+        }
+    }
+
+
+})
 const currentTab = ref(params.get('slug') ?? 'metadata')
 const filteredPlatforms = computed(() => {
   return [];

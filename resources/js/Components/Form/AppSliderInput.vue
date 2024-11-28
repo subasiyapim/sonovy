@@ -5,7 +5,12 @@
         <div @click="playMusic">
             <PlayCircleFillIcon color="var(--dark-green-500)" />
         </div>
-        <VueSlider :minRange="config?.range" :maxRange="config?.range" :tooltip-formatter="config?.formatter" :processStyle="config?.railStyle" class="!w-full" v-model="element"  contained></VueSlider>
+
+        <div class="w-full relative">
+        <p class="absolute text-black -right-2 bottom-3 paragraph-xs c-sub-600"> {{config?.formatter(config.max)}}</p>
+            <VueSlider :minRange="config?.range" :max="config?.max" :interval="1" :maxRange="config?.range" :tooltip-formatter="config?.formatter" :processStyle="config?.railStyle" class="!w-full" v-model="element"  contained></VueSlider>
+
+        </div>
     </div>
 
 

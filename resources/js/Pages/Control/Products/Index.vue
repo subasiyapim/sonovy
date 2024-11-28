@@ -134,11 +134,18 @@
         </template>
       </AppTableColumn>
 
-      <AppTableColumn label="Sanatçı">
+      <AppTableColumn label="Sanatçı" width="304">
         <template #default="scope">
-          <p class="paragraph-xs c-strong-950 px-1" v-for="artist in scope.row.main_artists">
-            {{ artist.name }}
-          </p>
+            <div class=" paragraph-xs c-strong-950 px-1 ">
+                <p>
+                    <template v-for="(artist,artistIndex) in scope.row.main_artists">
+                        {{ artist.name }}
+                        <template v-if="artistIndex != scope.row.main_artists.length-1">,&nbsp;</template>
+                    </template>
+                </p>
+
+            </div>
+
         </template>
       </AppTableColumn>
 
@@ -154,7 +161,7 @@
         <template #default="scope">
           <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
             <CalendarIcon color="var(--sub-600)"/>
-            <p class="paragraph-xs c-sub-600">
+            <p class="paragraph-xs c-sub-600 whitespace-nowrap">
 
               {{ scope.row.physical_release_date }}
             </p>

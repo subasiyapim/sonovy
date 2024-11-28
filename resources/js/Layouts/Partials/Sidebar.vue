@@ -28,10 +28,10 @@
 
 
       <div class="flex-1 overflow-scroll hideScroll">
-        <MenuItem title="Dashboard" :path="route('control.dashboard')" :icon="DashboardIcon">
+        <MenuItem title="Dashboard" wrapper="dashboard" :path="route('control.dashboard')" :icon="DashboardIcon">
 
         </MenuItem>
-        <MenuItem title="Katalog" :icon="DashboardIcon">
+        <MenuItem title="Katalog" wrapper="catalog" :icon="DashboardIcon">
           <template #sub>
             <sub-menu-item :path="'control.catalog.products.index'">Yayınlar</sub-menu-item>
             <sub-menu-item :path="'control.catalog.songs.index'">Parçalar</sub-menu-item>

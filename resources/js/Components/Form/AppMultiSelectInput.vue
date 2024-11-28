@@ -9,7 +9,19 @@
          class="absolute inset-0 flex items-center px-3 radius-8 border-none focus:ring-0 appSelectInput c-strong-950">
       <span class="label-sm !font-normal c-soft-400" v-if="!element">{{ placeholder }}</span>
       <slot v-else-if="hasSlot('disabled')" name="disabled"/>
-      <slot v-else-if="hasSlot('model')" name="model" :scope="choosenAll"/>
+        <div v-else-if="hasSlot('model')" class="flex items-center w-full">
+           <div class="flex-1 overflow-hidden"> <slot  name="model" :scope="choosenAll"/></div>
+
+           <div class="bg-white w-6 flex justify-center ms-auto">
+             <ChevronRightIcon
+
+                color="var(--soft-400)"
+                :class="{
+                                'transform rotate-90 transition-transform duration-300': isOpen,
+                            'transform -rotate-90 transition-transform duration-300': !isOpen
+                            }"/>
+           </div>
+        </div>
       <span v-else class="label-sm !font-normal">{{ getShowLabel }}</span>
     </div>
     <div
@@ -22,7 +34,7 @@
           color="var(--soft-400)"
           :class="{
                         'transform rotate-90 transition-transform duration-300': isOpen,
-                        'transform rotate-0 transition-transform duration-300': !isOpen
+                    'transform -rotate-90 transition-transform duration-300': !isOpen
                     }"/>
     </div>
 
@@ -69,7 +81,7 @@
     </transition>
   </div>
 
-  <div v-if="showTags" class="flex items-center gap-2 mt-2">
+  <div v-if="showTags" class="flex flex-wrap items-center gap-2 mt-2">
     <StatusBadge v-for="(el,index) in element" :showClose="true" @close="element.splice(index,1)" :showIcon="false">
       <span
           class="label-xs c-sub-600">{{ config.data.find((option) => option[config.value ?? 'value'] == el)[config.label ?? 'label'] }}</span>

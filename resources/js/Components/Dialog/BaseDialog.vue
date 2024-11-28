@@ -40,6 +40,9 @@ const props = defineProps({
     },
     title:{},
     description:{},
+    verticalAlign:{
+        default:'center'
+    }
 })
 const emits  =defineEmits(['update:modelValue']);
 const isDialogOn = computed({
@@ -67,6 +70,13 @@ const dialogWrapperClass = computed(() => {
         classString += " justify-start "
     }else if(props.align == 'right'){
         classString += " justify-end "
+    }
+     if(props.verticalAlign == 'center'){
+        classString += " items-center "
+    }else if(props.verticalAlign == 'top'){
+        classString += " items-start "
+    }else if(props.verticalAlign == 'bottom'){
+        classString += " items-end "
     }
     return classString;
 })

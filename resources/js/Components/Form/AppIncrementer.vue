@@ -3,11 +3,13 @@
     <button class="bg-white  w-10 flex items-center justify-center" @click="onDecrement">
       <MinusIcon color="var(--sub-600)"/>
     </button>
-    <input @input="onInput"
-    type="number"
-            :class="config?.isKeyboardOn ? 'pointer-events-auto' : 'pointer-events-none'"
-           class="p-0 w-10 appIncrementerButton bg-white  text-center paragragraph-sm c-strong-950 border-none focus:ring-0"
-           v-model="formattedValue"/>
+    <input
+      @input="onInput"
+      type="text"
+      :class="config?.isKeyboardOn ? 'pointer-events-auto' : 'pointer-events-none'"
+      class="p-0 w-10 appIncrementerButton bg-white text-center paragragraph-sm c-strong-950 border-none focus:ring-0"
+      v-model="formattedValue"
+    />
     <button class="bg-white  w-10  flex items-center justify-center" @click="onIncrement">
       <AddIcon color="var(--sub-600)"/>
     </button>
@@ -36,19 +38,15 @@ const element = computed({
   set: (value) => emits('update:modelValue', value)
 })
 
+// Format the value to display with a `%` and allow only numeric input
 const formattedValue = computed({
-  get: () => {
-    if (props.config?.formatter) {
-
-      return props.config?.formatter(element.value);
-    } else {
-      return element.value;
-    }
-  },
+  get: () => `%${element.value}`,
   set: (value) => {
-    return element.value = value;
+    const numericValue = parseInt(value.replace('%', '').trim()) || 0; // Remove % and parse to number
+    element.value = numericValue;
   }
 })
+
 const onDecrement = () => {
   if (element.value > 0)
     element.value -= props.config?.step ?? 1;
@@ -57,13 +55,11 @@ const onIncrement = () => {
   element.value += props.config?.step ?? 1;
 }
 const onInput = (event) => {
-  // console.log("EVENT TARGET",event.target.value);
-  // if(event.target.value == "")
-  //     element.value = 0;
-  // else
-  //     element.value = parseInt(event.target.value)
+  const input = event.target.value.replace('%', '').trim(); // Remove % symbol
+  if (/^\d*$/.test(input)) { // Ensure input is numeric
+    element.value = parseInt(input) || 0;
+  }
 }
-
 </script>
 
 <style scoped>

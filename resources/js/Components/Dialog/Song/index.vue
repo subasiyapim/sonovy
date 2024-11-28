@@ -167,7 +167,9 @@
 
       <FormElement label-width="190px"
                    :label="__('control.song.fields.preview_start')" type="custom">
-        <AppSliderInput @play="onPlaySong" :config="sliderConfig" v-model="form.preview_start"></AppSliderInput>
+        <AppSliderInput @play="onPlaySong" :config="sliderConfig" v-model="form.preview_start">
+
+        </AppSliderInput>
       </FormElement>
     </div>
     <SectionHeader :title="__('control.song.dialog.header_3')"/>
@@ -241,7 +243,7 @@
             </button>
           </template>
         </FormElement>
-        <FormElement class="flex-1" type="multiselect" :error="form.errors[`participants.${i}.tasks`]"
+        <FormElement class="flex-1" type="select" :error="form.errors[`participants.${i}.tasks`]"
                      v-model="participant.tasks" :config="roleConfig"
                      :label="__('control.song.fields.roles')" direction="vertical"
                      :placeholder="__('control.song.fields.roles_placeholder')"/>
@@ -264,13 +266,13 @@
 
 
     </div>
-    <div class="flex p-5 border-t border-soft-200 gap-4">
+    <div class="flex p-5 border-t border-soft-200 gap-4 sticky bottom-0 bg-white">
       <RegularButton @click="isDialogOn = false" class="flex-1">
         {{ __('control.general.cancel') }}
       </RegularButton>
       <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
         <template #icon>
-          <AddIcon/>
+          <AddIcon  color="var(--dark-green-500)"/>
         </template>
         {{ __('control.general.save') }}
       </PrimaryButton>
@@ -469,7 +471,7 @@ const participantSelectConfig = computed(() => {
     }
   }
 })
-
+const totalSongDuration = ref(200)
 const genreConfig = computed(() => {
   return {
     hasSearch: true,
@@ -488,9 +490,10 @@ const sliderConfig = computed(() => {
     formatter: (v) => {
       const minutes = Math.floor(v / 60);
       const remainingSeconds = v % 60;
-      return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')} sn`;
+      return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 
     },
+    max:parseInt(props.song.duration.split(":")[0])*60 + parseInt(props.song.duration.split(":")[1]),
     processStyle: {
       'background': 'var(--dark-green-800)'
     }

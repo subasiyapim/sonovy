@@ -25,7 +25,7 @@
           color="var(--soft-400)"
           :class="{
                     'transform rotate-90 transition-transform duration-300': isOpen,
-                    'transform rotate-0 transition-transform duration-300': !isOpen
+                    'transform -rotate-90 transition-transform duration-300': !isOpen
                 }"/>
     </div>
 
@@ -52,11 +52,7 @@
                  :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'"
                  class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
 
-              <div class="w-4 h-4 flex items-center justify-center border border-soft-200 rounded-full  shadow">
-                <div v-if="checkIfChecked(el[config.value ?? 'value'])"
-                     class="bg-dark-green-600 w-3 h-3 rounded-full border-dark-green-600">
-                </div>
-              </div>
+
               <slot v-if="hasSlot('option')" name="option" :scope="el"/>
               <span v-else class="paragraph-sm c-strong-950"> {{ el[config.label ?? 'label'] }}</span>
             </div>

@@ -9,7 +9,7 @@
     <RegularButton>Katalogdan Seç</RegularButton>
     <PrimaryButton @click="onSongAdd">
       <template #icon>
-        <AddIcon color="var(--dark-green-600)"/>
+        <AddIcon color="var(--dark-green-500)"/>
       </template>
       Parça Ekle
     </PrimaryButton>

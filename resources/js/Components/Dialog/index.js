@@ -5,6 +5,7 @@ import SongDialog from './Song/index.vue';
 import SmallArtistCreateDialog from './Artist/small.vue';
 import ConfirmDeleteDialog from './ConfirmDeleteDialog.vue';
 import SongParticipantModal from './Song/participants.vue';
+import SongMusiciansModal from './Song/musicians.vue';
 import SongDetailModal from './Song/details.vue';
 import SongAcrResponseModal from './Song/acrResponse.vue';
 import PlatformHistoryModal from './Platform/history.vue';
@@ -20,5 +21,6 @@ export {
     SongDetailModal,
     SongAcrResponseModal,
     PlatformHistoryModal,
+    SongMusiciansModal,
 
 }
