@@ -227,7 +227,7 @@
                 </div>
             </template>
         </FormElement>
-        <FormElement label-width="190px" :error="form.errors.grid" v-model="form.grid" label="Grid Kodu"
+        <FormElement v-if="form.type == 3" label-width="190px" :error="form.errors.grid" v-model="form.grid" label="Grid Kodu"
                    placeholder="Lütfen giriniz">
             <template #tooltip>
                 <div class="flex items-start gap-2 p-2">
