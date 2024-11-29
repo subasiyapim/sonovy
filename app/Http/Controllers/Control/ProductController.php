@@ -186,7 +186,7 @@ class ProductController extends Controller
         $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
         $formats = enumToSelectInputFormat(AlbumTypeEnum::getTitles());
         $labels = getDataFromInputFormat(Label::pluck('name', 'id'), 'id', 'name', 'image', true);
-        $artists = getDataFromInputFormat(Artist::whereNot('id', 1)->get(), 'id', 'name', 'image');
+        $artists = getDataFromInputFormat(Artist::with('platforms')->whereNot('id', 1)->get(), 'id', 'name', 'image');
         $users = getDataFromInputFormat(\App\Models\User::all(), 'id', 'name');
         $languages = getDataFromInputFormat(Country::whereNotNull('language')->get(), 'id', 'language', 'emoji');
         $progress = ProductServices::progress($product);
