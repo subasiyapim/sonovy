@@ -110,7 +110,7 @@ class ProductServices
 
     private static function checkStep2(Product $product): bool
     {
-        if (empty($product->songs)) {
+        if (empty($product->songs) || $product->songs->isEmpty()) {
             return false;
         }
 
