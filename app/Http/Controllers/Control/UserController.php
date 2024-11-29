@@ -2,22 +2,16 @@
 
 namespace App\Http\Controllers\Control;
 
-use App\Enums\PaymentProcessTypeEnum;
-use App\Enums\ProductStatusEnum;
-use App\Enums\ProductTypeEnum;
-use App\Enums\UserGenderEnum;
 use App\Enums\UserStatusEnum;
-use App\Enums\UserTitleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UserCompetencyRequest;
 use App\Http\Requests\User\UserStoreRequest;
 use App\Http\Requests\User\UserUpdateRequest;
-use App\Http\Resources\Panel\UserResource;
-use App\Models\Artist;
+use App\Http\Resources\User\UserResource;
+use App\Http\Resources\User\UserShowResource;
 use App\Models\BankAccount;
-use App\Models\Product;
 use App\Models\Country;
-use App\Models\Label;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\CountryServices;
 use App\Services\EarningService;
@@ -26,15 +20,12 @@ use App\Services\PermissionService;
 use App\Services\RoleService;
 use App\Services\TimezoneService;
 use App\Services\UserServices;
-use App\Services\UserVerifyService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
-use function PHPUnit\Framework\isEmpty;
 
 class UserController extends Controller
 {
@@ -63,14 +54,14 @@ class UserController extends Controller
 
         $user = Auth::user();
         $hasAdmin = $user->roles()->pluck('code')->contains('admin');
-        $query = User::with('roles', 'sub_users', 'parent_user', 'country', 'district', 'city');
+        $query = User::with('roles', 'parent', 'children', 'country', 'district', 'city');
 
-        $subUserId = $request->get('sub_users');
+        $children = $request->get('children');
 
         if ($hasAdmin) {
-            $users = $subUserId ? $query->where('parent_id', $subUserId)->advancedFilter() : $query->advancedFilter();
+            $users = $children ? $query->where('parent_id', $children)->advancedFilter() : $query->advancedFilter();
         } else {
-            $users = $query->where('parent_id', $subUserId ?? $user->id)->advancedFilter();
+            $users = $query->where('parent_id', $children ?? $user->id)->advancedFilter();
         }
 
         $statistics = [
@@ -102,16 +93,25 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
-        $data = $request->except(['password', 'artists', 'labels', 'platforms', 'commission_rate']);
-
+        $data = $request->except(['password', 'commission_rate']);
 
         $data['password'] = bcrypt($request->password);
-        $data['commission_rate'] = $request->commission_rate ? preg_replace('/\s+/', '',
-            $request->commission_rate) : null;
+        $data['commission_rate'] = $request->commission_rate
+            ? preg_replace('/\s+/', '', $request->commission_rate)
+            : null;
 
-        $user = User::create($data);
+        try {
+            $user = User::create($data);
+            $role_id = Role::where('code', 'user')->first()->id;
+            $user->roles()->sync($role_id);
+        } catch (\Exception $e) {
 
-        $user->roles()->sync($request->role_id);
+            return to_route('dashboard.users.index')
+                ->withErrors([
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                ]);
+
+        }
 
         return to_route('dashboard.users.index')
             ->with([
@@ -126,30 +126,29 @@ class UserController extends Controller
     {
         abort_if(Gate::denies('user_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $user->loadMissing('roles', 'country', 'state', 'city', 'bankAccounts', 'site', 'birthPlace', 'parent_user',
-            'sub_users', 'payments', 'orders');
+        $user->loadMissing('roles', 'country', 'city', 'district', 'parent', 'children');
+        $tabs = [
+            'pricing',
+            'contracts',
+            'balances',
+            'invoices',
+            'activities',
+            'flags',
+            'relations',
+            'authorisations',
+        ];
+        $tab = request()->has('slug') ? request()->input('slug') : 'profile';;
 
-        $genders = UserGenderEnum::getTitles();
-        $titles = UserTitleEnum::getTitles();
-        $payments = $user->payments()->whereNot('process_type',
-            PaymentProcessTypeEnum::APPROVED_ADVANCE->value)->with('account')->advancedFilter();
-        $advances = $user->payments()->where('process_type',
-            PaymentProcessTypeEnum::APPROVED_ADVANCE->value)->with('account')->advancedFilter();
-        $orders = $user->orders()->advancedFilter();
-        $balance = EarningService::balance($user->id);
-        $earnings = EarningService::earningsOfTheUser($user);
+        $response = new UserShowResource($user, $tab);
 
-
-        $sub_users = User::where('parent_id', '=', $user->id)->get();
-        $labels = Label::with('country')->where('created_by', '=', $user->i)->get();
-        $artists = Artist::where('created_by', '=', $user->i)->get();
-        $products = Product::with('artists', 'label', 'publishedCountries', 'songs')->where('created_by', '=',
-            $user->i)->get();
-
-
+        // dd($response->resolve());
         return inertia('Control/Users/Show',
-            compact('user', 'genders', 'titles', 'payments', 'advances', 'orders', 'balance', 'earnings', 'sub_users',
-                'labels', 'artists', 'broadcasts'));
+            [
+                'user' => $response->resolve(),
+                'tab' => $tab,
+                'tabs' => $tabs
+            ]
+        );
 
     }
 

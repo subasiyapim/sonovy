@@ -3,6 +3,7 @@ return [
     'notification_created' => ':model başarıyla oluşturuldu.',
     'notification_updated' => ':model başarıyla güncellendi.',
     'notification_deleted' => ':model başarıyla silindi.',
+    'notification_error' => 'Bir hata oluştu. Lütfen tekrar deneyin.',
 
     'status_code' => [
         '200' => 'İşlem başarılı',

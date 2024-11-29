@@ -9,7 +9,7 @@ enum PaymentTypeEnum: int
     case BANK_TRANSFER = 1;
     case CREDIT_CARD = 2;
     case CASH = 3;
-
+    case BALANCE = 4;
 
     public static function getTitles(): array
     {
@@ -30,7 +30,8 @@ enum PaymentTypeEnum: int
         return match ($this) {
             self::BANK_TRANSFER => 'panel.payment.enums.payment_type.bank_transfer',
             self::CREDIT_CARD => 'panel.payment.enums.payment_type.credit_card',
-            self::CACHE => 'panel.payment.enums.payment_type.cache',
+            self::CASH => 'panel.payment.enums.payment_type.cash',
+            self::BALANCE => 'panel.payment.enums.payment_type.balance',
         };
     }
 }
