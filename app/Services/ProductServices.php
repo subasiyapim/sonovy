@@ -104,10 +104,29 @@ class ProductServices
                         break;
                     }
                 }
+
+                if ($step === 'step2') {
+                    $allSongCompleted = false;
+                }
+
+                foreach ($product->songs as $song) {
+                    if ($song->is_completed == 1) {
+                        $allSongCompleted = true;
+                    } else {
+                        $allSongCompleted = false;
+                        break;
+                    }
+                }
+
+                if ($step === 'step2' && !$allSongCompleted) {
+                    $allFieldsFilled = false;
+                    break;
+                }
             }
 
             $completedSteps[$step] = $allFieldsFilled;
         }
+        
         return $completedSteps;
     }
 
