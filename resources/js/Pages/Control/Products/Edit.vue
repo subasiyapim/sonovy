@@ -25,11 +25,11 @@
       <div class="w-full h-full bg-white-500 flex flex-col gap-10 p-8 overflow-hidden">
 
         <AppStepper :modelValue="currentTab" @change="onChangeTab">
-          <AppStepperElement title="Yayın Bilgileri"></AppStepperElement>
-          <AppStepperElement
+          <AppStepperElement :showWarning="!completed_steps.step1" title="Yayın Bilgileri"></AppStepperElement>
+          <AppStepperElement :showWarning="!completed_steps.step2"
               :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
-          <AppStepperElement title="Yayınlama Detayları"></AppStepperElement>
-          <AppStepperElement title="Pazarlama ve Onay"></AppStepperElement>
+          <AppStepperElement :showWarning="!completed_steps.step3"  title="Yayınlama Detayları"></AppStepperElement>
+          <AppStepperElement :showWarning="!completed_steps.step4"  title="Pazarlama ve Onay"></AppStepperElement>
 
         </AppStepper>
 
@@ -52,15 +52,28 @@
               <AppProgressIndicator v-model="progress"/>
             </div>
           </div>
-          <PrimaryButton @click="submitStep">
-            <template v-if="currentTab < 3">
-                Devam Et
-            </template>
-            <template v-else>
-                Yayına Gönder
-            </template>
+          <PrimaryButton v-if="currentTab < 3" @click="submitStep" >
 
-          </PrimaryButton>
+                        Devam Et
+
+
+
+                </PrimaryButton>
+            <tippy v-else :allowHtml="true" :sticky="true" :interactive="true"  :trigger="Object.values(props.completed_steps).filter((e) => e == false).length > 0 ? 'mouseenter' : 'manual'">
+
+                <PrimaryButton @click="submitStep" :disabled="Object.values(props.completed_steps).filter((e) => e == false).length > 0">
+
+
+                        Yayına gönder
+
+
+                </PrimaryButton>
+
+                <template #content>
+                     Yayına göndermek için tüm eksikleri tamamlamalısınız!
+                </template>
+            </tippy>
+
         </div>
       </div>
 
@@ -127,6 +140,7 @@ const props = defineProps({
   formats: {},
   progress: Number,
   product_publish_country_types: {},
+  completed_steps:{},
 })
 
 const progress = ref(props.progress);
