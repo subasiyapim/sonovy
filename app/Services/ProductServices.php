@@ -137,7 +137,7 @@ class ProductServices
             }
         }
 
-        if ($product->previously_released == 0 && empty($product->previous_release_date)) {
+        if ($product->previously_released == 0 && !empty($product->previous_release_date)) {
             return false;
         }
 
