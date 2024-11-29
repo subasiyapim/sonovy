@@ -54,7 +54,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'uuid',
         'email_verified_at',
         'company_info',
-        'address'
+        'address',
+        'payment_threshold',
+        'currency',
+        'last_login_at'
     ];
 
     protected array $filterable = [
@@ -90,7 +93,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'status' => UserStatusEnum::class,
-        'company_info' => 'array'
+        'company_info' => 'array',
+        'last_login_at' => 'datetime',
     ];
 
     protected $appends = ['balance'];
@@ -99,11 +103,17 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         parent::boot();
         static::created(fn($user) => self::updateAfterCreatedUser($user));
+        static::updating(fn($user) => self::updatingUser($user));
     }
 
     protected static function updateAfterCreatedUser($user): void
     {
         $user->update(['parent_id' => auth()->id()]);
+    }
+
+    protected static function updatingUser($user): void
+    {
+        $user->update(['last_login_at' => now()]);
     }
 
     public function availablePlanItemsCount()
