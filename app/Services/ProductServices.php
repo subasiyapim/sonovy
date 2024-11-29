@@ -110,7 +110,7 @@ class ProductServices
 
     private static function checkStep2(Product $product): bool
     {
-        if (empty($product->songs)) {
+        if (empty($product->songs) || $product->songs->isEmpty()) {
             return false;
         }
 
@@ -127,19 +127,17 @@ class ProductServices
     {
         $step3Fields = [
             'production_year',
-            'previously_released',
-            'previous_release_date',
             'publishing_country_type',
             'physical_release_date',
         ];
 
         foreach ($step3Fields as $field) {
-            if (empty($product->$field)) {
+            if (!isset($product->$field) || $product->$field === null) {
                 return false;
             }
         }
 
-        if ($product->previously_released && empty($product->physical_release_date)) {
+        if ($product->previously_released == 0 && empty($product->previous_release_date)) {
             return false;
         }
 

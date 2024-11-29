@@ -23,7 +23,9 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropColumn('payment_threshold');
+            $table->dropColumn('currency');
+            $table->dropColumn('last_login_at');
         });
     }
 };
