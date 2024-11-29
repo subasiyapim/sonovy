@@ -6,7 +6,6 @@
     </p>
   </div>
   <div class="flex gap-10">
-
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
       <FormElement :required="true" label-width="190px" :error="form.errors.album_name" v-model="form.album_name"
                    label="Albüm Adı"></FormElement>
@@ -69,6 +68,7 @@
               </div>
               <p>{{ scope.data.label }}</p>
             </div>
+
             <template v-if="scope.data.platforms">
               <div class="flex" v-for="platform in scope.data.platforms">
                 <a v-if="platform.code == 'spotify' || platform.code == 'apple'"
@@ -123,12 +123,22 @@
           </button>
         </template>
         <template #option="scope">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 w-full">
             <div class="w-5 h-5 rounded-md overflow-hidden">
               <img v-if="scope.data.image" alt=""
                    :src="scope.data.image"/>
             </div>
-            <p>{{ scope.data.label }}</p>
+            <div class="flex-1"><p>{{ scope.data.label }}</p></div>
+
+            <template v-if="scope.data.platforms">
+              <div class="flex" v-for="platform in scope.data.platforms">
+                <a v-if="platform.code == 'spotify' || platform.code == 'apple'"
+                   :href="platform.pivot.url"
+                   target="_blank">
+                  <icon :icon="platform.icon"/>
+                </a>
+              </div>
+            </template>
           </div>
         </template>
         <template #model="scope">
@@ -151,6 +161,7 @@
                 </template>
               </template>
             </p>
+
 
           </div>
         </template>
@@ -411,10 +422,12 @@ onBeforeMount(() => {
       "label": props.product.label.name,
     });
   }
+
   if (props.product.main_artists) {
 
+
     props.product.main_artists.forEach(element => {
-      console.log("ELEENT", element);
+
       const findedIndex = mainArtistSelectConfig.value.data.findIndex((art) => art.value == element.id);
       if (findedIndex < 0) {
         mainArtistSelectConfig.value.data.push({
