@@ -39,99 +39,116 @@ class ProductServices
 
     }
 
-
-    public static function stepCompletedStatus(Product $product)
-    {
-        $stepFields = [
-            'common' => [
-                'type',
-                'album_name',
-                'created_by',
-                'status',
-            ],
-            'step1' => [
-                ProductTypeEnum::SOUND->value => [
-                    'mixed_album',
-                    'genre_id',
-                    'sub_genre_id',
-                    'format_id',
-                    'label_id',
-                    'language_id',
-                ],
-                ProductTypeEnum::VIDEO->value => [
-                    'video_type',
-                    'is_for_kids',
-                ],
-                ProductTypeEnum::RINGTONE->value => [
-                    'grid_code',
-                ],
-            ],
-            'step2' => [
-            ],
-            'step3' => [
-                'production_year',
-                'previously_released',
-                'previous_release_date',
-                'publishing_country_type',
-                'physical_release_date',
-            ],
-            'step4' => [],
-        ];
-
-        $completedSteps = [];
-
-        foreach ($stepFields as $step => $fields) {
-            if ($step === 'step1') {
-                $fields = $fields[$product->type->value] ?? [];
-            }
-
-            $allFieldsFilled = true;
-
-            foreach ($fields as $field) {
-                if (in_array($field, $stepFields['common']) && empty($product->$field)) {
-                    $allFieldsFilled = false;
-                    break;
-                }
-
-                if (!in_array($field, $stepFields['common']) && empty($product->$field)) {
-                    $allFieldsFilled = false;
-                    break;
-                }
-
-                if ($step === 'step3' && $field === 'previously_released' && $product->previously_released) {
-                    if (empty($product->physical_release_date)) {
-                        $allFieldsFilled = false;
-                        break;
-                    }
-                }
-
-                if ($step === 'step2') {
-                    $allSongCompleted = false;
-                }
-
-                foreach ($product->songs as $song) {
-                    if ($song->is_completed == 1) {
-                        $allSongCompleted = true;
-                    } else {
-                        $allSongCompleted = false;
-                        break;
-                    }
-                }
-
-                if ($step === 'step2' && !$allSongCompleted) {
-                    $allFieldsFilled = false;
-                    break;
-                }
-            }
-
-            $completedSteps[$step] = $allFieldsFilled;
-        }
-        
-        return $completedSteps;
-    }
-
     public static function search($search): mixed
     {
         return Product::with('songs')->where('name', 'like', '%'.$search.'%')->get();
     }
+
+
+    public static function stepCompletedStatus(Product $product)
+    {
+        return [
+            'common' => self::checkCommonFields($product),
+            'step1' => self::checkStep1($product),
+            'step2' => self::checkStep2($product),
+            'step3' => self::checkStep3($product),
+            'step4' => self::checkStep4($product),
+        ];
+
+    }
+
+    private static function checkCommonFields(Product $product): bool
+    {
+        $commonFields = ['type', 'album_name', 'created_by', 'status'];
+
+        foreach ($commonFields as $field) {
+            if (empty($product->$field)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static function checkStep1(Product $product): bool
+    {
+        $step1Fields = [
+            ProductTypeEnum::SOUND->value => [
+                'mixed_album',
+                'genre_id',
+                'sub_genre_id',
+                'format_id',
+                'label_id',
+            ],
+            ProductTypeEnum::VIDEO->value => [
+                'video_type',
+                'is_for_kids',
+            ],
+            ProductTypeEnum::RINGTONE->value => [
+                'grid_code',
+            ],
+        ];
+
+        $typeValue = $product->type->value ?? null;
+
+        if (!isset($step1Fields[$typeValue])) {
+            return false;
+        }
+
+        foreach ($step1Fields[$typeValue] as $field) {
+            if (!isset($product->$field) || $product->$field === null) {
+                return false;
+            }
+        }
+
+        if (empty($product->mainArtists) || $product->mainArtists->isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static function checkStep2(Product $product): bool
+    {
+        if (empty($product->songs)) {
+            return false;
+        }
+
+        foreach ($product->songs as $song) {
+            if ($song->is_completed != 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static function checkStep3(Product $product): bool
+    {
+        $step3Fields = [
+            'production_year',
+            'previously_released',
+            'previous_release_date',
+            'publishing_country_type',
+            'physical_release_date',
+        ];
+
+        foreach ($step3Fields as $field) {
+            if (empty($product->$field)) {
+                return false;
+            }
+        }
+
+        if ($product->previously_released && empty($product->physical_release_date)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static function checkStep4(Product $product): bool
+    {
+        return true;
+    }
+
 }
