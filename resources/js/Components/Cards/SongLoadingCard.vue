@@ -42,7 +42,7 @@ const meta = computed({
         <p v-else class="c-error-500 paragraph-xs "> {{ meta.errorMessage }}</p>
       </div>
     </div>
-    <button @click="onRemove" class="c-error-500 paragraph-sm hover:underline">
+    <button v-if="meta.errorMessage " @click="onRemove" class="c-error-500 paragraph-sm hover:underline">
       sil
     </button>
   </div>
