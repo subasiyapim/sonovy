@@ -147,35 +147,6 @@ class Product extends Model implements HasMedia
         $model->update(['created_by' => auth()->id()]);
     }
 
-    protected function statusClass(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                $styles = [
-                    ProductStatusEnum::NEW->value => 'default-badge',
-                    ProductStatusEnum::WAITING_FOR_APPROVAL->value => 'dark-badge',
-                    ProductStatusEnum::APPROVED->value => 'green-badge',
-                    ProductStatusEnum::REJECTED->value => 'red-badge',
-                    ProductStatusEnum::NOT_BROADCASTING->value => 'yellow-badge',
-                    ProductStatusEnum::DRAFT->value => 'yellow-badge',
-                ];
-
-                $statusValue = $this->status ?? 'default';
-                $class = $styles[$statusValue] ?? 'default-style';
-
-                return $class;
-            }
-        );
-    }
-
-    public function publishCountryTypeText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => ProductPublishedCountryTypeEnum::getTitles()[$this->publishing_country_type],
-        );
-    }
-
-
     public function artists(): BelongsToMany
     {
         return $this->belongsToMany(Artist::class, 'artist_product', 'product_id', 'artist_id')->withPivot('is_main');
@@ -205,12 +176,7 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsTo(Label::class, 'label_id');
     }
-
-    // public function language(): BelongsTo
-    // {
-    //     return $this->belongsTo(Country::class);
-    // }
-
+    
     public function hashtags(): MorphMany
     {
         return $this->morphMany(Hashtag::class, 'model');

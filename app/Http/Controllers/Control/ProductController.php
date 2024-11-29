@@ -202,6 +202,8 @@ class ProductController extends Controller
         $video_types = enumToSelectInputFormat(VideoTypeEnum::getTitles());
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
+        $completedSteps = ProductServices::stepCompletedStatus($product);
+
         $product->load(
             'songs',
             'label',
@@ -211,11 +213,11 @@ class ProductController extends Controller
             'hashtags',
             'downloadPlatforms',
             'promotions',
-            'mainArtists',
-            'featuredArtists',
-            'songs.artists',
-            'songs.mainArtists',
-            'songs.featuringArtists',
+            'mainArtists.platforms',
+            'featuredArtists.platforms',
+            'songs.artists.platforms',
+            'songs.mainArtists.platforms',
+            'songs.featuringArtists.platforms',
             'songs.composers',
             'songs.musicians',
             'songs.writers',
@@ -228,6 +230,7 @@ class ProductController extends Controller
             "step" => $step,
             'progress' => $progress,
             'total_song_duration' => $total_song_duration,
+            'completed_steps' => $completedSteps
         ];
 
         switch ($step) {
