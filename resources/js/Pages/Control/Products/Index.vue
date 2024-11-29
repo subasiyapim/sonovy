@@ -129,27 +129,25 @@
               >
 
             </div>
-            <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
-              {{ scope.row.album_name }}
-            </a>
+           <div class="flex flex-col flex-1 items-start justisy-start">
+                <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
+                {{ scope.row.album_name }}
+                </a>
+
+                <div class=" paragraph-xs c-strong-950 ">
+                    <p>
+                        <template v-for="(artist,artistIndex) in scope.row.main_artists">
+                            {{ artist.name }}
+                            <template v-if="artistIndex != scope.row.main_artists.length-1">,&nbsp;</template>
+                        </template>
+                    </p>
+
+                </div>
+           </div>
           </div>
         </template>
       </AppTableColumn>
 
-      <AppTableColumn label="Sanatçı" width="304">
-        <template #default="scope">
-            <div class=" paragraph-xs c-strong-950 px-1 ">
-                <p>
-                    <template v-for="(artist,artistIndex) in scope.row.main_artists">
-                        {{ artist.name }}
-                        <template v-if="artistIndex != scope.row.main_artists.length-1">,&nbsp;</template>
-                    </template>
-                </p>
-
-            </div>
-
-        </template>
-      </AppTableColumn>
 
       <AppTableColumn label="Plak Şirketi">
         <template #default="scope">
@@ -162,10 +160,10 @@
       <AppTableColumn label="Yayın Tarih">
         <template #default="scope">
           <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
-            <CalendarIcon color="var(--sub-600)"/>
+
             <p class="paragraph-xs c-sub-600 whitespace-nowrap">
 
-              {{ scope.row.physical_release_date }}
+              {{ moment(scope.row.physical_release_date).format('DD/MM/YYYY') }}
             </p>
           </div>
         </template>
@@ -241,7 +239,6 @@ import {useDefaultStore} from "@/Stores/default";
 import {
   AddIcon,
   LabelsIcon,
-  CalendarIcon,
   EditLineIcon,
   WarningIcon,
   RetractedIcon,
@@ -254,7 +251,7 @@ import {
 } from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
-
+import moment from 'moment';
 const productTable = ref();
 const defaultStore = useDefaultStore();
 
