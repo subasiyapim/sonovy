@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
 
 class ProductUpdateRequest extends FormRequest
 {
-    private static function stepFour(): array
+    private static function stepFour(Product $product): array
     {
         $data = [
             'promotions' => ['array'],
@@ -23,7 +23,6 @@ class ProductUpdateRequest extends FormRequest
             'promotions.*.description' => ['required', 'string', 'min:3'],
         ];
 
-        $product = Product::find(request()->route('product')->id);
 
         if ($product && !$product->image) {
             $data =
@@ -41,21 +40,35 @@ class ProductUpdateRequest extends FormRequest
         return array_merge($data, self::common());
     }
 
-    private static function stepThree($publishing_country_type): array
+    private static function stepThree(Product $product): array
     {
         $data = [
             'production_year' => ['required', 'integer', 'min:1900', 'max:'.date('Y')],
             'previously_released' => ['required', 'boolean'],
+
             'previous_release_date' => [
-                'required_if:previously_released,true', 'nullable', 'date', 'before:'.date('d-m-Y')
+                'required_if:previously_released,true',
+                'nullable',
+                'date', 'before:'.date('Y-m-d')
+            ],
+
+            'physical_release_date' => [
+                'required', 'date',
+                function ($attribute, $value, $fail) use ($product) {
+                    // Sadece product modelinde previous_release_date boşsa kontrol yap
+                    if (empty($product->physical_release_date)) {
+                        if ($value && \Carbon\Carbon::parse($value)->gte(\Carbon\Carbon::today())) {
+                            $fail("The {$attribute} must be a date before today.");
+                        }
+                    }
+                }
             ],
             'publishing_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
-            'physical_release_date' => ['required', 'date', 'after_or_equal:'.date('d-m-Y')],
             'published_countries' => [
                 'required',
                 'array',
-                function ($attribute, $value, $fail) use ($publishing_country_type) {
-                    if ($publishing_country_type !== ProductPublishedCountryTypeEnum::ALL) {
+                function ($attribute, $value, $fail) use ($product) {
+                    if ($product->publishing_country_type !== ProductPublishedCountryTypeEnum::ALL) {
                         if (count($value) < 1) {
                             $fail("The {$attribute} must have at least 1 item(s) when publishing_country_type is specific.");
                         }
@@ -129,11 +142,13 @@ class ProductUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $product = Product::find(request()->route('product')->id);
+
         return match ($this->step) {
             '1' => self::stepOne(),
             '2' => self::stepTwo(),
-            '3' => self::stepThree($this->publishing_country_type),
-            '4' => self::stepFour(),
+            '3' => self::stepThree($product),
+            '4' => self::stepFour($product),
         };
     }
 
