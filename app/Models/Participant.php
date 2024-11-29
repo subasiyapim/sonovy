@@ -46,7 +46,7 @@ class Participant extends Model
     public function getBranchNamesAttribute()
     {
         $taskIds = $this->tasks;
-        return ArtistBranch::whereIn('id', $taskIds)->get()->pluck('name')->implode(', ');
+        return ArtistBranch::whereIn('id', [$taskIds])->get()->pluck('name')->implode(', ');
     }
 
     protected function serializeDate(DateTimeInterface $date): string
