@@ -108,7 +108,6 @@ class ProductServices
 
             $completedSteps[$step] = $allFieldsFilled;
         }
-        dd($completedSteps);
         return $completedSteps;
     }
 
