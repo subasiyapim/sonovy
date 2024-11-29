@@ -34,7 +34,7 @@
       <p class="paragraph-xs c-sub-600">Düet</p>
       <span class="label-sm c-strong-950">
             <template v-for="(artist,artistIndex) in product.featured_artists">
-                {{ artist.name }} <template v-if="artistIndex != product.main_artists.length-1"> , </template>
+                {{ artist.name }} <template v-if="artistIndex != product.featured_artists.length-1"> , </template>
             </template>
         </span>
     </div>
