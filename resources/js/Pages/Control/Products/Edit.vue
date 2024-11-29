@@ -216,6 +216,10 @@ const submitStep = async () => {
     });
   }
   if (currentTab.value == 1) {
+    if(step2Element.songs.length == 0){
+      toast.error("Şarkı eklemelisiniz");
+      return;
+    }
     let isCompleted = true;
     step2Element.songs.forEach(element => {
 
