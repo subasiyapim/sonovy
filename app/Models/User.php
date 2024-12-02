@@ -103,7 +103,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         parent::boot();
         static::created(fn($user) => self::updateAfterCreatedUser($user));
-        static::updating(fn($user) => self::updatingUser($user));
+
     }
 
     protected static function updateAfterCreatedUser($user): void
@@ -114,6 +114,11 @@ class User extends Authenticatable implements MustVerifyEmail
     protected static function updatingUser($user): void
     {
         $user->update(['last_login_at' => now()]);
+        $user->activities()->create([
+            'country' => geoip(request()->ip())->country ?? '',
+            'ip' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
     }
 
     public function availablePlanItemsCount()
@@ -264,6 +269,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function competency(): HasOne
     {
         return $this->hasOne(Competency::class);
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(UserActivity::class);
     }
 
     public function serializeDate(DateTimeInterface $date): string

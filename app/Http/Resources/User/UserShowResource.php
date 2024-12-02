@@ -100,5 +100,10 @@ class UserShowResource extends JsonResource
         return $this->orders;
     }
 
+    private function activities()
+    {
+        return $this->activities;
+    }
+
 
 }

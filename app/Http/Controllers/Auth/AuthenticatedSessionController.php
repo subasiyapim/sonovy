@@ -8,10 +8,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
-use Stancl\Tenancy\Database\Models\Domain;
+use Stevebauman\Location\Facades\Location;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -35,8 +34,21 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = $request->user();
+        $location = Location::get($request->ip());
 
-        return redirect()->intended(route('control.dashboard', absolute: false));
+        if ($user) {
+            $user->update(['last_login_at' => now()]);
+
+            $user->activities()->create([
+                'country' => $location->countryName ?? null,
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+        }
+
+        // intended ile redirect yapılırken absolute parametresi kontrol edilmeli
+        return redirect()->intended(route('control.dashboard'));
     }
 
     /**
