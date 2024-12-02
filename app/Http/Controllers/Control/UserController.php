@@ -253,4 +253,38 @@ class UserController extends Controller
         $user->competency()->create($request->validated());
     }
 
+    public function toggleStatus(User $user)
+    {
+        try {
+            $flags = $user->flags;
+
+            $flag = [
+                'created_at' => now(),
+                'status' => !$user->status,
+                'reason' => 'User status changed',
+            ];
+
+            array_unshift($flags, $flag);
+
+            $user->update(
+                [
+                    'status' => !$user->status,
+                    $flags => $flags
+                ]
+            );
+
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors([
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                ]);
+        }
+
+        return back()
+            ->with([
+                'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+            ]);
+
+    }
+
 }

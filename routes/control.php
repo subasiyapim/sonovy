@@ -143,6 +143,8 @@ Route::group(
 
         Route::group(['prefix' => 'user-management', 'as' => 'user-management.'], function () {
             Route::resource('users', UserController::class)->names('users');
+            Route::post('users/{user}/toggle-status',
+                [UserController::class, 'toggleStatus'])->name('users.toggle-status');
         });
 
         Route::post('user/competency/{user}', [UserController::class, 'competency'])->name('users.competency');

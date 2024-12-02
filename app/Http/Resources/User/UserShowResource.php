@@ -105,5 +105,10 @@ class UserShowResource extends JsonResource
         return $this->activities;
     }
 
+    private function flags()
+    {
+        return $this->flags;
+    }
+
 
 }

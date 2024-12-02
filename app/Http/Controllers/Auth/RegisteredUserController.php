@@ -34,18 +34,21 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
+        $data = $request->validated();
+
         $user = User::create([
-            'name' => $request->validated()['name'],
-            'surname' => $request->validated()['surname'],
-            'email' => $request->validated()['email'],
-            'password' => Hash::make($request->validated()['password']),
-            'phone' => $request->validated()['phone'],
+            'name' => $data['name'],
+            'surname' => $data['surname'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'phone' => $data['phone'],
         ]);
-        $userRole = Role::where('code', 'user')->first();
+
+        $userRole = Role::where('code', 'user')->firstOrFail();
         $user->roles()->attach($userRole->id);
 
         Auth::login($user);
 
-        return redirect(route('control.dashboard', absolute: false));
+        return redirect()->route('control.dashboard');
     }
 }

@@ -6,9 +6,8 @@ use ReflectionClass;
 
 enum UserStatusEnum: int
 {
-    case PENDING_APPROVAL = 1;
-    case ACTIVE = 2;
-    case PASSIVE = 3;
+    case PENDING_APPROVAL = 0;
+    case ACTIVE = 1;
 
     public static function getTitles(): array
     {
@@ -28,7 +27,6 @@ enum UserStatusEnum: int
         return match ($this) {
             self::PENDING_APPROVAL => __('control.user.status_enum.status_pending_approval'),
             self::ACTIVE => __('control.user.status_enum.status_active'),
-            self::PASSIVE => __('control.user.status_enum.status_passive'),
         };
     }
 }

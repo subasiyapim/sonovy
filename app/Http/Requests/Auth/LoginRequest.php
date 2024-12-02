@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Enums\UserStatusEnum;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -41,10 +42,15 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
-
-        if (!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
-
+//user status true ise login olabilir.
+        if (Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            $user = Auth::user();
+            if ($user->status === UserStatusEnum::ACTIVE) {
+                RateLimiter::clear($this->throttleKey());
+                return;
+            }
+            Auth::logout();
+            Session::flash('status', __('client.login.messages.user_status'));
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);

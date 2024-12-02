@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\UserStatusEnum;
-use App\Models\Scopes\FilterByUserRoleScope;
 use App\Services\EarningService;
 use App\Traits\DataTables\HasAdvancedFilter;
 use Carbon\Carbon;
@@ -57,7 +56,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'address',
         'payment_threshold',
         'currency',
-        'last_login_at'
+        'last_login_at',
+        'flags'
     ];
 
     protected array $filterable = [
@@ -82,6 +82,8 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'roles',
+        'permissions'
     ];
 
     /**
@@ -95,30 +97,28 @@ class User extends Authenticatable implements MustVerifyEmail
         'status' => UserStatusEnum::class,
         'company_info' => 'array',
         'last_login_at' => 'datetime',
+        'flags' => 'array',
     ];
 
     protected $appends = ['balance'];
 
     protected static function booted(): void
     {
-        parent::boot();
-        static::created(fn($user) => self::updateAfterCreatedUser($user));
+        static::creating(fn($user) => self::updateAfterCreatingUser($user));
 
+        static::updating(function ($user) {
+            if (isset($user->roles) || isset($user->permissions)) {
+                unset($user->roles);
+                unset($user->permissions);
+            }
+        });
     }
 
-    protected static function updateAfterCreatedUser($user): void
+    protected static function updateAfterCreatingUser($user): void
     {
-        $user->update(['parent_id' => auth()->id()]);
-    }
-
-    protected static function updatingUser($user): void
-    {
-        $user->update(['last_login_at' => now()]);
-        $user->activities()->create([
-            'country' => geoip(request()->ip())->country ?? '',
-            'ip' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-        ]);
+        if (auth()->check()) {
+            $user->update(['parent_id' => auth()->id()]);
+        }
     }
 
     public function availablePlanItemsCount()

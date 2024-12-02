@@ -35,9 +35,9 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = $request->user();
-        $location = Location::get($request->ip());
 
         if ($user) {
+            $location = Location::get($request->ip());
             $user->update(['last_login_at' => now()]);
 
             $user->activities()->create([
@@ -56,7 +56,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        Auth::logout();
 
         $request->session()->invalidate();
 
