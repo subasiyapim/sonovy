@@ -95,5 +95,10 @@ class UserShowResource extends JsonResource
             ->sum('amount');
     }
 
+    private function invoices()
+    {
+        return $this->orders;
+    }
+
 
 }
