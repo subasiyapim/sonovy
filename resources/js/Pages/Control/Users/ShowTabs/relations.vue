@@ -1,9 +1,9 @@
 <script setup>
 import {ref,reactive} from 'vue';
-import AppTable from '@/Components/Table/AppTable.vue';
+
 import {IconButton,PrimaryButton,RegularButton} from '@/Components/Buttons';
 import {FormElement} from '@/Components/Form';
-import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
+
 import {usePage} from '@inertiajs/vue3';
 
 import {
@@ -18,51 +18,36 @@ const defaultStore = useDefaultStore();
 const props = defineProps({
   user: {},
 });
+const activeTab = ref('sub_users');
+import UsersTab from './RelationsTabs/users.vue';
+import LabelsTab from './RelationsTabs/labels.vue';
+import ParticipantsTab from './RelationsTabs/participants.vue';
+import ProductsTab from './RelationsTabs/products.vue';
 
+const tableData = ref([]);
 </script>
 <template>
 
+    <div class="flex gap-2">
+        <div @click="activeTab = 'sub_users'" class="rounded-full px-2 py-1 cursor-pointer subheading-xs" :class="activeTab == 'sub_users' ? 'bg-dark-green-800 text-white':'bg-weak-50 c-sub-600' ">
+            Alt Kullanıcılar
+        </div>
+         <div @click="activeTab = 'products'" class="rounded-full px-2 py-1 cursor-pointer subheading-xs" :class="activeTab == 'products' ? 'bg-dark-green-800 text-white':'bg-weak-50 c-sub-600' ">
+            Yayınlar
+        </div>
+         <div @click="activeTab = 'labels'" class="rounded-full px-2 py-1 cursor-pointer subheading-xs" :class="activeTab == 'labels' ? 'bg-dark-green-800 text-white':'bg-weak-50 c-sub-600' ">
+            Plak Şirketleri
+        </div>
+         <div @click="activeTab = 'participants'" class="rounded-full px-2 py-1 cursor-pointer subheading-xs" :class="activeTab == 'participants' ? 'bg-dark-green-800 text-white':'bg-weak-50 c-sub-600' ">
+            Katılımcılar
+        </div>
+    </div>
 
 
-    <AppTable  v-model="user.histories"  :isClient="true" >
-        <AppTableColumn label="Fatura">
-            <template #default="scope">
-
-            </template>
-        </AppTableColumn>
-
-        <AppTableColumn label="Tarih">
-            <template #default="scope">
-
-            </template>
-        </AppTableColumn>
-
-
-        <AppTableColumn label="İşlem Türü">
-            <template #default="scope">
-
-            </template>
-        </AppTableColumn>
-
-        <AppTableColumn label="Miktar">
-            <template #default="scope">
-
-            </template>
-        </AppTableColumn>
-         <AppTableColumn label="Durumu">
-            <template #default="scope">
-
-            </template>
-        </AppTableColumn>
-        <AppTableColumn label="Aksiyon">
-            <template #default="scope">
-
-            </template>
-        </AppTableColumn>
-        <template #empty>
-            Tarih Detayı Bulunamadı
-        </template>
-    </AppTable>
+    <UsersTab v-if="activeTab == 'sub_users'" v-model="tableData"></UsersTab>
+    <LabelsTab v-else-if="activeTab == 'labels'" v-model="tableData"></LabelsTab>
+    <ParticipantsTab v-else-if="activeTab == 'participants'" v-model="tableData"></ParticipantsTab>
+    <ProductsTab v-else-if="activeTab == 'products'" v-model="tableData"></ProductsTab>
 </template>
 
 <style scoped>

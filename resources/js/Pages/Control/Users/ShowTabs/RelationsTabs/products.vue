@@ -1,0 +1,144 @@
+
+
+<template>
+    <AppTable ref="productTable" :showAddButton="false"
+
+              :isClient="true">
+      <AppTableColumn label="Tür" sortable="type">
+        <template #default="scope">
+          <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
+            <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
+            <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
+            <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
+          </div>
+        </template>
+      </AppTableColumn>
+      <AppTableColumn label="Durum">
+        <template #default="scope">
+
+          <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2">
+            <component :is="statusData.find((e) => e.value == scope.row.status)?.icon"
+                       :color="statusData.find((e) => e.value == scope.row.status)?.color"></component>
+            <p class="subheading-xs c-sub-600">
+              {{ statusData.find((e) => e.value == scope.row.status)?.label }}
+            </p>
+          </div>
+        </template>
+      </AppTableColumn>
+
+      <AppTableColumn label="Yayın Bilgisi">
+        <template #default="scope">
+          <div class="flex gap-x-2 items-center">
+            <div class="w-8 h-8 rounded overflow-hidden">
+              <img class="w-10 h-10" alt=""
+                   :src="scope.row.image ? scope.row.image.thumb : 'https://loremflickr.com/400/400'">
+
+              <img :alt="scope.row.album_name"
+                   :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.album_name)"
+              >
+
+            </div>
+           <div class="flex flex-col flex-1 items-start justisy-start">
+                <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
+                {{ scope.row.album_name }}
+                </a>
+
+                <div class=" paragraph-xs c-strong-950 ">
+                    <p>
+                        <template v-for="(artist,artistIndex) in scope.row.main_artists">
+                            {{ artist.name }}
+                            <template v-if="artistIndex != scope.row.main_artists.length-1">,&nbsp;</template>
+                        </template>
+                    </p>
+
+                </div>
+           </div>
+          </div>
+        </template>
+      </AppTableColumn>
+
+
+      <AppTableColumn label="Plak Şirketi">
+        <template #default="scope">
+
+          <span class="paragraph-xs c-sub-600">{{ scope.row.label?.name }}</span>
+
+        </template>
+      </AppTableColumn>
+
+      <AppTableColumn label="Yayın Tarih">
+        <template #default="scope">
+          <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
+            <p class="paragraph-xs c-sub-600 whitespace-nowrap">
+              {{ moment(scope.row.physical_release_date).format('DD/MM/YYYY') }}
+            </p>
+          </div>
+        </template>
+      </AppTableColumn>
+      <AppTableColumn label="Parçalar">
+        <template #default="scope">
+          <span class="paragraph-xs c-sub-600">{{ scope.row.songs?.length }} Parça</span>
+        </template>
+      </AppTableColumn>
+      <AppTableColumn label="UPC/Katalog">
+        <template #default="scope">
+          <div class="flex flex-col justify-start ">
+            <span class="paragraph-xs c-sub-600">{{ scope.row.upc_code }}</span>
+            <span class="paragraph-xs c-sub-600">{{ scope.row.catalog_number }}</span>
+
+          </div>
+        </template>
+      </AppTableColumn>
+      <AppTableColumn label="Mağazalar">
+        <template #default="scope">
+          <div class="flex flex-col items-start paragraph-xs c-sub-600">
+            <p>
+
+              {{ scope.row.selected_count ?? 0 }} Bölge
+            </p>
+            <p>
+              {{ scope.row.download_platforms?.length }} Mağaza
+            </p>
+          </div>
+        </template>
+      </AppTableColumn>
+      <AppTableColumn label="Aksiyonlar" align="end">
+        <template #default="scope">
+          <IconButton :confirmDelete="true" @confirm="deleteProduct(scope.row)"
+                      title="Ürünü Silmek İstediğine Emin misin?" description="">
+            <TrashIcon color="var(--sub-600)"/>
+
+          </IconButton>
+        </template>
+      </AppTableColumn>
+      <template #empty>
+        <div class="flex flex-col items-center justify-center gap-8">
+          <div>
+            <h2 class="label-medium c-strong-950">Henüz yayınız bulunmamaktadır.</h2>
+            <h3 class="paragraph-medium c-neutral-500">Oluşturucağınız tüm yayınlar burada listelenecektir.</h3>
+          </div>
+
+        </div>
+
+
+      </template>
+    </AppTable>
+</template>
+
+<script  setup>
+import AppTable from '@/Components/Table/AppTable.vue';
+import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
+import {computed} from 'vue';
+const props = defineProps({
+    modelValue:{}
+});
+const emits = defineEmits(['update:modelValue']);
+
+const tableData = computed({
+    get:() => props.modelValue,
+    set:(val) => emits('update:modelValue',value)
+})
+</script>
+<style  scoped>
+
+</style>

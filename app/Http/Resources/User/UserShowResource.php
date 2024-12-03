@@ -109,7 +109,7 @@ class UserShowResource extends JsonResource
 
     private function activities()
     {
-        return $this->activities;
+        return $this->activities->toArray();
     }
     private function relations()
     {
@@ -118,6 +118,6 @@ class UserShowResource extends JsonResource
 
     private function flags()
     {
-        return $this->flags;
+        return $this->flags?->toArray();
     }
 }

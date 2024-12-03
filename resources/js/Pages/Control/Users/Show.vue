@@ -183,7 +183,7 @@ const tabs = ref([
   },
   {
     title: "Bağlı Olduğu Alanlar",
-    slug: "relatons",
+    slug: "relations",
     component: RelationsTab,
   },
   {

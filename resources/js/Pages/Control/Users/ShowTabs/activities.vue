@@ -24,41 +24,32 @@ const props = defineProps({
 
 
 
-    <AppTable  v-model="user.histories"  :isClient="true" >
-        <AppTableColumn label="Fatura">
+    <AppTable  v-model="user.activities"  :isClient="true" >
+        <AppTableColumn label="Giriş Tarihi">
             <template #default="scope">
 
             </template>
         </AppTableColumn>
 
-        <AppTableColumn label="Tarih">
+        <AppTableColumn label="Ülke">
             <template #default="scope">
 
             </template>
         </AppTableColumn>
 
 
-        <AppTableColumn label="İşlem Türü">
+        <AppTableColumn label="IP">
             <template #default="scope">
 
             </template>
         </AppTableColumn>
 
-        <AppTableColumn label="Miktar">
+        <AppTableColumn label="Agent">
             <template #default="scope">
 
             </template>
         </AppTableColumn>
-         <AppTableColumn label="Durumu">
-            <template #default="scope">
 
-            </template>
-        </AppTableColumn>
-        <AppTableColumn label="Aksiyon">
-            <template #default="scope">
-
-            </template>
-        </AppTableColumn>
         <template #empty>
             Tarih Detayı Bulunamadı
         </template>
