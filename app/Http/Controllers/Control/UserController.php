@@ -108,7 +108,7 @@ class UserController extends Controller
 
             return to_route('dashboard.users.index')
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
@@ -137,7 +137,6 @@ class UserController extends Controller
             'authorisations',
         ];
         $tab = request()->has('slug') ? request()->input('slug') : 'profile';;
-
         $response = new UserShowResource($user, $tab);
 
         // dd($response->resolve());
@@ -180,7 +179,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+" . $country->phone_code . $user->phone;
+            $user->phone = "+".$country->phone_code.$user->phone;
         }
 
         return inertia(
@@ -276,7 +275,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
