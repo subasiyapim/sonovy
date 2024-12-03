@@ -70,7 +70,7 @@ class UserController extends Controller
         ];
 
         return inertia('Control/Users/Index', [
-            'users' => UserResource::collection($users),
+            'users' => UserResource::collection($users)->resource,
             'roles' => RoleService::getRolesFromInputFormat(),
             'statuses' => UserStatusEnum::getTitles(),
             'statistics' => $statistics,
@@ -108,9 +108,8 @@ class UserController extends Controller
 
             return to_route('dashboard.users.index')
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
-
         }
 
         return to_route('dashboard.users.index')
@@ -142,14 +141,14 @@ class UserController extends Controller
         $response = new UserShowResource($user, $tab);
 
         // dd($response->resolve());
-        return inertia('Control/Users/Show',
+        return inertia(
+            'Control/Users/Show',
             [
                 'user' => $response->resolve(),
                 'tab' => $tab,
                 'tabs' => $tabs
             ]
         );
-
     }
 
 
@@ -181,13 +180,13 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+".$country->phone_code.$user->phone;
+            $user->phone = "+" . $country->phone_code . $user->phone;
         }
 
-        return inertia('Control/Users/Edit',
-            compact('user', 'counties', 'permissions', 'roles', 'timezones', 'localize_list'));
-
-
+        return inertia(
+            'Control/Users/Edit',
+            compact('user', 'counties', 'permissions', 'roles', 'timezones', 'localize_list')
+        );
     }
 
     /**
@@ -196,22 +195,25 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user)
     {
         $data = $request->except(['role_id', 'password', 'artists', 'labels', 'platforms', 'commission_rate']);
-        $data['commission_rate'] = $request->commission_rate ? preg_replace('/\s+/', '',
-            $request->commission_rate) : null;
+        $data['commission_rate'] = $request->commission_rate ? preg_replace(
+            '/\s+/',
+            '',
+            $request->commission_rate
+        ) : null;
 
         if ($request->validated()['password']) {
             $data['password'] = bcrypt($request->password);
         }
 
-//        if ($request->access_all_artists == 0 && $request->artists) {
-//            $user->permittedArtists()->sync($request->artists);
-//        }
-//        if ($request->access_all_labels == 0 && $request->labels) {
-//            $user->permittedLabels()->sync($request->labels);
-//        }
-//        if ($request->access_all_platforms == 0 && $request->platforms) {
-//            $user->permittedPlatforms()->sync($request->platforms);
-//        }
+        //        if ($request->access_all_artists == 0 && $request->artists) {
+        //            $user->permittedArtists()->sync($request->artists);
+        //        }
+        //        if ($request->access_all_labels == 0 && $request->labels) {
+        //            $user->permittedLabels()->sync($request->labels);
+        //        }
+        //        if ($request->access_all_platforms == 0 && $request->platforms) {
+        //            $user->permittedPlatforms()->sync($request->platforms);
+        //        }
 
         $user->roles()->sync($request->role_id);
         $user->update($data);
@@ -220,7 +222,6 @@ class UserController extends Controller
             ->with([
                 'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
             ]);
-
     }
 
     /**
@@ -272,11 +273,10 @@ class UserController extends Controller
                     $flags => $flags
                 ]
             );
-
         } catch (\Exception $e) {
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -284,7 +284,5 @@ class UserController extends Controller
             ->with([
                 'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
             ]);
-
     }
-
 }

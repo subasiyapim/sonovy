@@ -160,9 +160,7 @@
       <AppTableColumn label="Yayın Tarih">
         <template #default="scope">
           <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
-
             <p class="paragraph-xs c-sub-600 whitespace-nowrap">
-
               {{ moment(scope.row.physical_release_date).format('DD/MM/YYYY') }}
             </p>
           </div>

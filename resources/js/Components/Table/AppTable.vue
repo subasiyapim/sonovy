@@ -38,8 +38,8 @@
       </div>
     </div>
   </div>
- <div class="relative" @dragenter="emits('dragenter',$e)" @dragleave="emits('dragleave',e)">
-  <div class="relative">
+ <div class="relative"  @dragenter="emits('dragenter',$e)" @dragleave="emits('dragleave',e)">
+  <div class="relative" >
      <div class="overflow-x-scroll w-full border border-soft-200 rounded-lg tableWrapper ">
         <table class="w-full appTable">
             <thead>
@@ -82,7 +82,7 @@
                     </td>
                 </tr>
                 <tr class="hasBorder" v-if="showNoteIf != null && showNoteIf(row)">
-                    <td :colspan="columns.length+1">
+                    <td :colspan="columns?.length+1">
                     <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
                         <WarningIcon color="var(--error-500)"/>
                         <p class="paragraph-xs c-strong-950"> {{ renderRowNoteText(row) }}</p>
@@ -93,7 +93,7 @@
                 </template>
 
                 <tr v-if="hasSlot('appends')">
-                <td :colspan="columns.length+1" class="!p-0">
+                <td :colspan="columns?.length+1" class="!p-0">
                     <slot name="appends"/>
                 </td>
 
@@ -108,6 +108,7 @@
         </div>
     </div>
   </div>
+
   <div v-if="searching" class="h-[300px] flex flex-col items-center justify-center">
     <div class="w-12 h-12">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
@@ -128,13 +129,14 @@
       </svg>
     </div>
   </div>
+
   <div v-else >
-    <template v-if="!(data == null || data.length <= 0)">
+    <template v-if="!(data == null || data?.length <= 0)">
       <div v-if="!isClient" class="flex items-center  c-sub-600">
         <p class="w-28">
           Sayfa {{ query.page }} of {{ Math.ceil((tableData.total / tableData.per_page)) }}
         </p>
-        <div class="flex flex-1 justify-center  gap-3">
+        <div class="flex flex-1 justify-center  gap-3" >
 
           <a :disabled="!tableData.first_page_url" :href="tableData.first_page_url"
              class="p-2 radius-8 w-10 h-10 flex items-center justify-center">
@@ -169,8 +171,7 @@
 
 
         </div>
-        <div class="w-28 max-w-xs mx-auto">
-
+        <div class="w-28 max-w-xs mx-auto" >
           <select id="options" name="options"
                   class="mt-1 block w-full pl-3 pr-10 py-2 paragraph-sm border border-soft-200 focus:outline-none  radius-8">
             <option v-for="page in Math.ceil((tableData.total / tableData.per_page))">{{ page }}. Sayfa</option>
@@ -179,8 +180,8 @@
       </div>
     </template>
 
-    <div v-show="(showEmptyOnDrag || (data == null || data.length <= 0) && !hasSlot('appends'))"
-         class="h-[300px] flex flex-col items-center justify-center gap-8  " :class="(showEmptyOnDrag &&  data.length > 0) ?  'absolute inset-0 bg-white' : ''">
+    <div v-show="(showEmptyOnDrag || (data == null || data?.length <= 0) && !hasSlot('appends'))"
+         class="h-[300px] flex flex-col items-center justify-center gap-8  " :class="(showEmptyOnDrag &&  data?.length > 0) ?  'absolute inset-0 bg-white' : ''">
       <img v-if="showEmptyImage" src="@/assets/images/empty_state.png" class="w-32 h-32">
       <slot name="empty"/>
     </div>
@@ -373,7 +374,7 @@ const onSelectRow = (row, index) => {
   emits('selectionChange', selectedRowIndexes.value);
 }
 const selectAll = () => {
-  if (data.value.length == selectedRowIndexes.value.length) {
+  if (data.value?.length == selectedRowIndexes.value?.length) {
     selectedRowIndexes.value = [];
   } else {
     deSelect();

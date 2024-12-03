@@ -8,6 +8,7 @@ import SearchIcon from './SearchIcon.vue';
 import NotificationIcon from './NotificationIcon.vue';
 import CalendarIcon from './CalendarIcon.vue';
 import TableOrderIcon from './TableOrderIcon.vue';
+import More2LineIcon from './More2LineIcon.vue';
 import WorldIcon from './WorldIcon.vue';
 import PhoneIcon from './PhoneIcon.vue';
 import MessageIcon from './MessageIcon.vue';
@@ -17,6 +18,8 @@ import HistoryIcon from './HistoryIcon.vue';
 import WarningDocumentIcon from './WarningDocumentIcon.vue';
 import ScheduledIcon from './ScheduledIcon.vue';
 import WWWIcon from './WWWIcon.vue';
+import StackIcon from './StackIcon.vue';
+import CreditCardIcon from './CreditCardIcon.vue';
 
 import ArrowDoubleRightIcon from './ArrowDoubleRightIcon.vue';
 import ArrowDoubleLeftIcon from './ArrowDoubleLeftIcon.vue';
@@ -161,4 +164,7 @@ export {
     RingtoneIcon,
     AudioIcon,
     EditLineIcon,
+    More2LineIcon,
+    StackIcon,
+    CreditCardIcon,
 }

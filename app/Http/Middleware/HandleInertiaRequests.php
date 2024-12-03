@@ -54,9 +54,9 @@ class HandleInertiaRequests extends Middleware
         });
 
         // Ayarları cache'leme
-        $settings = Cache::remember('settings', $this->cacheTime, function () {
-            return Setting::pluck('value', 'key');
-        });
+        // $settings = Cache::remember('settings', $this->cacheTime, function () {
+        //     return Setting::pluck('value', 'key');
+        // });
 
         $data = [
             'ziggy' => function () use ($request) {
@@ -89,7 +89,7 @@ class HandleInertiaRequests extends Middleware
         if ($this->isTenant()) {
             $data['verification_code_expire'] = (int) ($settings['verification_code_expire'] ?? 1);
 
-            $data['site_settings'] = fn() => $settings;
+            // $data['site_settings'] = fn() => $settings;
         }
 
         if (Auth::check()) {

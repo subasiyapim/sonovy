@@ -1,7 +1,7 @@
 <template>
 
     <div class="flex items-center relative bg-white-600 rounded overflow-hidden w-full" :style="{'height' : `${height}px`}">
-        <div class="absolute bg-dark-green-600"   :style="{'width' : element+'%','height' : `${height}px`}">
+        <div class="absolute"   :style="{'width' : element+'%','height' : `${height}px`,'background' : color}">
         </div>
     </div>
 </template>
@@ -15,6 +15,9 @@
        height:{
         default:8,
        },
+       color:{
+        default:'#3F5562'
+       }
 
     });
     const emits = defineEmits(['update:modelValue']);

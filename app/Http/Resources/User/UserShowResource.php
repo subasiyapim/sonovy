@@ -23,6 +23,7 @@ class UserShowResource extends JsonResource
     private function getTabContent(): array
     {
         return match ($this->tab) {
+            'profile' => $this->profile(),
             'pricing' => $this->pricing(),
             'contracts' => $this->contracts(),
             'balances' => $this->balances(),
@@ -53,6 +54,10 @@ class UserShowResource extends JsonResource
         ];
     }
 
+    private function profile(): array
+    {
+        return [];
+    }
     private function pricing(): array
     {
         return [
@@ -64,9 +69,7 @@ class UserShowResource extends JsonResource
         ];
     }
 
-    private function contracts()
-    {
-    }
+    private function contracts() {}
 
     private function balances(): array
     {
@@ -88,6 +91,10 @@ class UserShowResource extends JsonResource
         return Payment::where('user_id', $this->id)->get();
     }
 
+    private function confirmedTotal()
+    {
+        return [];
+    }
     private function pendingOutPayments(): float
     {
         return Payment::where('status', PaymentStatusEnum::PENDING->value)
@@ -97,18 +104,20 @@ class UserShowResource extends JsonResource
 
     private function invoices()
     {
-        return $this->orders;
+        return $this->orders->toArray();
     }
 
     private function activities()
     {
         return $this->activities;
     }
+    private function relations()
+    {
+        return [];
+    }
 
     private function flags()
     {
         return $this->flags;
     }
-
-
 }
