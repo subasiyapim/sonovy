@@ -4,10 +4,12 @@
 
 
     <AppTable  ref="usersTable" :showAddButton="false"
-
+            :renderSubWhen="renderSubWhen"
               v-model="usePage().props.users" :slug="route('control.user-management.users.index')">
 
-
+        <template #sub="scope">
+            <NestedTable v-model="scope.row.children"></NestedTable>
+        </template>
         <AppTableColumn label="Kullanıcı Adı" sortable="type">
             <template #default="scope">
             <div class="flex justify-start items-center gap-2 w-full">
@@ -21,8 +23,9 @@
                     class="font-poppins table-name-text c-sub-600">{{ scope.row.name }}</a>
                     <span class="c-sub-600 paragraph-xs">{{scope.row.email}}</span>
 
-                    <button class="c-blue-500 label-xs" v-if="scope.row?.children?.length>0">
-                        {{scope.row?.children?.length}} Alt Kullanıcıyı Göre
+                    <button class="c-blue-500 label-xs" @click="usersTable.toggleShowSub(scope.index)" v-if="scope.row?.children?.length>0">
+                        {{scope.row?.children?.length}} Alt Kullanıcıyı Gör
+
                     </button>
 
                 </div>
@@ -82,6 +85,7 @@
 import {ref} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
+import NestedTable from '@/Components/Table/NestedTable.vue';
 import {ProductDialog} from '@/Components/Dialog';
 import {RegularButton} from '@/Components/Buttons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
@@ -123,6 +127,10 @@ const data = ref([
     name: "ikinci"
   },
 ])
+
+const renderSubWhen = (row) => {
+    return row.children.length > 0;
+}
 const isCreateProductDialogOn = ref(false);
 const openCreateProductDialog = () => {
   isCreateProductDialogOn.value = true;

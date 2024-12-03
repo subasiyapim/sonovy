@@ -32,7 +32,7 @@
             <template #icon>
               <AddIcon color="var(--dark-green-500)"/>
             </template>
-            <p class="">{{ buttonLabel ?? 'Ekle' }}</p>
+            <p >{{ buttonLabel ?? 'Ekle' }}</p>
           </PrimaryButton>
         </div>
       </div>
@@ -40,8 +40,8 @@
   </div>
  <div class="relative"  @dragenter="emits('dragenter',$e)" @dragleave="emits('dragleave',e)">
   <div class="relative" >
-     <div class="overflow-x-scroll w-full border border-soft-200 rounded-lg tableWrapper ">
-        <table class="w-full appTable">
+     <div ref="currentAppTable" class="overflow-x-scroll overflow-y-hidden w-full border border-soft-200 rounded-lg tableWrapper ">
+        <table  class="w-full appTable">
             <thead>
                 <tr class="border-b border-white-600">
 
@@ -68,28 +68,37 @@
                 </thead>
                 <tbody>
                 <template v-for="(row, rowIndex) in data" :key="rowIndex">
-                <tr class="tableRow"
-                    :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf != null && showNoteIf(row) ? '' : 'hasBorder') ">
-                    <td v-if="hasSelect" class="tableCell">
+                    <tr class="tableRow"
+                        :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf != null && showNoteIf(row) ? '' : ( renderSubWhen != null && renderSubWhen(row) ? (data.isSelected ? '' : 'hasBorder') :'hasBorder')) ">
+                        <td v-if="hasSelect" class="tableCell">
 
-                    <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''"
-                            @click="onSelectRow(row)">
-                            <CheckIcon color="#fff" />
-                    </button>
-                    </td>
-                    <td v-for="(column, colIndex) in columns" :key="colIndex" class="tableCell" :style="column.props.width ? {width:`${column.props.width}px`,display:'inline-block'} :{}">
-                        <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
-                    </td>
-                </tr>
-                <tr class="hasBorder" v-if="showNoteIf != null && showNoteIf(row)">
-                    <td :colspan="columns?.length+1">
-                    <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
-                        <WarningIcon color="var(--error-500)"/>
-                        <p class="paragraph-xs c-strong-950"> {{ renderRowNoteText(row) }}</p>
+                        <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''"
+                                @click="onSelectRow(row)">
+                                <CheckIcon color="#fff" />
+                        </button>
+                        </td>
+                        <td colspan="1" v-for="(column, colIndex) in columns" :key="colIndex" class="tableCell" :style="column.props.width ? {width:`${column.props.width}px`,display:'inline-block'} :{}">
+                            <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
+                        </td>
 
-                    </div>
-                    </td>
-                </tr>
+
+                    </tr>
+                    <template v-if="!loadingApp && hasSlot('sub') && (renderSubWhen != null && renderSubWhen(row))" >
+                        <tr class="hasBorder" :class="row.isSelected ? '' : 'hidden'">
+                            <td :colspan="columns?.length+1" >
+                                <slot name="sub" :index="rowIndex" :row="row" />
+                            </td>
+                        </tr>
+                    </template>
+                    <tr class="hasBorder" v-if="showNoteIf != null && showNoteIf(row)">
+                        <td :colspan="columns?.length+1">
+                        <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
+                            <WarningIcon color="var(--error-500)"/>
+                            <p class="paragraph-xs c-strong-950"> {{ renderRowNoteText(row) }}</p>
+
+                        </div>
+                        </td>
+                    </tr>
                 </template>
 
                 <tr v-if="hasSlot('appends')">
@@ -215,7 +224,7 @@ import {toast} from 'vue3-toastify';
 
 const slots = useSlots()
 const songs = ref([]);
-
+const currentAppTable = ref();
 
 const crudStore = useCrudStore();
 let params = new URLSearchParams(window.location.search)
@@ -267,10 +276,14 @@ const props = defineProps({
   renderRowNoteText: {},
   showEmptyOnDrag:{
     default:false
+  },
+  renderSubWhen:{},
+  scrollable:{
+    default:true,
   }
 })
 const emits = defineEmits(['update:modelValue', 'addNewClicked', 'selectionChange','dragenter','dragleave']);
-
+const loadingApp = ref(true);
 const tableData = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value)
@@ -278,7 +291,10 @@ const tableData = computed({
 
 const term = ref();
 const scrollTable = (direction) => {
-    const wrapper = document.querySelector(".tableWrapper");
+//    console.log(currentAppTable.value);
+    const wrapper = currentAppTable.value;
+    // const wrapper = document.querySelector(".tableWrapper");
+    // console.log("WRAPPER",wrapper);
 
     let scrollOption = {  behavior: "smooth" }
     if(direction == 'left'){
@@ -493,35 +509,57 @@ onMounted(() => {
         const leftIndicator = wrapper.querySelector('.left-indicator');
 
         const rightIndicator = wrapper.querySelector('.right-indicator');
-        console.log("GELDİİİ");
 
 
         const updateIndicators = () => {
-            const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
+            const maxScrollLeft = wrapper.scrollWidth - wrapper.offsetWidth;
+
 
             // Show/hide indicators based on the scroll position
             leftIndicator.style.display = wrapper.scrollLeft > 0 ? "flex" : "none";
             rightIndicator.style.display = wrapper.scrollLeft < maxScrollLeft ? "flex" : "none";
 
+
             const rows = wrapper.querySelectorAll('tr.tableRow');
-            console.log("ROESS",rows);
+
+            loadingApp.value = false;
             rows.forEach(element => {
+                if (!element.offsetParent) return;
+
+
                 element.querySelectorAll('td').forEach(td => {
-                    td.style.height = `${element.clientHeight}px`
+                    td.style.height = `${element.offsetHeight}px`
                 });
             });
+
         };
 
+        if(props.scrollable){
+            console.log("GELDİİ");
+
+            // Initial check
+            updateIndicators();
+            // Update indicators on scroll and resize
+            wrapper.addEventListener("scroll", updateIndicators);
+            window.addEventListener("resize", updateIndicators);
+        }else {
+            loadingApp.value = false;
+
+        }
 
 
-        // Initial check
-        updateIndicators();
-
-        // Update indicators on scroll and resize
-        wrapper.addEventListener("scroll", updateIndicators);
-        window.addEventListener("resize", updateIndicators);
     })
 });
+
+
+const toggleShowSub = (index) => {
+
+
+
+  data.value[index].isSelected = !data.value[index].isSelected ?? true;
+
+
+}
 defineExpose({
   removeRowByIndex,
   removeRowData,
@@ -531,7 +569,8 @@ defineExpose({
   editRow,
   deSelect,
   selectAll,
-  selectRows
+  selectRows,
+  toggleShowSub
 })
 </script>
 <style>
@@ -580,6 +619,7 @@ defineExpose({
     cursor:pointer;
 }
 .left-indicator{
+    display:none;
     left:0px;
     top:0px;
     bottom:0px;
@@ -588,6 +628,7 @@ defineExpose({
     background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 100%);
 }
 .right-indicator{
+    display:none;
     right:0px;
     top:0px;
     bottom:0px;
