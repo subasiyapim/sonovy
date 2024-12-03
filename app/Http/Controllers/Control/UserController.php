@@ -125,7 +125,8 @@ class UserController extends Controller
     {
         abort_if(Gate::denies('user_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $user->loadMissing('roles', 'country', 'city', 'district', 'parent', 'children');
+        $user->load('roles', 'country', 'city', 'district', 'parent', 'children');
+
         $tabs = [
             'pricing',
             'contracts',
@@ -139,7 +140,6 @@ class UserController extends Controller
         $tab = request()->has('slug') ? request()->input('slug') : 'profile';;
         $response = new UserShowResource($user, $tab);
 
-        // dd($response->resolve());
         return inertia(
             'Control/Users/Show',
             [

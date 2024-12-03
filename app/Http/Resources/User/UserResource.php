@@ -39,6 +39,7 @@ class UserResource extends JsonResource
             'status' => $this->status->value,
             'status_text' => $this->status->title(),
             'created_at' => Carbon::parse($this->created_at)->locale(App::currentLocale())->translatedFormat('d F Y H:i'),
+            'children' => $this->whenLoaded('children', $this->children),
         ];
     }
 }
