@@ -22,9 +22,19 @@ const props = defineProps({
 </script>
 <template>
 
+    <div class="flex flex gap-6 items-center mb-5">
+       <FormElement :label="'Kullanıcıyı Blokla'" placeholder="Yorum Ekle" label-width="290px" class="w-[560px]">
+            <template #tooltip>
+                deneme
+            </template>
+        </FormElement>
+        <button class="bg-error-500 px-3 py-2 rounded-lg text-white  label-sm">
+            Kullanıcıyı Blokla
+        </button>
 
+    </div>
 
-    <AppTable  v-model="user.histories"  :isClient="true" >
+    <AppTable  v-model="user.histories"  :isClient="true" :hasSearch="false" :showAddButton="false" >
         <AppTableColumn label="Fatura">
             <template #default="scope">
 

@@ -3,18 +3,23 @@
   <AdminLayout :showDatePicker="false" :title="__('control.user.show_header')" parentTitle="Katalog"
                subParent="Tüm Şarkılar" :hasPadding="false">
     <template #breadcrumb>
-      <span class="label-xs c-soft-400">Katalog</span>
+      <span class="label-xs c-soft-400">Kullanıcı Yönetimi</span>
       <span class="label-xs c-soft-400">•</span>
-      <span class="label-xs c-soft-400 cursor-pointer" @click="router.visit(route('control.user-management.users.index'))">Tüm Kullanıcılar</span>
-      <span class="label-xs c-soft-400">•</span>
-      <span class="label-xs c-soft-400">{{ user.type_text }}</span>
-      <span class="label-xs c-soft-400">•</span>
-      <span class="label-xs c-soft-400">{{ user.album_name }}</span>
+      <span class="label-xs c-soft-400">{{ user.name }}</span>
     </template>
       <div class="bg-white-400 h-44 p-5 relative">
       <div class="">
-        <h1 class="label-xl c-strong-950" v-text="user.name"/>
-        <span class="c-sub-600 paragraph-medium" v-text="user.id"/>
+        <div class="flex items-center gap-2">
+            <h1 class="label-xl c-strong-950" v-text="user.name"/>
+            <div class="bg-[#C0D5FF] px-3 py-1 rounded-full">
+              <p class="label-xs text-[#122368]">  Rol: Kullanıcı</p>
+            </div>
+             <div class="border border-soft-200 px-2 py-1 rounded-full flex items-center gap-2">
+                <CheckFilledIcon color="var(--sub-600)" />
+                <p class="label-xs text-[#122368]">  Aktif</p>
+            </div>
+        </div>
+        <span class="c-sub-600 paragraph-medium" v-text="user.email"/>
       </div>
 
       <div
@@ -24,9 +29,15 @@
              :src="user.image ? user.image.thumb : defaultStore.profileImage(user.name)">
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
-        <PrimaryButton @click="remove">
+        <RegularButton >
           <template #icon>
-            <TrashIcon color="var(--dark-green-500)"/>
+            <EyeOnIcon color="var(--sub-600)"/>
+          </template>
+          Kullanıcının Gözünden Gör
+        </RegularButton>
+        <PrimaryButton @click="remove" class="bg-error-500">
+          <template #icon>
+            <TrashIcon color="#fff"/>
           </template>
         </PrimaryButton>
         <PrimaryButton @click="isModalOn = true">
@@ -35,15 +46,14 @@
           </template>
         </PrimaryButton>
       </div>
+
+        <div class=" absolute bottom-2 right-5">
+        <span class="label-xs !font-semibold c-sub-600">Son giriş: </span>
+        <span class="label-xs !font-regular c-sub-600">02.09.2024 - 09:30</span>
+        </div>
     </div>
     <div class="mt-32 "></div>
-    <div v-if="usePage().props.user.status == 4" class="my-3 px-8">
-      <div class="bg-red-50 rounded px-3 py-2 my-2 flex items-center gap-2">
-        <WarningIcon color="var(--error-500)"/>
-        <p class="paragraph-xs c-strong-950"> {{ usePage().props.user.note }}</p>
 
-      </div>
-    </div>
     <!---APP TABS --->
     <div>
       <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"></AppTabs>
@@ -70,6 +80,7 @@ import {
   PlayFilledIcon,
   SpotifyIcon,
   TrashIcon,
+  EyeOnIcon,
   WorldIcon,
   EditLineIcon,
   AddIcon,

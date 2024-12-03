@@ -1,7 +1,8 @@
 <script setup>
-import {ref} from 'vue';
+import {ref, reactive} from 'vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import {IconButton} from '@/Components/Buttons';
+import {AppActivity} from '@/Components/Widgets';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {usePage} from '@inertiajs/vue3';
 import {Howl} from "howler";
@@ -17,6 +18,13 @@ const defaultStore = useDefaultStore();
 const props = defineProps({
   user: {},
 });
+
+const activities = reactive([
+    {
+        "title":"Curabitur quam sem lobortis imperdiet sagittis ut. Interdum.",
+        "description" : "15 Eylül 2024 - 09:30"
+    }
+]);
 
 
 </script>
@@ -179,28 +187,7 @@ const props = defineProps({
       <div class="w-96 pr-8">
         <h1 class="mb-6 subheading-regular" v-text="'Aktiviteler'"/>
 
-        <template v-if="user.products?.length > 0">
-          <div v-for="product in user.products" class="flex p-4">
-            <div class="flex-1 flex items-center gap-4">
-              <div class="w-8 h-8 rounded-lg overflow-hidden">
-                <img src="https://placehold.co/400x400"/>
-              </div>
-              <div>
-                <p class="text-sm c-strong-950">Parça Adı</p>
-                <span class="paragraph-xs c-blue-500">Albüm Adı</span>
-              </div>
-            </div>
-            <div class="flex items-end gap-2">
-              <div class="h-3.5">
-                <PlayFilledIcon color="var(--strong-950)"/>
-              </div>
-              <span class="paragraph-xs c-neutral-500">02:35</span>
-            </div>
-          </div>
-        </template>
-        <template v-else>
-          <p v-text="__('control.user.album_notfound')"/>
-        </template>
+        <AppActivity :items="activities"></AppActivity>
       </div>
     </div>
 </template>

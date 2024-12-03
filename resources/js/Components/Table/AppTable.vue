@@ -132,8 +132,8 @@
 
   <div v-else >
     <template v-if="!(data == null || data?.length <= 0)">
-      <div v-if="!isClient" class="flex items-center  c-sub-600">
-        <p class="w-28">
+      <div v-if="!isClient" class="flex items-center  c-sub-600 mt-5">
+        <p class="w-28 paragraph-sm c-sub-600">
           Sayfa {{ query.page }} of {{ Math.ceil((tableData.total / tableData.per_page)) }}
         </p>
         <div class="flex flex-1 justify-center  gap-3" >
@@ -150,7 +150,7 @@
           </a>
 
 
-          <Link :href="route('control.catalog.artists.index',{page:p})"
+          <Link :href="route(route().current(),{page:p})"
                 v-for="p in Math.ceil((tableData.total / tableData.per_page)) >= 7 ? 6 : Math.ceil((tableData.total / tableData.per_page))"
                 :class="query.page == p ? 'bg-weak-50' : 'bg-white border border-soft-200'"
                 class="p-2 radius-8 w-10 h-10  flex items-center justify-center">
@@ -173,8 +173,9 @@
         </div>
         <div class="w-28 max-w-xs mx-auto" >
           <select id="options" name="options"
+                @change="onSelectChange"
                   class="mt-1 block w-full pl-3 pr-10 py-2 paragraph-sm border border-soft-200 focus:outline-none  radius-8">
-            <option v-for="page in Math.ceil((tableData.total / tableData.per_page))">{{ page }}. Sayfa</option>
+            <option v-for="page in Math.ceil((tableData.total / tableData.per_page))" :value="page">{{ page }}. Sayfa</option>
           </select>
         </div>
       </div>
@@ -323,6 +324,14 @@ function deleteNullProperties(obj) {
   }
 }
 
+const onSelectChange = (e) => {
+    console.log(e.target.value);
+    // route(route().current(),{page:e.target.value})
+
+    query.value['page'] = e.target.value;
+    getTableData();
+
+}
 const setQuery = (key, value) => {
   query.value[key] = value;
 }
