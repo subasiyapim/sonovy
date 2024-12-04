@@ -29,7 +29,7 @@ class LabelUpdateRequest extends FormRequest
             'name' => ['required', 'string'],
             'country_id' => ['required', Rule::exists(Country::class, 'id')],
             'address' => ['nullable', 'string'],
-            'image' => ['nullable'],
+            'image' => ['nullable', 'image', 'dimensions:ratio=1, min_width=1000, min_height=1000', 'max:2048'],
             'phone' => ['nullable'],
             'web' => ['nullable'],
             'email' => ['nullable', 'email'],
