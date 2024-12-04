@@ -69,8 +69,7 @@ class Label extends Model implements HasMedia
 
     protected static function updateCreatedBy($model): void
     {
-        parent::boot();
-        $model->update(['created_by' => auth()->id()]);
+        $model->setAttribute('created_by', auth()->id());
     }
 
     public function hasActive()

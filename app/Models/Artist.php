@@ -61,7 +61,7 @@ class Artist extends Model implements HasMedia
     {
         parent::boot();
         static::addGlobalScope(new FilterByUserRoleScope);
-        static::created(fn($model) => self::updateCreatedBy($model));
+        static::creating(fn($model) => self::updateCreatedBy($model));
     }
 
     /**
@@ -69,7 +69,7 @@ class Artist extends Model implements HasMedia
      */
     protected static function updateCreatedBy($model): void
     {
-        $model->update(['created_by' => auth()->id()]);
+        $model->setAttribute(['created_by' => auth()->id()]);
     }
 
     public function registerMediaCollections(): void

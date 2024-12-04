@@ -138,13 +138,13 @@ class Product extends Model implements HasMedia
     protected static function booted(): void
     {
         self::boot();
-        self::created(fn($model) => self::updateCreatedBy($model));
+        self::creating(fn($model) => self::updateCreatedBy($model));
         static::addGlobalScope(new FilterByUserRoleScope);
     }
 
     protected static function updateCreatedBy($model): void
     {
-        $model->update(['created_by' => auth()->id()]);
+        $model->creating(['created_by' => auth()->id()]);
     }
 
     public function artists(): BelongsToMany
@@ -176,7 +176,7 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsTo(Label::class, 'label_id');
     }
-    
+
     public function hashtags(): MorphMany
     {
         return $this->morphMany(Hashtag::class, 'model');
