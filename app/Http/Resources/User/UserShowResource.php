@@ -135,9 +135,7 @@ class UserShowResource extends JsonResource
 
     private function profile()
     {
-        return [
-
-        ];
+        return [];
     }
 
     private function getParticipants()
@@ -192,7 +190,7 @@ class UserShowResource extends JsonResource
                 'artists' => $product->artists->map(function ($artist) {
                     return $artist->name;
                 })->implode(', '),
-                'label' => $product->label->name,
+                'label' => $product?->label?->name,
                 'physical_release_date' => $product->physical_release_date,
                 'song_count' => $product->songs->count(),
                 'upc' => $product->upc_code,

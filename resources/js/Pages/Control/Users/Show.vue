@@ -59,6 +59,7 @@
       <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"></AppTabs>
     </div>
     <div class="px-8 pb-10">
+
       <component :user="user" :is="tabs.find(e => e.slug == currentTab)?.component"></component>
     </div>
 
@@ -128,10 +129,6 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  statuses: {
-    type: Array,
-    required: true
-  }
 });
 
 
@@ -150,11 +147,7 @@ const remove = () => {
 }
 
 const productStatus = ref(props.user.status);
-const productStatusConfig = computed(() => {
-  return {
-    data: props.statuses,
-  };
-})
+
 const tabs = ref([
   {
     title: "Profil Bilgileri",

@@ -119,6 +119,8 @@ const onSubmit = (e) => {
     form.image = image.value?.file;
 
   }
+
+
   if (isUpdating.value) {
     form
         .transform((data) => ({

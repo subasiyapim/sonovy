@@ -2,7 +2,7 @@
 
 <template>
     <AppTable ref="productTable" :showAddButton="false"
-
+    v-model="tableData"
               :isClient="true">
       <AppTableColumn label="Tür" sortable="type">
         <template #default="scope">
@@ -34,7 +34,7 @@
                    :src="scope.row.image ? scope.row.image.thumb : 'https://loremflickr.com/400/400'">
 
               <img :alt="scope.row.album_name"
-                   :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.album_name)"
+                   :src="scope.row.image ? scope.row.image.thumb : scope.row.album_name ? defaultStore.profileImage(scope.row.album_name) : ''"
               >
 
             </div>
@@ -128,16 +128,74 @@
 <script  setup>
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {computed} from 'vue';
+import {computed,ref} from 'vue';
+import {useDefaultStore} from "@/Stores/default";
+
+import {
+  AddIcon,
+  EditIcon,
+  EditLineIcon,
+  WarningIcon,
+  RetractedIcon,
+  ArtistsIcon,
+  AudioIcon,
+  MusicVideoIcon,
+  RingtoneIcon,
+  CheckFilledIcon,
+  TrashIcon
+} from '@/Components/Icons'
+
+const defaultStore = useDefaultStore();
 const props = defineProps({
     modelValue:{}
 });
+
 const emits = defineEmits(['update:modelValue']);
 
 const tableData = computed({
     get:() => props.modelValue,
     set:(val) => emits('update:modelValue',value)
 })
+
+const statusData = ref([
+  {
+    label: "Taslak",
+    value: 1,
+    icon: EditLineIcon,
+    color: "#FF8447",
+
+  },
+  {
+    label: "İnceleniyor",
+    value: 2,
+    icon: EditLineIcon,
+    color: "#FF8447",
+  },
+  {
+    label: "Yayınlandı",
+    value: 3,
+    icon: CheckFilledIcon,
+    color: "#335CFF",
+  },
+  {
+    label: "Reddedildi",
+    value: 4,
+    icon: WarningIcon,
+    color: "#FB3748",
+  },
+  {
+    label: "Geri Çekildi",
+    value: 5,
+    icon: RetractedIcon,
+    color: "#717784",
+  },
+  {
+    label: "Planlandı",
+    value: 6,
+    icon: CheckFilledIcon,
+    color: "#FF8447",
+  }
+]);
 </script>
 <style  scoped>
 

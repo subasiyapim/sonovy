@@ -2,6 +2,7 @@
   <div class="singleUpload" >
 
     <div class="flex items-start gap-5 ">
+
         <div class="w-16 h-16 bg-weak-50 rounded-full overflow-hidden">
 
             <img v-if="(!image?.url || !config?.image) && !isImageExist" src="@/assets/images/avatar.png">
@@ -79,7 +80,9 @@ const handleFiles = (files) => {
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        image.value = {file,url: e.target.result}
+        console.log("FİLEEE",file);
+
+        image.value = file;
 
       };
 

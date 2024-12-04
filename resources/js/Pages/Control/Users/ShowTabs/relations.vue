@@ -1,5 +1,5 @@
 <script setup>
-import {ref,reactive} from 'vue';
+import {ref,reactive,computed} from 'vue';
 
 import {IconButton,PrimaryButton,RegularButton} from '@/Components/Buttons';
 import {FormElement} from '@/Components/Form';
@@ -24,10 +24,22 @@ import LabelsTab from './RelationsTabs/labels.vue';
 import ParticipantsTab from './RelationsTabs/participants.vue';
 import ProductsTab from './RelationsTabs/products.vue';
 
-const tableData = ref([]);
+const tableData = computed(() => {
+    if(activeTab.value == 'sub_users'){
+        return usePage().props.user.tab.relations;
+    }else if(activeTab.value == 'products'){
+         return usePage().props.user.tab.products;
+    }else if(activeTab.value == 'labels'){
+         return usePage().props.user.tab.labels;
+    }else if(activeTab.value == 'participants'){
+         return usePage().props.user.tab.participants;
+    }
+});
 </script>
 <template>
-
+    <!-- {{Object.keys(usePage().props)}}
+    {{usePage().props.user}} -->
+      {{usePage().props.user.tab}}
     <div class="flex gap-2">
         <div @click="activeTab = 'sub_users'" class="rounded-full px-2 py-1 cursor-pointer subheading-xs" :class="activeTab == 'sub_users' ? 'bg-dark-green-800 text-white':'bg-weak-50 c-sub-600' ">
             Alt Kullanıcılar

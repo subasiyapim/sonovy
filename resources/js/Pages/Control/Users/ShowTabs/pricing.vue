@@ -34,6 +34,7 @@ const usages = reactive([
 ]);
 </script>
 <template>
+  {{usePage().props.user.tab}}
     <div class="flex flex-col gap-6 items-start">
         <h1 class="subheading-regular text-start" v-text="'Fiyatlandırma'"/>
         <p class="paragraph-sm c-sub-600">Et semper orci donec varius sed faucibus hendrerit. Vel nunc mauris gravida nullam nulla ut nisl nibh. </p>
