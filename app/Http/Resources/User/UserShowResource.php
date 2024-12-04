@@ -117,7 +117,7 @@ class UserShowResource extends JsonResource
     {
         return [
             'relations' => $this->children->toArray(),
-            'products' => $this->products->toArray(),
+            'products' => $this->getProducts(),
             'labels' => $this->getLabels(),
             'participants' => $this->getParticipants(),
         ];
@@ -179,5 +179,24 @@ class UserShowResource extends JsonResource
         })->toArray();
     }
 
-
+    private function getProducts()
+    {
+        return $this->products->map(function ($product) {
+            $product->load('label', 'songs', 'artists');
+            return [
+                'type' => $product->type->value,
+                'status' => $product->status->value,
+                'status_name' => $product->status->title(),
+                'image' => $product->image ? $product->image->getUrl('thumb') : null,
+                'name' => $product->name,
+                'artists' => $product->artists->map(function ($artist) {
+                    return $artist->name;
+                })->implode(', '),
+                'label' => $product->label->name,
+                'physical_release_date' => $product->physical_release_date,
+                'song_count' => $product->songs->count(),
+                'upc' => $product->upc_code,
+            ];
+        })->toArray();
+    }
 }
