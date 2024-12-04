@@ -129,27 +129,27 @@
               >
 
             </div>
-           <div class="flex flex-col flex-1 items-start justisy-start">
-                <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
+            <div class="flex flex-col flex-1 items-start justisy-start">
+              <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
                 {{ scope.row.album_name }}
-                </a>
+              </a>
 
-                <div class=" paragraph-xs c-strong-950 ">
-                    <p>
-                        <template v-for="(artist,artistIndex) in scope.row.main_artists">
-                            {{ artist.name }}
-                            <template v-if="artistIndex != scope.row.main_artists.length-1">,&nbsp;</template>
-                        </template>
-                    </p>
+              <div class=" paragraph-xs c-strong-950 ">
+                <p>
+                  <template v-for="(artist,artistIndex) in scope.row.main_artists">
+                    {{ artist.name }}
+                    <template v-if="artistIndex != scope.row.main_artists.length-1">,&nbsp;</template>
+                  </template>
+                </p>
 
-                </div>
-           </div>
+              </div>
+            </div>
           </div>
         </template>
       </AppTableColumn>
 
 
-      <AppTableColumn label="Plak Şirketi" >
+      <AppTableColumn label="Plak Şirketi">
         <template #default="scope">
 
           <span class="paragraph-xs c-sub-600">{{ scope.row.label?.name }}</span>
@@ -161,7 +161,7 @@
         <template #default="scope">
           <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
             <p class="paragraph-xs c-sub-600 whitespace-nowrap">
-              {{ moment(scope.row.physical_release_date).format('DD/MM/YYYY') }}
+              {{ scope.row.physical_release_date }}
             </p>
           </div>
         </template>
@@ -250,6 +250,7 @@ import {
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
 import moment from 'moment';
+
 const productTable = ref();
 const defaultStore = useDefaultStore();
 

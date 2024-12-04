@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Label;
 use App\Models\System\Tenant;
+use App\Services\MediaServices;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -17,10 +18,21 @@ class LabelSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('labels')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        
-        Label::factory(15)->create();
+        $diskName = 'tenant_'.tenant('domain').'_labels';
+
+        Label::factory(150)->create()->each(function (Label $row) use ($diskName) {
+
+            $imageUrl = 'https://picsum.photos/id/'.rand(1, 1000).'/500/500';
+
+            if (!@getimagesize($imageUrl)) {
+                $imageUrl = 'https://picsum.photos/500/500';
+            }
+
+            $row->addMediaFromUrl($imageUrl)
+                ->usingFileName(Str::slug($row->name).'.jpg')
+                ->usingName($row->name)
+                ->toMediaCollection('labels', $diskName);
+        });
+
     }
 }

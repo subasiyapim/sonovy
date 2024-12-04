@@ -10,6 +10,7 @@ use App\Models\System\User;
 use App\Services\EarningService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 class UserShowResource extends JsonResource
 {
@@ -192,7 +193,7 @@ class UserShowResource extends JsonResource
                     return $artist->name;
                 })->implode(', '),
                 'label' => $product?->label?->name,
-                'physical_release_date' => $product->physical_release_date,
+                'physical_release_date' => Carbon::parse($product->physical_release_date)->format('d.m.Y'),
                 'song_count' => $product->songs->count(),
                 'upc' => $product->upc_code,
             ];

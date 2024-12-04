@@ -22,6 +22,11 @@ enum ProductStatusEnum: int
         );
     }
 
+    public static function getKeys(): array
+    {
+        return array_keys(self::cases());
+    }
+
     public function title()
     {
         return match ($this) {

@@ -138,13 +138,13 @@ class Product extends Model implements HasMedia
     protected static function booted(): void
     {
         self::boot();
-        self::creating(fn($model) => self::updateCreatedBy($model));
+        static::creating(fn($model) => self::updateCreatedBy($model));
         static::addGlobalScope(new FilterByUserRoleScope);
     }
 
     protected static function updateCreatedBy($model): void
     {
-        $model->creating(['created_by' => auth()->id()]);
+        $model->setAttribute('created_by', auth()->id());
     }
 
     public function artists(): BelongsToMany
