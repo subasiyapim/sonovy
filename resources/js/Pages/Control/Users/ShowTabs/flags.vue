@@ -33,7 +33,7 @@ const props = defineProps({
         </button>
 
     </div>
-    <!-- {{usePage().props.user}} -->
+
     <AppTable  v-model="user.histories"  :isClient="true" :hasSearch="false" :showAddButton="false" >
         <AppTableColumn label="Fatura">
             <template #default="scope">

@@ -37,9 +37,7 @@ const tableData = computed(() => {
 });
 </script>
 <template>
-    <!-- {{Object.keys(usePage().props)}}
-    {{usePage().props.user}} -->
-      {{usePage().props.user.tab}}
+
     <div class="flex gap-2">
         <div @click="activeTab = 'sub_users'" class="rounded-full px-2 py-1 cursor-pointer subheading-xs" :class="activeTab == 'sub_users' ? 'bg-dark-green-800 text-white':'bg-weak-50 c-sub-600' ">
             Alt Kullanıcılar

@@ -21,8 +21,7 @@ const props = defineProps({
 
 </script>
 <template>
-    <!-- {{usePage().props.user.tab}} -->
-    <!-- {{usePage().props.}} -->
+
     <div class="border border-soft-200 w-full p-3 rounded-lg my-5">
         <div class="flex items-center justify-between w-1/2 mb-2">
             <p class="c-strong-950 label-medium w-36 !text-start">Current Balance</p>

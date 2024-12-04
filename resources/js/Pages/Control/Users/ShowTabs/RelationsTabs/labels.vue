@@ -1,12 +1,22 @@
 
 
 <template>
-    <AppTable :hasSelect="true" :isClient="true" :buttonLabel="'Yeni Plak Şirketi Ata'"
-              v-model="tableData">
+    <AppTable :hasSelect="true" ref="pageTable" :showAddButton="false"  :isClient="true"
+              v-model="tableData" @addNewClicked="openDialog">
       <AppTableColumn :label="__('control.label.title_singular')" align="left" sortable="name">
         <template #default="scope">
 
+          <div class="flex items-center gap-2 ">
+            <div class="w-12 h-12 rounded-full overflow-hidden">
+              <img :alt="scope.row.name"
+                   :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.name)"
+              >
+            </div>
+            <a :href="route('control.catalog.labels.show',scope.row.id)"
+               class="c-sub-600 table-name-text">{{ scope.row.name }}</a>
 
+
+          </div>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="__('control.label.fields.country_id')" sortable="name">
@@ -67,15 +77,9 @@
       <template #empty>
         <div class="flex flex-col items-center justify-center gap-8">
           <div>
-            <h2 class="label-medium c-strong-950">{{ __('control.label.table.empty_header') }}</h2>
-            <h3 class="paragraph-medium c-neutral-500">{{ __('control.label.table.empty_description') }}</h3>
+            <h2 class="label-medium c-strong-950">Henüz plak şirketi bulunamadı</h2>
           </div>
-          <PrimaryButton>
-            <template #icon>
-              <AddIcon  color="var(--dark-green-500)" />
-            </template>
-            {{ __('control.label.table.empty_button') }}
-          </PrimaryButton>
+
         </div>
       </template>
     </AppTable>
@@ -83,11 +87,17 @@
 
 <script  setup>
 import AppTable from '@/Components/Table/AppTable.vue';
+import {AddIcon} from '@/Components/Icons';
+import {PrimaryButton} from '@/Components/Buttons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed} from 'vue';
+import {useDefaultStore} from "@/Stores/default";
+
 const props = defineProps({
     modelValue:{}
 });
+
+const defaultStore = useDefaultStore();
 const emits = defineEmits(['update:modelValue']);
 
 const tableData = computed({
