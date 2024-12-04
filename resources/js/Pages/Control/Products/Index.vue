@@ -117,9 +117,9 @@
         </template>
       </AppTableColumn>
 
-      <AppTableColumn label="Yayın Bilgisi">
+      <AppTableColumn label="Yayın Bilgisi" width="250">
         <template #default="scope">
-          <div class="flex gap-x-2 items-center">
+          <div class="flex gap-x-2 items-start">
             <div class="w-8 h-8 rounded overflow-hidden">
               <img class="w-10 h-10" alt=""
                    :src="scope.row.image ? scope.row.image.thumb : 'https://loremflickr.com/400/400'">
@@ -149,7 +149,7 @@
       </AppTableColumn>
 
 
-      <AppTableColumn label="Plak Şirketi">
+      <AppTableColumn label="Plak Şirketi" >
         <template #default="scope">
 
           <span class="paragraph-xs c-sub-600">{{ scope.row.label?.name }}</span>
@@ -171,11 +171,11 @@
           <span class="paragraph-xs c-sub-600">{{ scope.row.songs?.length }} Parça</span>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="UPC/Katalog">
+      <AppTableColumn label="UPC/Katalog" width="240">
         <template #default="scope">
           <div class="flex flex-col justify-start ">
-            <span class="paragraph-xs c-sub-600">{{ scope.row.upc_code }}</span>
-            <span class="paragraph-xs c-sub-600">{{ scope.row.catalog_number }}</span>
+            <span class="paragraph-xs c-sub-600">UPC:{{ scope.row.upc_code ?? 'Boş' }}</span>
+            <span class="paragraph-xs c-sub-600">Katalog Numarası: {{ scope.row.catalog_number ?? 'Boş' }}</span>
 
           </div>
         </template>
