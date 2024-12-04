@@ -184,11 +184,12 @@ class UserShowResource extends JsonResource
         return $this->products->map(function ($product) {
             $product->load('label', 'songs', 'artists');
             return [
+                'id' => $product->id,
                 'type' => $product->type->value,
                 'status' => $product->status->value,
                 'status_name' => $product->status->title(),
                 'image' => $product->image ? $product->image->getUrl('thumb') : null,
-                'name' => $product->name,
+                'album_name' => $product->album_name,
                 'artists' => $product->artists->map(function ($artist) {
                     return $artist->name;
                 })->implode(', '),
