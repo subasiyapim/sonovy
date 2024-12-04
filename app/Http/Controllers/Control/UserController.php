@@ -137,9 +137,12 @@ class UserController extends Controller
             'relations',
             'authorisations',
         ];
+
         $tab = request()->has('slug') ? request()->input('slug') : 'profile';;
+
         $response = new UserShowResource($user, $tab);
 
+        // dd($response->resolve());
         return inertia(
             'Control/Users/Show',
             [

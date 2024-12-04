@@ -115,10 +115,10 @@ class UserShowResource extends JsonResource
     private function relations()
     {
         return [
-            'relations' => $this->children,
-            'products' => $this->products,
-            'labels' => $this->labels,
-            'artists' => $this->participants,
+            'relations' => $this->children->toArray(),
+            'products' => $this->products->toArray(),
+            'labels' => $this->labels->toArray(),
+            'participants' => $this->getParticipants(),
         ];
     }
 
@@ -137,6 +137,29 @@ class UserShowResource extends JsonResource
         return [
 
         ];
+    }
+
+    private function getParticipants()
+    {
+        $participants = [];
+
+        $this->products->each(function ($product) use (&$participants) {
+            $product->songs->each(function ($song) use (&$participants) {
+                $song->participants->load('user');
+                $participants = array_merge($participants, $song->participants->map(function ($participant) {
+                    return [
+                        'name' => $participant->user->name,
+                        'email' => $participant->user->email,
+                        'branch_names' => $participant->branch_names,
+                        'commission_rate' => $participant->user->commission_rate,
+                        'realization' => 100 - $participant->user->commission_rate,
+                        'status' => $participant->user->status->title()
+                    ];
+                })->toArray());
+            });
+        });
+
+        return $participants;
     }
 
 
