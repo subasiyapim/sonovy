@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User;
 
 use App\Enums\PaymentStatusEnum;
+use App\Models\Label;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\System\User;
@@ -117,7 +118,7 @@ class UserShowResource extends JsonResource
         return [
             'relations' => $this->children->toArray(),
             'products' => $this->products->toArray(),
-            'labels' => $this->labels->toArray(),
+            'labels' => $this->getLabels(),
             'participants' => $this->getParticipants(),
         ];
     }
@@ -160,6 +161,22 @@ class UserShowResource extends JsonResource
         });
 
         return $participants;
+    }
+
+    private function getLabels()
+    {
+        return $this->labels->map(function ($label) {
+            $label->load('country', 'user');
+            return [
+                'name' => $label->name,
+                'country' => $label->country->name,
+                'country_emoji' => $label->country->emoji,
+                'phone' => $label->phone,
+                'email' => $label->email,
+                'commission_rate' => $label->user->commission_rate,
+                'status' => $label->hasActive() ? 'Aktif şirket' : 'Pasif şirket'
+            ];
+        })->toArray();
     }
 
 

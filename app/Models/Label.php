@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProductStatusEnum;
 use App\Models\Scopes\FilterByUserRoleScope;
 use App\Traits\DataTables\HasAdvancedFilter;
 use DateTimeInterface;
@@ -9,7 +10,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -64,13 +64,18 @@ class Label extends Model implements HasMedia
     {
         parent::boot();
         static::addGlobalScope(new FilterByUserRoleScope);
-        static::created(fn($model) => self::updateCreatedBy($model));
+        static::creating(fn($model) => self::updateCreatedBy($model));
     }
 
     protected static function updateCreatedBy($model): void
     {
         parent::boot();
         $model->update(['created_by' => auth()->id()]);
+    }
+
+    public function hasActive()
+    {
+        return $this->products()->where('status', ProductStatusEnum::APPROVED->value)->exists();
     }
 
     public function registerMediaCollections(): void

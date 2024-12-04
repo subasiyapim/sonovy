@@ -142,7 +142,7 @@ class UserController extends Controller
 
         $response = new UserShowResource($user, $tab);
 
-        // dd($response->resolve());
+        //dd($response->resolve());
         return inertia(
             'Control/Users/Show',
             [
