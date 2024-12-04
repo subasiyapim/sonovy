@@ -114,7 +114,12 @@ class UserShowResource extends JsonResource
 
     private function relations()
     {
-        return $this->children;
+        return [
+            'relations' => $this->children,
+            'products' => $this->products,
+            'labels' => $this->labels,
+            'artists' => $this->participants,
+        ];
     }
 
     private function flags()
