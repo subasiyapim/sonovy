@@ -273,7 +273,10 @@ class UserController extends Controller
                 'created_at' => now()->format('d-m-Y H:i'),
                 'status' => $status->value,
                 'reason' => $request->reason,
-                'created_by' => auth()->id(),
+                'created_by' => [
+                    'id' => Auth::id(),
+                    'name' => Auth::user()->name,
+                ],
             ];
 
             array_unshift($flags, $flag);
@@ -286,6 +289,7 @@ class UserController extends Controller
             );
 
         } catch (\Exception $e) {
+            echo $e->getMessage();
             return back()
                 ->withErrors([
                     'notification' => __('control.notification_error'.': '.$e->getMessage())
