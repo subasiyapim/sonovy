@@ -33,7 +33,13 @@
           <template #icon>
             <EyeOnIcon color="var(--sub-600)"/>
           </template>
-          Kullanıcının Gözünden Gör
+          <template v-if="isInViewMode">
+            Admin'e geri dön
+          </template>
+           <template v-else>
+             Kullanıcının Gözünden Gör
+          </template>
+
         </RegularButton>
         <PrimaryButton @click="remove" class="bg-error-500">
           <template #icon>
@@ -274,15 +280,27 @@ const statusData = ref([
     color: "#FF8447",
   }
 ]);
-
+const isInViewMode = ref(localStorage.getItem("account-to-switch-back"));
 const switchUsers = () => {
-    // users/switch-to-user
-    console.log();
+    if(isInViewMode.value == null){
+        localStorage.setItem("account-to-switch-back",props.user.id );
+        isInViewMode.value = props.user.id;
+        router.visit(route('control.user-management.users.switch-to-user'), { method: 'post',data:{
+            user_id : props.user.id
+        } });
+    }else {
+        console.log("GELDİ");
 
-    router.visit(route('control.user-management.users.switch-to-user'), { method: 'post',data:{
-        user_id : usePage().props.auth.user.id
-    } });
-}
+        localStorage.removeItem('account-to-switch-back');
+        isInViewMode.value = null;
+        router.visit(route('control.user-management.users.switch-back-to-admin'), { method: 'post',data:{
+            user_id : isInViewMode.value
+        } });
+
+    }
+
+
+};
 </script>
 
 <style lang="scss" scoped>
