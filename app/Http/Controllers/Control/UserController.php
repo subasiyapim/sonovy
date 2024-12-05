@@ -256,15 +256,19 @@ class UserController extends Controller
         $user->competency()->create($request->validated());
     }
 
-    public function toggleStatus(User $user)
+    public function toggleStatus(Request $request, User $user)
     {
+        $request->validate([
+            'reason' => 'required|string',
+        ]);
+
         try {
             $flags = $user->flags;
 
             $flag = [
                 'created_at' => now(),
                 'status' => !$user->status,
-                'reason' => 'User status changed',
+                'reason' => $request->reason,
             ];
 
             array_unshift($flags, $flag);
