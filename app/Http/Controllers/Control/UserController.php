@@ -271,6 +271,10 @@ class UserController extends Controller
                 'reason' => $request->reason,
             ];
 
+            if ($flags === null) {
+                $flags = [];
+            }
+
             array_unshift($flags, $flag);
 
             $user->update(
@@ -291,4 +295,30 @@ class UserController extends Controller
                 'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
             ]);
     }
+
+    public function switchToUser(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        session(['admin_id' => auth()->id()]);
+
+        Auth::loginUsingId($request->user_id);
+
+        return redirect()->back();
+    }
+
+    public function switchBackToAdmin()
+    {
+        $adminId = session('admin_id');
+
+        Auth::loginUsingId($adminId);
+
+        session()->forget('admin_id');
+
+        return redirect()->back();
+    }
+
+
 }

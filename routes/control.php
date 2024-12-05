@@ -145,6 +145,9 @@ Route::group(
             Route::resource('users', UserController::class)->names('users');
             Route::post('users/{user}/toggle-status',
                 [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+            Route::post('users/switch-to-user', [UserController::class, 'switchToUser'])->name('users.switch-to-user');
+            Route::post('users/switch-back-to-admin', [UserController::class, 'switchBackToAdmin'])
+                ->name('users.switch-back-to-admin');
         });
 
         Route::post('user/competency/{user}', [UserController::class, 'competency'])->name('users.competency');
