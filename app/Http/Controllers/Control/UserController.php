@@ -108,7 +108,7 @@ class UserController extends Controller
 
             return to_route('dashboard.users.index')
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
@@ -182,7 +182,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+" . $country->phone_code . $user->phone;
+            $user->phone = "+".$country->phone_code.$user->phone;
         }
 
         return inertia(
@@ -263,31 +263,31 @@ class UserController extends Controller
         ]);
 
         try {
-            $flags = $user->flags;
+            $flags = $user->flags ?? [];
+
+            $status = $user->status == UserStatusEnum::ACTIVE
+                ? UserStatusEnum::PENDING_APPROVAL
+                : UserStatusEnum::ACTIVE;
 
             $flag = [
-                'created_at' => now(),
-                'status' => !$user->status,
+                'created_at' => now()->format('Y-m-d H:i:s'),
+                'status' => $status->value,
                 'reason' => $request->reason,
             ];
-
-            if ($flags === null) {
-                $flags = [];
-            }
 
             array_unshift($flags, $flag);
 
             $user->update(
                 [
-                    'status' => !$user->status,
-                    $flags => json_encode($flags),
-
+                    'status' => $status->value,
+                    'flags' => $flags,
                 ]
             );
+
         } catch (\Exception $e) {
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 

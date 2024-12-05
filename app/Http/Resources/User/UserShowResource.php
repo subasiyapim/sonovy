@@ -126,7 +126,7 @@ class UserShowResource extends JsonResource
 
     private function flags()
     {
-        return $this->flags?->toArray();
+        return $this->flags;
     }
 
     private function authorisations()
