@@ -57,7 +57,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'payment_threshold',
         'currency',
         'last_login_at',
-        'flags'
+        'flags',
+        'status',
     ];
 
     protected array $filterable = [
