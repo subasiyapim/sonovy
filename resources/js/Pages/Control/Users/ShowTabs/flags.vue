@@ -12,23 +12,31 @@ import {
   TrashIcon
 } from '@/Components/Icons'
 import {useDefaultStore} from "@/Stores/default";
+import {useCrudStore} from "@/Stores/useCrudStore";
 
 const defaultStore = useDefaultStore();
-
+const crudStore = useCrudStore();
+const note = ref('');
 const props = defineProps({
   user: {},
 });
+const onBlockClicked = async () => {
+    var response = await crudStore.post(route('control.user-management.users.toggle-status',props.user.id),{
+        "note" :note.value
+    });
+    console.log("RESPONSE",response);
 
+};
 </script>
 <template>
 
     <div class="flex flex gap-6 items-center mb-5">
-       <FormElement :label="'Kullanıcıyı Blokla'" placeholder="Yorum Ekle" label-width="290px" class="w-[560px]">
+       <FormElement :label="'Kullanıcıyı Blokla'" v-model="note" placeholder="Yorum Ekle" label-width="290px" class="w-[560px]">
             <template #tooltip>
                 deneme
             </template>
         </FormElement>
-        <button class="bg-error-500 px-3 py-2 rounded-lg text-white  label-sm">
+        <button @click="onBlockClicked" class="bg-error-500 px-3 py-2 rounded-lg text-white  label-sm">
             Kullanıcıyı Blokla
         </button>
 

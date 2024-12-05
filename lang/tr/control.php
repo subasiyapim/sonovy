@@ -676,50 +676,32 @@ return [
         'competency' => [
             'title' => 'Yetkiler',
         ],
-        'form' => [
-            'id' => 'ID',
-            'name' => [
-                'label' => 'Kullanıcı Adı',
-                'placeholder' => 'Örn: Sibel Aydın'
-            ],
-            'email' => [
-                'label' => 'E-posta',
-                'placeholder' => 'Örn: sibelaydinmusic@gmail.com'
-            ],
-            'password' => [
-                'label' => 'Şifre',
-                'placeholder' => '********',
-                'new_password' => 'Yeni şifre',
-                'renew_password' => 'Yeni şifreyi tekrarla',
-                'new_password_desc' => 'Şifren en az 8 karakter, büyük harf, rakam ve noktalama işareti içermelidir',
-            ],
-            'role_id' => [
-                'label' => 'Kullanıcı Rolü',
-                'placeholder' => 'Rol seçin'
-            ],
-            'country_id' => [
-                'label' => 'Ülke',
-                'placeholder' => 'Ülke seçin'
-            ],
-            'city_id' => [
-                'label' => 'İlçe',
-                'placeholder' => 'İlçe seçin'
-            ],
-            'state_id' => [
-                'label' => 'Şehir',
-                'placeholder' => 'Şehir seçin'
-            ],
-            'gender' => [
-                'label' => 'Yetkili Kişinin Cinsiyeti',
-            ],
-            'birth_place' => [
-                'label' => 'Yetkili Kişinin Doğum Yeri',
-                'placeholder' => 'Doğum yeri seçin'
-            ],
-            'birth_date' => [
-                'label' => 'Yetkili Kişinin Doğum Tarihi',
-                'placeholder' => 'Doğum tarihi seçin'
-            ],
+        'fields' => [
+            'name' => 'Kullanıcı Adı',
+            'name_placeholder' => 'Örn: Sibel Aydın',
+            'email' => 'E-posta',
+            'email_placeholder' => 'Örn: sibelaydinmusic@gmail.com',
+            'password' => "Şifre",
+            'password_placeholer' => "Şifre giriniz",
+            'adress' => "Adres",
+            'adress_placeholder' => "Adres giriniz",
+            're_password' => "Şifre tekrar",
+            're_password_placeholder' => "Şifre tekrar giriniz",
+            'commission_rate' => "Hakediş",
+            'commission_rate_placeholder' => "Lütfen giriniz",
+
+            'country_id' => "Ülke",
+            'country_id_placeholder' => "Ülke giriniz",
+            'city_id' => "ilçe",
+            'city_id_placeholder' => "ilçe giriniz",
+            'state_id' => "Şehir",
+            'district_id' => "district",
+            'district_id_placeholder' => "district seçiniz",
+            'language_id' => "Dil",
+            'is_company_placeholder' => "Şirket(Tüzel kişilik)",
+            'language_id_placeholder' => "Dil seçiniz",
+            'state_id_placeholder' => "Şehir giriniz",
+
             'access_all_artists' => [
                 'label' => 'Tüm sanatçılara erişebilsin mi?',
             ],
@@ -741,10 +723,7 @@ return [
                 'label' => 'Erişilebilecek platformları seçin',
                 'placeholder' => 'Bu alana çoklu seçim yapılabilir. Birden çok platformu seçerek ekleyebilirsin.'
             ],
-            'commission_rate' => [
-                'label' => 'Hak ediş Oranı',
-                'placeholder' => 'Örn:%80'
-            ],
+
             'phone' => [
                 'label' => 'Telefon Numarası',
                 'placeholder' => 'Örn: 0532 123 45 67',
@@ -801,6 +780,10 @@ return [
                 'address_placeholder' => 'Adres bilgisini girin...',
             ],
         ],
+        'dialog' => [
+            'header_1' => 'KULLANICI HAKKINDA',
+            'header_2' => 'PAROLA',
+        ]
     ],
     'setting' => [
         'title' => 'Uygulama Ayarları',

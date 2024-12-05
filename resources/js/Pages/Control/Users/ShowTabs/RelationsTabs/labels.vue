@@ -87,8 +87,8 @@
 
 <script  setup>
 import AppTable from '@/Components/Table/AppTable.vue';
-import {AddIcon} from '@/Components/Icons';
-import {PrimaryButton} from '@/Components/Buttons';
+import {AddIcon,LabelEmailIcon,TrashIcon,EditIcon,PhoneIcon} from '@/Components/Icons';
+import {PrimaryButton,IconButton} from '@/Components/Buttons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed} from 'vue';
 import {useDefaultStore} from "@/Stores/default";

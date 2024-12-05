@@ -167,6 +167,7 @@ class UserShowResource extends JsonResource
         return $this->labels->map(function ($label) {
             $label->load('country', 'user');
             return [
+                'id' => $label->id,
                 'name' => $label->name,
                 'country' => $label->country->name,
                 'country_emoji' => $label->country->emoji,

@@ -3,7 +3,9 @@
 
 
 
-    <AppTable  ref="usersTable" :showAddButton="false"
+    <AppTable  ref="usersTable" :showAddButton="true"
+            :buttonLabel="'Yeni Kullanıcı Ekle'"
+             @addNewClicked="openAddDialog"
             :renderSubWhen="renderSubWhen"
               v-model="usePage().props.users" :slug="route('control.user-management.users.index')">
 
@@ -77,7 +79,7 @@
         </AppTableColumn>
     </AppTable>
   </AdminLayout>
-  <ProductDialog v-model="isCreateProductDialogOn" v-if="isCreateProductDialogOn"></ProductDialog>
+  <UserModal v-model="isUserModalOn" v-if="isUserModalOn"></UserModal>
 
 </template>
 
@@ -86,7 +88,7 @@ import {ref} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import NestedTable from '@/Components/Table/NestedTable.vue';
-import {ProductDialog} from '@/Components/Dialog';
+import {UserModal} from '@/Components/Dialog';
 import {RegularButton} from '@/Components/Buttons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton, IconButton} from '@/Components/Buttons'
@@ -110,11 +112,13 @@ import {usePage} from '@inertiajs/vue3';
 import moment from 'moment';
 const usersTable = ref();
 const defaultStore = useDefaultStore();
-
+const isUserModalOn = ref(false);
 const props = defineProps({
   statistics: Object,
 })
-
+const openAddDialog = () => {
+    isUserModalOn.value = true;
+}
 const deleteProduct = (row) => {
   usersTable.value.removeRowDataFromRemote(row);
 }
