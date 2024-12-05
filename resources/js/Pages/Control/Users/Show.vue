@@ -29,7 +29,7 @@
              :src="user.image ? user.image.thumb : defaultStore.profileImage(user.name)">
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
-        <RegularButton >
+        <RegularButton @click="switchUsers">
           <template #icon>
             <EyeOnIcon color="var(--sub-600)"/>
           </template>
@@ -274,6 +274,15 @@ const statusData = ref([
     color: "#FF8447",
   }
 ]);
+
+const switchUsers = () => {
+    // users/switch-to-user
+    console.log();
+
+    router.visit(route('control.user-management.users.switch-to-user'), { method: 'post',data:{
+        user_id : usePage().props.auth.user.id
+    } });
+}
 </script>
 
 <style lang="scss" scoped>
