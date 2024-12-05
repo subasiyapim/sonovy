@@ -270,7 +270,7 @@ class UserController extends Controller
                 : UserStatusEnum::ACTIVE;
 
             $flag = [
-                'created_at' => now()->format('Y-m-d H:i:s'),
+                'created_at' => now()->format('d-m-Y H:i'),
                 'status' => $status->value,
                 'reason' => $request->reason,
             ];
