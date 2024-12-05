@@ -89,12 +89,16 @@ class UserShowResource extends JsonResource
 
     private function pendingInvoices()
     {
-        return Payment::where('user_id', $this->id)->get();
+        return Payment::where('user_id', $this->id)
+            ->where('status', PaymentStatusEnum::PENDING->value)
+            ->sum('amount');
     }
 
     private function confirmedTotal()
     {
-        return [];
+        return Payment::where('user_id', $this->id)
+            ->where('status', PaymentStatusEnum::APPROVED->value)
+            ->sum('amount');
     }
 
     private function pendingOutPayments(): float

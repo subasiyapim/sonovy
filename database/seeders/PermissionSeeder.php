@@ -93,6 +93,11 @@ class PermissionSeeder extends Seeder
             'tr' => ['name' => 'Kullanıcı Yeterlilik',],
             'en' => ['name' => 'User Competency',],
         ],
+        [
+            'code' => 'user_switch',
+            'tr' => ['name' => 'Kullanıcının gözünden gör',],
+            'en' => ['name' => 'See through the user\'s eyes',],
+        ],
 //Artists
         [
             'code' => 'artist_list',

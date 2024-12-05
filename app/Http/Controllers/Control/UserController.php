@@ -11,6 +11,7 @@ use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserShowResource;
 use App\Models\BankAccount;
 use App\Models\Country;
+use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\CountryServices;
@@ -23,6 +24,7 @@ use App\Services\UserServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
@@ -123,7 +125,10 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        abort_if(Gate::denies('user_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        if (!session('admin_id')) {
+            abort_if(Gate::denies('user_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+
 
         $user->load('roles', 'country', 'city', 'district', 'parent', 'children');
 
@@ -304,25 +309,64 @@ class UserController extends Controller
 
     public function switchToUser(Request $request)
     {
+        abort_if(Gate::denies('user_switch'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
         ]);
 
         session(['admin_id' => auth()->id()]);
 
+        if (!session()->has('admin_id')) {
+            abort(500, 'Oturum saklanamadı.');
+        }
+
         Auth::loginUsingId($request->user_id);
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Kullanıcı moduna geçildi.');
     }
 
     public function switchBackToAdmin()
     {
         $adminId = session('admin_id');
 
-        Auth::loginUsingId($adminId);
+        abort_if(!$adminId, Response::HTTP_FORBIDDEN, 'Yönetici oturumu bulunamadı.');
 
+        Auth::loginUsingId($adminId);
         session()->forget('admin_id');
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Yönetici moduna geri dönüldü.');
     }
+
+    public function assignToProducts(Request $request, User $user)
+    {
+        $request->validate([
+            'products' => 'required|array',
+        ]);
+
+        Product::whereIn('id', $request->products)
+            ->get()
+            ?->each(function ($product) use ($user) {
+                $product->update(['created_by' => $user->id]);
+            });
+
+        return redirect()->back()->with('success', 'Yayınlar başarıyla atanmıştır.');
+    }
+
+    public function addToChildren(Request $request, User $user)
+    {
+        $request->validate([
+            'children' => 'required|array',
+        ]);
+
+        User::whereIn('id', $request->children)
+            ->get()
+            ?->each(function ($child) use ($user) {
+                $child->update(['parent_id' => $user->id]);
+            });
+
+        return redirect()->back()->with('success', 'Alt kullanıcılar başarıyla atanmıştır.');
+    }
+
+
 }

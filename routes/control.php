@@ -148,6 +148,10 @@ Route::group(
             Route::post('users/switch-to-user', [UserController::class, 'switchToUser'])->name('users.switch-to-user');
             Route::post('users/switch-back-to-admin', [UserController::class, 'switchBackToAdmin'])
                 ->name('users.switch-back-to-admin');
+            Route::post('users/{user}/assign-to-products', [UserController::class, 'assignToProducts'])
+                ->name('users.assign-to-products');
+            Route::post('users/{user}/add-to-children', [UserController::class, 'addToChildren'])
+                ->name('users.add-to-children');
         });
 
         Route::post('user/competency/{user}', [UserController::class, 'competency'])->name('users.competency');
