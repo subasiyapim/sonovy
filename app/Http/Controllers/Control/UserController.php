@@ -11,6 +11,7 @@ use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserShowResource;
 use App\Models\BankAccount;
 use App\Models\Country;
+use App\Models\Label;
 use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
@@ -351,6 +352,22 @@ class UserController extends Controller
             });
 
         return redirect()->back()->with('success', 'Yayınlar başarıyla atanmıştır.');
+    }
+
+    public function assignToLabels(Request $request, User $user)
+    {
+        $request->validate([
+            'labels' => 'required|array',
+        ]);
+
+        Label::whereIn('id', $request->labels)
+            ->get()
+            ?->each(function ($label) use ($user) {
+                $label->update(['created_by' => $user->id]);
+            });
+
+        return redirect()->back()->with('success', 'Şirketler başarıyla atanmıştır.');
+
     }
 
     public function addToChildren(Request $request, User $user)

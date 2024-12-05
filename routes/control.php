@@ -150,6 +150,8 @@ Route::group(
                 ->name('users.switch-back-to-admin');
             Route::post('users/{user}/assign-to-products', [UserController::class, 'assignToProducts'])
                 ->name('users.assign-to-products');
+            Route::post('users/{user}/assign-to-labels', [UserController::class, 'assignToLabels'])
+                ->name('users.assign-to-labels');
             Route::post('users/{user}/add-to-children', [UserController::class, 'addToChildren'])
                 ->name('users.add-to-children');
         });
