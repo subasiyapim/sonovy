@@ -23,30 +23,29 @@ const props = defineProps({
 <template>
 
 
-
-    <AppTable  v-model="user.activities"  :isClient="true" >
+    <AppTable  :showAddButton="false" v-model="user.tab"  :isClient="true" >
         <AppTableColumn label="Giriş Tarihi">
             <template #default="scope">
-
+                {{scope.row.created_at}}
             </template>
         </AppTableColumn>
 
         <AppTableColumn label="Ülke">
             <template #default="scope">
-
+      {{scope.row.country}}
             </template>
         </AppTableColumn>
 
 
         <AppTableColumn label="IP">
             <template #default="scope">
-
+                 {{scope.row.ip}}
             </template>
         </AppTableColumn>
 
         <AppTableColumn label="Agent">
             <template #default="scope">
-
+                 {{scope.row.user_agent}}
             </template>
         </AppTableColumn>
 

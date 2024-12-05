@@ -1,6 +1,8 @@
 <template>
-  <AppTable ref="productTable" :showAddButton="false"
+  <AppTable ref="productTable"
             v-model="tableData"
+            @addNewClicked="openDialog"
+            :buttonLabel="'Yayın Ata'"
             :isClient="true">
     <AppTableColumn label="Tür" sortable="type">
       <template #default="scope">
@@ -121,10 +123,12 @@
 
     </template>
   </AppTable>
+  <AssignUserProductModal v-if="isAssignModalOn" v-model="isAssignModalOn" ></AssignUserProductModal>
 </template>
 
 <script setup>
 import AppTable from '@/Components/Table/AppTable.vue';
+import {AssignUserProductModal} from '@/Components/Dialog';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed, ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";
@@ -149,7 +153,7 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['update:modelValue']);
-
+const isAssignModalOn = ref(false);
 const tableData = computed({
   get: () => props.modelValue,
   set: (val) => emits('update:modelValue', value)
@@ -194,6 +198,10 @@ const statusData = ref([
     color: "#FF8447",
   }
 ]);
+
+const openDialog =  () => {
+    isAssignModalOn.value = true;
+};
 </script>
 <style scoped>
 

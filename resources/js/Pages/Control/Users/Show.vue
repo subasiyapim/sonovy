@@ -11,12 +11,19 @@
       <div class="">
         <div class="flex items-center gap-2">
             <h1 class="label-xl c-strong-950" v-text="user.name"/>
-            <div class="bg-[#C0D5FF] px-3 py-1 rounded-full">
-              <p class="label-xs text-[#122368]">  Rol: Kullanıcı</p>
-            </div>
-             <div class="border border-soft-200 px-2 py-1 rounded-full flex items-center gap-2">
+             <template v-for="role in user.roles">
+                    <div class="px-3 py-1 rounded-full" :class="role.code == 'super_admin' ? 'bg-[#CAC0FF]' : (role.code == 'admin' ? 'bg-[#D8E5ED]' : 'bg-[#C0D5FF]')">
+                    <p class="label-xs" :class="role.code == 'super_admin' ? 'text-[#351A75]' : (role.code == 'admin' ? 'text-[#060E2F]' : 'text-[#122368]')">  {{role.name}}</p>
+                    </div>
+                </template>
+
+             <div v-if="user.status == 1" class="border border-soft-200 px-2 py-1 rounded-full flex items-center gap-2">
                 <CheckFilledIcon color="var(--sub-600)" />
                 <p class="label-xs text-[#122368]">  Aktif</p>
+            </div>
+             <div v-if="user.else" class="border border-soft-200 px-2 py-1 rounded-full flex items-center gap-2">
+                <WarningIcon color="var(--sub-600)" />
+                <p class="label-xs text-[#122368]">  Pasif</p>
             </div>
         </div>
         <span class="c-sub-600 paragraph-medium" v-text="user.email"/>
@@ -46,7 +53,7 @@
             <TrashIcon color="#fff"/>
           </template>
         </PrimaryButton>
-        <PrimaryButton @click="isModalOn = true">
+        <PrimaryButton @click="openUserModal">
           <template #icon>
             <EditIcon color="var(--dark-green-500)"/>
           </template>
@@ -70,12 +77,15 @@
     </div>
 
   </AdminLayout>
+    <UserModal @update="onUpdated" v-model="isUserModalOn" v-if="isUserModalOn" :user="user"></UserModal>
+
 </template>
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {ArtistDialog} from '@/Components/Dialog';
 import {FormElement} from '@/Components/Form';
+import {UserModal} from '@/Components/Dialog';
 import {
   DocumentIcon,
   EditIcon,
@@ -137,7 +147,7 @@ const props = defineProps({
   },
 });
 
-
+const isUserModalOn = ref(false);
 const crudStore = useCrudStore();
 const defaultStore = useDefaultStore();
 let params = new URLSearchParams(window.location.search)
@@ -203,6 +213,10 @@ const tabs = ref([
   },
 ])
 
+const openUserModal = () => {
+    isUserModalOn.value = true;
+}
+
 const onTabChange = (tab) => {
 
   router.visit(route(route().current(), props.user.id ?? 4), {
@@ -241,45 +255,10 @@ const changeStatus = async () => {
 
 }
 
-const statusData = ref([
-  {
-    user: "Taslak",
-    value: 1,
-    icon: EditLineIcon,
-    color: "#FF8447",
+const onUpdated = (e) => {
+    console.log("EEE",e);
 
-  },
-  {
-    user: "İnceleniyor",
-    value: 2,
-    icon: EditLineIcon,
-    color: "#FF8447",
-  },
-  {
-    user: "Yayınlandı",
-    value: 3,
-    icon: CheckFilledIcon,
-    color: "#335CFF",
-  },
-  {
-    user: "Reddedildi",
-    value: 4,
-    icon: WarningIcon,
-    color: "#FB3748",
-  },
-  {
-    user: "Geri Çekildi",
-    value: 5,
-    icon: RetractedIcon,
-    color: "#717784",
-  },
-  {
-    user: "Planlandı",
-    value: 6,
-    icon: CheckFilledIcon,
-    color: "#FF8447",
-  }
-]);
+}
 const isInViewMode = ref(localStorage.getItem("account-to-switch-back"));
 const switchUsers = () => {
     if(isInViewMode.value == null){

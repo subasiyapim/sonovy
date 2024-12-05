@@ -10,6 +10,8 @@ import SongDetailModal from './Song/details.vue';
 import SongAcrResponseModal from './Song/acrResponse.vue';
 import PlatformHistoryModal from './Platform/history.vue';
 import UserModal from './User/index.vue';
+import AssignUserModal from './User/assign_user.vue';
+import AssignUserProductModal from './User/assign_product.vue';
 export {
     ArtistDialog,
     LabelDialog,
@@ -23,5 +25,7 @@ export {
     PlatformHistoryModal,
     SongMusiciansModal,
     UserModal,
+    AssignUserModal,
+    AssignUserProductModal,
 
 }
