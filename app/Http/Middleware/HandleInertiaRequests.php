@@ -70,6 +70,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'intent' => fn() => $request->session()->get('intent', []),
             'notification' => fn() => $request->session()->get('notification', []),
+            'admin_id' => fn() => $request->session()->get('admin_id', []),
             'production' => config('app.env') === 'production',
             'default_barcode_type' => 1,
             'editable_catalogues' => [
