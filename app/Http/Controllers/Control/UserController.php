@@ -256,16 +256,24 @@ class UserController extends Controller
         $user->competency()->create($request->validated());
     }
 
-    public function toggleStatus(User $user)
+    public function toggleStatus(Request $request, User $user)
     {
+        $request->validate([
+            'reason' => 'required|string',
+        ]);
+
         try {
             $flags = $user->flags;
 
             $flag = [
                 'created_at' => now(),
                 'status' => !$user->status,
-                'reason' => 'User status changed',
+                'reason' => $request->reason,
             ];
+
+            if ($flags === null) {
+                $flags = [];
+            }
 
             array_unshift($flags, $flag);
 
@@ -287,4 +295,30 @@ class UserController extends Controller
                 'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
             ]);
     }
+
+    public function switchToUser(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        session(['admin_id' => auth()->id()]);
+
+        Auth::loginUsingId($request->user_id);
+
+        return redirect()->back();
+    }
+
+    public function switchBackToAdmin()
+    {
+        $adminId = session('admin_id');
+
+        Auth::loginUsingId($adminId);
+
+        session()->forget('admin_id');
+
+        return redirect()->back();
+    }
+
+
 }

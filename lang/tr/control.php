@@ -642,6 +642,7 @@ return [
         'title' => 'Kullanıcılar',
         'title_singular' => 'Kullanıcı',
         'title_management' => 'Kullanıcı Yönetimi',
+        'show_header' => 'Kullanıcı Detay',
         'search_placeholder' => 'Ara...',
         'add_new' => 'Yeni Kullanıcı ekle',
         'new' => 'Yeni Kullanıcı',
