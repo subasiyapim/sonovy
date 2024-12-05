@@ -1,11 +1,12 @@
 
 
 <template>
-    <AppTable  ref="usersTable" :showAddButton="false"
+    <AppTable  ref="usersTable"
         :isClient="true"
-            :renderSubWhen="renderSubWhen"
-              v-model="tableData" >
-
+        :renderSubWhen="renderSubWhen"
+        @addNewClicked="openDialog"
+        :buttonLabel="'Alt Kullanıcı Ata'"
+        v-model="tableData" >
         <template #sub="scope">
             <NestedTable v-model="scope.row.children"></NestedTable>
         </template>
@@ -75,21 +76,23 @@
             </template>
         </AppTableColumn>
     </AppTable>
+    <AssignUserModal v-if="isAssignModalOn" v-model="isAssignModalOn" ></AssignUserModal>
 </template>
 
 <script  setup>
 import AppTable from '@/Components/Table/AppTable.vue';
 import {IconButton} from '@/Components/Buttons';
+import {AssignUserModal} from '@/Components/Dialog';
 import {TrashIcon,EditIcon} from '@/Components/Icons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {computed} from 'vue';
+import {computed,ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";
 import NestedTable from '@/Components/Table/NestedTable.vue';
 
 
 
 const defaultStore = useDefaultStore();
-
+const isAssignModalOn = ref(false);
 const props = defineProps({
     modelValue:{}
 });
@@ -101,6 +104,10 @@ const tableData = computed({
 })
 const renderSubWhen = (row) => {
     return row.children.length > 0;
+};
+
+const openDialog =  () => {
+    isAssignModalOn.value = true;
 };
 </script>
 <style  scoped>

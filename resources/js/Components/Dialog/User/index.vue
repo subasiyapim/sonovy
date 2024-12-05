@@ -38,17 +38,21 @@
         </FormElement>
 
         <div class="flex items-center gap-2">
-            <FormElement direction="vertical" label-width="190px" v-model="form.city_id"
-                    :error="form.errors.city_id" type="select"
-                    :label="__('control.user.fields.city_id')"
-                    :placeholder="__('control.user.fields.city_id')" :config="cityConfig">
+            <FormElement type="custom" label="İl İlçe" label-width="190px" class="w-full">
+                <div class="flex items-center gap-2">
+                    <AppSelectInput   class="flex-1" v-model="form.city_id"
+                            :error="form.errors.city_id" type="select"
 
-            </FormElement>
-            <FormElement direction="vertical" label-width="190px" v-model="form.district_id"
-                    :error="form.errors.district_id" type="select"
-                    :label="__('control.user.fields.district_id')"
-                    :placeholder="__('control.user.fields.district_id_placeholder')" :config="districtConfig">
+                            :placeholder="__('control.user.fields.city_id')" :config="cityConfig">
 
+                    </AppSelectInput>
+                    <AppSelectInput  class="flex-1" v-model="form.district_id"
+                            :error="form.errors.district_id" type="select"
+
+                            :placeholder="__('control.user.fields.district_id_placeholder')" :config="districtConfig">
+
+                    </AppSelectInput>
+                </div>
             </FormElement>
         </div>
 
@@ -217,7 +221,7 @@ const countryConfig = computed(() => {
 const cityConfig = computed(() => {
   return {
     hasSearch: true,
-    data: props.genres,
+    data: [],
   }
 })
 const districtConfig = computed(() => {
@@ -229,24 +233,45 @@ const districtConfig = computed(() => {
 
 const onSubmit = async (e) => {
 
+    if(props.user?.id){
+        form.put(route('control.user-management.users.update',props.user.id),
+            {
+                onFinish: () => {
 
-  form.post(route('control.user-management.users.store', props.user.id),
-      {
-        onFinish: () => {
+                },
+                onSuccess: async (e) => {
 
-        },
-        onSuccess: async (e) => {
+                    toast.success(e.props.notification.message);
+                    isDialogOn.value = false;
+                    emits('update', e.props.notification.user)
 
-          toast.success(e.props.notification.message);
-          isDialogOn.value = false;
+                },
+                onError: (e) => {
+                    toast.error(Object.values(e)[0])
+                }
+            }
+        );
+    }else {
+        form.post(route('control.user-management.users.store'),
+            {
+                onFinish: () => {
 
-          emits('done', e.props.notification.user)
+                },
+                onSuccess: async (e) => {
 
-        },
-        onError: (e) => {
-          toast.error(Object.values(e)[0])
-        }
-      });
+                    toast.success(e.props.notification.message);
+                    isDialogOn.value = false;
+
+                    emits('done', e.props.notification.user)
+
+                },
+                onError: (e) => {
+                    toast.error(Object.values(e)[0])
+                }
+            }
+        );
+    }
+
 
 }
 
@@ -254,70 +279,28 @@ const checkIfDisabled = computed(() => {
   return false;
 })
 
-const onArtistCreated = (e) => {
-  let row = {
-    label: e.name,
-    value: e.id,
 
-  };
-
-
-  if (whichArtistConfigToAdd.value == 'featuring_artists') {
-    featuringArtistMultiselect.value.appMultiSelect.insertData(row);
-    featuringArtistSelectConfig.value.data.push(row);
-  } else {
-    mainArtistSelect.value.appSelect.insertData(row);
-    mainArtistSelectConfig.value.data.push(row);
-  }
-
-}
-const roleConfig = computed(() => {
-  return {
-    data: usePage().props.artistBranches,
-  }
-})
 onMounted(() => {
   if (props.user) {
+        form['id'] = props.user.id;
+        form['name'] = props.user.name;
+        form['city_id'] =props.user.city_id;
+        form['country_id'] =props.user.country_id;
+        form['district_id'] =props.user.district_id;
+        form['language_id'] =props.user.language_id;
+        form['company_name'] =props.user.company_name;
+        form['tax_number'] =props.user.tax_number;
+        form['tax_house'] =props.user.tax_house;
+        form['tax_house'] =props.user.tax_house;
+        form['email'] =props.user.email;
+        form['adress'] =props.user.adress;
+        form['commission_rate'] =props.user.commission_rate;
+        form['is_company'] =props.user.is_company;
+        form['phone'] =props.user.phone;
 
-    form.featuring_artists = (props.user.featuring_artists ?? []).map((e) => e.id);
-
-
-    form.main_artists = props.user.main_artists?.length > 0 ? props.user.main_artists[0].id : null;
-
-
-    form.musicians = (props.user.musicians ?? []).map((e) => {
-      return {name: e.name, role_id: e.role_id}
-    }) ?? [{}];
-
-    form.participants = (props.user.participants ?? []).map((e) => {
-      return {id: e.user_id, tasks: e.tasks, rate: e.rate}
-    }) ?? [{}];
-
-
-    props.user?.writers?.forEach(element => {
-      if (element.name) {
-        form.lyrics_writers.push(element.name)
-      }
-    });
-    props.user?.composers?.forEach(element => {
-      if (element.name) {
-        form.composers.push(element.name)
-      }
-    });
-    if (form.composers.length == 0)
-      form.composers = [''];
-    if (form.lyrics_writers.length == 0)
-      form.lyrics_writers = [''];
-    if (form.musicians.length == 0)
-      form.musicians = [{name: ''}];
-    if (form.participants.length == 0)
-      form.participants = [{}]
   }
 });
-const openArtistCreateDialog = (whichArtistConfigToAdString) => {
-  whichArtistConfigToAdd.value = whichArtistConfigToAdString;
-  createArtistDialog.value = true;
-}
+
 
 </script>
 
