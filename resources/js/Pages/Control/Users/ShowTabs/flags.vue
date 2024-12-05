@@ -22,7 +22,7 @@ const props = defineProps({
 });
 const onBlockClicked = async () => {
     var response = await crudStore.post(route('control.user-management.users.toggle-status',props.user.id),{
-        "note" :note.value
+        "reason" :note.value
     });
     console.log("RESPONSE",response);
 

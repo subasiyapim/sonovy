@@ -108,7 +108,7 @@ class UserController extends Controller
 
             return to_route('dashboard.users.index')
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -182,7 +182,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+".$country->phone_code.$user->phone;
+            $user->phone = "+" . $country->phone_code . $user->phone;
         }
 
         return inertia(
@@ -280,13 +280,14 @@ class UserController extends Controller
             $user->update(
                 [
                     'status' => !$user->status,
-                    $flags => $flags
+                    $flags => json_encode($flags),
+
                 ]
             );
         } catch (\Exception $e) {
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -319,6 +320,4 @@ class UserController extends Controller
 
         return redirect()->back();
     }
-
-
 }
