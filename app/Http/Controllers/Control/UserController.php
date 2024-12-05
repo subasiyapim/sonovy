@@ -273,6 +273,7 @@ class UserController extends Controller
                 'created_at' => now()->format('d-m-Y H:i'),
                 'status' => $status->value,
                 'reason' => $request->reason,
+                'created_by' => auth()->id(),
             ];
 
             array_unshift($flags, $flag);
