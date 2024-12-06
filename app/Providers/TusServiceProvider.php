@@ -48,7 +48,7 @@ class TusServiceProvider extends ServiceProvider
         $settings = Cache::remember('settings', 60 * 60 * 24, function () {
             return Setting::whereIn('key',
                 ['allowed_song_formats', 'allowed_ringtone_formats', 'allowed_video_formats'])->get(
-                ['code', 'value']
+                ['key', 'value']
             )->toArray();
         });
 
