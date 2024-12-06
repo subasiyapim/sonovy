@@ -66,6 +66,7 @@ class UserController extends Controller
         } else {
             $users = $query->where('parent_id', $children ?? $user->id)->advancedFilter();
         }
+        $countryCodes = CountryServices::getCountryPhoneCodes();
 
         $statistics = [
             'users' => UserServices::statistics('users', $validated['period'] ?? 'month'),
@@ -77,6 +78,7 @@ class UserController extends Controller
             'roles' => RoleService::getRolesFromInputFormat(),
             'statuses' => UserStatusEnum::getTitles(),
             'statistics' => $statistics,
+            'countryCodes' => $countryCodes
         ]);
     }
 
@@ -150,7 +152,7 @@ class UserController extends Controller
         $tab = request()->has('slug') ? request()->input('slug') : 'profile';;
 
         $response = new UserShowResource($user, $tab);
-
+        $countryCodes = CountryServices::getCountryPhoneCodes();
         //dd($response->resolve());
         return inertia(
             'Control/Users/Show',
@@ -160,6 +162,7 @@ class UserController extends Controller
                 'tabs' => $tabs,
                 'countries' => $countries,
                 'languages' => $languages,
+                'countryCodes' => $countryCodes
             ]
         );
     }

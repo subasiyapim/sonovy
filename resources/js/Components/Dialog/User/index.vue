@@ -39,18 +39,18 @@
         </FormElement>
 
         <div class="flex items-center gap-2">
-            <FormElement type="custom" label="İl İlçe" label-width="190px" class="w-full">
+            <FormElement type="custom" :required="true" :error="form.errors.city_id || form.errors.district_id" label="İl İlçe" label-width="190px" class="w-full">
                 <div class="flex items-center gap-2">
-                    <AppSelectInput @change="onStateChoosen"  class="flex-1" v-model="form.city_id"
+                    <AppSelectInput @change="onCityChoosen"  class="flex-1" v-model="form.city_id"
                             :error="form.errors.city_id" type="select"
 
-                            :placeholder="__('control.user.fields.city_id')" :config="stateConfig">
+                            :placeholder="__('control.user.fields.city_id')" :config="cityConfig">
 
                     </AppSelectInput>
                     <AppSelectInput  class="flex-1" v-model="form.district_id"
                             :error="form.errors.district_id" type="select"
 
-                            :placeholder="__('control.user.fields.district_id_placeholder')" :config="cityConfig">
+                            :placeholder="__('control.user.fields.district_id_placeholder')" :config="districtConfig">
 
                     </AppSelectInput>
                 </div>
@@ -60,10 +60,10 @@
 
       <FormElement label-width="190px"
                    :required="false"
-                   :error="form.errors.adress"
+                   :error="form.errors.address"
                    :config="{letter:500}"
-                   v-model="form.adress"
-                   :label="__('control.user.fields.adress')"
+                   v-model="form.address"
+                   :label="__('control.user.fields.address')"
                    type="textarea"
                    :placeholder="__('control.user.fields.adress_placeholder')"/>
         <FormElement label-width="190px"
@@ -73,44 +73,45 @@
                    :label="__('control.user.fields.commission_rate')"
                    type="text"
                    :placeholder="__('control.user.fields.commission_rate_placeholder')"/>
+
         <FormElement direction="vertical" v-model="form.is_company" :error="form.errors.is_company"
                    type="fancyCheck"
                    :placeholder="__('control.user.fields.is_company_placeholder')">
 
-            <div v-if="form.is_company">
-                <FormElement label-width="190px"
-                   :required="false"
-                   :error="form.errors.company_name"
-                   v-model="form.company_name"
-                   :label="__('control.user.fields.company_name')"
-                   type="text"
-                   :placeholder="__('control.user.fields.company_name_placeholder')"/>
-                <FormElement label-width="190px"
-                   :required="false"
-                   :error="form.errors.tax_number"
-                   v-model="form.tax_number"
-                   :label="__('control.user.fields.tax_number')"
-                   type="text"
-                   :placeholder="__('control.user.fields.tax_number_placeholder')"/>
-                <FormElement label-width="190px"
-                   :required="false"
-                   :error="form.errors.tax_house"
-                   v-model="form.tax_house"
-                   :label="__('control.user.fields.tax_house')"
-                   type="text"
-                   :placeholder="__('control.user.fields.tax_house_placeholder')"/>
 
-                <FormElement label-width="190px"
-                   v-model="form.phone"
-                   :error="form.errors.phone"
-                   :label="__('control.artist.fields.phone')"
-                   :config="{codes:usePage().props.countryCodes}"
-                   type="phone"
-                   placeholder="(555) 000-0000"></FormElement>
-
-            </div>
         </FormElement>
+        <div v-if="form.is_company" class="flex flex-col gap-6">
+            <FormElement label-width="190px"
+                :required="false"
+                :error="form.errors.company_name"
+                v-model="form.company_name"
+                :label="__('control.user.fields.company_name')"
+                type="text"
+                :placeholder="__('control.user.fields.company_name_placeholder')"/>
+            <FormElement label-width="190px"
+                :required="false"
+                :error="form.errors.tax_number"
+                v-model="form.tax_number"
+                :label="__('control.user.fields.tax_number')"
+                type="text"
+                :placeholder="__('control.user.fields.tax_number_placeholder')"/>
+            <FormElement label-width="190px"
+                :required="false"
+                :error="form.errors.tax_house"
+                v-model="form.tax_house"
+                :label="__('control.user.fields.tax_house')"
+                type="text"
+                :placeholder="__('control.user.fields.tax_house_placeholder')"/>
 
+            <FormElement label-width="190px"
+                v-model="form.phone"
+                :error="form.errors.phone"
+                :label="__('control.artist.fields.phone')"
+                :config="{codes:usePage().props.countryCodes}"
+                type="phone"
+                placeholder="(555) 000-0000"></FormElement>
+
+        </div>
     </div>
     <SectionHeader :title="__('control.user.dialog.header_2')"/>
     <div class="p-5 flex flex-col gap-6">
@@ -193,7 +194,7 @@ const form = useForm({
     tax_house:null,
     tax_house:null,
     email:'',
-    adress:'',
+    address:'',
     commission_rate:'',
     is_company:false,
     phone:'',
@@ -225,14 +226,18 @@ const languageConfig = computed(() => {
 })
 
 
-const stateConfig = computed(() => {
+const cityConfig = computed(() => {
   return {
+    value : 'id',
+    label:'name',
     hasSearch: true,
     data: [],
   }
 })
-const cityConfig = computed(() => {
+const districtConfig = computed(() => {
   return {
+      value : 'id',
+    label:'name',
     hasSearch: true,
     data: [],
   }
@@ -287,16 +292,19 @@ const checkIfDisabled = computed(() => {
 })
 
 const onCountryChoosen = async (e) => {
-    var response = await crudStore.post(route('control.findall.states'),{
+    console.log("ÜLKE SEÇİLDİİ SEÇİLDİ");
+
+    var response = await crudStore.post(route('control.findall.cities'),{
         country_id:e.value
     })
-    stateConfig.value.data = response;
-}
-const onStateChoosen = async (e) => {
-    var response = await crudStore.post(route('control.findall.cities'),{
-        state_id:e.value
-    })
     cityConfig.value.data = response;
+}
+const onCityChoosen = async (e) => {
+
+    var response = await crudStore.post(route('control.findall.districts'),{
+        city_id:e.id
+    })
+    districtConfig.value.data = response;
 }
 onMounted(() => {
   if (props.user) {
@@ -311,7 +319,7 @@ onMounted(() => {
         form['tax_house'] =props.user.tax_house;
         form['tax_house'] =props.user.tax_house;
         form['email'] =props.user.email;
-        form['adress'] =props.user.adress;
+        form['address'] =props.user.address;
         form['commission_rate'] =props.user.commission_rate;
         form['is_company'] = props.user.is_company ?? false;
         form['phone'] =props.user.phone;

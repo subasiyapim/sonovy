@@ -20,15 +20,17 @@ const props = defineProps({
 </script>
 <template>
 
+
     <div class="grid grid-cols-3 gap-5">
-        <div v-for="i in 5">
-            <h1 class="label-sm c-strong-950">Yeni Yayın izinleri</h1>
-            <div class="flex items-center gap-2">
+        <div v-for="i in Object.keys(user.tab)">
+
+            <h1 class="label-sm c-strong-950">{{i}}</h1>
+            <div class="flex items-center gap-2" v-for="permisson in user.tab[i]">
                 <button class="appCheckBox checked">
                     <CheckIcon color="#fff" />
 
                 </button>
-               <p class="paragraph-sm c-strong-950"> Ses yayını oluştur</p>
+               <p class="paragraph-sm c-strong-950"> {{permisson}}</p>
             </div>
         </div>
 

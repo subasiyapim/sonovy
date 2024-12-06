@@ -13,6 +13,7 @@ use App\Models\Label;
 use App\Models\Service;
 use App\Models\Plan;
 use App\Models\Song;
+use App\Models\System\District;
 use App\Models\Title;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -113,11 +114,19 @@ class PubController extends Controller
 
     public function findAllCities(Request $request)
     {
-        $city_id = $request->state_id;
+        $country_id = $request->country_id;
 
-        $label = City::where('city_id', '=', $city_id)->get();
+        $label = City::where('country_id', '=', $country_id)->get();
 
         return response()->json($label, Response::HTTP_OK);
+    }
+    public function findAllDistricts(Request $request)
+    {
+        $city_id = $request->city_id;
+
+        $districts = District::where('city_id', '=', $city_id)->get();
+
+        return response()->json($districts, Response::HTTP_OK);
     }
 
     public function findAllStates(Request $request)

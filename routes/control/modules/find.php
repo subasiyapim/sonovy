@@ -19,5 +19,6 @@ Route::group(['prefix' => 'find', 'as' => 'find.'], function () {
 Route::group(['prefix' => 'findall', 'as' => 'findall.'], function () {
     Route::post('artists', [PubController::class, 'findAllArtists'])->name('artists');
     Route::post('cities', [PubController::class, 'findAllCities'])->name('cities');
+    Route::post('districts', [PubController::class, 'findAllDistricts'])->name('districts');
     Route::post('states', [PubController::class, 'findAllStates'])->name('states');
 });
