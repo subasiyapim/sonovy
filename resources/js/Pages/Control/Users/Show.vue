@@ -21,7 +21,7 @@
                 <CheckFilledIcon color="var(--sub-600)" />
                 <p class="label-xs text-[#122368]">  Aktif</p>
             </div>
-             <div v-if="user.else" class="border border-soft-200 px-2 py-1 rounded-full flex items-center gap-2">
+             <div v-else class="border border-soft-200 px-2 py-1 rounded-full flex items-center gap-2">
                 <WarningIcon color="var(--sub-600)" />
                 <p class="label-xs text-[#122368]">  Pasif</p>
             </div>

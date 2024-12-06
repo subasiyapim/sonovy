@@ -52,14 +52,11 @@ const props = defineProps({
 
             </template>
         </AppTableColumn>
-
         <AppTableColumn label="İşlem Türü">
             <template #default="scope">
 
             </template>
         </AppTableColumn>
-
-
         <AppTableColumn label="Miktar">
             <template #default="scope">
 

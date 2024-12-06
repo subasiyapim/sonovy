@@ -63,12 +63,12 @@
 
     </div>
     <div class="flex p-5 border-t border-soft-200 gap-4 sticky bottom-0 bg-white">
-      <RegularButton @click="isDialogOn = false" class="flex-1">
-       İptal
-      </RegularButton>
-      <PrimaryButton @click="isDialogOn = false" class="flex-1" :disabled="choosenProducts.length<=0">
-       Seçilenleri Ata
-      </PrimaryButton>
+        <RegularButton @click="isDialogOn = false" class="flex-1">
+                İptal
+        </RegularButton>
+        <PrimaryButton :loading="submitting" @click="submit" class="flex-1" :disabled="choosenProducts.length<=0">
+            Seçilenleri Ata
+        </PrimaryButton>
     </div>
   </BaseDialog>
 </template>
@@ -86,9 +86,12 @@ import {FormElement, AppFancyRadio} from '@/Components/Form'
 import {useDefaultStore} from "@/Stores/default";
 const queryTerm = ref();
 const props = defineProps({
-  modelValue: {
-    default: false,
-  },
+    modelValue: {
+        default: false,
+    },
+    user_id:{
+
+    }
 })
 const defaultStore = useDefaultStore();
 const crudStore = useCrudStore();
@@ -107,7 +110,7 @@ const isDialogOn = computed({
   set: (value) => emits('update:modelValue', value)
 })
 
-
+const submitting = ref(false);
 
 const onInput = (e) => {
     loading.value = true;
@@ -144,6 +147,19 @@ const onChoosenItem =  (product) => {
     }else {
         choosenProducts.value.push(product);
     }
+}
+
+
+const submit = async () => {
+    submitting.value = true;
+    const response = await crudStore.post(route('control.user-management.users.assign-to-products',props.user_id),{
+        products: choosenProducts.value.map((e) => e.id),
+    });
+    submitting.value = false;
+
+
+    toast(response['message'] ?? 'İşlem Başarılı');
+
 }
 </script>
 
