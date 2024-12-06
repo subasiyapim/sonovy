@@ -23,7 +23,7 @@ class PermissionService
         foreach ($permissions as $id => $value) {
             $group = Str::beforeLast($value->code, '_');
 
-            $group = str_replace('_', ' ', $group);
+            $group = Str::title(Str::replace('_', ' ', $group));
 
             if (!isset($groupedPermissions[$group])) {
                 $groupedPermissions[$group] = [];
