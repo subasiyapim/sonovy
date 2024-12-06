@@ -66,8 +66,8 @@
       <RegularButton @click="isDialogOn = false" class="flex-1">
        İptal
       </RegularButton>
-      <PrimaryButton @click="isDialogOn = false" class="flex-1" :disabled="choosenUsers.length<=0">
-       Seçilenleri Ata
+      <PrimaryButton :loading="submitting" @click="submit" class="flex-1" :disabled="choosenUsers.length<=0">
+         Seçilenleri Ata
       </PrimaryButton>
     </div>
   </BaseDialog>
@@ -89,6 +89,9 @@ const props = defineProps({
   modelValue: {
     default: false,
   },
+  user_id:{
+
+  }
 })
 const defaultStore = useDefaultStore();
 const crudStore = useCrudStore();
@@ -102,12 +105,8 @@ const isDialogOn = computed({
   set: (value) => emits('update:modelValue', value)
 })
 
+const submitting = ref(false);
 
-const checkIfDisabled = computed(() => {
-
-  return !form['album_name'];
-
-});
 
 const onInput = (e) => {
     loading.value = true;
@@ -144,6 +143,17 @@ const chooseUser =  (user) => {
     }else {
         choosenUsers.value.push(user);
     }
+}
+
+
+const submit = async () => {
+    submitting.value = true;
+    const response = await crudStore.post(route('control.user-management.add-to-children',props.user_id),{
+        children: choosenUsers.value.map((e) => e.id),
+    });
+    submitting.value = false;
+    toast(response['message'] ?? 'İşlem Başarılı');
+
 }
 </script>
 

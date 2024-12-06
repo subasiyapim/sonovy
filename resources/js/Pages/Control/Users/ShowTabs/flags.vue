@@ -61,20 +61,20 @@ onMounted(() => {
 
         <AppTableColumn label="Aksiyon Tarihi">
             <template #default="scope">
-                {{scope.row.created_at}}
+                <p class="paragraph-xs c-sub-600">  {{scope.row.created_at}}</p>
             </template>
         </AppTableColumn>
 
 
         <AppTableColumn label="Yorum">
             <template #default="scope">
-                  {{scope.row.reason}}
+                 <p class="paragraph-xs c-sub-600">   {{scope.row.reason}}</p>
             </template>
         </AppTableColumn>
 
         <AppTableColumn label="Bloklayan Kullanıcı">
             <template #default="scope">
-                 {{scope.row.created_by?.name}}
+               <p class="paragraph-xs c-sub-600">   {{scope.row.created_by?.name}}</p>
             </template>
         </AppTableColumn>
 
