@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Setting;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class SettingSeeder extends Seeder
@@ -249,6 +250,9 @@ class SettingSeeder extends Seeder
         ];
 
         DB::table('settings')->truncate();
+
+        Cache::forget('settings');
+
         foreach ($settings as $setting) {
             Setting::create(
                 [
