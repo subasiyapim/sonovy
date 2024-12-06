@@ -15,7 +15,7 @@
                    :label="__('control.user.fields.name')"
                    type="text"
                    :placeholder="__('control.user.fields.name_placeholder')"/>
-        <FormElement  label-width="190px" v-model="form.country_id"
+        <FormElement @change="onCountryChoosen" label-width="190px" :required="true" v-model="form.country_id"
                    :error="form.errors.country_id" type="select"
                    :label="__('control.user.fields.country_id')"
                    :placeholder="__('control.user.fields.country_id_placeholder')" :config="countryConfig">
@@ -31,7 +31,7 @@
                    type="text"
                    :placeholder="__('control.user.fields.email_placeholder')"/>
 
-        <FormElement  label-width="190px" v-model="form.language_id"
+        <FormElement :required="true" label-width="190px" v-model="form.language_id"
                    :error="form.errors.language_id" type="select"
                    :label="__('control.user.fields.language_id')"
                    :placeholder="__('control.user.fields.language_id_placeholder')" :config="languageConfig">
@@ -41,16 +41,16 @@
         <div class="flex items-center gap-2">
             <FormElement type="custom" label="İl İlçe" label-width="190px" class="w-full">
                 <div class="flex items-center gap-2">
-                    <AppSelectInput   class="flex-1" v-model="form.city_id"
+                    <AppSelectInput @change="onStateChoosen"  class="flex-1" v-model="form.city_id"
                             :error="form.errors.city_id" type="select"
 
-                            :placeholder="__('control.user.fields.city_id')" :config="cityConfig">
+                            :placeholder="__('control.user.fields.city_id')" :config="stateConfig">
 
                     </AppSelectInput>
                     <AppSelectInput  class="flex-1" v-model="form.district_id"
                             :error="form.errors.district_id" type="select"
 
-                            :placeholder="__('control.user.fields.district_id_placeholder')" :config="districtConfig">
+                            :placeholder="__('control.user.fields.district_id_placeholder')" :config="cityConfig">
 
                     </AppSelectInput>
                 </div>
@@ -205,7 +205,7 @@ const form = useForm({
 
 
 
-const emits = defineEmits(['update:modelValue', 'done']);
+const emits = defineEmits(['update:modelValue', 'done','update']);
 const isDialogOn = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value)
@@ -225,13 +225,13 @@ const languageConfig = computed(() => {
 })
 
 
-const cityConfig = computed(() => {
+const stateConfig = computed(() => {
   return {
     hasSearch: true,
     data: [],
   }
 })
-const districtConfig = computed(() => {
+const cityConfig = computed(() => {
   return {
     hasSearch: true,
     data: [],
@@ -286,7 +286,18 @@ const checkIfDisabled = computed(() => {
   return false;
 })
 
-
+const onCountryChoosen = async (e) => {
+    var response = await crudStore.post(route('control.findall.states'),{
+        country_id:e.value
+    })
+    stateConfig.value.data = response;
+}
+const onStateChoosen = async (e) => {
+    var response = await crudStore.post(route('control.findall.cities'),{
+        state_id:e.value
+    })
+    cityConfig.value.data = response;
+}
 onMounted(() => {
   if (props.user) {
         form['id'] = props.user.id;
@@ -302,7 +313,7 @@ onMounted(() => {
         form['email'] =props.user.email;
         form['adress'] =props.user.adress;
         form['commission_rate'] =props.user.commission_rate;
-        form['is_company'] =props.user.is_company;
+        form['is_company'] = props.user.is_company ?? false;
         form['phone'] =props.user.phone;
 
   }

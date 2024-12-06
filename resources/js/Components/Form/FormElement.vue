@@ -28,7 +28,7 @@
       <AppSliderInput v-else-if="type=='slider'" :config="config" :type="type" v-model="element"
                       :placeholder="placeholder" :disabled="disabled"></AppSliderInput>
 
-      <AppSelectInput ref="appSelect" v-else-if="type=='select'" :config="config" :type="type" v-model="element"
+      <AppSelectInput ref="appSelect" v-else-if="type=='select'" @change="change" :config="config" :type="type" v-model="element"
                       :placeholder="placeholder" :disabled="disabled">
         <template v-if="hasSlot('first_child')" #first_child>
           <slot name="first_child"/>
