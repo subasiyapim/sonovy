@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\System\User;
 use App\Services\EarningService;
+use App\Services\PermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
@@ -135,7 +136,7 @@ class UserShowResource extends JsonResource
 
     private function authorisations()
     {
-        return null;
+        return PermissionService::getGroupedPermissions();
     }
 
     private function profile()
