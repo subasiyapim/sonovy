@@ -113,7 +113,7 @@ class UserController extends Controller
 
             return to_route('dashboard.users.index')
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
@@ -196,7 +196,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+" . $country->phone_code . $user->phone;
+            $user->phone = "+".$country->phone_code.$user->phone;
         }
 
         return inertia(
@@ -220,16 +220,6 @@ class UserController extends Controller
         if ($request->validated()['password']) {
             $data['password'] = bcrypt($request->password);
         }
-
-        //        if ($request->access_all_artists == 0 && $request->artists) {
-        //            $user->permittedArtists()->sync($request->artists);
-        //        }
-        //        if ($request->access_all_labels == 0 && $request->labels) {
-        //            $user->permittedLabels()->sync($request->labels);
-        //        }
-        //        if ($request->access_all_platforms == 0 && $request->platforms) {
-        //            $user->permittedPlatforms()->sync($request->platforms);
-        //        }
 
         $user->roles()->sync($request->role_id);
         $user->update($data);
@@ -305,7 +295,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
