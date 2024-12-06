@@ -192,6 +192,8 @@ const chooseValue = (val) => {
   element.value = val[props.config.value ?? 'value'];
   isOpen.value = false;
   emits('change', val)
+
+
 }
 
 // Handle window resize event to recheck dropdown direction
