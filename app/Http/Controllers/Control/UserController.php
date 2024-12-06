@@ -111,7 +111,7 @@ class UserController extends Controller
 
             return to_route('dashboard.users.index')
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -130,6 +130,8 @@ class UserController extends Controller
             abort_if(Gate::denies('user_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         }
 
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        $languages = getDataFromInputFormat(CountryServices::get(), 'id', 'language', 'emoji');
 
         $user->load('roles', 'country', 'city', 'district', 'parent', 'children');
 
@@ -142,6 +144,7 @@ class UserController extends Controller
             'flags',
             'relations',
             'authorisations',
+
         ];
 
         $tab = request()->has('slug') ? request()->input('slug') : 'profile';;
@@ -154,7 +157,9 @@ class UserController extends Controller
             [
                 'user' => $response->resolve(),
                 'tab' => $tab,
-                'tabs' => $tabs
+                'tabs' => $tabs,
+                'countries' => $countries,
+                'languages' => $languages,
             ]
         );
     }
@@ -188,7 +193,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+".$country->phone_code.$user->phone;
+            $user->phone = "+" . $country->phone_code . $user->phone;
         }
 
         return inertia(
@@ -293,12 +298,11 @@ class UserController extends Controller
                     'flags' => $flags,
                 ]
             );
-
         } catch (\Exception $e) {
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -367,7 +371,6 @@ class UserController extends Controller
             });
 
         return redirect()->back()->with('success', 'Şirketler başarıyla atanmıştır.');
-
     }
 
     public function addToChildren(Request $request, User $user)
@@ -384,6 +387,4 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', 'Alt kullanıcılar başarıyla atanmıştır.');
     }
-
-
 }

@@ -1,10 +1,11 @@
 <template>
-  <BaseDialog v-model="isDialogOn" align="right" :title="'Yeni Kullanıcı Ekle'"
-              :description="'Temel bilgileri girerek yeni kullanıcı oluşturabilirsiniz'">
+  <BaseDialog v-model="isDialogOn" align="right" :title="user?.id ? 'Kullanıcı Düzenle' :'Yeni Kullanıcı Ekle'"
+              :description="user?.id ? 'Kullanıcı düzenleyebilirsiniz' :'Temel bilgileri girerek yeni kullanıcı oluşturabilirsiniz'">
     <template #icon>
       <img width="24" height="24" src="@/assets/images/mp3_active.png"/>
     </template>
     <SectionHeader :title="__('control.user.dialog.header_1')"/>
+
     <div class="p-5 flex flex-col gap-6">
       <FormElement label-width="190px"
                    :required="true"
@@ -33,7 +34,7 @@
         <FormElement  label-width="190px" v-model="form.language_id"
                    :error="form.errors.language_id" type="select"
                    :label="__('control.user.fields.language_id')"
-                   :placeholder="__('control.user.fields.language_id_placeholder')" :config="countryConfig">
+                   :placeholder="__('control.user.fields.language_id_placeholder')" :config="languageConfig">
 
         </FormElement>
 
@@ -214,6 +215,12 @@ const isDialogOn = computed({
 const countryConfig = computed(() => {
   return {
     data: usePage().props.countries,
+  };
+})
+
+const languageConfig = computed(() => {
+  return {
+    data: usePage().props.languages,
   };
 })
 
