@@ -136,7 +136,7 @@ class UserShowResource extends JsonResource
 
     private function authorisations()
     {
-        return PermissionService::getGroupedPermissions();
+        return PermissionService::getGroupedPermissions($this);
     }
 
     private function profile()
