@@ -29,7 +29,7 @@ class PermissionService
                 $groupedPermissions[$group] = [];
             }
 
-            $groupedPermissions[$group] = [
+            $groupedPermissions[$group][] = [
                 'id' => $id,
                 'name' => $value->name,
                 'code' => $value->code,
