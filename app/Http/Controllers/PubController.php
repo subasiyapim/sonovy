@@ -7,13 +7,12 @@ use App\Models\AnnouncementTemplate;
 use App\Models\Artist;
 use App\Models\ArtistBranch;
 use App\Models\Product;
-use App\Models\City;
+use App\Models\System\City;
 use App\Models\Feature;
 use App\Models\Label;
 use App\Models\Service;
 use App\Models\Plan;
 use App\Models\Song;
-use App\Models\State;
 use App\Models\Title;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,8 +38,6 @@ class PubController extends Controller
 
     public function lastSong(Request $request)
     {
-
-
         $artist = Song::latest('id')->first();
 
         return response()->json($artist, Response::HTTP_OK);
@@ -72,8 +69,6 @@ class PubController extends Controller
 
     public function findArtist(Request $request)
     {
-
-
         $artist = Artist::with('platforms')->find($request->id);
 
         return response()->json($artist, Response::HTTP_OK);
@@ -92,9 +87,7 @@ class PubController extends Controller
 
     public function findLabel(Request $request)
     {
-
         $id = $request->id;
-
 
         $label = Label::where('id', '=', $id)->first();
 
@@ -103,9 +96,7 @@ class PubController extends Controller
 
     public function findBroadcast(Request $request)
     {
-
         $id = $request->id;
-
 
         $label = Product::with('songs')->where('id', '=', $id)->first();
 
@@ -114,7 +105,6 @@ class PubController extends Controller
 
     public function findAnnouncementTemplates(Request $request)
     {
-
         $id = $request->id;
         $label = AnnouncementTemplate::where('id', '=', $id)->first();
 
@@ -123,20 +113,16 @@ class PubController extends Controller
 
     public function findAllCities(Request $request)
     {
+        $city_id = $request->state_id;
 
-        $state_id = $request->state_id;
-
-
-        $label = City::where('state_id', '=', $state_id)->get();
+        $label = City::where('city_id', '=', $city_id)->get();
 
         return response()->json($label, Response::HTTP_OK);
     }
 
     public function findAllStates(Request $request)
     {
-
         $country_id = $request->country_id;
-
 
         $label = State::where('country_id', '=', $country_id)->get();
 
