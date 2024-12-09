@@ -12,6 +12,7 @@ import PlatformHistoryModal from './Platform/history.vue';
 import UserModal from './User/index.vue';
 import AssignUserModal from './User/assign_user.vue';
 import AssignUserProductModal from './User/assign_product.vue';
+import AssignUserLabelModal from './User/assign_labels.vue';
 export {
     ArtistDialog,
     LabelDialog,
@@ -27,5 +28,6 @@ export {
     UserModal,
     AssignUserModal,
     AssignUserProductModal,
+    AssignUserLabelModal,
 
 }

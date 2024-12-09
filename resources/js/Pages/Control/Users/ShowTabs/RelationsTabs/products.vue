@@ -123,7 +123,7 @@
 
     </template>
   </AppTable>
-  <AssignUserProductModal v-if="isAssignModalOn" v-model="isAssignModalOn" ></AssignUserProductModal>
+  <AssignUserProductModal @done="onDone" v-if="isAssignModalOn" :user_id="usePage().props.user.id" v-model="isAssignModalOn" ></AssignUserProductModal>
 </template>
 
 <script setup>
@@ -132,6 +132,7 @@ import {AssignUserProductModal} from '@/Components/Dialog';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed, ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";
+import { usePage} from '@inertiajs/vue3';
 
 import {
   AddIcon,
@@ -202,6 +203,12 @@ const statusData = ref([
 const openDialog =  () => {
     isAssignModalOn.value = true;
 };
+
+const onDone = (e) => {
+    e.forEach(element => {
+        tableData.value.push(element);
+    });
+}
 </script>
 <style scoped>
 

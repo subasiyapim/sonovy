@@ -76,7 +76,8 @@
             </template>
         </AppTableColumn>
     </AppTable>
-    <AssignUserModal v-if="isAssignModalOn" v-model="isAssignModalOn" ></AssignUserModal>
+
+    <AssignUserModal @done="onDone" v-if="isAssignModalOn" v-model="isAssignModalOn" :user_id="usePage().props.user.id" ></AssignUserModal>
 </template>
 
 <script  setup>
@@ -88,6 +89,7 @@ import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed,ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";
 import NestedTable from '@/Components/Table/NestedTable.vue';
+import { usePage} from '@inertiajs/vue3';
 
 
 
@@ -100,15 +102,24 @@ const emits = defineEmits(['update:modelValue']);
 
 const tableData = computed({
     get:() => props.modelValue,
-    set:(val) => emits('update:modelValue',value)
+    set:(val) => emits('update:modelValue',val)
 })
 const renderSubWhen = (row) => {
-    return row.children.length > 0;
+    return row.children?.length > 0;
 };
 
 const openDialog =  () => {
     isAssignModalOn.value = true;
 };
+
+const onDone = (e) => {
+    console.log("EEE",e);
+    e.forEach(element => {
+        console.log("ELEMENT",element);
+
+        tableData.value.push(element);
+    });
+}
 </script>
 <style  scoped>
 

@@ -1,7 +1,8 @@
 
 
 <template>
-    <AppTable :hasSelect="true" ref="pageTable" :showAddButton="false"  :isClient="true"
+    <AppTable :hasSelect="true"
+            :buttonLabel="'Yayın Ata'" ref="pageTable"  :isClient="true"
               v-model="tableData" @addNewClicked="openDialog">
       <AppTableColumn :label="__('control.label.title_singular')" align="left" sortable="name">
         <template #default="scope">
@@ -83,27 +84,41 @@
         </div>
       </template>
     </AppTable>
+    <AssignUserLabelModal @done="onDone" v-if="isAssignModalOn" v-model="isAssignModalOn" :user_id="usePage().props.user.id" ></AssignUserLabelModal>
+
 </template>
 
 <script  setup>
 import AppTable from '@/Components/Table/AppTable.vue';
 import {AddIcon,LabelEmailIcon,TrashIcon,EditIcon,PhoneIcon} from '@/Components/Icons';
 import {PrimaryButton,IconButton} from '@/Components/Buttons';
-import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {computed} from 'vue';
-import {useDefaultStore} from "@/Stores/default";
+import {AssignUserLabelModal} from '@/Components/Dialog';
 
+import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
+import {computed,ref} from 'vue';
+import {useDefaultStore} from "@/Stores/default";
+import { usePage} from '@inertiajs/vue3';
 const props = defineProps({
     modelValue:{}
 });
 
 const defaultStore = useDefaultStore();
 const emits = defineEmits(['update:modelValue']);
-
+const isAssignModalOn = ref(false);
 const tableData = computed({
     get:() => props.modelValue,
-    set:(val) => emits('update:modelValue',value)
+    set:(val) => emits('update:modelValue',val)
 })
+
+const openDialog =  () => {
+    isAssignModalOn.value = true;
+};
+
+const onDone = (e) => {
+    e.forEach(element => {
+        tableData.value.push(element);
+    });
+}
 </script>
 <style  scoped>
 

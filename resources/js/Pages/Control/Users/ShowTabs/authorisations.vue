@@ -22,12 +22,10 @@ const props = defineProps({
 
     <div class="grid grid-cols-3 gap-5">
         <div v-for="i in Object.keys(user.tab)">
-
             <h1 class="label-sm c-strong-950">{{i}}</h1>
             <div @click="permisson.checked = !permisson.checked" class="flex items-center gap-2" v-for="permisson in user.tab[i]">
                 <button class="appCheckBox" :class="permisson.checked ? 'checked' : ''">
                     <CheckIcon color="#fff" />
-
                 </button>
                <p class="paragraph-sm c-strong-950 cursor-pointer"> {{permisson.name}}</p>
             </div>

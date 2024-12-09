@@ -49,7 +49,7 @@ const emits = defineEmits(['update:modelValue']);
 
 const tableData = computed({
     get:() => props.modelValue,
-    set:(val) => emits('update:modelValue',value)
+    set:(val) => emits('update:modelValue',val)
 })
 </script>
 <style  scoped>

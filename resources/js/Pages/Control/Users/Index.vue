@@ -133,7 +133,7 @@ const data = ref([
 ])
 
 const renderSubWhen = (row) => {
-    return row.children.length > 0;
+    return row.children?.length > 0;
 }
 const isCreateProductDialogOn = ref(false);
 const openCreateProductDialog = () => {

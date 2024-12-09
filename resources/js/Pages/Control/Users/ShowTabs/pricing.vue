@@ -9,15 +9,15 @@ import {usePage} from '@inertiajs/vue3';
 import {AppProgressIndicator} from '@/Components/Widgets';
 
 import {
-  StackIcon,
-More2LineIcon,
-  CreditCardIcon,
-  RingtoneIcon,
-  MusicVideoIcon,
-  PlayCircleFillIcon,
-  ChartsIcon,
-  EyeOnIcon,
-  EditIcon
+    StackIcon,
+    More2LineIcon,
+    CreditCardIcon,
+    RingtoneIcon,
+    MusicVideoIcon,
+    PlayCircleFillIcon,
+    ChartsIcon,
+    EyeOnIcon,
+    EditIcon
 } from '@/Components/Icons'
 import {useDefaultStore} from "@/Stores/default";
 
@@ -32,20 +32,43 @@ const usages = reactive([
     {"title" : "deneme"},
     {"title" : "deneme"},
 ]);
+const commission_rate = ref();
+const threshold = ref();
+const onChangeComissonRate = (e) => {
+    console.log("EEE",e);
+
+};
+const onChangeThreshold = (e) => {
+
+};
 </script>
 <template>
 
     <div class="flex flex-col gap-6 items-start">
         <h1 class="subheading-regular text-start" v-text="'Fiyatlandırma'"/>
         <p class="paragraph-sm c-sub-600">Et semper orci donec varius sed faucibus hendrerit. Vel nunc mauris gravida nullam nulla ut nisl nibh. </p>
-        <FormElement :label="'Hakediş Oranı'" placeholder="Lütfen Giriniz" label-width="290px" class="w-[560px]">
+        <FormElement :label="'Hakediş Oranı'" v-model="commission_rate" placeholder="Lütfen Giriniz" label-width="290px" class="w-[560px]">
             <template #tooltip>
                 deneme
             </template>
+             <template #description >
+                <div class="text-end">
+                    <button @click="onChangeComissonRate" class="paragraph-xs c-blue-500">
+                        kaydet
+                    </button>
+                </div>
+            </template>
         </FormElement>
-        <FormElement :label="'Satış Ödemesi Eşiği'" placeholder="Lütfen Giriniz" label-width="290px" class="w-[560px]">
+        <FormElement :label="'Satış Ödemesi Eşiği'"  v-model="threshold" placeholder="Lütfen Giriniz" label-width="290px" class="w-[560px]">
             <template #tooltip>
                 deneme
+            </template>
+             <template #description>
+                <div class="text-end">
+                    <button @click="onChangeThreshold" class="paragraph-xs c-blue-500">
+                        kaydet
+                    </button>
+                </div>
             </template>
         </FormElement>
     </div>

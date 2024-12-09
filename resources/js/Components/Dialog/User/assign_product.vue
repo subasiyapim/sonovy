@@ -26,7 +26,7 @@
                     </button>
                 <div class="w-12 h-12 rounded-full overflow-hidden">
                     <img :alt="product.album_name"
-                        :src="product.image ? product.image.thumb : defaultStore.profileImage(product.name)"
+                        :src="product.image ? product.image.thumb : defaultStore.profileImage(product.album_name)"
                     >
                 </div>
                 <div class="flex flex-col">
@@ -34,7 +34,7 @@
                         {{product.album_name}}
                     </p>
                      <p class="paragraph-xs c-sub--600">
-                        {{product.type}}
+                        {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : 'Zil Sesi') }}
                     </p>
 
                 </div>
@@ -156,8 +156,8 @@ const submit = async () => {
         products: choosenProducts.value.map((e) => e.id),
     });
     submitting.value = false;
-
-
+    isDialogOn.value = false;
+    emits('done',response['products']);
     toast(response['message'] ?? 'İşlem Başarılı');
 
 }

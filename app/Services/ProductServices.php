@@ -14,7 +14,7 @@ class ProductServices
 {
     public static function imageUpload($model, $image): void
     {
-        $name = Str::random(10).'-'.time();
+        $name = Str::random(10) . '-' . time();
         $file_name = Str::slug($name);
         $collection = 'products';
 
@@ -36,12 +36,11 @@ class ProductServices
         }
 
         return round(($filledFields / $totalFields) * 100);
-
     }
 
     public static function search($search): mixed
     {
-        return Product::with('songs')->where('name', 'like', '%'.$search.'%')->get();
+        return Product::with('songs')->where('album_name', 'like', '%' . $search . '%')->get();
     }
 
 
@@ -54,7 +53,6 @@ class ProductServices
             'step3' => self::checkStep3($product),
             'step4' => self::checkStep4($product),
         ];
-
     }
 
     private static function checkCommonFields(Product $product): bool
@@ -148,5 +146,4 @@ class ProductServices
     {
         return true;
     }
-
 }

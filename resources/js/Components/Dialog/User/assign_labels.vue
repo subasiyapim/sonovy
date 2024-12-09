@@ -1,6 +1,6 @@
 <template>
-  <BaseDialog height="400px" v-model="isDialogOn" align="center" :title="'Alt kullanıcı ata'"
-              :description="'Seçtiğiniz kullanıcıya alt kullanıcılar ekleyebilirsiniz'">
+  <BaseDialog height="400px" v-model="isDialogOn" align="center" :title="'Alt kullanıcıya Plak şirketi ata'"
+              :description="'Seçtiğiniz kullanıcıya yeni plak şirketi tanımlayabilirsiniz'">
     <template #icon>
       <PersonIcon color="var(--dark-green-950)"/>
     </template>
@@ -12,29 +12,29 @@
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <SearchIcon color="var(--sub-600)" />
                 </div>
-                <input v-model="queryTerm" v-debounce="400" @input="onInput" @change="onChange" type="text" id="voice-search" class="focus:ring-0 focu border-none text-gray-900 text-sm rounded-lg block w-full ps-10 p-1 " placeholder="Kullanıcı Ara" required />
+                <input v-model="queryTerm" v-debounce="400" @input="onInput" @change="onChange" type="text" id="voice-search" class="focus:ring-0 focu border-none text-gray-900 text-sm rounded-lg block w-full ps-10 p-1 " placeholder="Yayın Ara" required />
 
             </div>
 
         </div>
 
-        <div v-for="user in users" class="flex items-center  justify-between cursor-pointer" @click="chooseUser(user)">
+        <div v-for="label in labels" class="flex items-center  justify-between cursor-pointer" @click="onChoosenItem(label)">
 
             <div class="flex items-center gap-2 flex-1">
-                <button class="appCheckBox" :class="choosenUsers?.find((e) => e.id == user.id) ? 'checked' : ''">
+                <button class="appCheckBox" :class="choosenLabels?.find((e) => e.id == label.id) ? 'checked' : ''">
                         <CheckIcon color="#fff" />
                     </button>
                 <div class="w-12 h-12 rounded-full overflow-hidden">
-                    <img :alt="user.name"
-                        :src="user.image ? user.image.thumb : defaultStore.profileImage(user.name)"
+                    <img :alt="label.name"
+                        :src="label.image ? label.image.thumb : defaultStore.profileImage(label.name)"
                     >
                 </div>
                 <div class="flex flex-col">
                     <p class="label-sm c-sub-600">
-                        {{user.name}}
+                        {{label.name}}
                     </p>
                      <p class="paragraph-xs c-sub--600">
-                        {{user.email}}
+                        {{label.email }}
                     </p>
 
                 </div>
@@ -50,7 +50,7 @@
         </div>
         <div v-else class="h-full flex-1">
 
-            <div v-if="users.length <= 0">
+            <div v-if="labels.length <= 0">
                 <template v-if="!queryTerm">
                     Kullanıcı Aramak için bilgi giriniz.
                 </template>
@@ -63,12 +63,12 @@
 
     </div>
     <div class="flex p-5 border-t border-soft-200 gap-4 sticky bottom-0 bg-white">
-      <RegularButton @click="isDialogOn = false" class="flex-1">
-       İptal
-      </RegularButton>
-      <PrimaryButton :loading="submitting" @click="submit" class="flex-1" :disabled="choosenUsers.length<=0">
-         Seçilenleri Ata
-      </PrimaryButton>
+        <RegularButton @click="isDialogOn = false" class="flex-1">
+                İptal
+        </RegularButton>
+        <PrimaryButton :loading="submitting" @click="submit" class="flex-1" :disabled="choosenLabels.length<=0">
+            Seçilenleri Ata
+        </PrimaryButton>
     </div>
   </BaseDialog>
 </template>
@@ -86,19 +86,24 @@ import {FormElement, AppFancyRadio} from '@/Components/Form'
 import {useDefaultStore} from "@/Stores/default";
 const queryTerm = ref();
 const props = defineProps({
-  modelValue: {
-    default: false,
-  },
-  user_id:{
+    modelValue: {
+        default: false,
+    },
+    user_id:{
 
-  }
+    }
 })
 const defaultStore = useDefaultStore();
 const crudStore = useCrudStore();
 const loading = ref(false)
+const form = useForm({
+  id: "",
+  name: '',
+  type:1
 
-const users = ref([]);
-const choosenUsers = ref([]);
+});
+const labels = ref([]);
+const choosenLabels = ref([]);
 const emits = defineEmits(['update:modelValue', 'done']);
 const isDialogOn = computed({
   get: () => props.modelValue,
@@ -106,7 +111,6 @@ const isDialogOn = computed({
 })
 
 const submitting = ref(false);
-
 
 const onInput = (e) => {
     loading.value = true;
@@ -120,40 +124,40 @@ const onChange = async (e) => {
         loading.value = false;
        tempUser = [];
     }else {
-        tempUser = await crudStore.get(route('control.search.users'),{
+        tempUser = await crudStore.get(route('control.search.labels'),{
             search:queryTerm.value
         })
 
     }
-    users.value = tempUser;
+    labels.value = tempUser;
     loading.value = false;
 
 
-    choosenUsers.value.forEach(element => {
-        const finded = users.value.find((e) => e.id == element.id);
+    choosenLabels.value.forEach(element => {
+        const finded = labels.value.find((e) => e.id == element.id);
         if(!finded){
-            users.value.push(element);
+            labels.value.push(element);
         }
     });
 }
-const chooseUser =  (user) => {
-    const findedIndex = choosenUsers.value.findIndex((el) =>el.id == user.id);
+const onChoosenItem =  (label) => {
+    const findedIndex = choosenLabels.value.findIndex((el) =>el.id == label.id);
     if(findedIndex >= 0 ){
-        choosenUsers.value.splice(findedIndex,1);
+        choosenLabels.value.splice(findedIndex,1);
     }else {
-        choosenUsers.value.push(user);
+        choosenLabels.value.push(label);
     }
 }
 
 
 const submit = async () => {
     submitting.value = true;
-    const response = await crudStore.post(route('control.user-management.users.add-to-children',props.user_id),{
-        children: choosenUsers.value.map((e) => e.id),
+    const response = await crudStore.post(route('control.user-management.users.assign-to-labels',props.user_id),{
+        labels: choosenLabels.value.map((e) => e.id),
     });
     submitting.value = false;
     isDialogOn.value = false;
-    emits('done',response['user'])
+    emits('done',response['labels']);
     toast(response['message'] ?? 'İşlem Başarılı');
 
 }

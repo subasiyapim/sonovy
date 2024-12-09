@@ -19,7 +19,8 @@ const tableData = computed({
 });
 
 const renderSubWhen = (row) => {
-    return row.children.length > 0;
+
+    return row.children?.length > 0;
 };
 
 </script>

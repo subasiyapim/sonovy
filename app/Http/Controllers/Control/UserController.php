@@ -113,7 +113,7 @@ class UserController extends Controller
 
             return to_route('dashboard.users.index')
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -196,7 +196,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+".$country->phone_code.$user->phone;
+            $user->phone = "+" . $country->phone_code . $user->phone;
         }
 
         return inertia(
@@ -295,7 +295,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -342,13 +342,16 @@ class UserController extends Controller
             'products' => 'required|array',
         ]);
 
-        Product::whereIn('id', $request->products)
+        $assignedProducts = Product::whereIn('id', $request->products)
             ->get()
             ?->each(function ($product) use ($user) {
                 $product->update(['created_by' => $user->id]);
             });
-
-        return redirect()->back()->with('success', 'Yayınlar başarıyla atanmıştır.');
+        return response()->json([
+            "success" => true,
+            "products"  => $assignedProducts,
+            "message" => 'Yayınlar başarıyla atanmıştır.'
+        ]);
     }
 
     public function assignToLabels(Request $request, User $user)
@@ -357,13 +360,16 @@ class UserController extends Controller
             'labels' => 'required|array',
         ]);
 
-        Label::whereIn('id', $request->labels)
+        $assignedLabels =  Label::whereIn('id', $request->labels)
             ->get()
             ?->each(function ($label) use ($user) {
                 $label->update(['created_by' => $user->id]);
             });
-
-        return redirect()->back()->with('success', 'Şirketler başarıyla atanmıştır.');
+        return response()->json([
+            "success" => true,
+            "labels"  => $assignedLabels,
+            "message" => 'Şirketler başarıyla atanmıştır.'
+        ]);
     }
 
     public function addToChildren(Request $request, User $user)
@@ -372,13 +378,17 @@ class UserController extends Controller
             'children' => 'required|array',
         ]);
 
-        User::whereIn('id', $request->children)
+        $assingedUsers = User::whereIn('id', $request->children)
             ->get()
             ?->each(function ($child) use ($user) {
                 $child->update(['parent_id' => $user->id]);
             });
-
-        return redirect()->back()->with('success', 'Alt kullanıcılar başarıyla atanmıştır.');
+        return response()->json([
+            "success" => true,
+            "user"  => $assingedUsers,
+            "message" => 'Alt kullanıcılar başarıyla atanmıştır.'
+        ]);
+        // return redirect()->back()->with('success', 'Alt kullanıcılar başarıyla atanmıştır.');
     }
 
     public function assignToCommissionRate(Request $request, User $user)
