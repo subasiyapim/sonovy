@@ -430,4 +430,18 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', 'Üst kullanıcı başarıyla kaldırılmıştır.');
     }
+
+    public function detachLabel(User $user, Label $label)
+    {
+        $label->update(['created_by' => null]);
+
+        return redirect()->back()->with('success', 'Şirket başarıyla kaldırılmıştır.');
+    }
+
+    public function detachProduct(User $user, Product $product)
+    {
+        $product->update(['created_by' => null]);
+
+        return redirect()->back()->with('success', 'Yayın başarıyla kaldırılmıştır.');
+    }
 }
