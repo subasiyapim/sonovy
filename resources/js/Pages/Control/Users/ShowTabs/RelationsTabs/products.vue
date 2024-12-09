@@ -129,6 +129,7 @@
 <script setup>
 import AppTable from '@/Components/Table/AppTable.vue';
 import {AssignUserProductModal} from '@/Components/Dialog';
+import {IconButton} from '@/Components/Buttons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed, ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";

@@ -67,12 +67,8 @@
         </AppTableColumn>
         <AppTableColumn label="Aksiyon" align="right">
             <template #default="scope">
-                <IconButton @click="deleteRow(scope.row)">
-                    <TrashIcon color="var(--sub-600)"/>
-                </IconButton>
-                <IconButton @click="editRow(scope.row)">
-                    <EditIcon color="var(--sub-600)"/>
-                </IconButton>
+
+                <ActionButton :user="scope.row" />
             </template>
         </AppTableColumn>
     </AppTable>
@@ -84,8 +80,9 @@
 import AppTable from '@/Components/Table/AppTable.vue';
 import {IconButton} from '@/Components/Buttons';
 import {AssignUserModal} from '@/Components/Dialog';
-import {TrashIcon,EditIcon} from '@/Components/Icons';
+import {TrashIcon,EditIcon,More2LineIcon} from '@/Components/Icons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
+import ActionButton from './Components/user_action_button.vue';
 import {computed,ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";
 import NestedTable from '@/Components/Table/NestedTable.vue';
@@ -120,6 +117,8 @@ const onDone = (e) => {
         tableData.value.push(element);
     });
 }
+
+
 </script>
 <style  scoped>
 

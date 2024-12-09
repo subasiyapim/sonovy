@@ -19,6 +19,8 @@ import WarningDocumentIcon from './WarningDocumentIcon.vue';
 import ScheduledIcon from './ScheduledIcon.vue';
 import WWWIcon from './WWWIcon.vue';
 import StackIcon from './StackIcon.vue';
+import RemoveUserIcon from './RemoveUserIcon.vue';
+import TopRightArrowIcon from './TopRightArrowIcon.vue';
 import CreditCardIcon from './CreditCardIcon.vue';
 
 import ArrowDoubleRightIcon from './ArrowDoubleRightIcon.vue';
@@ -118,6 +120,8 @@ export {
     StickyNoteFilledIcon,
     CloudIcon,
     PersonIcon,
+    RemoveUserIcon,
+    TopRightArrowIcon,
     DurationIcon,
     BroadcastTitleIcon,
     GenreIcon,
