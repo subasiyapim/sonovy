@@ -17,7 +17,7 @@ const emits = defineEmits(['onDetached']);
 const myTippy = ref();
 const onUnAssignProduct = () => {
 
-    crudStore.post(route('control.user-management.users.detach-product',props.user.id));
+    crudStore.post(route('control.user-management.users.detach-product',props.product.id));
     emits('onDetached')
     onCancel();
 }

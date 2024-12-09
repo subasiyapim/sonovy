@@ -113,7 +113,7 @@ class UserController extends Controller
 
             return to_route('dashboard.users.index')
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -196,7 +196,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+".$country->phone_code.$user->phone;
+            $user->phone = "+" . $country->phone_code . $user->phone;
         }
 
         return inertia(
@@ -294,7 +294,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -421,7 +421,6 @@ class UserController extends Controller
         $user->permissions()->toggle($request->permission);
 
         return redirect()->back()->with('success', 'İzinler başarıyla güncellenmiştir.');
-
     }
 
     public function detachParent(User $user)
@@ -431,14 +430,14 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Üst kullanıcı başarıyla kaldırılmıştır.');
     }
 
-    public function detachLabel(User $user, Label $label)
+    public function detachLabel(Label $label)
     {
         $label->update(['created_by' => null]);
 
         return redirect()->back()->with('success', 'Şirket başarıyla kaldırılmıştır.');
     }
 
-    public function detachProduct(User $user, Product $product)
+    public function detachProduct(Product $product)
     {
         $product->update(['created_by' => null]);
 

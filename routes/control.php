@@ -143,8 +143,10 @@ Route::group(
 
         Route::group(['prefix' => 'user-management', 'as' => 'user-management.'], function () {
             Route::resource('users', UserController::class)->names('users');
-            Route::post('users/{user}/toggle-status',
-                [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+            Route::post(
+                'users/{user}/toggle-status',
+                [UserController::class, 'toggleStatus']
+            )->name('users.toggle-status');
             Route::post('users/switch-to-user', [UserController::class, 'switchToUser'])->name('users.switch-to-user');
             Route::post('users/switch-back-to-admin', [UserController::class, 'switchBackToAdmin'])
                 ->name('users.switch-back-to-admin');
@@ -162,11 +164,14 @@ Route::group(
                 ->name('users.togglePermissions');
             Route::post('users/{user}/detach-parent', [UserController::class, 'detachParent'])
                 ->name('users.detach-parent');
-            Route::post('users/{user}/detach-product', [UserController::class, 'detachProduct'])
-                ->name('users.detach-product');
-            Route::post('users/{user}/detach-label',
-                [UserController::class, 'detachLabel'])->name('users.detach-label');
 
+            Route::post('users/{product}/detach-product', [UserController::class, 'detachProduct'])
+                ->name('users.detach-product');
+
+            Route::post(
+                'users/{label}/detach-label',
+                [UserController::class, 'detachLabel']
+            )->name('users.detach-label');
         });
 
         Route::post('user/competency/{user}', [UserController::class, 'competency'])->name('users.competency');
@@ -349,10 +354,8 @@ Route::group(
         //        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
         //    });
 
-        require __DIR__.'/control/modules/search.php';
-        require __DIR__.'/control/modules/last.php';
-        require __DIR__.'/control/modules/find.php';
-
-
+        require __DIR__ . '/control/modules/search.php';
+        require __DIR__ . '/control/modules/last.php';
+        require __DIR__ . '/control/modules/find.php';
     }
 );
