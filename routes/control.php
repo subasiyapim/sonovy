@@ -162,6 +162,11 @@ Route::group(
                 ->name('users.togglePermissions');
             Route::post('users/{user}/detach-parent', [UserController::class, 'detachParent'])
                 ->name('users.detach-parent');
+            Route::post('users/{user}/detach-product', [UserController::class, 'detachProduct'])
+                ->name('users.detach-product');
+            Route::post('users/{user}/detach-label',
+                [UserController::class, 'detachLabel'])->name('users.detach-label');
+
         });
 
         Route::post('user/competency/{user}', [UserController::class, 'competency'])->name('users.competency');
