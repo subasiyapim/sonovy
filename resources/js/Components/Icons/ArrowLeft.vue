@@ -11,7 +11,7 @@
 
 </template>
 <script setup>
-const props =defineProps({
+const props = defineProps({
         color:{
             default:'white'
         }

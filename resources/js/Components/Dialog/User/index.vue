@@ -19,7 +19,16 @@
                    :error="form.errors.country_id" type="select"
                    :label="__('control.user.fields.country_id')"
                    :placeholder="__('control.user.fields.country_id_placeholder')" :config="countryConfig">
-
+            <template #option="scope">
+                <span>{{ scope.data.iconKey }}</span>
+                <span class="paragraph-sm c-strong-950">{{ scope.data.label }}</span>
+            </template>
+            <template #model="scope">
+                <div v-if="scope.data" class="flex items-center gap-2">
+                    <span>{{ countryConfig.data.find((el) => el.value == scope.data)?.iconKey }}</span>
+                    <span>{{ countryConfig.data.find((el) => el.value == scope.data)?.label }}</span>
+                </div>
+            </template>
         </FormElement>
 
         <FormElement label-width="190px"
@@ -35,11 +44,20 @@
                    :error="form.errors.language_id" type="select"
                    :label="__('control.user.fields.language_id')"
                    :placeholder="__('control.user.fields.language_id_placeholder')" :config="languageConfig">
-
+            <template #option="scope">
+                <span>{{ scope.data.iconKey }}</span>
+                <span class="paragraph-sm c-strong-950">{{ scope.data.label }}</span>
+            </template>
+            <template #model="scope">
+                <div v-if="scope.data" class="flex items-center gap-2">
+                    <span>{{ languageConfig.data.find((el) => el.value == scope.data)?.iconKey }}</span>
+                    <span>{{ languageConfig.data.find((el) => el.value == scope.data)?.label }}</span>
+                </div>
+            </template>
         </FormElement>
 
         <div class="flex items-center gap-2">
-            <FormElement type="custom" :required="true" :error="form.errors.city_id || form.errors.district_id" label="İl İlçe" label-width="190px" class="w-full">
+            <FormElement type="custom" :error="form.errors.city_id || form.errors.district_id" label="İl İlçe" label-width="190px" class="w-full">
                 <div class="flex items-center gap-2">
                     <AppSelectInput @change="onCityChoosen"  class="flex-1" v-model="form.city_id"
                             :error="form.errors.city_id" type="select"
@@ -215,12 +233,14 @@ const isDialogOn = computed({
 
 const countryConfig = computed(() => {
   return {
+     hasSearch:true,
     data: usePage().props.countries,
   };
 })
 
 const languageConfig = computed(() => {
   return {
+    hasSearch:true,
     data: usePage().props.languages,
   };
 })

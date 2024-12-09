@@ -1,7 +1,7 @@
 
 
 <template>
-         <AppTable  v-model="tableData"  :isClient="true" >
+    <AppTable  v-model="tableData" :showAddButton="false" :isClient="true" >
         <AppTableColumn label="Kullanıcı Adı">
             <template #default="scope">
 

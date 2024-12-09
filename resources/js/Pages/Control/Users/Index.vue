@@ -1,5 +1,5 @@
 <template>
-  <AdminLayout :showDatePicker="false">
+  <AdminLayout :showDatePicker="false" title="Kulanıcılar" >
 
 
 

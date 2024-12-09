@@ -45,7 +45,7 @@ const onChangeComissonRate = (e) => {
     const response = crudStore.post(route('control.user-management.users.assign-to-commission-rate',props.user.id),{
         commission_rate:commission_rate.value
     });
-
+    props.user.commission_rate = commission_rate.value;
     toast.success('işlem başarılı');
 };
 const onChangeThreshold = (e) => {
