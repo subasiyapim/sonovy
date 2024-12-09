@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Str;
 
@@ -15,6 +16,11 @@ class PermissionService
         $groupedPermissions = [];
 
         if ($user) {
+            $user->roles();
+
+            if ($user->roles->isEmpty()) {
+                $user->roles()->attach(Role::where('code', 'user')->first()->id);
+            }
             $userPermissions = self::getUserPermissions($user, 'id');
         }
 

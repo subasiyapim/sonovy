@@ -113,7 +113,7 @@ class UserController extends Controller
 
             return to_route('dashboard.users.index')
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
@@ -196,7 +196,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+" . $country->phone_code . $user->phone;
+            $user->phone = "+".$country->phone_code.$user->phone;
         }
 
         return inertia(
@@ -223,7 +223,6 @@ class UserController extends Controller
 
         $user->update($data);
 
-        //dd($request->validated());
         return to_route('control.user-management.users.index')
             ->with([
                 'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
@@ -295,7 +294,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
@@ -349,7 +348,7 @@ class UserController extends Controller
             });
         return response()->json([
             "success" => true,
-            "products"  => $assignedProducts,
+            "products" => $assignedProducts,
             "message" => 'Yayınlar başarıyla atanmıştır.'
         ]);
     }
@@ -360,14 +359,14 @@ class UserController extends Controller
             'labels' => 'required|array',
         ]);
 
-        $assignedLabels =  Label::whereIn('id', $request->labels)
+        $assignedLabels = Label::whereIn('id', $request->labels)
             ->get()
             ?->each(function ($label) use ($user) {
                 $label->update(['created_by' => $user->id]);
             });
         return response()->json([
             "success" => true,
-            "labels"  => $assignedLabels,
+            "labels" => $assignedLabels,
             "message" => 'Şirketler başarıyla atanmıştır.'
         ]);
     }
@@ -385,7 +384,7 @@ class UserController extends Controller
             });
         return response()->json([
             "success" => true,
-            "user"  => $assingedUsers,
+            "user" => $assingedUsers,
             "message" => 'Alt kullanıcılar başarıyla atanmıştır.'
         ]);
         // return redirect()->back()->with('success', 'Alt kullanıcılar başarıyla atanmıştır.');
