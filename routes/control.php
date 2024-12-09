@@ -154,6 +154,10 @@ Route::group(
                 ->name('users.assign-to-labels');
             Route::post('users/{user}/add-to-children', [UserController::class, 'addToChildren'])
                 ->name('users.add-to-children');
+            Route::post('users/{user}/assign-to-commission-rate', [UserController::class, 'assignToCommissionRate'])
+                ->name('users.assign-to-commission-rate');
+            Route::post('users/{user}/assign-to-payment-threshold', [UserController::class, 'assignToPaymentThreshold'])
+                ->name('users.assign-to-payment-threshold');
         });
 
         Route::post('user/competency/{user}', [UserController::class, 'competency'])->name('users.competency');

@@ -224,7 +224,7 @@ class UserController extends Controller
         $user->roles()->sync($request->role_id);
         $user->update($data);
 
-        return to_route('dashboard.users.index')
+        return to_route('control.user-management.users.index')
             ->with([
                 'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
             ]);
@@ -379,5 +379,27 @@ class UserController extends Controller
             });
 
         return redirect()->back()->with('success', 'Alt kullanıcılar başarıyla atanmıştır.');
+    }
+
+    public function assignToCommissionRate(Request $request, User $user)
+    {
+        $request->validate([
+            'commission_rate' => 'required|numeric',
+        ]);
+
+        $user->update(['commission_rate' => $request->commission_rate]);
+
+        return redirect()->back()->with('success', 'Komisyon oranı başarıyla atanmıştır.');
+    }
+
+    public function assignToPaymentThreshold(Request $request, User $user)
+    {
+        $request->validate([
+            'payment_threshold' => 'required|numeric',
+        ]);
+
+        $user->update(['payment_threshold' => $request->payment_threshold]);
+
+        return redirect()->back()->with('success', 'Ödeme eşiği başarıyla atanmıştır.');
     }
 }

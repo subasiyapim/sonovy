@@ -5,13 +5,10 @@ namespace App\Http\Requests\User;
 use App\Models\System\City;
 use App\Models\System\Country;
 use App\Models\System\District;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-use Laravel\Jetstream\Jetstream;
 
 class UserUpdateRequest extends FormRequest
 {
