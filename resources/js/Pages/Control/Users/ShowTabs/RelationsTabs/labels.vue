@@ -66,12 +66,8 @@
       <AppTableColumn :label="__('control.general.actions')" align="right">
         <template #default="scope">
           <div class="flex gap-3">
-            <IconButton @click="deleteRow(scope.row)">
-              <TrashIcon color="var(--sub-600)"/>
-            </IconButton>
-            <IconButton @click="editRow(scope.row)">
-              <EditIcon color="var(--sub-600)"/>
-            </IconButton>
+                <ActionButton :label="scope.row" @onDetached="onDetached(scope)" />
+
           </div>
         </template>
       </AppTableColumn>
@@ -92,15 +88,19 @@
 import AppTable from '@/Components/Table/AppTable.vue';
 import {AddIcon,LabelEmailIcon,TrashIcon,EditIcon,PhoneIcon} from '@/Components/Icons';
 import {PrimaryButton,IconButton} from '@/Components/Buttons';
+import {StatusBadge} from '@/Components/Badges';
 import {AssignUserLabelModal} from '@/Components/Dialog';
-
+import ActionButton from './Components/labels_action_button.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed,ref} from 'vue';
+import {toast} from 'vue3-toastify';
 import {useDefaultStore} from "@/Stores/default";
 import { usePage} from '@inertiajs/vue3';
 const props = defineProps({
     modelValue:{}
 });
+
+
 
 const defaultStore = useDefaultStore();
 const emits = defineEmits(['update:modelValue']);
@@ -119,6 +119,12 @@ const onDone = (e) => {
         tableData.value.push(element);
     });
 }
+
+const onDetached = (scopeRow) => {
+    tableData.value.splice(scopeRow.index);
+    toast.success("İşlem başarılı")
+};
+
 </script>
 <style  scoped>
 

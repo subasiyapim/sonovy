@@ -67,8 +67,7 @@
         </AppTableColumn>
         <AppTableColumn label="Aksiyon" align="right">
             <template #default="scope">
-
-                <ActionButton :user="scope.row" />
+                <ActionButton :user="scope.row" @onUserDetached="onUserDetached(scope)" />
             </template>
         </AppTableColumn>
     </AppTable>
@@ -87,6 +86,7 @@ import {computed,ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";
 import NestedTable from '@/Components/Table/NestedTable.vue';
 import { usePage} from '@inertiajs/vue3';
+import {toast} from 'vue3-toastify';
 
 
 
@@ -117,7 +117,10 @@ const onDone = (e) => {
         tableData.value.push(element);
     });
 }
-
+const onUserDetached = (scopeRow) => {
+    tableData.value.splice(scopeRow.index);
+    toast.success("İşlem başarılı")
+}
 
 </script>
 <style  scoped>

@@ -11,26 +11,22 @@ const getBody = computed(() => {
 const crudStore = useCrudStore();
 const props = defineProps({
     user:{},
+    label:{}
 })
-const emits = defineEmits(['onUserDetached']);
+const emits = defineEmits(['onDetached']);
 const myTippy = ref();
-const onUnAssignUser = () => {
+const onUnAssignProduct = () => {
 
     crudStore.post(route('control.user-management.users.detach-parent',props.user.id));
-    emits('onUserDetached')
+    emits('onDetached')
     onCancel();
 }
-const onGotoUserDetail = () => {
+const onGoToDetail = () => {
 
 
-    router.visit(route('control.user-management.users.show',props.user.id))
+    router.visit(route('control.catalog.labels.show',props.label.id))
     onCancel();
 }
-const onRemoveUser = () => {
-     router.visit(route('control.user-management.users.destroy',props.user.id), { method: 'delete'});
-    //   router.post(route('control.user-management.users.destroy',props.user.id))
-    onCancel();
-};
 
 
 
@@ -47,9 +43,8 @@ const onCancel = () => {
         <template #content>
             <div class="flex flex-col py-3 px-1">
                 <p class="label-sm !font-bold c-sub-600 mb-2 px-3">İşlemler</p>
-                <button @click="onUnAssignUser" class="flex items-center gap-2 label-sm c-sub-600 py-3 rounded-lg px-3 hover:bg-[#FAF9F8]"><RemoveUserIcon color="var(--sub-600)" />Alt Kullanıcıyı Kaldır</button>
-                <button @click="onGotoUserDetail" class="flex items-center gap-2 label-sm c-sub-600 py-3 rounded-lg px-3 hover:bg-[#FAF9F8]"><TopRightArrowIcon color="var(--sub-600)" />Kullanıcı Detayına Git</button>
-                <button @click="onRemoveUser" class="flex items-center gap-2 label-sm c-sub-600 py-3 rounded-lg px-3 hover:bg-[#FAF9F8]"><TrashIcon color="var(--sub-600)" />Kullanıcıyı Sil</button>
+                <button @click="onUnAssignProduct" class="flex items-center gap-2 label-sm c-sub-600 py-3 rounded-lg px-3 hover:bg-[#FAF9F8]"><RemoveUserIcon color="var(--sub-600)" />Plak Şirketini Kullanıcıdan Kaldır</button>
+                <button @click="onGoToDetail" class="flex items-center gap-2 label-sm c-sub-600 py-3 rounded-lg px-3 hover:bg-[#FAF9F8]"><TopRightArrowIcon color="var(--sub-600)" />Plak Şirketi Detayına Git</button>
             </div>
         </template>
     </tippy>

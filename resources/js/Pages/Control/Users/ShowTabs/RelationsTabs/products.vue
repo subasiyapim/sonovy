@@ -104,11 +104,7 @@
     </AppTableColumn>
     <AppTableColumn label="Aksiyonlar" align="end">
       <template #default="scope">
-        <IconButton :confirmDelete="true" @confirm="deleteProduct(scope.row)"
-                    title="Ürünü Silmek İstediğine Emin misin?" description="">
-          <TrashIcon color="var(--sub-600)"/>
-
-        </IconButton>
+            <ActionButton :product="scope.row" @onDetached="onDetached(scope)" />
       </template>
     </AppTableColumn>
     <template #empty>
@@ -134,7 +130,8 @@ import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed, ref} from 'vue';
 import {useDefaultStore} from "@/Stores/default";
 import { usePage} from '@inertiajs/vue3';
-
+import ActionButton from './Components/products_action_button.vue';
+import {toast} from 'vue3-toastify';
 import {
   AddIcon,
   EditIcon,
@@ -210,6 +207,12 @@ const onDone = (e) => {
         tableData.value.push(element);
     });
 }
+
+const onDetached = (scopeRow) => {
+    tableData.value.splice(scopeRow.index);
+    toast.success("İşlem başarılı")
+};
+
 </script>
 <style scoped>
 
