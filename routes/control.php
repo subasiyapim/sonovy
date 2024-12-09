@@ -160,6 +160,8 @@ Route::group(
                 ->name('users.assign-to-payment-threshold');
             Route::post('users/{user}/togglePermissions', [UserController::class, 'togglePermissions'])
                 ->name('users.togglePermissions');
+            Route::post('users/{user}/detach-parent', [UserController::class, 'detachParent'])
+                ->name('users.detach-parent');
         });
 
         Route::post('user/competency/{user}', [UserController::class, 'competency'])->name('users.competency');

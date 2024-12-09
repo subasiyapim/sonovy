@@ -24,9 +24,8 @@ class PermissionService
             $userPermissions = self::getUserPermissions($user, 'id');
         }
 
-        $permissions = Permission::with('roles')->get()->keyBy('id');
-
-
+        $permissions = Role::with('permissions')->where('code', '=', 'user')->first()->permissions->keyBy('id');
+        
         foreach ($permissions as $id => $value) {
             $group = Str::beforeLast($value->code, '_');
 
