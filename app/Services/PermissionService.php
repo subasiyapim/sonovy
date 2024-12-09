@@ -12,12 +12,13 @@ class PermissionService
 
     public static function getGroupedPermissions($user = null): array
     {
-        $permissions = Permission::with('roles')->get()->keyBy('id');
         $groupedPermissions = [];
 
         if ($user) {
-            $userPermissions = $user->roles()->with('permissions')->get()->pluck('permissions')->flatten()->keyBy('id');
+            $userPermissions = self::getUserPermissions($user, 'id');
         }
+
+        $permissions = Permission::with('roles')->get()->keyBy('id');
 
 
         foreach ($permissions as $id => $value) {
@@ -33,7 +34,7 @@ class PermissionService
                 'id' => $id,
                 'name' => $value->name,
                 'code' => $value->code,
-                'checked' => $user ? $userPermissions->has($id) : false,
+                'checked' => $user && $userPermissions && in_array($id, $userPermissions),
             ];
         }
 
@@ -51,6 +52,25 @@ class PermissionService
             ];
         }
         return $permissions;
+    }
+
+    public static function getUserPermissions(User $user, $key = 'code')
+    {
+        $excludedPermissions = $user->permissions->pluck('id')->toArray();
+
+        return $user->roles()
+            ->with('permissions')
+            ->get()
+            ->flatMap(function ($role) {
+                return $role->permissions;
+            })
+            ->whereNotIn('id', $excludedPermissions)
+            ->pluck($key)
+            ->unique()
+            ->values()
+            ->all();
+
+
     }
 
 }

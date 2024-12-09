@@ -6,6 +6,7 @@ use App\Enums\AnnouncementTypeEnum;
 use App\Models\AnnouncementUser;
 use App\Models\Setting;
 use App\Services\LocaleService;
+use App\Services\PermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -96,16 +97,7 @@ class HandleInertiaRequests extends Middleware
         if (Auth::check()) {
             // Roller ve izinler
             $data['auth']['user']['roles'] = $user->roles;
-            $data['auth']['user']['permissions'] = function () use ($user) {
-                return $user->roles()
-                    ->with('permissions')
-                    ->get()
-                    ->pluck('permissions.*.code')
-                    ->flatten()
-                    ->unique()
-                    ->values()
-                    ->all();
-            };
+            $data['auth']['user']['permissions'] = PermissionService::getUserPermissions($user);
 
             // Bildirimler
             $notifications = AnnouncementUser::with('announcement')

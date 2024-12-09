@@ -277,6 +277,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(UserActivity::class);
     }
 
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'permission_user');
+    }
+
     public function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('d-m-Y H:i');

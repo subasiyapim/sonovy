@@ -402,4 +402,16 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', 'Ödeme eşiği başarıyla atanmıştır.');
     }
+
+    public function togglePermissions(Request $request, User $user)
+    {
+        $request->validate([
+            'permission' => 'required|exists:permissions,id',
+        ]);
+
+        $user->permissions()->toggle($request->permission);
+
+        return redirect()->back()->with('success', 'İzinler başarıyla güncellenmiştir.');
+
+    }
 }
