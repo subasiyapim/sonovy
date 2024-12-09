@@ -5,6 +5,7 @@ import {IconButton,PrimaryButton,RegularButton} from '@/Components/Buttons';
 import {FormElement} from '@/Components/Form';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {usePage} from '@inertiajs/vue3';
+import {toast} from 'vue3-toastify';
 
 import {AppProgressIndicator} from '@/Components/Widgets';
 
@@ -20,9 +21,11 @@ import {
     EditIcon
 } from '@/Components/Icons'
 import {useDefaultStore} from "@/Stores/default";
+import {useCrudStore} from "@/Stores/useCrudStore";
 
 const defaultStore = useDefaultStore();
 
+const crudStore = useCrudStore();
 const props = defineProps({
   user: {},
 });
@@ -32,18 +35,27 @@ const usages = reactive([
     {"title" : "deneme"},
     {"title" : "deneme"},
 ]);
-const commission_rate = ref();
-const threshold = ref();
-const onChangeComissonRate = (e) => {
-    console.log("EEE",e);
+const commission_rate = ref(props.user.tab.commission_rate ?? 0);
+const payment_threshold = ref(props.user.tab.payment_threshold ?? 0);
 
+
+
+const onChangeComissonRate = (e) => {
+
+    const response = crudStore.post(route('control.user-management.users.assign-to-commission-rate',props.user.id),{
+        commission_rate:commission_rate.value
+    });
+
+    toast.success('işlem başarılı');
 };
 const onChangeThreshold = (e) => {
-
+     const response = crudStore.post(route('control.user-management.users.assign-to-payment-threshold',props.user.id),{
+        payment_threshold:payment_threshold.value
+    });
+    toast.success('işlem başarılı');
 };
 </script>
 <template>
-
     <div class="flex flex-col gap-6 items-start">
         <h1 class="subheading-regular text-start" v-text="'Fiyatlandırma'"/>
         <p class="paragraph-sm c-sub-600">Et semper orci donec varius sed faucibus hendrerit. Vel nunc mauris gravida nullam nulla ut nisl nibh. </p>
@@ -59,7 +71,7 @@ const onChangeThreshold = (e) => {
                 </div>
             </template>
         </FormElement>
-        <FormElement :label="'Satış Ödemesi Eşiği'"  v-model="threshold" placeholder="Lütfen Giriniz" label-width="290px" class="w-[560px]">
+        <FormElement :label="'Satış Ödemesi Eşiği'"  v-model="payment_threshold" placeholder="Lütfen Giriniz" label-width="290px" class="w-[560px]">
             <template #tooltip>
                 deneme
             </template>
