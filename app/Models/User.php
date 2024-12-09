@@ -44,8 +44,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'country_id',
-        'state_id',
+        'district_id',
         'city_id',
+        'language_id',
         'phone_code',
         'phone',
         'is_verified',
@@ -275,6 +276,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function activities(): HasMany
     {
         return $this->hasMany(UserActivity::class);
+    }
+
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'permission_user');
     }
 
     public function serializeDate(DateTimeInterface $date): string

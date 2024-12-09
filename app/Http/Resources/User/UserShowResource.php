@@ -49,6 +49,12 @@ class UserShowResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'country_id' => $this->country_id,
+            'language_id' => $this->language_id,
+            'city_id' => $this->city_id,
+            'district_id' => $this->district_id,
+            'commission_rate' => $this->commission_rate,
+            'address' => $this->address,
             'roles' => $this->roles,
             'status' => $this->status->value,
             'email' => $this->email,
@@ -136,7 +142,7 @@ class UserShowResource extends JsonResource
 
     private function authorisations()
     {
-        return PermissionService::getGroupedPermissions($this);
+        return PermissionService::getGroupedPermissions($this->resource);
     }
 
     private function profile()

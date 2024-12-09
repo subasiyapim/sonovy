@@ -210,7 +210,7 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user)
     {
-        $data = $request->except(['role_id', 'password', 'artists', 'labels', 'platforms', 'commission_rate']);
+        $data = $request->except(['password', 'artists', 'labels', 'platforms', 'commission_rate']);
         $data['commission_rate'] = $request->commission_rate ? preg_replace(
             '/\s+/',
             '',
@@ -221,9 +221,9 @@ class UserController extends Controller
             $data['password'] = bcrypt($request->password);
         }
 
-        $user->roles()->sync($request->role_id);
         $user->update($data);
 
+        //dd($request->validated());
         return to_route('control.user-management.users.index')
             ->with([
                 'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
@@ -411,5 +411,17 @@ class UserController extends Controller
         $user->update(['payment_threshold' => $request->payment_threshold]);
 
         return redirect()->back()->with('success', 'Ödeme eşiği başarıyla atanmıştır.');
+    }
+
+    public function togglePermissions(Request $request, User $user)
+    {
+        $request->validate([
+            'permission' => 'required|exists:permissions,id',
+        ]);
+
+        $user->permissions()->toggle($request->permission);
+
+        return redirect()->back()->with('success', 'İzinler başarıyla güncellenmiştir.');
+
     }
 }

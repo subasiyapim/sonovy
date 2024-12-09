@@ -31,6 +31,12 @@ class Permission extends Model implements TranslatableContract
         return $this->belongsToMany(Role::class, 'permission_role');
     }
 
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'permission_user');
+    }
+
     public function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
