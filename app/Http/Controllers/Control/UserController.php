@@ -423,4 +423,11 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'İzinler başarıyla güncellenmiştir.');
 
     }
+
+    public function detachParent(User $user)
+    {
+        $user->update(['parent_id' => null]);
+
+        return redirect()->back()->with('success', 'Üst kullanıcı başarıyla kaldırılmıştır.');
+    }
 }
