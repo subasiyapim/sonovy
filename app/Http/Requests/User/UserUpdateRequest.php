@@ -30,12 +30,12 @@ class UserUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'country_id' => ['required', Rule::exists(Country::class, 'id')],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $this->user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$this->user->id],
             'language_id' => ['required', Rule::exists(Country::class, 'id')],
             'city_id' => ['nullable', Rule::exists(City::class, 'id')],
             'district_id' => ['nullable', Rule::exists(District::class, 'id')],
             'address' => ['nullable', 'string', 'max:255'],
-            'commission_rate' => ['nullable', 'numeric', 'min:0.1', 'max:99.99'],
+            'commission_rate' => ['nullable', 'numeric', 'min:0.1', 'max:100'],
             'is_company' => ['required', 'boolean'],
             'company_info' => ['required_if:is_company,1', 'array'],
             'company_info.name' => ['required_if:is_company,1', 'string'],
@@ -43,8 +43,7 @@ class UserUpdateRequest extends FormRequest
             'company_info.tax_office' => ['required_if:is_company,1', 'string'],
             'company_info.phone' => ['required_if:is_company,1', 'string'],
             'password' => [
-                'nullable',
-                'string',
+                'nullable', 'string',
                 Password::min(8)
                     ->mixedCase()
                     ->numbers()
@@ -71,7 +70,7 @@ class UserUpdateRequest extends FormRequest
             'company_info.tax_number' => __('control.user.fields.company_info.tax_number'),
             'company_info.tax_office' => __('control.user.fields.company_info.tax_office'),
             'company_info.phone' => __('control.user.fields.company_info.phone'),
-            'password' => __('control.user.fields.password.label'),
+            'password' => __('control.user.fields.password'),
             'password_confirmation' => __('control.user.fields.password_confirmation'),
         ];
     }
