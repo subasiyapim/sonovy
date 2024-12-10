@@ -34,7 +34,7 @@
                         {{user.name}}
                     </p>
                      <p class="paragraph-xs c-sub--600">
-                        {{user.email}}
+                        {{user.email}} | {{user.id}}
                     </p>
 
                 </div>

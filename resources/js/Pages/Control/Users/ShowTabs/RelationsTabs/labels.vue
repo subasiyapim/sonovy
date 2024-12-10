@@ -121,7 +121,7 @@ const onDone = (e) => {
 }
 
 const onDetached = (scopeRow) => {
-    tableData.value.splice(scopeRow.index);
+    tableData.value.splice(scopeRow.index,1);
     toast.success("İşlem başarılı")
 };
 

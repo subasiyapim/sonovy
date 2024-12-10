@@ -8,12 +8,12 @@
       <span class="label-xs c-soft-400">{{ user.name }}</span>
     </template>
       <div class="bg-white-400 h-44 p-5 relative">
-      <div class="">
+      <div class="flex flex-col items-start">
         <div class="flex items-center gap-2">
             <h1 class="label-xl c-strong-950" v-text="user.name"/>
              <template v-for="role in user.roles">
                     <div class="px-3 py-1 rounded-full" :class="role.code == 'super_admin' ? 'bg-[#CAC0FF]' : (role.code == 'admin' ? 'bg-[#D8E5ED]' : 'bg-[#C0D5FF]')">
-                    <p class="label-xs" :class="role.code == 'super_admin' ? 'text-[#351A75]' : (role.code == 'admin' ? 'text-[#060E2F]' : 'text-[#122368]')">  {{role.name}}</p>
+                        <p class="label-xs" :class="role.code == 'super_admin' ? 'text-[#351A75]' : (role.code == 'admin' ? 'text-[#060E2F]' : 'text-[#122368]')">  {{role.name}}</p>
                     </div>
                 </template>
 
@@ -26,7 +26,9 @@
                 <p class="label-xs text-[#122368]">  Pasif</p>
             </div>
         </div>
+        <span class="c-neutral-400 paragraph-xs" v-text="'#'+user.id"/>
         <span class="c-sub-600 paragraph-medium" v-text="user.email"/>
+
       </div>
 
       <div

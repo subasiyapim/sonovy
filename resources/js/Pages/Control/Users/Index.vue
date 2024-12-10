@@ -1,8 +1,5 @@
 <template>
   <AdminLayout :showDatePicker="false" title="Kulanıcılar" >
-
-
-
     <AppTable  ref="usersTable" :showAddButton="true"
             :buttonLabel="'Yeni Kullanıcı Ekle'"
              @addNewClicked="openAddDialog"

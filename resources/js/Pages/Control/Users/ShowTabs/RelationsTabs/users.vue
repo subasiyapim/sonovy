@@ -10,6 +10,12 @@
         <template #sub="scope">
             <NestedTable v-model="scope.row.children"></NestedTable>
         </template>
+
+        <AppTableColumn label="#" sortable="id">
+            <template #default="scope">
+                    {{scope.row.id}}
+            </template>
+        </AppTableColumn>
         <AppTableColumn label="Kullanıcı Adı" sortable="type">
             <template #default="scope">
             <div class="flex justify-start items-center gap-2 w-full">
@@ -61,24 +67,26 @@
             <template #default="scope">
                 <div class="flex items-center gap-2 border border-soft-200 rounded-lg px-3 py-1">
                     <span class="label-xs c-strong-950">•</span>
-                    <span class="label-xs c-sub-600">{{scope.row.status_text}}</span>
+                    <span class="label-xs c-sub-600">{{scope.row.status == 1 ? 'Aktif' : 'Pasif'}}</span>
                 </div>
             </template>
         </AppTableColumn>
         <AppTableColumn label="Aksiyon" align="right">
             <template #default="scope">
-                <ActionButton :user="scope.row" @onUserDetached="onUserDetached(scope)" />
+                <ActionButton @updateUser="onOpenUpdateModal(scope.row)" :user="scope.row" @onUserDetached="onUserDetached(scope)" />
             </template>
         </AppTableColumn>
     </AppTable>
+    <UserModal @update="onUpdated" v-model="isUserModalOn" v-if="isUserModalOn" :user="choosenUser"></UserModal>
 
-    <AssignUserModal @done="onDone" v-if="isAssignModalOn" v-model="isAssignModalOn" :user_id="usePage().props.user.id" ></AssignUserModal>
+     <AssignUserModal @done="onDone" v-if="isAssignModalOn" v-model="isAssignModalOn" :user_id="usePage().props.user.id" ></AssignUserModal>
 </template>
 
 <script  setup>
 import AppTable from '@/Components/Table/AppTable.vue';
 import {IconButton} from '@/Components/Buttons';
 import {AssignUserModal} from '@/Components/Dialog';
+import {StatusBadge} from '@/Components/Badges';
 import {TrashIcon,EditIcon,More2LineIcon} from '@/Components/Icons';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import ActionButton from './Components/user_action_button.vue';
@@ -89,12 +97,17 @@ import { usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
 
 
+import {UserModal} from '@/Components/Dialog';
 
+
+const isUserModalOn = ref(false);
 const defaultStore = useDefaultStore();
 const isAssignModalOn = ref(false);
 const props = defineProps({
     modelValue:{}
 });
+
+const choosenUser = ref(null);
 const emits = defineEmits(['update:modelValue']);
 
 const tableData = computed({
@@ -109,6 +122,10 @@ const openDialog =  () => {
     isAssignModalOn.value = true;
 };
 
+const onOpenUpdateModal = (row) => {
+    choosenUser.value = row;
+    isUserModalOn.value = true;
+}
 const onDone = (e) => {
     console.log("EEE",e);
     e.forEach(element => {
@@ -118,8 +135,12 @@ const onDone = (e) => {
     });
 }
 const onUserDetached = (scopeRow) => {
-    tableData.value.splice(scopeRow.index);
+    tableData.value.splice(scopeRow.index,1);
     toast.success("İşlem başarılı")
+}
+
+const onUpdated = (e) => {
+  location.reload();
 }
 
 </script>

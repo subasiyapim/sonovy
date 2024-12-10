@@ -111,13 +111,13 @@ class UserController extends Controller
             $user->roles()->sync($role_id);
         } catch (\Exception $e) {
 
-            return to_route('dashboard.users.index')
+            return back()
                 ->withErrors([
                     'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
-        return to_route('dashboard.users.index')
+        return back()
             ->with([
                 'notification' => __('control.notification_created', ['model' => __('control.user.title_singular')])
             ]);
@@ -223,7 +223,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return to_route('control.user-management.users.index')
+        return back()
             ->with([
                 'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
             ]);
@@ -239,7 +239,7 @@ class UserController extends Controller
         $user->delete();
 
 
-        return to_route('dashboard.users.index')
+        return back()
             ->with([
                 'notification' => __('control.notification_deleted', ['model' => __('control.user.title_singular')])
             ]);

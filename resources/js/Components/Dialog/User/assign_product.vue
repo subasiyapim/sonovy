@@ -36,6 +36,9 @@
                      <p class="paragraph-xs c-sub--600">
                         {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : 'Zil Sesi') }}
                     </p>
+                    <p class="paragraph-xs c-sub--600">
+                        Upc: {{product.upc_code }}
+                    </p>
 
                 </div>
             </div>

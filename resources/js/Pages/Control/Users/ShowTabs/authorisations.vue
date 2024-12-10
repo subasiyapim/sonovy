@@ -4,6 +4,8 @@ import {IconButton,PrimaryButton,RegularButton} from '@/Components/Buttons';
 import {FormElement} from '@/Components/Form';
 import {usePage} from '@inertiajs/vue3';
 import {CheckIcon} from '@/Components/Icons'
+import {toast} from 'vue3-toastify';
+
 import {
 
   EyeOnIcon,
@@ -23,6 +25,7 @@ const togglePermission = (permission) => {
     crudStore.post(route('control.user-management.users.togglePermissions',props.user.id),{
         permission:permission.id,
     })
+    toast.success("İzin işlem değişimi başarılı");
 };
 
 </script>
