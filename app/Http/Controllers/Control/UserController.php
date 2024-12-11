@@ -113,7 +113,7 @@ class UserController extends Controller
 
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
@@ -196,7 +196,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+" . $country->phone_code . $user->phone;
+            $user->phone = "+".$country->phone_code.$user->phone;
         }
 
         return inertia(
@@ -211,11 +211,8 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user)
     {
         $data = $request->except(['password', 'artists', 'labels', 'platforms', 'commission_rate']);
-        $data['commission_rate'] = $request->commission_rate ? preg_replace(
-            '/\s+/',
-            '',
-            $request->commission_rate
-        ) : null;
+
+        $data['commission_rate'] = $request->commission_rate > 100 ? 100 : $request->commission_rate;
 
         if ($request->validated()['password']) {
             $data['password'] = bcrypt($request->password);
@@ -294,7 +291,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
@@ -395,10 +392,16 @@ class UserController extends Controller
         $request->validate([
             'commission_rate' => 'required|numeric',
         ]);
+        $rate = $request->commission_rate > 100 ? 100 : $request->commission_rate;
+        $user->update(['commission_rate' => $rate]);
 
-        $user->update(['commission_rate' => $request->commission_rate]);
-
-        return redirect()->back()->with('success', 'Komisyon oranı başarıyla atanmıştır.');
+        return redirect()->back()->with([
+            'notification' => [
+                'type' => 'success',
+                'message' => 'Komisyon oranı başarıyla atanmıştır.',
+                'commission_rate' => $rate,
+            ]
+        ]);
     }
 
     public function assignToPaymentThreshold(Request $request, User $user)

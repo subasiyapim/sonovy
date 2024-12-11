@@ -35,7 +35,7 @@ class UserUpdateRequest extends FormRequest
             'city_id' => ['nullable', Rule::exists(City::class, 'id')],
             'district_id' => ['nullable', Rule::exists(District::class, 'id')],
             'address' => ['nullable', 'string', 'max:255'],
-            'commission_rate' => ['nullable', 'numeric', 'min:0.1', 'max:100'],
+            'commission_rate' => ['nullable', 'numeric', 'min:0.1'],
             'is_company' => ['required', 'boolean'],
             'company_info' => ['required_if:is_company,1', 'array'],
             'company_info.name' => ['required_if:is_company,1', 'string'],
@@ -44,11 +44,7 @@ class UserUpdateRequest extends FormRequest
             'company_info.phone' => ['required_if:is_company,1', 'string'],
             'password' => [
                 'nullable', 'string',
-                Password::min(8)
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-                    ->uncompromised()
+                Password::min(6)
             ],
             'password_confirmation' => ['nullable', 'string', 'same:password'],
         ];

@@ -54,10 +54,10 @@ class HandleInertiaRequests extends Middleware
             return LocaleService::getLanguageFile($appLocale, ['client', 'control', 'sidebar', 'auth']);
         });
 
-        // Ayarları cache'leme
-        // $settings = Cache::remember('settings', $this->cacheTime, function () {
-        //     return Setting::pluck('value', 'key');
-        // });
+        //site ayarları
+        $settings = Cache::remember('settings', $this->cacheTime, function () {
+            return Setting::pluck('value', 'key')->toArray();
+        });
 
         $data = [
             'ziggy' => function () use ($request) {
@@ -86,6 +86,7 @@ class HandleInertiaRequests extends Middleware
             'translations' => $translations,
             'notifications' => [],
             'maintenance' => null,
+            'site_settings' => $settings,
         ];
 
         if ($this->isTenant()) {
