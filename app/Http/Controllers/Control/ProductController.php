@@ -681,6 +681,7 @@ class ProductController extends Controller
 
             $result = $labels->map(function ($label) {
                 return [
+                    'name' => $label->name,
                     'label' => Str::limit($label->name, 3),
                     'value' => $label->products_count,
                 ];
