@@ -330,8 +330,15 @@ onMounted(() => {
   if (props.user) {
         form['id'] = props.user.id;
         form['name'] = props.user.name;
-        form['city_id'] =props.user.city_id;
         form['country_id'] =props.user.country_id;
+        if(props.user.country_id){
+            onCountryChoosen({value:props.user.country_id})
+        }
+        form['city_id'] =props.user.city_id;
+        if(props.user.city_id){
+            onCityChoosen({value:props.user.city_id})
+        }
+
         form['district_id'] =props.user.district_id;
         form['language_id'] =props.user.language_id;
         form['company_name'] =props.user.company_name;
