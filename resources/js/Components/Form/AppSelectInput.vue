@@ -54,7 +54,7 @@
 
 
               <slot v-if="hasSlot('option')" name="option" :scope="el"/>
-              <span v-else class="paragraph-sm c-strong-950"> {{ el[config.label ?? 'label'] }}</span>
+              <span v-else class="paragraph-sm c-strong-950"> {{ el[config?.label ?? 'label'] }}</span>
             </div>
           </div>
           <div v-if="getFilteredData?.length <= 0"
@@ -105,9 +105,9 @@ const selectContainer = ref(null);  // Reference to the select container element
 const getShowLabel = computed(() => {
   const listOfOptions = remoteDatas.value ?? props.config?.data;
   const findedElement = listOfOptions?.find((e) => e[props.config.value ?? 'value'] == element.value);
-
   return findedElement == null ? '' : findedElement[props.config.label ?? 'label'];
-})
+});
+
 const open = async () => {
   if (props.disabled) return;
   isOpen.value = true;

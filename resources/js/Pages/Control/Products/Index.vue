@@ -80,7 +80,7 @@
             <span class="paragraph-xs c-sub-600 mb-4">Toplam Sanatçılar</span>
             <div class="flex items-center gap-2">
               <div class="flex -space-x-3 rtl:space-x-reverse">
-                <template v-for="artist in statistics.artists">
+                <template v-for="artist in statistics.artists.splice(0,5)">
                   <img class="w-8 h-8 border-2 border-white rounded-full "
                        :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)" alt="">
                 </template>
@@ -451,6 +451,14 @@ const barOptions = ref({
   colors: ['#1A7544', '#49A668', '#5BCF82'], // Custom colors for the bars
   legend: {
     show: false, // Hide the legend
+  },
+   tooltip: {
+    custom: function({ series, seriesIndex, dataPointIndex, w }) {
+
+     return `<div class="p-3">
+                <span>${usePage().props.statistics?.labels[dataPointIndex].name} : ${usePage().props.statistics?.labels[dataPointIndex].value}</span>
+              </div>`;
+    },
   },
 });
 

@@ -13,7 +13,7 @@
       <FormElement label-width="190px"
                    :required="true"
                    :error="form.errors.name"
-                   :addition-error="form.errors.similar_record[0]"
+
                    :label="__('control.artist.fields.name')"
                    type="custom">
         <ArtistInput @onPlatformsChoosen="onPlatformsChoosen"
