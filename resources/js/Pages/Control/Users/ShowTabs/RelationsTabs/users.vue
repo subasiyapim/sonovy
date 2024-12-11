@@ -3,6 +3,7 @@
 <template>
     <AppTable  ref="usersTable"
         :isClient="true"
+        :hasSearch="false"
         :renderSubWhen="renderSubWhen"
         @addNewClicked="openDialog"
         :buttonLabel="'Alt Kullanıcı Ata'"

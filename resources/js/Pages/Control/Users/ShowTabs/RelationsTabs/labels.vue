@@ -2,6 +2,7 @@
 
 <template>
     <AppTable :hasSelect="true"
+         :hasSearch="false"
             :buttonLabel="'Yayın Ata'" ref="pageTable"  :isClient="true"
               v-model="tableData" @addNewClicked="openDialog">
       <AppTableColumn :label="__('control.label.title_singular')" align="left" sortable="name">

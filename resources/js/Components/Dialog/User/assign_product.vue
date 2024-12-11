@@ -5,10 +5,10 @@
       <PersonIcon color="var(--dark-green-950)"/>
     </template>
 
-    <div class="p-5 flex flex-col gap-6" style="min-height:250px;">
+    <div  class="p-5 flex flex-col gap-6" style="min-height:250px;">
         <div>
 
-        <div class="relative w-full">
+            <div class="relative w-full">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <SearchIcon color="var(--sub-600)" />
                 </div>
@@ -17,60 +17,116 @@
             </div>
 
         </div>
+        <div v-if="step == 1">
+            <div v-for="product in products" class="flex items-center  justify-between cursor-pointer" @click="onChoosenItem(product)">
 
-        <div v-for="product in products" class="flex items-center  justify-between cursor-pointer" @click="onChoosenItem(product)">
+                <div class="flex items-center gap-2 flex-1">
+                    <button class="appCheckBox" :class="choosenProducts?.find((e) => e.id == product.id) ? 'checked' : ''">
+                            <CheckIcon color="#fff" />
+                        </button>
+                    <div class="w-12 h-12 rounded-full overflow-hidden">
+                        <img :alt="product.album_name"
+                            :src="product.image ? product.image.thumb : defaultStore.profileImage(product.album_name)"
+                        >
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="label-sm c-sub-600">
+                            {{product.album_name}}
+                        </p>
+                        <p class="paragraph-xs c-sub--600">
+                            {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : 'Zil Sesi') }}
+                        </p>
+                        <p class="paragraph-xs c-sub--600">
+                            Upc: {{product.upc_code }}
+                        </p>
 
-            <div class="flex items-center gap-2 flex-1">
-                <button class="appCheckBox" :class="choosenProducts?.find((e) => e.id == product.id) ? 'checked' : ''">
-                        <CheckIcon color="#fff" />
-                    </button>
-                <div class="w-12 h-12 rounded-full overflow-hidden">
-                    <img :alt="product.album_name"
-                        :src="product.image ? product.image.thumb : defaultStore.profileImage(product.album_name)"
-                    >
+                    </div>
                 </div>
-                <div class="flex flex-col">
-                    <p class="label-sm c-sub-600">
-                        {{product.album_name}}
-                    </p>
-                     <p class="paragraph-xs c-sub--600">
-                        {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : 'Zil Sesi') }}
-                    </p>
-                    <p class="paragraph-xs c-sub--600">
-                        Upc: {{product.upc_code }}
-                    </p>
+
+
+
+            </div>
+            <div v-if="loading" class="h-full flex-1">
+                <div class="flex items-center gap-2 paragraph-sm">
+                    <ProgressIcon /> Yükleniyor
+                </div>
+            </div>
+            <div v-else class="h-full flex-1">
+
+                <div v-if="products.length <= 0">
+                    <template v-if="!queryTerm">
+                        Kullanıcı Aramak için bilgi giriniz.
+                    </template>
+                    <template v-else>
+                        kullanıcı bulunamadı
+                    </template>
 
                 </div>
             </div>
-
-
-
         </div>
-        <div v-if="loading" class="h-full flex-1">
-            <div class="flex items-center gap-2 paragraph-sm">
-                <ProgressIcon /> Yükleniyor
+
+
+        <div v-else>
+            <div v-for="label in labels" class="flex items-center  justify-between cursor-pointer" @click="onChoosenItem(label)">
+
+                <div class="flex items-center gap-2 flex-1">
+                    <button class="appCheckBox" :class="choosenLabels?.find((e) => e.id == label.id) ? 'checked' : ''">
+                            <CheckIcon color="#fff" />
+                        </button>
+                    <div class="w-12 h-12 rounded-full overflow-hidden">
+                        <img :alt="label.name"
+                            :src="label.image ? label.image.thumb : defaultStore.profileImage(label.name)"
+                        >
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="label-sm c-sub-600">
+                            {{label.name}}
+                        </p>
+
+                        <p class="paragraph-xs c-sub--600">
+                             {{label.email }}
+                        </p>
+
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div v-if="loading" class="h-full flex-1">
+                <div class="flex items-center gap-2 paragraph-sm">
+                    <ProgressIcon /> Yükleniyor
+                </div>
+            </div>
+            <div v-else class="h-full flex-1">
+
+                <div v-if="products.length <= 0">
+                    <template v-if="!queryTerm">
+                        Kullanıcı Aramak için bilgi giriniz.
+                    </template>
+                    <template v-else>
+                        kullanıcı bulunamadı
+                    </template>
+
+                </div>
             </div>
         </div>
-        <div v-else class="h-full flex-1">
 
-            <div v-if="products.length <= 0">
-                <template v-if="!queryTerm">
-                    Kullanıcı Aramak için bilgi giriniz.
-                </template>
-                <template v-else>
-                    kullanıcı bulunamadı
-                </template>
-
-            </div>
-        </div>
 
     </div>
+
+
     <div class="flex p-5 border-t border-soft-200 gap-4 sticky bottom-0 bg-white">
         <RegularButton @click="isDialogOn = false" class="flex-1">
                 İptal
         </RegularButton>
         <PrimaryButton :loading="submitting" @click="submit" class="flex-1" :disabled="choosenProducts.length<=0">
-            Seçilenleri Ata
+            <template v-if="step == 1">
+                Plak şirketi seç
+            </template>
+            <template v-else>
+                Seçilenleri Ata
+            </template>
         </PrimaryButton>
     </div>
   </BaseDialog>
@@ -96,17 +152,17 @@ const props = defineProps({
 
     }
 })
+
+const step = ref(1);
 const defaultStore = useDefaultStore();
 const crudStore = useCrudStore();
 const loading = ref(false)
-const form = useForm({
-  id: "",
-  album_name: '',
-  type:1
 
-});
 const products = ref([]);
+const labels = ref([]);
 const choosenProducts = ref([]);
+const choosenLabels = ref([]);
+
 const emits = defineEmits(['update:modelValue', 'done']);
 const isDialogOn = computed({
   get: () => props.modelValue,
@@ -120,43 +176,74 @@ const onInput = (e) => {
 
 }
 const onChange = async (e) => {
-    let tempUser = [];
+    let tempData = [];
     if(queryTerm.value == ""){
-
-
         loading.value = false;
-       tempUser = [];
+        tempData = [];
     }else {
-        tempUser = await crudStore.get(route('control.search.products'),{
+        let path = route('control.search.products');
+    if(step.value == 2){
+            path = route('control.search.labels')
+    }
+        tempData = await crudStore.get(path,{
             search:queryTerm.value
         })
 
     }
-    products.value = tempUser;
+    if(step.value == 1){
+        products.value = tempData;
+        choosenProducts.value.forEach(element => {
+            const finded = products.value.find((e) => e.id == element.id);
+            if(!finded){
+                products.value.push(element);
+            }
+        });
+    console.log("PRODUCT",products.value);
+
+    }else {
+        labels.value = tempData;
+        choosenLabels.value.forEach(element => {
+            const finded = labels.value.find((e) => e.id == element.id);
+            if(!finded){
+                labels.value.push(element);
+            }
+        });
+    }
+
     loading.value = false;
 
 
-    choosenProducts.value.forEach(element => {
-        const finded = products.value.find((e) => e.id == element.id);
-        if(!finded){
-            products.value.push(element);
-        }
-    });
 }
-const onChoosenItem =  (product) => {
-    const findedIndex = choosenProducts.value.findIndex((el) =>el.id == product.id);
-    if(findedIndex >= 0 ){
-        choosenProducts.value.splice(findedIndex,1);
+const onChoosenItem =  (item) => {
+    if(step.value == 1){
+        const findedIndex = choosenProducts.value.findIndex((el) =>el.id == item.id);
+        if(findedIndex >= 0 ){
+            choosenProducts.value.splice(findedIndex,1);
+        }else {
+            choosenProducts.value.push(item);
+        }
     }else {
-        choosenProducts.value.push(product);
+        const findedIndex = choosenLabels.value.findIndex((el) =>el.id == item.id);
+        if(findedIndex >= 0 ){
+            choosenLabels.value.splice(findedIndex,1);
+        }else {
+            choosenLabels.value.push(item);
+        }
     }
+
 }
 
 
 const submit = async () => {
+    if(step.value == 1){
+        queryTerm.value = "";
+        step.value++;
+        return;
+    };
     submitting.value = true;
     const response = await crudStore.post(route('control.user-management.users.assign-to-products',props.user_id),{
         products: choosenProducts.value.map((e) => e.id),
+        labels: choosenLabels.value.map((e) => e.id),
     });
     submitting.value = false;
     isDialogOn.value = false;

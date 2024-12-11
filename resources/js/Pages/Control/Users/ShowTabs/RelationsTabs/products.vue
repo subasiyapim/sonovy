@@ -1,7 +1,9 @@
 <template>
+
   <AppTable ref="productTable"
             v-model="tableData"
             @addNewClicked="openDialog"
+            :hasSearch="false"
             :buttonLabel="'Yayın Ata'"
             :isClient="true">
     <AppTableColumn label="Tür" sortable="type">

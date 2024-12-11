@@ -1,6 +1,6 @@
 <template>
 
-  <div v-if="hasSearch || config?.filters">
+  <div>
 
     <div class="flex items-center mb-4 ">
       <div class="flex-1 flex items-center gap-7">
@@ -217,6 +217,7 @@ import {
   WarningIcon,
   CheckIcon
 } from '@/Components/Icons';
+
 import {AppTextInput} from '@/Components/Form';
 import {router, Link} from '@inertiajs/vue3';
 import {PrimaryButton} from '@/Components/Buttons'
