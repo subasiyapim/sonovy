@@ -13,6 +13,7 @@ import UserModal from './User/index.vue';
 import AssignUserModal from './User/assign_user.vue';
 import AssignUserProductModal from './User/assign_product.vue';
 import AssignUserLabelModal from './User/assign_labels.vue';
+import ChangePackageDialog from './User/change_package.vue';
 export {
     ArtistDialog,
     LabelDialog,
@@ -29,5 +30,6 @@ export {
     AssignUserModal,
     AssignUserProductModal,
     AssignUserLabelModal,
+    ChangePackageDialog,
 
 }

@@ -63,7 +63,6 @@
         <template #default="scope">
           <div class="flex gap-3">
                 <ActionButton :label="scope.row" @onDetached="onDetached(scope)" />
-
           </div>
         </template>
       </AppTableColumn>
