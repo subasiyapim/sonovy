@@ -149,7 +149,7 @@ class UserController extends Controller
 
         ];
 
-        $tab = request()->has('slug') ? request()->input('slug') : 'profile';;
+        $tab = request()->has('slug') ? request()->input('slug') : 'profile';
 
         $response = new UserShowResource($user, $tab);
         $countryCodes = CountryServices::getCountryPhoneCodes();
@@ -377,14 +377,22 @@ class UserController extends Controller
             'children' => 'required|array',
         ]);
 
-        $assingedUsers = User::whereIn('id', $request->children)
+        $assignedUsers = User::whereIn('id', collect($request->children)->pluck('id'))
             ->get()
-            ?->each(function ($child) use ($user) {
-                $child->update(['parent_id' => $user->id]);
+            ->each(function ($child) use ($user, $request) {
+                // Find the corresponding element in the original array
+                $commissionData = collect($request->children)->firstWhere('id', $child->id);
+
+                // Update the child with both parent_id and commission_rate
+                $child->update([
+                    'parent_id' => $user->id,
+                    'commission_rate' => $commissionData['commission_rate'] ?? null, // Default to null if not set
+                ]);
             });
+
         return response()->json([
             "success" => true,
-            "user" => $assingedUsers,
+            "user" => $assignedUsers,
             "message" => 'Alt kullanıcılar başarıyla atanmıştır.'
         ]);
         // return redirect()->back()->with('success', 'Alt kullanıcılar başarıyla atanmıştır.');

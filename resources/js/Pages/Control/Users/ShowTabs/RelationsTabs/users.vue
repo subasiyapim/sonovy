@@ -54,7 +54,7 @@
             <template #default="scope">
 
                 <div class="flex items-center gap-1 label-sm">
-                    <span class="c-strong-950">%{{scope.row.real_commission_rate}} /</span>
+                    <span class="c-strong-950">%{{scope.row.payment_threshold}} /</span>
                     <span class="c-soft-400">%{{scope.row.commission_rate}}</span>
                 </div>
             </template>
@@ -97,7 +97,7 @@ import NestedTable from '@/Components/Table/NestedTable.vue';
 import { usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
 
-
+const usersTable = ref();
 import {UserModal} from '@/Components/Dialog';
 
 

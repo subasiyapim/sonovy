@@ -22,7 +22,7 @@ class LabelController extends Controller
     {
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $labels = Label::with('country', 'products')
+        $labels = Label::with('country', 'products', 'user')
             ->when(request('status') == 1, function ($query) {
                 $query->whereDoesntHave('products');
             })
@@ -56,8 +56,12 @@ class LabelController extends Controller
             [
                 'title' => __('control.label.fields.country_id'),
                 'param' => 'country',
-                'options' => getDataFromInputFormat(\App\Models\System\Country::get(['id', 'name', 'emoji']), 'id',
-                    'name', 'emoji')
+                'options' => getDataFromInputFormat(
+                    \App\Models\System\Country::get(['id', 'name', 'emoji']),
+                    'id',
+                    'name',
+                    'emoji'
+                )
             ]
         ];
         return inertia('Control/Labels/Index', compact('labels', 'countries', 'countryCodes', 'filters'));

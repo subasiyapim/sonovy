@@ -554,12 +554,7 @@ onMounted(() => {
 
 
 const toggleShowSub = (index) => {
-
-
-
   data.value[index].isSelected = !data.value[index].isSelected ?? true;
-
-
 }
 defineExpose({
   removeRowByIndex,

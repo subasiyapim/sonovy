@@ -7,6 +7,20 @@
       <span class="label-xs c-soft-400">•</span>
       <span class="label-xs c-soft-400">{{ user.name }}</span>
     </template>
+    <template #toolbar>
+        <RegularButton @click="switchUsers">
+          <template #icon>
+            <EyeOnIcon color="var(--sub-600)"/>
+          </template>
+          <template v-if="isInViewMode">
+            Admin'e geri dön
+          </template>
+           <template v-else>
+             Kullanıcının Gözünden Gör
+          </template>
+
+        </RegularButton>
+    </template>
       <div class="bg-white-400 h-44 p-5 relative">
       <div class="flex flex-col items-start">
         <div class="flex items-center gap-2">
@@ -38,18 +52,7 @@
              :src="user.image ? user.image.thumb : defaultStore.profileImage(user.name)">
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
-        <RegularButton @click="switchUsers">
-          <template #icon>
-            <EyeOnIcon color="var(--sub-600)"/>
-          </template>
-          <template v-if="isInViewMode">
-            Admin'e geri dön
-          </template>
-           <template v-else>
-             Kullanıcının Gözünden Gör
-          </template>
 
-        </RegularButton>
         <PrimaryButton @click="remove" class="bg-error-500">
           <template #icon>
             <TrashIcon color="#fff"/>

@@ -84,7 +84,7 @@
   <div v-if="showTags" class="flex flex-wrap items-center gap-2 mt-2">
     <StatusBadge v-for="(el,index) in element" :showClose="true" @close="element.splice(index,1)" :showIcon="false">
       <span
-          class="label-xs c-sub-600">{{ config.data.find((option) => option[config.value ?? 'value'] == el)[config?.label ?? 'label'] }}</span>
+          class="label-xs c-sub-600">{{ config.data?.find((option) => option[config.value ?? 'value'] == el)[config?.label ?? 'label'] }}</span>
     </StatusBadge>
   </div>
 
@@ -258,9 +258,10 @@ const handleResize = () => {
 }
 
 const insertData = (e) => {
+
+    props.config?.data.push(e);
   chooseValue(e);
   instance.update();
-  // const $forceUpdate = () => queueJob(instance.update)
 }
 
 // Add event listener for window resize on mounted, and remove on unmounted

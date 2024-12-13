@@ -95,10 +95,9 @@ class Product extends Model implements HasMedia
         'status'
     ];
     protected array $orderable = [
-        'name',
-        'id',
-        'type',
-        'status'
+        'status',
+
+
     ];
 
 
@@ -235,7 +234,7 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsToMany(
             \App\Models\System\Country::class,
-            tenant('tenancy_db_name').'.product_published_country',
+            tenant('tenancy_db_name') . '.product_published_country',
             'product_id',
             'country_id'
         );

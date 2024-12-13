@@ -197,6 +197,7 @@ return [
             'email' => 'Email',
             'phone' => 'Telefon',
             'web' => 'Web sitesi',
+            'added_by' => "Ekleyen",
             'commission_rate' => 'Hakediş Oranı',
             'status' => "Durum",
             'status_inactive' => 'Pasif',

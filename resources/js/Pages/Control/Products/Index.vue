@@ -66,24 +66,25 @@
           </div>
 
         </template>
-        <template #tool>
-          <div class="">
 
-            <RegularButton>Detay</RegularButton>
-          </div>
-        </template>
 
         <template #body>
+
           <hr class="my-3">
           <div class="flex flex-col items-start">
             <p class="label-medium c-strong-950 !font-semibold">{{ statistics.artists.length }}</p>
-            <span class="paragraph-xs c-sub-600 mb-4">Toplam Sanatçılar</span>
+            <span class="paragraph-xs c-sub-600 mb-4">Toplam Sanatçılar </span>
             <div class="flex items-center gap-2">
               <div class="flex -space-x-3 rtl:space-x-reverse">
-                <template v-for="artist in statistics.artists.splice(0,5)">
-                  <img class="w-8 h-8 border-2 border-white rounded-full "
+                <template v-for="artist in statistics.artists.slice(0,5)">
+                  <img class="w-8 h-8 border border-soft-200 rounded-full "
                        :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)" alt="">
                 </template>
+                <template v-if="statistics.artists.length > 5">
+                     <span class="w-8 h-8 border-2 rounded-full bg-gray-500 flex items-center justify-center paragraph-xs text-white">
+                     +{{statistics.artists.length-5}}
+                     </span>
+                 </template>
               </div>
               <span class="paragraph-xs c-sub-600">{{ statistics.artists.length }} Yeni eklendi</span>
             </div>
@@ -94,6 +95,7 @@
 
     <AppTable ref="productTable" :showAddButton="false" :renderRowNoteText="renderRowNoteText"
               :showNoteIf="showNoteIfFn"
+            :config="appTableConfig"
               v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
       <AppTableColumn label="Tür" sortable="type">
         <template #default="scope">
@@ -104,7 +106,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Durum">
+      <AppTableColumn label="Durum" sortable="status">
         <template #default="scope">
 
           <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2">
@@ -225,7 +227,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref,computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import {ProductDialog} from '@/Components/Dialog';
@@ -256,8 +258,16 @@ const defaultStore = useDefaultStore();
 
 const props = defineProps({
   statistics: Object,
+  filters: {
+    type: Array,
+  }
 })
 
+const appTableConfig = computed(() => {
+  return {
+    filters: props.filters,
+  }
+})
 const deleteProduct = (row) => {
   productTable.value.removeRowDataFromRemote(row);
 

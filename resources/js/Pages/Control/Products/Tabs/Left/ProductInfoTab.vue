@@ -308,11 +308,8 @@ const onArtistCreated = (e) => {
 
   if (whichSelectToAdd.value == 'featuring_artists') {
     featuringArtistSelect.value.appMultiSelect.insertData(row);
-
-    featuringArtistSelectConfig.value.data.push(row);
   } else {
     mainArtistSelect.value.appMultiSelect.insertData(row);
-    mainArtistSelectConfig.value.data.push(row);
   }
 
 }

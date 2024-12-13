@@ -75,7 +75,12 @@ class ProductController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-
+        if (!$request->query('order') || !$request->query('sort')) {
+            return redirect()->route($request->route()->getName(), array_merge($request->query(), [
+                'order' => 'asc',
+                'sort' => 'status',
+            ]));
+        }
         $validated = $validator->validated();
 
 
@@ -86,21 +91,30 @@ class ProductController extends Controller
             ->when($request->input('type'), function ($query) use ($request) {
                 $query->where('type', $request->input('type'));
             })
+
             ->advancedFilter();
 
         $statistics = [
             'products' => $this->getProductsGroupedByPeriod($validated['period'] ?? 'month'),
             'labels' => $this->getTopLabelsByProductCount(),
             'artists' => $this->getArtistsAddedLastMonth(),
+
         ];
 
         $country_count = Country::count();
         $statuses = ProductStatusEnum::getTitles();
         $types = ProductTypeEnum::getTitles();
 
+        $filters = [
+            [
+                "title" => "Durum",
+                "param" => "status",
+                "options" => getDataFromInputFormat($statuses, 'id', 'name', null, true)
+            ]
+        ];
         return inertia(
             'Control/Products/Index',
-            compact('products', 'country_count', 'statuses', 'types', 'statistics')
+            compact('products', 'country_count', 'statuses', 'types', 'statistics', 'filters')
         );
     }
 

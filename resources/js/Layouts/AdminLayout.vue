@@ -24,6 +24,7 @@
                                 <slot name="breadcrumb" />
                             </div>
                        </div>
+                       <slot name="toolbar" />
                          <IconButton>
                              <SearchIcon color="var(--sub-600)" />
                         </IconButton>

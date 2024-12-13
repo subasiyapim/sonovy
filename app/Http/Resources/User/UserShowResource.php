@@ -185,7 +185,8 @@ class UserShowResource extends JsonResource
                 'phone' => $label->phone,
                 'email' => $label->email,
                 'commission_rate' => $label->user->commission_rate,
-                'status' => $label->hasActive() ? 'Aktif şirket' : 'Pasif şirket'
+                'status' => $label->hasActive() ? 'Aktif şirket' : 'Pasif şirket',
+                'user' => $label->user,
             ];
         })->toArray();
     }

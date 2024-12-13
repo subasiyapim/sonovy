@@ -21,18 +21,13 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn :label="__('control.label.fields.country_id')" sortable="name">
+        <AppTableColumn :label="__('control.label.fields.added_by')" sortable="name" width="140">
         <template #default="scope">
-
           <div class="flex items-center gap-4">
-             <span class="text-xl">
-                {{ scope.row?.country?.emoji }}
-             </span>
-            <p class="paragraph-xs c-sub-600">
-              {{ scope.row?.country?.name }}
-            </p>
+             <a v-if="scope.row.user" :href="route('control.user-management.users.show',scope.row.user?.id)" class="paragraph-xs c-strong-950 hover:underline">
+                {{ scope.row.user?.name }}
+             </a>
           </div>
-
         </template>
       </AppTableColumn>
 

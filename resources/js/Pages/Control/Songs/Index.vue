@@ -11,7 +11,6 @@
           </div>
         </template>
       </AppTableColumn>
-
       <AppTableColumn :label="'Durum'" sortable="name" >
         <template #default="scope">
           <StatusBadge v-text="props.statuses[scope.row.status]"
@@ -20,7 +19,6 @@
 
         </template>
       </AppTableColumn>
-
       <AppTableColumn :label="'Parça Adı'" sortable="name">
         <template #default="scope">
           <div class="flex flex-col items-start">
@@ -31,8 +29,7 @@
           </div>
         </template>
       </AppTableColumn>
-
-      <AppTableColumn :label="'Süre'" sortable="name">
+      <AppTableColumn :label="'Süre'" sortable="name" width="150">
         <template #default="scope">
           <div v-if="currentSong !== scope.row" @click="playSound(scope.row)"
                class="flex items-center gap-2 cursor-pointer">
@@ -70,7 +67,6 @@
           </div>
         </template>
       </AppTableColumn>
-
       <template #empty>
         <div class="flex flex-col items-center justify-center gap-8">
           <div>
