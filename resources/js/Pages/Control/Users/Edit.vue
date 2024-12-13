@@ -27,9 +27,9 @@
         <AppStepper :modelValue="currentTab" @change="onChangeTab">
           <AppStepperElement :showWarning="!completed_steps.step1" title="Yayın Bilgileri"></AppStepperElement>
           <AppStepperElement :showWarning="!completed_steps.step2"
-              :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
-          <AppStepperElement :showWarning="!completed_steps.step3"  title="Yayınlama Detayları"></AppStepperElement>
-          <AppStepperElement :showWarning="!completed_steps.step4"  title="Pazarlama ve Onay"></AppStepperElement>
+                             :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
+          <AppStepperElement :showWarning="!completed_steps.step3" title="Yayınlama Detayları"></AppStepperElement>
+          <AppStepperElement :showWarning="!completed_steps.step4" title="Pazarlama ve Onay"></AppStepperElement>
 
         </AppStepper>
 
@@ -52,27 +52,28 @@
               <AppProgressIndicator v-model="progress"/>
             </div>
           </div>
-          <PrimaryButton v-if="currentTab < 3" @click="submitStep" >
+          <PrimaryButton v-if="currentTab < 3" @click="submitStep">
 
-                        Devam Et
-
-
-
-                </PrimaryButton>
-            <tippy v-else :allowHtml="true" :sticky="true" :interactive="true"  :trigger="Object.values(props.completed_steps).filter((e) => e == false).length > 0 ? 'mouseenter' : 'manual'">
-
-                <PrimaryButton @click="submitStep" :disabled="Object.values(props.completed_steps).filter((e) => e == false).length > 0">
+            Devam Et
 
 
-                        Yayına gönder
+          </PrimaryButton>
+          <tippy v-else :allowHtml="true" :sticky="true" :interactive="true"
+                 :trigger="Object.values(props.completed_steps).filter((e) => e == false).length > 0 ? 'mouseenter' : 'manual'">
+
+            <PrimaryButton @click="submitStep"
+                           :disabled="Object.values(props.completed_steps).filter((e) => e == false).length > 0">
 
 
-                </PrimaryButton>
+              Yayına gönder
 
-                <template #content>
-                     Yayına göndermek için tüm eksikleri tamamlamalısınız!
-                </template>
-            </tippy>
+
+            </PrimaryButton>
+
+            <template #content>
+              Yayına göndermek için tüm eksikleri tamamlamalısınız!
+            </template>
+          </tippy>
 
         </div>
       </div>
@@ -99,36 +100,26 @@
 </template>
 
 <script setup>
-import {computed, ref, onBeforeMount} from 'vue';
+import {ref, onBeforeMount} from 'vue';
 import {IconButton} from '@/Components/Buttons'
-import {FormElement} from '@/Components/Form';
+
 
 import {
   ArrowLeftIcon,
-  SearchIcon,
-  ChevronRightIcon,
   StickyNoteFilledIcon,
-  AddIcon,
-  BroadcastTitleIcon,
-  PersonIcon,
-  GenreIcon,
-  CalendarIcon,
-  DurationIcon
 } from '@/Components/Icons';
 import {router} from '@inertiajs/vue3';
-import ProductInfoTab from './Tabs/Left/ProductInfoTab.vue'
-import ProductSummaryTab from './Tabs/Right/ProductSummaryTab.vue'
 import {useForm} from '@inertiajs/vue3';
-
-import SongDetailTab from './Tabs/Left/SongDetailTab.vue'
-import SongSummaryTab from './Tabs/Right/SongSummaryTab.vue'
 import {PrimaryButton} from '@/Components/Buttons'
 import {AppProgressIndicator} from '@/Components/Widgets'
-import PublishingDetailTab from './Tabs/Left/PublishingDetailTab.vue'
-import MarketingAndSend from './Tabs/Left/MarketingAndSend.vue'
+import MarketingAndSend from '@/Pages/Control/Products/Tabs/Left/MarketingAndSend.vue'
 import {AppStepper, AppStepperElement} from '@/Components/Stepper';
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {toast} from 'vue3-toastify';
+import ProductSummaryTab from "@/Pages/Control/Products/Tabs/Right/ProductSummaryTab.vue";
+import PublishingDetailTab from "@/Pages/Control/Products/Tabs/Left/PublishingDetailTab.vue";
+import SongDetailTab from "@/Pages/Control/Products/Tabs/Left/SongDetailTab.vue";
+import ProductInfoTab from "@/Pages/Control/Products/Tabs/Left/ProductInfoTab.vue";
 
 
 const crudStore = useCrudStore();
@@ -140,13 +131,13 @@ const props = defineProps({
   formats: {},
   progress: Number,
   product_publish_country_types: {},
-  completed_steps:{},
+  completed_steps: {},
 })
 
 const progress = ref(props.progress);
 const onChangeTab = (e) => {
 
-    router.visit(route('control.catalog.products.form.edit', [e + 1, props.product.id]))
+  router.visit(route('control.catalog.products.form.edit', [e + 1, props.product.id]))
 
 }
 
@@ -216,7 +207,7 @@ const submitStep = async () => {
     });
   }
   if (currentTab.value == 1) {
-    if(step2Element.songs.length == 0){
+    if (step2Element.songs.length == 0) {
       toast.error("Şarkı eklemelisiniz");
       return;
     }
