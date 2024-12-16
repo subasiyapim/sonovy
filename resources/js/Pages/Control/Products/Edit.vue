@@ -174,6 +174,7 @@ const step1Element = useForm({
   video_type: props.product.video_type,
   description: props.product.description,
   is_for_kids: props.product.is_for_kids,
+  grid: props.product.grid,
 });
 
 
