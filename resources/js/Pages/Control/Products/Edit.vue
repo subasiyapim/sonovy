@@ -27,9 +27,10 @@
         <AppStepper :modelValue="currentTab" @change="onChangeTab" :count="product.type != 2 ? 4 : 3">
           <AppStepperElement :showWarning="!completed_steps.step1" title="Yayın Bilgileri"></AppStepperElement>
           <AppStepperElement :showWarning="!completed_steps.step2"
-              :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
-          <AppStepperElement :showWarning="!completed_steps.step3"  title="Yayınlama Detayları"></AppStepperElement>
-          <AppStepperElement v-if="product.type != 2" :showWarning="!completed_steps.step4"  title="Pazarlama ve Onay"></AppStepperElement>
+                             :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
+          <AppStepperElement :showWarning="!completed_steps.step3" title="Yayınlama Detayları"></AppStepperElement>
+          <AppStepperElement v-if="product.type != 2" :showWarning="!completed_steps.step4"
+                             title="Pazarlama ve Onay"></AppStepperElement>
 
         </AppStepper>
 
@@ -40,8 +41,10 @@
                           v-if="currentTab == 0"></ProductInfoTab>
           <SongDetailTab :product="product" :genres="genres" v-model="step2Element"
                          v-if="currentTab == 1"></SongDetailTab>
-          <PublishingDetailTab v-if="currentTab == 2 && product.type != 2" v-model="step3Element" :product="product"></PublishingDetailTab>
-          <MusicVideoPublishingDetails v-if="currentTab == 2 && product.type == 2" v-model="step3Element" :product="product"></MusicVideoPublishingDetails>
+          <PublishingDetailTab v-if="currentTab == 2 && product.type != 2" v-model="step3Element"
+                               :product="product"></PublishingDetailTab>
+          <MusicVideoPublishingDetails v-if="currentTab == 2 && product.type == 2" v-model="step3Element"
+                                       :product="product"></MusicVideoPublishingDetails>
           <MarketingAndSend v-if="currentTab == 3" v-model="step4Element" :product="product"></MarketingAndSend>
 
 
@@ -53,27 +56,28 @@
               <AppProgressIndicator v-model="progress"/>
             </div>
           </div>
-          <PrimaryButton v-if="currentTab < 3" @click="submitStep" >
+          <PrimaryButton v-if="currentTab < 3" @click="submitStep">
 
-                        Devam Et
-
-
-
-                </PrimaryButton>
-            <tippy v-else :allowHtml="true" :sticky="true" :interactive="true"  :trigger="Object.values(props.completed_steps).filter((e) => e == false).length > 0 ? 'mouseenter' : 'manual'">
-
-                <PrimaryButton @click="submitStep" :disabled="Object.values(props.completed_steps).filter((e) => e == false).length > 0">
+            Devam Et
 
 
-                        Yayına gönder
+          </PrimaryButton>
+          <tippy v-else :allowHtml="true" :sticky="true" :interactive="true"
+                 :trigger="Object.values(props.completed_steps).filter((e) => e == false).length > 0 ? 'mouseenter' : 'manual'">
+
+            <PrimaryButton @click="submitStep"
+                           :disabled="Object.values(props.completed_steps).filter((e) => e == false).length > 0">
 
 
-                </PrimaryButton>
+              Yayına gönder
 
-                <template #content>
-                     Yayına göndermek için tüm eksikleri tamamlamalısınız!
-                </template>
-            </tippy>
+
+            </PrimaryButton>
+
+            <template #content>
+              Yayına göndermek için tüm eksikleri tamamlamalısınız!
+            </template>
+          </tippy>
 
         </div>
       </div>
@@ -142,13 +146,13 @@ const props = defineProps({
   formats: {},
   progress: Number,
   product_publish_country_types: {},
-  completed_steps:{},
+  completed_steps: {},
 })
 
 const progress = ref(props.progress);
 const onChangeTab = (e) => {
 
-    router.visit(route('control.catalog.products.form.edit', [e + 1, props.product.id]))
+  router.visit(route('control.catalog.products.form.edit', [e + 1, props.product.id]))
 
 }
 
@@ -174,7 +178,7 @@ const step1Element = useForm({
   video_type: props.product.video_type,
   description: props.product.description,
   is_for_kids: props.product.is_for_kids,
-  grid: props.product.grid,
+  grid_code: props.product.grid_code,
 });
 
 
@@ -219,7 +223,7 @@ const submitStep = async () => {
     });
   }
   if (currentTab.value == 1) {
-    if(step2Element.songs.length == 0){
+    if (step2Element.songs.length == 0) {
       toast.error("Şarkı eklemelisiniz");
       return;
     }
@@ -240,20 +244,20 @@ const submitStep = async () => {
 
   }
   if (currentTab.value == 2) {
-    if(props.product.type == 2){
-        step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
+    if (props.product.type == 2) {
+      step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
-            onError: (e) => {
-                toast.error(Object.values(e)[0])
-            },
-            onSuccess: (e) => {
-                      router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))
+        onError: (e) => {
+          toast.error(Object.values(e)[0])
+        },
+        onSuccess: (e) => {
+          router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))
 
-            },
+        },
 
-        });
-        return;
-    }else {
+      });
+      return;
+    } else {
 
     }
 

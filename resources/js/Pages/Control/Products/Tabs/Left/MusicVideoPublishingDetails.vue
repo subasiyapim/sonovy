@@ -9,44 +9,52 @@
 
     <div class="flex flex-col gap-6">
 
-        <SectionHeader title="PLATFORM TERCİHLERİ"></SectionHeader>
+      <SectionHeader title="PLATFORM TERCİHLERİ"></SectionHeader>
 
-        <div v-for="platform in form.platforms" class="flex items-start gap-24">
+      <div v-for="platform in form.platforms" class="flex items-start gap-24">
 
-            <div class="flex items-center gap-2 w-32">
-                <Icon :icon="platform.iconKey"/>
-                <p class="label-sm c-strong-950">{{platform.label}}</p>
-            </div>
-           <div class="flex-1">
-                <FormElement direction="vertical" type="textarea" v-model="platform.description" placeholder="Tanım"></FormElement>
-                <div class="flex items-center gap-2">
-                    <FormElement direction="vertical" v-model="platform.content_id" class="flex-1" type="text"></FormElement>
-                    <FormElement direction="vertical" v-model="platform.privacy" class="flex-1" type="select" :config="youtubeConfig"></FormElement>
-                </div>
-                 <div class="flex items-center gap-2">
-                    <FormElement direction="vertical" v-model="platform.hashtags" class="flex-1" type="hashtags" placeholder="Etiket giriniz"></FormElement>
-                </div>
-                <div class="flex items-center gap-2">
-
-                      <VueDatePicker  v-model="platform.date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
-                            <template #input-icon>
-                            <div class="p-3">
-                                    <CalendarIcon color="var(--sub-600)"/>
-                            </div>
-                            </template>
-                        </VueDatePicker>
-                    <VueDatePicker    v-model="platform.time" class="radius-8" time-picker auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
-                            <template #input-icon>
-                            <div class="p-3">
-                                    <CalendarIcon color="var(--sub-600)"/>
-                            </div>
-                            </template>
-                        </VueDatePicker>
-
-                </div>
-
-           </div>
+        <div class="flex items-center gap-2 w-32">
+          <Icon :icon="platform.iconKey"/>
+          <p class="label-sm c-strong-950">{{ platform.label }}</p>
         </div>
+        <div class="flex-1">
+          <FormElement direction="vertical" type="textarea" v-model="platform.description"
+                       placeholder="Tanım"></FormElement>
+          <div class="flex items-center gap-2">
+            <FormElement direction="vertical" v-model="platform.content_id" placeholder="Youtube Content ID"
+                         class="flex-1"
+                         type="text"></FormElement>
+            <FormElement direction="vertical" v-model="platform.privacy" placeholder="Youtube’da görünürlük"
+                         class="flex-1" type="select"
+                         :config="youtubeConfig"></FormElement>
+          </div>
+          <div class="flex items-center gap-2">
+            <FormElement direction="vertical" v-model="platform.hashtags" class="flex-1" type="hashtags"
+                         placeholder="Etiket giriniz"></FormElement>
+          </div>
+          <div class="flex items-center gap-2">
+
+            <VueDatePicker v-model="platform.date" class="radius-8" auto-apply :enable-time-picker="false"
+                           placeholder="Tarih Giriniz">
+              <template #input-icon>
+                <div class="p-3">
+                  <CalendarIcon color="var(--sub-600)"/>
+                </div>
+              </template>
+            </VueDatePicker>
+            <VueDatePicker v-model="platform.time" class="radius-8" time-picker auto-apply :enable-time-picker="false"
+                           placeholder="Tarih Giriniz">
+              <template #input-icon>
+                <div class="p-3">
+                  <CalendarIcon color="var(--sub-600)"/>
+                </div>
+              </template>
+            </VueDatePicker>
+
+          </div>
+
+        </div>
+      </div>
     </div>
 
 
@@ -95,14 +103,14 @@ const youtubeConfig = computed(() => {
   return {
     hasSearch: false,
     data: [
-        {
-            "label" : "Herkese Açık",
-            value:1,
-        },
-         {
-            "label" : "Gizli",
-            value:2,
-        }
+      {
+        "label": "Herkese Açık",
+        value: 1,
+      },
+      {
+        "label": "Gizli",
+        value: 2,
+      }
     ]
   }
 })
@@ -121,21 +129,21 @@ const onChangeIsPublishedBefore = (e) => {
   }
 }
 
-const onChangePublishCountryType =  (e) => {
-    console.log(e);
-    if(e.value == 1){
-        Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
-               usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
+const onChangePublishCountryType = (e) => {
+  console.log(e);
+  if (e.value == 1) {
+    Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
+      usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
 
-            chooseAll(key);
-        })
-    }else {
-        Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
-               usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = 0;
+      chooseAll(key);
+    })
+  } else {
+    Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
+      usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = 0;
 
-            unChooseAll(key);
-        })
-    }
+      unChooseAll(key);
+    })
+  }
 
 }
 const onCountryCheck = (e) => {
@@ -146,20 +154,20 @@ const onCountryCheck = (e) => {
     form.value.published_countries.push(e.value);
   }
 
-   Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
+  Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
 
-        let total = 0;
-        usePage().props.countriesGroupedByRegion.countries.data[key].forEach(element => {
-            console.log("TEK TEK",element);
-            if(form.value.published_countries.includes(element.value)){
-                total++;
-            }
+    let total = 0;
+    usePage().props.countriesGroupedByRegion.countries.data[key].forEach(element => {
+      console.log("TEK TEK", element);
+      if (form.value.published_countries.includes(element.value)) {
+        total++;
+      }
 
-        });
+    });
 
-        usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = total;
+    usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = total;
 
-    })
+  })
 }
 
 const chooseAll = (key) => {
@@ -171,17 +179,17 @@ const chooseAll = (key) => {
       form.value.published_countries.push(e.value);
     }
   });
-    usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
+  usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
 
 }
 const unChooseAll = (key) => {
-    usePage().props.countriesGroupedByRegion.countries.data[key].forEach((e) => {
-        const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
-        if (findedIndex >= 0) {
-            form.value.published_countries.splice(findedIndex, 1);
-        }
-    });
-    usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = 0;
+  usePage().props.countriesGroupedByRegion.countries.data[key].forEach((e) => {
+    const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
+    if (findedIndex >= 0) {
+      form.value.published_countries.splice(findedIndex, 1);
+    }
+  });
+  usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = 0;
 
 }
 
@@ -220,12 +228,12 @@ onBeforeMount(() => {
 
       usePage().props.countriesGroupedByRegion.countries.data[key].forEach((e) => {
 
-            if(e.selected){
-                const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
-                if (findedIndex < 0) {
-                form.value.published_countries.push(e.value);
-                }
-            }
+        if (e.selected) {
+          const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
+          if (findedIndex < 0) {
+            form.value.published_countries.push(e.value);
+          }
+        }
 
       });
     })
@@ -253,13 +261,13 @@ onBeforeMount(() => {
       platformTable.value?.selectRows(tempPlatformsTofill);
     })
   }
-    if(form.value.publishing_country_type == 1){
-            Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach(key => {
-               chooseAll(key)
+  if (form.value.publishing_country_type == 1) {
+    Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach(key => {
+      chooseAll(key)
 
-               usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
-            });
-    }
+      usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
+    });
+  }
 });
 
 
