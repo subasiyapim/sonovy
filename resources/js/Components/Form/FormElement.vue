@@ -45,6 +45,11 @@
         </template>
       </AppSelectInput>
 
+      <AppHashtagInput  v-else-if="type=='hashtags'" @change="change" :config="config" :type="type" v-model="element"
+                      :placeholder="placeholder" :disabled="disabled">
+
+      </AppHashtagInput>
+
       <slot v-if="type=='custom'"/>
 
       <AppMultiSelectInput ref="appMultiSelect" v-else-if="type=='multiselect'" :config="config" :type="type"
@@ -96,6 +101,7 @@ import AppUploadInput from './AppUploadInput.vue';
 import AppFancyCheckInput from './AppFancyCheckInput.vue';
 import AppRadioInput from './AppRadioInput.vue';
 import AppSliderInput from './AppSliderInput.vue';
+import AppHashtagInput from './AppHashtagInput.vue';
 
 import {useSlots} from 'vue';
 

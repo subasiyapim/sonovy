@@ -1,11 +1,9 @@
 <template>
     <div class="w-full flex items-center gap-4">
         <!-- <slot  /> -->
-
         <render @change="onIndexChange" :index="index" v-for="(currentSlot,index) in slots.default()">
             <!-- {{a}} -->
         </render>
-
     </div>
 </template>
 
@@ -14,6 +12,9 @@
     const props = defineProps({
         modelValue:{
         },
+        count:{
+            default:null
+        }
 
     })
     const emits = defineEmits(['update:modelValue','change']);
@@ -35,7 +36,7 @@
         return h(slots.default()[e.index], {
             currentIndex:e.index,
             activeIndex: activeIndex.value,
-            showIcon:slots.default().length-1 > e.index
+            showIcon: (props.count ?? slots.default().length) - 1 > e.index
         }, slots.default()[e.index].children);
     };
 

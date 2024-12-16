@@ -225,9 +225,10 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 })
 const insertData = (e) => {
+     props.config?.data.push(e);
   chooseValue(e);
   instance.update();
-  // const $forceUpdate = () => queueJob(instance.update)
+
 }
 defineExpose({
   insertData,

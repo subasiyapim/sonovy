@@ -11,6 +11,7 @@ import AppIncrementer from './AppIncrementer.vue';
 import ArtistInput from './ArtistInput.vue';
 import AppFancyRadio from './AppFancyRadio.vue';
 import AppSliderInput from './AppSliderInput.vue';
+import AppHashtagInput from './AppHashtagInput.vue';
 export  {
     AppTextInput,
     AppSelectInput,
@@ -24,6 +25,7 @@ export  {
     AppIncrementer,
     ArtistInput,
     AppFancyRadio,
+    AppHashtagInput,
     AppSliderInput,
 }
 

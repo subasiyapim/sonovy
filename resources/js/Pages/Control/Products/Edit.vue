@@ -24,12 +24,12 @@
       </div>
       <div class="w-full h-full bg-white-500 flex flex-col gap-10 p-8 overflow-hidden">
 
-        <AppStepper :modelValue="currentTab" @change="onChangeTab">
+        <AppStepper :modelValue="currentTab" @change="onChangeTab" :count="product.type != 2 ? 4 : 3">
           <AppStepperElement :showWarning="!completed_steps.step1" title="Yayın Bilgileri"></AppStepperElement>
           <AppStepperElement :showWarning="!completed_steps.step2"
               :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
           <AppStepperElement :showWarning="!completed_steps.step3"  title="Yayınlama Detayları"></AppStepperElement>
-          <AppStepperElement :showWarning="!completed_steps.step4"  title="Pazarlama ve Onay"></AppStepperElement>
+          <AppStepperElement v-if="product.type != 2" :showWarning="!completed_steps.step4"  title="Pazarlama ve Onay"></AppStepperElement>
 
         </AppStepper>
 
@@ -40,7 +40,8 @@
                           v-if="currentTab == 0"></ProductInfoTab>
           <SongDetailTab :product="product" :genres="genres" v-model="step2Element"
                          v-if="currentTab == 1"></SongDetailTab>
-          <PublishingDetailTab v-if="currentTab == 2" v-model="step3Element" :product="product"></PublishingDetailTab>
+          <PublishingDetailTab v-if="currentTab == 2 && product.type != 2" v-model="step3Element" :product="product"></PublishingDetailTab>
+          <MusicVideoPublishingDetails v-if="currentTab == 2 && product.type == 2" v-model="step3Element" :product="product"></MusicVideoPublishingDetails>
           <MarketingAndSend v-if="currentTab == 3" v-model="step4Element" :product="product"></MarketingAndSend>
 
 
@@ -125,6 +126,7 @@ import SongSummaryTab from './Tabs/Right/SongSummaryTab.vue'
 import {PrimaryButton} from '@/Components/Buttons'
 import {AppProgressIndicator} from '@/Components/Widgets'
 import PublishingDetailTab from './Tabs/Left/PublishingDetailTab.vue'
+import MusicVideoPublishingDetails from './Tabs/Left/MusicVideoPublishingDetails.vue'
 import MarketingAndSend from './Tabs/Left/MarketingAndSend.vue'
 import {AppStepper, AppStepperElement} from '@/Components/Stepper';
 import {useCrudStore} from '@/Stores/useCrudStore';
@@ -237,7 +239,22 @@ const submitStep = async () => {
 
   }
   if (currentTab.value == 2) {
+    if(props.product.type == 2){
+        step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
+            onError: (e) => {
+                toast.error(Object.values(e)[0])
+            },
+            onSuccess: (e) => {
+                      router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))
+
+            },
+
+        });
+        return;
+    }else {
+
+    }
 
     if (step3Element.physical_release_date instanceof Date) {
       step3Element.physical_release_date = step3Element.physical_release_date.toISOString().split("T")[0];
@@ -248,7 +265,6 @@ const submitStep = async () => {
         step3Element.physical_release_date = date.toISOString().split("T")[0];
       }
     }
-
     if (step3Element.previous_release_date instanceof Date) {
       step3Element.previous_release_date = step3Element.previous_release_date.toISOString().split("T")[0];
     } else if (step3Element.previous_release_date) {
