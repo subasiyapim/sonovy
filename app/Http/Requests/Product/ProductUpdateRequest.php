@@ -10,6 +10,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
+use Illuminate\Validation\Rules\RequiredIf;
 
 class ProductUpdateRequest extends FormRequest
 {
@@ -77,7 +78,7 @@ class ProductUpdateRequest extends FormRequest
             ],
 
             'published_countries' => [
-                'required',
+                Rule::requiredIf(fn() => $product->video_type != 2),
                 'array',
                 function ($attribute, $value, $fail) use ($product) {
                     if ($product->publishing_country_type !== ProductPublishedCountryTypeEnum::ALL) {
