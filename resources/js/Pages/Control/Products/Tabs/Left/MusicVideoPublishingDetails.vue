@@ -36,8 +36,8 @@
                 <div class="flex-1">
                     <FormElement direction="vertical" type="textarea" v-model="platform.description" placeholder="Tanım"></FormElement>
                     <div class="flex items-center gap-2">
-                        <FormElement direction="vertical" v-model="platform.content_id" class="flex-1" type="text"></FormElement>
-                        <FormElement direction="vertical" v-model="platform.privacy" class="flex-1" type="select" :config="youtubeConfig"></FormElement>
+                        <FormElement direction="vertical" v-model="platform.content_id" class="flex-1" type="text" placeholder="Content Id"></FormElement>
+                        <FormElement direction="vertical" v-model="platform.privacy" class="flex-1" type="select" :config="youtubeConfig" placeholder="Gizlilik seçiniz"></FormElement>
                     </div>
                     <div class="flex items-center gap-2">
                         <FormElement direction="vertical" v-model="platform.hashtags" class="flex-1" type="hashtags" placeholder="Etiket giriniz"></FormElement>
