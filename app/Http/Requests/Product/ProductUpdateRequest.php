@@ -30,9 +30,12 @@ class ProductUpdateRequest extends FormRequest
                     //image,mimes:jpeg olacak ve min. 14440 px olabilir max: 3000px olabilir
 
                     'image' => [
-                        'required', 'image', 'mimes:jpeg',
+                        'required',
+                        'image',
+                        'mimes:jpeg',
                         'aspect_ratio:1',
-                        'min:1440', 'max:3000'
+                        'min:1440',
+                        'max:3000'
                     ]
                 ];
         }
@@ -63,18 +66,20 @@ class ProductUpdateRequest extends FormRequest
         ];
 
         if ($product->video_type && $product->video_type !== 2) {
-            $data['production_year'] = ['required', 'integer', 'min:1900', 'max:'.date('Y')];
+            $data['production_year'] = ['required', 'integer', 'min:1900', 'max:' . date('Y')];
 
             $data['previously_released'] = ['required', 'boolean'];
 
             $data['previous_release_date'] = [
                 'required_if:previously_released,true',
                 'nullable',
-                'date', 'before:'.date('Y-m-d')
+                'date',
+                'before:' . date('Y-m-d')
             ];
 
             $data['physical_release_date'] = [
-                'required', 'date',
+                'required',
+                'date',
                 function ($attribute, $value, $fail) use ($product) {
                     // Sadece product modelinde previous_release_date boşsa kontrol yap
                     if (empty($product->physical_release_date)) {
@@ -106,7 +111,7 @@ class ProductUpdateRequest extends FormRequest
             'mixed_album' => ['required', 'boolean'],
             'genre_id' => ['required', 'integer', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'integer', 'exists:genres,id'],
-            'format_id' => ['required_if:type,'.ProductTypeEnum::SOUND->value],
+            'format_id' => ['required_if:type,' . ProductTypeEnum::SOUND->value],
             'main_artists' => ['array', 'required_if:mixed_album,false'],
             'featuring_artists' => ['array'],
             'label_id' => ['required', 'exists:labels,id'],
@@ -116,10 +121,10 @@ class ProductUpdateRequest extends FormRequest
             'catalog_number' => ['nullable', 'string', 'min:3', 'max:100'],
             'language_id' => ['required', Rule::exists(Country::class, 'id')],
             'main_price' => ['nullable', 'numeric', 'min:0'],
-            'video_type' => ['required_if:type,'.ProductTypeEnum::VIDEO->value],
+            'video_type' => ['required_if:type,' . ProductTypeEnum::VIDEO->value],
             'description' => ['nullable'],
-            'is_for_kids' => ['required_if:type,'.ProductTypeEnum::VIDEO->value],
-            'grid_code' => ['required_if:type,'.ProductTypeEnum::RINGTONE->value],
+            'is_for_kids' => ['required_if:type,' . ProductTypeEnum::VIDEO->value],
+            'grid_code' => ['required_if:type,' . ProductTypeEnum::RINGTONE->value],
         ];
 
         return array_merge($data, self::common());
@@ -130,7 +135,6 @@ class ProductUpdateRequest extends FormRequest
         return [
             'step' => ['required', 'integer', 'min:1', 'max:5'],
         ];
-
     }
 
     /**
@@ -149,7 +153,7 @@ class ProductUpdateRequest extends FormRequest
     public function rules(): array
     {
         $product = Product::find(request()->route('product')->id);
-        dd($this->all());
+
         return match ($this->step) {
             '1' => self::stepOne(),
             '2' => self::stepTwo(),

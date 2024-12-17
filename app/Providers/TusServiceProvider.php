@@ -21,7 +21,7 @@ class TusServiceProvider extends ServiceProvider
     {
         $this->app->singleton('tus-server', function ($app) {
             $server = new TusServer();
-            $storagePath = storage_path('app/public/tenant_'.tenant('domain').'_songs');
+            $storagePath = storage_path('app/public/tenant_' . tenant('domain') . '_songs');
 
             if (!File::exists($storagePath)) {
                 File::makeDirectory($storagePath, 0775, true, true);
@@ -33,7 +33,15 @@ class TusServiceProvider extends ServiceProvider
             $server->event()->addListener(
                 'tus-server.upload.complete',
                 function (\TusPhp\Events\TusEvent $event) use ($storagePath) {
+
                     $this->handleFileUploadComplete($event, $storagePath);
+                }
+            );
+            $server->event()->addListener(
+                'tus-server.upload.patch',
+                function (\TusPhp\Events\TusEvent $event) {
+                    $offset = $event->getRequest()->header('Upload-Offset');
+                    Log::info("PATCH Request: Offset received - {$offset}");
                 }
             );
 
@@ -46,12 +54,14 @@ class TusServiceProvider extends ServiceProvider
         //izin verilen dosya uzantıları
 
         $settings = Cache::remember('settings', 60 * 60 * 24, function () {
-            return Setting::whereIn('key',
-                ['allowed_song_formats', 'allowed_ringtone_formats', 'allowed_video_formats'])->get(
+            return Setting::whereIn(
+                'key',
+                ['allowed_song_formats', 'allowed_ringtone_formats', 'allowed_video_formats']
+            )->get(
                 ['key', 'value']
             )->toArray();
         });
-
+        Log::info("burayaa geldi 1");
         $allowedExtensions = [
             'sound' => explode(',', $settings[0]['value'] ?? 'wav,flac'),
             'ringtone' => explode(',', $settings[1]['value'] ?? 'wav ,mp3'),
@@ -60,13 +70,13 @@ class TusServiceProvider extends ServiceProvider
 
         $fileMeta = $event->getFile()->details();
         $metaType = $fileMeta['metadata']['type'];
-        $filePath = $storagePath.'/'.$fileMeta['name'];
-
+        $filePath = $storagePath . '/' . $fileMeta['name'];
+        Log::info("burayada geldi 2");
         //Dosya uzantısı kontrolü
         $fileExtension = strtolower(File::extension($filePath));
 
         $allowedExtension = [];
-
+        Log::info("burayada geldi 3");
         switch ($metaType) {
             case SongTypeEnum::SOUND->value:
                 $allowedExtension = $allowedExtensions['sound'];
@@ -79,8 +89,8 @@ class TusServiceProvider extends ServiceProvider
                 break;
         }
         if (!in_array($fileExtension, $allowedExtension)) {
-            Log::error("Dosya türü desteklenmiyor: ".$fileExtension, $allowedExtension);
-            $event->getResponse()->setHeaders(['error_message' => 'Gecersiz dosya tipi: '.$fileExtension]);
+            Log::error("Dosya türü desteklenmiyor: " . $fileExtension, $allowedExtension);
+            $event->getResponse()->setHeaders(['error_message' => 'Gecersiz dosya tipi: ' . $fileExtension]);
 
             return;
         }
@@ -88,7 +98,7 @@ class TusServiceProvider extends ServiceProvider
         $details = FFMpegServices::getMediaDetails(file: $filePath);
 
         if (!$details['status']) {
-            Log::error("Bir hata oluştu: ".json_encode($details));
+            Log::error("Bir hata oluştu: " . json_encode($details));
             return;
         }
 
@@ -108,7 +118,7 @@ class TusServiceProvider extends ServiceProvider
             $file->products()->attach([$fileMeta['metadata']['product_id']]);
             $event->getResponse()->setHeaders(['upload_info' => $file->id]);
         } catch (Error $e) {
-            Log::info("HATA: ".$e);
+            Log::info("HATA: " . $e);
         }
     }
 
@@ -120,7 +130,5 @@ class TusServiceProvider extends ServiceProvider
         return sprintf('%02d:%02d', $minutes, $remainingSeconds);
     }
 
-    public function boot()
-    {
-    }
+    public function boot() {}
 }

@@ -303,7 +303,6 @@ class ProductController extends Controller
 
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
     {
-        dd($request->all());
         $data = $request->validated();
         $step = $data['step'];
         $this->excepted_data = $this->getExceptedData($data, $step);

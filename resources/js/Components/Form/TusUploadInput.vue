@@ -165,16 +165,13 @@ const handleFileInput = (e) => {
       type: props.type,
       name: file.name,
       temp: tempFileName,
-
     }),
+    chunkSize:1024,
     metadata: metaData,
 
     uploadDataDuringCreation: true,
     onStart: function (e) {
       metaData.percentage = 0;
-      console.log("BAŞLADIII");
-
-
     },
     // Callback for errors which cannot be fixed using retries
     onError: function (error) {
