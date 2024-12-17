@@ -24,7 +24,7 @@ class ProductUpdateRequest extends FormRequest
         ];
 
 
-        if ($product && !$product->image) {
+        if (!$product->image) {
             $data =
                 [
                     //image,mimes:jpeg olacak ve min. 14440 px olabilir max: 3000px olabilir
@@ -43,26 +43,6 @@ class ProductUpdateRequest extends FormRequest
     private static function stepThree(Product $product): array
     {
         $data = [
-            'production_year' => ['required', 'integer', 'min:1900', 'max:'.date('Y')],
-            'previously_released' => ['required', 'boolean'],
-
-            'previous_release_date' => [
-                'required_if:previously_released,true',
-                'nullable',
-                'date', 'before:'.date('Y-m-d')
-            ],
-
-            'physical_release_date' => [
-                'required', 'date',
-                function ($attribute, $value, $fail) use ($product) {
-                    // Sadece product modelinde previous_release_date boşsa kontrol yap
-                    if (empty($product->physical_release_date)) {
-                        if ($value && \Carbon\Carbon::parse($value)->gte(\Carbon\Carbon::today())) {
-                            $fail("The {$attribute} must be a date before today.");
-                        }
-                    }
-                }
-            ],
             'publishing_country_type' => ['required', Rule::enum(ProductPublishedCountryTypeEnum::class)],
             'published_countries' => [
                 'required',
@@ -82,6 +62,33 @@ class ProductUpdateRequest extends FormRequest
             'platforms.*.publish_date' => ['required', 'date'],
         ];
 
+        if ($product->video_type && $product->video_type !== 2) {
+            $data['production_year'] = ['required', 'integer', 'min:1900', 'max:'.date('Y')];
+
+            $data['previously_released'] = ['required', 'boolean'];
+
+            $data['previous_release_date'] = [
+                'required_if:previously_released,true',
+                'nullable',
+                'date', 'before:'.date('Y-m-d')
+            ];
+
+            $data['physical_release_date'] = [
+                'required', 'date',
+                function ($attribute, $value, $fail) use ($product) {
+                    // Sadece product modelinde previous_release_date boşsa kontrol yap
+                    if (empty($product->physical_release_date)) {
+                        if ($value && \Carbon\Carbon::parse($value)->gte(\Carbon\Carbon::today())) {
+                            $fail("The {$attribute} must be a date before today.");
+                        }
+                    }
+                }
+            ];
+        } else {
+            ///video_muzik zorunlu olanlar buraya gelecek
+        }
+
+
         return array_merge($data, self::common());
     }
 
@@ -92,7 +99,6 @@ class ProductUpdateRequest extends FormRequest
 
     private static function stepOne(): array
     {
-
         $data = [
             'type' => ['required', Rule::enum(ProductTypeEnum::class)],
             'album_name' => ['required', 'string', 'max:250'],
@@ -143,7 +149,7 @@ class ProductUpdateRequest extends FormRequest
     public function rules(): array
     {
         $product = Product::find(request()->route('product')->id);
-
+        dd($this->all());
         return match ($this->step) {
             '1' => self::stepOne(),
             '2' => self::stepTwo(),

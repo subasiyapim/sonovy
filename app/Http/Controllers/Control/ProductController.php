@@ -56,6 +56,20 @@ class ProductController extends Controller
     protected array $excepted = [];
     protected array $excepted_data = [];
 
+    private static function attachHashtags(Product $product, array $data)
+    {
+        if (isset($data['hashtags']) && is_array($data['hashtags']) && count($data['hashtags']) > 0) {
+            $product->hashtags()->delete();
+
+            foreach ($data['hashtags'] as $value) {
+                $product->hashtags()->create([
+                    'name' => $value,
+                    'code' => Str::slug($value),
+                ]);
+            }
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -91,7 +105,6 @@ class ProductController extends Controller
             ->when($request->input('type'), function ($query) use ($request) {
                 $query->where('type', $request->input('type'));
             })
-
             ->advancedFilter();
 
         $statistics = [
@@ -290,6 +303,7 @@ class ProductController extends Controller
 
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
     {
+        dd($request->all());
         $data = $request->validated();
         $step = $data['step'];
         $this->excepted_data = $this->getExceptedData($data, $step);
@@ -342,6 +356,7 @@ class ProductController extends Controller
     {
         self::publishedCountries($product, $data);
         self::createDownloadPlatforms($product, $data);
+        self::attachHashtags($product, $data);
     }
 
     private function handleStepFour(Product $product, array $data): void

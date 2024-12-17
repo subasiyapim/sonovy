@@ -1,4 +1,5 @@
 <template>
+
   <div ref="selectContainer" v-click-outside="handleClickOutside"
        class="relative w-full flex h-9 border-text-input flex items-center radius-8 c-white-500 px-2.5 ">
     <div v-if="hasSlot('icon')">
@@ -203,7 +204,7 @@ const chooseValue = (val) => {
   } else {
     element.value.splice(vIndex, 1);
   }
-//   element.value = JSON.parse(JSON.stringify(element.value));
+  element.value = JSON.parse(JSON.stringify(element.value));
 
 }
 

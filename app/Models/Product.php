@@ -184,7 +184,7 @@ class Product extends Model implements HasMedia
     public function downloadPlatforms(): BelongsToMany
     {
         return $this->belongsToMany(Platform::class, 'product_download_platform', 'product_id', 'platform_id')
-            ->withPivot('price', 'pre_order_date', 'publish_date', 'status');
+            ->withPivot('price', 'pre_order_date', 'publish_date', 'status', 'time', 'date', 'hashtags', 'description');
     }
 
     public function songs(): BelongsToMany
@@ -234,7 +234,7 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsToMany(
             \App\Models\System\Country::class,
-            tenant('tenancy_db_name') . '.product_published_country',
+            tenant('tenancy_db_name').'.product_published_country',
             'product_id',
             'country_id'
         );
