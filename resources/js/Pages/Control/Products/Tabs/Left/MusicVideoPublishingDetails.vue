@@ -8,12 +8,27 @@
   <div class="">
 
     <div class="flex flex-col gap-6">
+          <SectionHeader title="YAYINLANMA TARİHLERİ"></SectionHeader>
 
+        <FormElement label-width="190px" :error="form.errors.physical_release_date" type="custom" label="Genel Yayın Tarihi">
+            <VueDatePicker  v-model="form.physical_release_date"
+                        :convertModel="false" class="radius-8" auto-apply :enable-time-picker="false"
+                        placeholder="Tarih Seçiniz">
+            <template #input-icon>
+                <div class="p-3">
+                <CalendarIcon color="var(--sub-600)"/>
+                </div>
+            </template>
+            </VueDatePicker>
+        </FormElement>
         <SectionHeader title="PLATFORM TERCİHLERİ"></SectionHeader>
 
         <div v-for="platform in form.platforms" class="flex items-start gap-24">
 
-            <div class="flex items-center gap-2 w-32">
+            <div @click="platform.isChecked = !platform.isChecked" class="flex items-center gap-2 w-32 cursor-pointer">
+                <button class="w-4 h-4 focus:ring-0 rounded appCheckbox border border-soft-200 p-0.5 flex items-center justify-center" :class="platform.isChecked ? 'bg-dark-green-500' :'bg-white'">
+                    <CheckIcon v-if="platform.isChecked" color="#fff" />
+                </button>
                 <Icon :icon="platform.iconKey"/>
                 <p class="label-sm c-strong-950">{{platform.label}}</p>
             </div>
@@ -59,7 +74,7 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed, ref, onBeforeMount, nextTick} from 'vue';
 import {FormElement, AppTextInput} from '@/Components/Form';
-import {AddIcon, Icon, CalendarIcon} from '@/Components/Icons'
+import {AddIcon, Icon, CalendarIcon,CheckIcon} from '@/Components/Icons'
 import {usePage} from '@inertiajs/vue3';
 
 const props = defineProps({
