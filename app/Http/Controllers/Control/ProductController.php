@@ -304,9 +304,13 @@ class ProductController extends Controller
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
     {
         $data = $request->validated();
-        $data['physical_release_date'] = Carbon::parse($data['physical_release_date'])->format('Y-m-d');
         $step = $data['step'];
         $this->excepted_data = $this->getExceptedData($data, $step);
+
+        if (isset($data['physical_release_date']) && $data['physical_release_date']) {
+            $physical_release_date = Carbon::parse($request->physical_release_date)->format('Y-m-d');
+            $product->update(['physical_release_date' => $physical_release_date]);
+        }
 
         switch ($step) {
             case 1:
@@ -335,7 +339,7 @@ class ProductController extends Controller
         $exceptedKeys = match ($step) {
             1 => ['main_artists', 'featuring_artists'],
             2 => ['songs'],
-            3 => ['published_countries', 'platforms'],
+            3 => ['published_countries', 'platforms', 'physical_release_date'],
             default => []
         };
 

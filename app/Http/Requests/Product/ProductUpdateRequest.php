@@ -78,9 +78,11 @@ class ProductUpdateRequest extends FormRequest
             ],
 
             'published_countries' => [
-                Rule::requiredIf(fn() => $product->video_type != 2),
                 'array',
                 function ($attribute, $value, $fail) use ($product) {
+                    if ($product->video_type == 2) {
+                        return;
+                    }
                     if ($product->publishing_country_type !== ProductPublishedCountryTypeEnum::ALL) {
                         if (empty($value) || count($value) < 1) {
                             $fail("The {$attribute} must have at least 1 item(s) when publishing_country_type is specific.");
