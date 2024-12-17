@@ -106,27 +106,16 @@
 <script setup>
 import {computed, ref, onBeforeMount} from 'vue';
 import {IconButton} from '@/Components/Buttons'
-import {FormElement} from '@/Components/Form';
 
 import {
   ArrowLeftIcon,
-  SearchIcon,
-  ChevronRightIcon,
   StickyNoteFilledIcon,
-  AddIcon,
-  BroadcastTitleIcon,
-  PersonIcon,
-  GenreIcon,
-  CalendarIcon,
-  DurationIcon
 } from '@/Components/Icons';
 import {router} from '@inertiajs/vue3';
 import ProductInfoTab from './Tabs/Left/ProductInfoTab.vue'
 import ProductSummaryTab from './Tabs/Right/ProductSummaryTab.vue'
 import {useForm} from '@inertiajs/vue3';
-
 import SongDetailTab from './Tabs/Left/SongDetailTab.vue'
-import SongSummaryTab from './Tabs/Right/SongSummaryTab.vue'
 import {PrimaryButton} from '@/Components/Buttons'
 import {AppProgressIndicator} from '@/Components/Widgets'
 import PublishingDetailTab from './Tabs/Left/PublishingDetailTab.vue'
