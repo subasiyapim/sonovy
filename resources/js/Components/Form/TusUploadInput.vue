@@ -98,7 +98,7 @@ const handleDrop = (event) => {
 
 const onChangeInput = (e) => {
 
-    console.log("DEĞİŞTİİİ");
+  console.log("DEĞİŞTİİİ");
 
   const files = Array.from(e.target.files);
   handleFiles(files);
@@ -202,7 +202,7 @@ const handleFileInput = (e) => {
         response.percentage = 100;
         emits('complete', response)
       }
-        fileInput.value.value = null;
+      fileInput.value.value = null;
 
     },
   })
