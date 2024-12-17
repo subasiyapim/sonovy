@@ -245,8 +245,9 @@ const submitStep = async () => {
   }
   if (currentTab.value == 2) {
     if (props.product.type == 2) {
-      step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
 
+        step3Element.platforms.map((e) => e.id = e.value);
+      step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
         onError: (e) => {
           toast.error(Object.values(e)[0])
         },

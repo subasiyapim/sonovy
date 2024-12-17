@@ -39,7 +39,6 @@
                         <FormElement direction="vertical" v-model="platform.content_id" class="flex-1" type="text"></FormElement>
                         <FormElement direction="vertical" v-model="platform.privacy" class="flex-1" type="select" :config="youtubeConfig"></FormElement>
                     </div>
-                    {{platform.hashtags}}
                     <div class="flex items-center gap-2">
                         <FormElement direction="vertical" v-model="platform.hashtags" class="flex-1" type="hashtags" placeholder="Etiket giriniz"></FormElement>
                     </div>
