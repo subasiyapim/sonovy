@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('product_download_platform', function (Blueprint $table) {
             $table->tinyText('description')->nullable();
-            $table->tinyText('hashtags')->nullable();
+            $table->jsonb('hashtags')->nullable();
             $table->date('date')->nullable();
             $table->time('time')->nullable();
             $table->string('content_id')->nullable();

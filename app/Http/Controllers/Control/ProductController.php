@@ -634,17 +634,23 @@ class ProductController extends Controller
             $product->downloadPlatforms()->detach();
 
             foreach ($data['platforms'] as $platform) {
-                $product->downloadPlatforms()->attach(
-                    $platform['id'],
-                    [
-                        'price' => isset($platform['price']),
-                        'pre_order_date' => !empty($platform['pre_order_date']) ? $platform['pre_order_date'] : null,
-                        'publish_date' => isset($platform['publish_date']) ? $platform['publish_date'] : null,
-                        'date' => isset($platform['date']) ? Carbon::parse($platform['date'])->format('Y-m-d') : null,
-                        'time' => isset($platform['time']) ?? null,
-                        'hashtags' => isset($platform['hashtags']) ?? null,
-                    ]
-                );
+
+                $data = [
+                    'price' => isset($platform['price']) ? $platform['price'] : null,
+                    'pre_order_date' => isset($platform['pre_order_date']) ? Carbon::parse($platform['pre_order_date'])->format('Y-m-d') : null,
+                    'publish_date' => isset($platform['publish_date']) ? Carbon::parse($platform['publish_date'])->format('Y-m-d') : null,
+                    'date' => isset($platform['date']) ? Carbon::parse($platform['date'])->format('Y-m-d') : null,
+                    'time' => isset($platform['time']) ? $platform['time']['hours'].':'.$platform['time']['minutes'] : null,
+                    'hashtags' => isset($platform['hashtags']) ? json_encode($platform['hashtags']) : null,
+                    // Ensure it's a valid JSON
+                    'description' => isset($platform['description']) ? $platform['description'] : null,
+                    'content_id' => isset($platform['content_id']) ? $platform['content_id'] : null,
+                    'privacy' => isset($platform['privacy']) ? $platform['privacy'] : null,
+                ];
+
+                $product->downloadPlatforms()->attach($platform['id'], $data);
+
+
             }
 
         }
