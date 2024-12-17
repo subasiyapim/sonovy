@@ -362,6 +362,7 @@ return [
                     'sub_title' => 'Ek bilgiler girilir ve onaya gönderilir.'
                 ],
             ],
+            'id' => 'ID',
             'label' => 'Label',
             'type' => 'Yayın tipi',
             'label_id' => 'Plak Şirketi',
@@ -529,7 +530,14 @@ return [
             'physical_release_date' => 'Genel yayın tarihi',
             'previous_release_date' => 'Önceki yayın tarihi',
             'previously_released' => 'Daha önce yayınlandı mı?',
-            'grid_code' => 'Grid Kodu'
+            'grid_code' => 'Grid Kodu',
+            'price' => 'Fiyat',
+            'publish_date' => 'Genel yayın tarihi',
+            'isChecked' => 'Seçili',
+            'content_id' => 'Youtube Content ID',
+            'privacy' => 'Gizlilik',
+            'date' => 'Tarih',
+            'time' => 'Saat',
         ],
     ],
     'products-apply' => [

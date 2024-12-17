@@ -304,6 +304,7 @@ class ProductController extends Controller
     public function stepStore(ProductUpdateRequest $request, Product $product): RedirectResponse
     {
         $data = $request->validated();
+        $data['physical_release_date'] = Carbon::parse($data['physical_release_date'])->format('Y-m-d');
         $step = $data['step'];
         $this->excepted_data = $this->getExceptedData($data, $step);
 
@@ -355,7 +356,6 @@ class ProductController extends Controller
     {
         self::publishedCountries($product, $data);
         self::createDownloadPlatforms($product, $data);
-        self::attachHashtags($product, $data);
     }
 
     private function handleStepFour(Product $product, array $data): void
@@ -639,10 +639,14 @@ class ProductController extends Controller
                     [
                         'price' => isset($platform['price']),
                         'pre_order_date' => !empty($platform['pre_order_date']) ? $platform['pre_order_date'] : null,
-                        'publish_date' => $platform['publish_date'],
+                        'publish_date' => isset($platform['publish_date']) ? $platform['publish_date'] : null,
+                        'date' => isset($platform['date']) ? Carbon::parse($platform['date'])->format('Y-m-d') : null,
+                        'time' => isset($platform['time']) ?? null,
+                        'hashtags' => isset($platform['hashtags']) ?? null,
                     ]
                 );
             }
+
         }
     }
 

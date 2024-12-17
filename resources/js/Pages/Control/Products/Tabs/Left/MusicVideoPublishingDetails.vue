@@ -6,66 +6,75 @@
     </p>
   </div>
 
-    <div class="">
+  <div class="">
 
-        <div class="flex flex-col gap-6">
-            <SectionHeader title="YAYINLANMA TARİHLERİ"></SectionHeader>
+    <div class="flex flex-col gap-6">
+      <SectionHeader title="YAYINLANMA TARİHLERİ"></SectionHeader>
 
-            <FormElement label-width="190px" :error="form.errors.physical_release_date" type="custom" label="Genel Yayın Tarihi">
-                <VueDatePicker  v-model="form.physical_release_date"
-                            :convertModel="false" class="radius-8" auto-apply :enable-time-picker="false"
-                            placeholder="Tarih Seçiniz">
-                <template #input-icon>
-                    <div class="p-3">
-                    <CalendarIcon color="var(--sub-600)"/>
-                    </div>
-                </template>
-                </VueDatePicker>
-            </FormElement>
-            <SectionHeader title="PLATFORM TERCİHLERİ"></SectionHeader>
-
-            <div v-for="platform in form.platforms" class="flex items-start gap-24">
-
-                    <div @click="choosePlatform(platform)" class="flex items-center gap-2 w-32 cursor-pointer">
-                        <button class="w-4 h-4 focus:ring-0 rounded appCheckbox border border-soft-200 p-0.5 flex items-center justify-center" :class="platform.isChecked ? 'bg-dark-green-500' :'bg-white'">
-                            <CheckIcon v-if="platform.isChecked" color="#fff" />
-                        </button>
-                        <Icon :icon="platform.iconKey"/>
-                        <p class="label-sm c-strong-950">{{platform.label}}</p>
-                    </div>
-                <div class="flex-1">
-                    <FormElement direction="vertical" type="textarea" v-model="platform.description" placeholder="Tanım"></FormElement>
-                    <div class="flex items-center gap-2">
-                        <FormElement direction="vertical" v-model="platform.content_id" class="flex-1" type="text" placeholder="Content Id"></FormElement>
-                        <FormElement direction="vertical" v-model="platform.privacy" class="flex-1" type="select" :config="youtubeConfig" placeholder="Gizlilik seçiniz"></FormElement>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <FormElement direction="vertical" v-model="platform.hashtags" class="flex-1" type="hashtags" placeholder="Etiket giriniz"></FormElement>
-                    </div>
-                    <div class="flex items-center gap-2">
-
-                        <VueDatePicker  v-model="platform.date" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
-                                <template #input-icon>
-                                <div class="p-3">
-                                        <CalendarIcon color="var(--sub-600)"/>
-                                </div>
-                                </template>
-                            </VueDatePicker>
-                        <VueDatePicker    v-model="platform.time" class="radius-8" time-picker auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
-                                <template #input-icon>
-                                <div class="p-3">
-                                        <CalendarIcon color="var(--sub-600)"/>
-                                </div>
-                                </template>
-                            </VueDatePicker>
-
-                    </div>
-                </div>
-
-
+      <FormElement label-width="190px" :error="form.errors.physical_release_date" type="custom"
+                   label="Genel Yayın Tarihi">
+        <VueDatePicker v-model="form.physical_release_date"
+                       :convertModel="false" class="radius-8" auto-apply :enable-time-picker="false"
+                       placeholder="Tarih Seçiniz">
+          <template #input-icon>
+            <div class="p-3">
+              <CalendarIcon color="var(--sub-600)"/>
             </div>
+          </template>
+        </VueDatePicker>
+      </FormElement>
+      <SectionHeader title="PLATFORM TERCİHLERİ"></SectionHeader>
+
+      <div v-for="(platform, index) in form.platforms" class="flex items-start gap-24">
+
+        <div @click="choosePlatform(platform)" class="flex items-center gap-2 w-32 cursor-pointer">
+          <button
+              class="w-4 h-4 focus:ring-0 rounded appCheckbox border border-soft-200 p-0.5 flex items-center justify-center"
+              :class="platform.isChecked ? 'bg-dark-green-500' :'bg-white'">
+            <CheckIcon v-if="platform.isChecked" color="#fff"/>
+          </button>
+          <Icon :icon="platform.iconKey"/>
+          <p class="label-sm c-strong-950">{{ platform.label }}</p>
         </div>
+        <div class="flex-1">
+          <FormElement direction="vertical" type="textarea" v-model="platform.description"
+                       placeholder="Tanım"></FormElement>
+          <div class="flex items-center gap-2">
+            <FormElement direction="vertical" v-model="platform.content_id" class="flex-1" type="text"
+                         placeholder="Content Id"></FormElement>
+            <FormElement direction="vertical" v-model="platform.privacy" class="flex-1" type="select"
+                         :config="youtubeConfig" placeholder="Gizlilik seçiniz"></FormElement>
+          </div>
+          <div class="flex items-center gap-2">
+            <FormElement direction="vertical" v-model="platform.hashtags" class="flex-1" type="hashtags"
+                         placeholder="Etiket giriniz"></FormElement>
+          </div>
+          <div class="flex items-center gap-2">
+
+            <VueDatePicker v-model="platform.date" class="radius-8" auto-apply :enable-time-picker="false"
+                           placeholder="Tarih Giriniz">
+              <template #input-icon>
+                <div class="p-3">
+                  <CalendarIcon color="var(--sub-600)"/>
+                </div>
+              </template>
+            </VueDatePicker>
+            <VueDatePicker v-model="platform.time" class="radius-8" time-picker auto-apply :enable-time-picker="false"
+                           placeholder="Tarih Giriniz">
+              <template #input-icon>
+                <div class="p-3">
+                  <CalendarIcon color="var(--sub-600)"/>
+                </div>
+              </template>
+            </VueDatePicker>
+
+          </div>
+        </div>
+
+
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
@@ -74,7 +83,7 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed, ref, onBeforeMount, nextTick} from 'vue';
 import {FormElement, AppTextInput} from '@/Components/Form';
-import {AddIcon, Icon, CalendarIcon,CheckIcon} from '@/Components/Icons'
+import {AddIcon, Icon, CalendarIcon, CheckIcon} from '@/Components/Icons'
 import {usePage} from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -177,13 +186,13 @@ const onCountryCheck = (e) => {
   })
 }
 const choosePlatform = (platform) => {
-    platform.description = platform.description ?? "";
-    platform.content_id = platform.content_id ?? "";
-    platform.privacy = platform.privacy ?? null;
-    platform.hashtags = platform.hashtags ?? [];
-    platform.date = platform.date ?? null;
-    platform.time = platform.time ?? null;
-    platform.isChecked = !platform.isChecked
+  platform.description = platform.description ?? "";
+  platform.content_id = platform.content_id ?? "";
+  platform.privacy = platform.privacy ?? null;
+  platform.hashtags = platform.hashtags ?? [];
+  platform.date = platform.date ?? null;
+  platform.time = platform.time ?? null;
+  platform.isChecked = !platform.isChecked
 }
 const chooseAll = (key) => {
 

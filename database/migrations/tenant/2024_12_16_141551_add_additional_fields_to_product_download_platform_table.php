@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->tinyText('hashtags')->nullable();
             $table->date('date')->nullable();
             $table->time('time')->nullable();
+            $table->string('content_id')->nullable();
+            $table->string('privacy')->nullable();
         });
     }
 
@@ -28,6 +30,8 @@ return new class extends Migration {
             $table->dropColumn('hashtags');
             $table->dropColumn('date');
             $table->dropColumn('time');
+            $table->dropColumn('content_id');
+            $table->dropColumn('privacy');
         });
     }
 };
