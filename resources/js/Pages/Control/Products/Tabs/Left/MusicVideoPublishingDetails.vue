@@ -26,7 +26,7 @@
 
             <div v-for="platform in form.platforms" class="flex items-start gap-24">
 
-                    <div @click="platform.isChecked = !platform.isChecked" class="flex items-center gap-2 w-32 cursor-pointer">
+                    <div @click="choosePlatform(platform)" class="flex items-center gap-2 w-32 cursor-pointer">
                         <button class="w-4 h-4 focus:ring-0 rounded appCheckbox border border-soft-200 p-0.5 flex items-center justify-center" :class="platform.isChecked ? 'bg-dark-green-500' :'bg-white'">
                             <CheckIcon v-if="platform.isChecked" color="#fff" />
                         </button>
@@ -176,7 +176,15 @@ const onCountryCheck = (e) => {
 
   })
 }
-
+const choosePlatform = (platform) => {
+    platform.description = platform.description ?? "";
+    platform.content_id = platform.content_id ?? "";
+    platform.privacy = platform.privacy ?? null;
+    platform.hashtags = platform.hashtags ?? [];
+    platform.date = platform.date ?? null;
+    platform.time = platform.time ?? null;
+    platform.isChecked = !platform.isChecked
+}
 const chooseAll = (key) => {
 
 
