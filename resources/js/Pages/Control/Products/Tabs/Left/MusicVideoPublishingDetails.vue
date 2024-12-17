@@ -174,7 +174,6 @@ const onCountryCheck = (e) => {
 
     let total = 0;
     usePage().props.countriesGroupedByRegion.countries.data[key].forEach(element => {
-      console.log("TEK TEK", element);
       if (form.value.published_countries.includes(element.value)) {
         total++;
       }
@@ -246,22 +245,7 @@ const onPublishDateChoosen = (e) => {
 }
 onBeforeMount(() => {
   form.value.platforms = usePage().props.platforms;
-  if (form.value.publishing_country_type) {
-    form.value.published_countries = [];
-    Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach((key) => {
 
-      usePage().props.countriesGroupedByRegion.countries.data[key].forEach((e) => {
-
-        if (e.selected) {
-          const findedIndex = form.value.published_countries.findIndex((el) => el == e.value);
-          if (findedIndex < 0) {
-            form.value.published_countries.push(e.value);
-          }
-        }
-
-      });
-    })
-  }
   if (usePage().props.product.download_platforms) {
     let tempPlatformsTofill = [];
     usePage().props.product.download_platforms.forEach(element => {
@@ -270,10 +254,13 @@ onBeforeMount(() => {
       const findedIndex = form.value.platforms.findIndex((e) => e.value == element.id);
       if (findedIndex >= 0) {
 
-        form.value.platforms[findedIndex].isSelected = true;
-        form.value.platforms[findedIndex].price = element.pivot?.price;
-        form.value.platforms[findedIndex].pre_order_date = new Date(element.pivot?.pre_order_date);
-        form.value.platforms[findedIndex].publish_date = new Date(element.pivot?.publish_date);
+        form.value.platforms[findedIndex].isChecked = true;
+        form.value.platforms[findedIndex].hashtags = JSON.parse(element.pivot?.hashtags ?? '[]');
+        form.value.platforms[findedIndex].date = new Date(element.pivot?.date);
+        form.value.platforms[findedIndex].time = new Date(element.pivot?.time);
+        form.value.platforms[findedIndex].privacy = element.pivot?.privacy;
+        form.value.platforms[findedIndex].description = element.pivot?.description;
+        form.value.platforms[findedIndex].content_id = element.pivot?.content_id;
 
         tempPlatformsTofill.push(findedIndex);
 
@@ -285,13 +272,7 @@ onBeforeMount(() => {
       platformTable.value?.selectRows(tempPlatformsTofill);
     })
   }
-  if (form.value.publishing_country_type == 1) {
-    Object.keys(usePage().props.countriesGroupedByRegion.countries.data).forEach(key => {
-      chooseAll(key)
 
-      usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
-    });
-  }
 });
 
 

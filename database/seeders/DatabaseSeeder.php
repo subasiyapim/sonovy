@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\UserSeeder::class,
             \Database\Seeders\PermissionRoleSeeder::class,
             \Database\Seeders\RoleUserSeeder::class,
-
+            \Database\Seeders\PlatformSeeder::class,
             \Database\Seeders\ContractSeeder::class,
             \Database\Seeders\FeatureSeeder::class,
             \Database\Seeders\GenreSeeder::class,
@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\PerformingRightsOrganizationSeeder::class,
             \Database\Seeders\PlanItemSeeder::class,
             \Database\Seeders\PlanSeeder::class,
-            \Database\Seeders\PlatformSeeder::class,
+
             \Database\Seeders\SendNotificationSeeder::class,
             \Database\Seeders\SettingSeeder::class,
 
