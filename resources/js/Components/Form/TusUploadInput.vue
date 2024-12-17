@@ -166,7 +166,7 @@ const handleFileInput = (e) => {
       name: file.name,
       temp: tempFileName,
     }),
-    chunkSize:1024,
+    chunkSize:1024 *1024,
     metadata: metaData,
 
     uploadDataDuringCreation: true,
