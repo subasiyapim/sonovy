@@ -40,7 +40,7 @@ class ProductServices
 
     public static function search($search): mixed
     {
-        return Product::with('songs')->where('album_name', 'like', '%' . $search . '%')->get();
+        return Product::with('songs.mainArtists', 'mainArtists')->where('album_name', 'like', '%' . $search . '%')->get();
     }
 
 

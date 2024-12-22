@@ -15,6 +15,21 @@
                 <span class="label-xs c-soft-400">Katalog</span>
                 <span class="label-xs c-soft-400">.</span>
                 <span class="label-xs c-soft-400">Tüm Yayınlar</span>
+                 <span class="label-xs c-soft-400">.</span>
+                <span class="label-xs c-soft-400">
+                    <template v-if="product.type == 1">
+                        Ses
+                    </template>
+                    <template v-if="product.type == 2">
+                        Video
+                    </template>
+                    <template v-if="product.type == 3">
+                        Zil sesi
+                    </template>
+                    <template v-if="product.type == 4">
+                        Apple Video
+                    </template>
+                </span>
               </div>
             </div>
 
@@ -36,7 +51,7 @@
 
         <div class="h-full bg-white w-full shadow rounded-xl px-8 py-8 overflow-scroll">
 
-          <ProductInfoTab v-model="step1Element" :genres="genres" :formats="formats" :product="product"
+          <ProductInfoTab v-model="step1Element" @onVideoTypeChange="onVideoTypeChange" :genres="genres" :formats="formats" :product="product"
                           :languages="languages"
                           v-if="currentTab == 0"></ProductInfoTab>
           <SongDetailTab :product="product" :genres="genres" v-model="step2Element"
@@ -192,7 +207,13 @@ const step4Element = useForm({
 
 
 const currentTab = ref(props.step - 1);
+const onVideoTypeChange = async (e) => {
+    props.product.type = e.value;
 
+    await crudStore.post(route('control.catalog.products.change.type',props.product.id),{
+        type: e.value,
+    });
+}
 
 const submitStep = async () => {
   console.log(currentTab.value);
@@ -234,14 +255,15 @@ const submitStep = async () => {
   }
   if (currentTab.value == 2) {
     if (props.product.type == 2) {
-
+        let tempPlatform = JSON.parse(JSON.stringify(step3Element.platforms));
+       step3Element.platforms = step3Element.platforms.filter((e) => e.isChecked);
         step3Element.platforms.map((e) => e.id = e.value);
       step3Element.post(route('control.catalog.products.form.step.store', props.product.id), {
         onError: (e) => {
           toast.error(Object.values(e)[0])
         },
         onSuccess: (e) => {
-          router.visit(route('control.catalog.products.form.edit', [4, props.product.id]))
+          router.visit(route('control.catalog.products.show', props.product.id))
 
         },
 
@@ -333,6 +355,7 @@ onBeforeMount(() => {
   step1Element.main_artists = props.product.main_artists.map((e) => e.id) ?? [];
   step1Element.featuring_artists = props.product.featured_artists.map((e) => e.id) ?? [];
 });
+
 
 </script>
 

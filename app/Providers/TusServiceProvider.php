@@ -63,7 +63,7 @@ class TusServiceProvider extends ServiceProvider
         });
         Log::info("burayaa geldi 1");
         $allowedExtensions = [
-            'sound' => explode(',', $settings[0]['value'] ?? 'wav,flac'),
+            'sound' => explode(',', $settings[0]['value'] ?? 'wav,flac,mp3'),
             'ringtone' => explode(',', $settings[1]['value'] ?? 'wav ,mp3'),
             'video' => explode(',', $settings[2]['value'] ?? 'mp4,avi,flv'),
         ];

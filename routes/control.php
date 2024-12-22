@@ -95,6 +95,7 @@ Route::group(
                     Route::delete('/{product}', [ProductController::class, 'destroy'])->name('delete');
                     Route::get('create', [ProductController::class, 'create'])->name('create');
                     Route::post('store', [ProductController::class, 'store'])->name('store');
+                    Route::post('change-type/{product}', [ProductController::class, 'changeType'])->name('change.type');
 
 
                     Route::group(['prefix' => 'form', 'as' => 'form.'], function () {

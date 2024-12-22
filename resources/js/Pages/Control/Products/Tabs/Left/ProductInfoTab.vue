@@ -9,17 +9,17 @@
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
       <FormElement :required="true" label-width="190px" :error="form.errors.album_name" v-model="form.album_name"
                    label="Albüm Adı"></FormElement>
-      <FormElement v-if="form.type != 2" label-width="190px" :error="form.errors.version" v-model="form.version"
+      <FormElement v-if="form.type != 2 && form.type != 4" label-width="190px" :error="form.errors.version" v-model="form.version"
                    label="Sürüm"
                    placeholder="Lütfen giriniz"></FormElement>
 
-      <FormElement v-if="form.type == 2" :required="true" :config="{data: usePage().props.video_types}"
-                   label-width="190px" type="select" placeholder="Seçiniz" :error="form.errors.video_type"
-                   v-model="form.video_type"
+      <FormElement v-if="form.type == 2 || form.type == 4" :required="true" :config="{data: usePage().props.video_types}"
+                   label-width="190px" type="select" @change="onVideoTypeChanged" placeholder="Seçiniz" :error="form.errors.type"
+                   v-model="form.type"
                    label="Video Türü">
 
       </FormElement>
-      <FormElement v-if="form.type == 2" :required="true" :config="{letter:5000}" label-width="190px" type="textarea"
+      <FormElement v-if="form.type == 2 || form.type == 4" :required="true" :config="{letter:5000}" label-width="190px" type="textarea"
                    placeholder="Açıklama giriniz" :error="form.errors.description" v-model="form.description"
                    label="Açıklama">
         <template #tooltip>
@@ -182,7 +182,7 @@
 
       </FormElement>
 
-      <FormElement v-if="form.type == 2" label-width="190px" :error="form.errors.is_for_kids" v-model="form.is_for_kids"
+      <FormElement v-if="form.type == 2 || form.type == 4" label-width="190px" :error="form.errors.is_for_kids" v-model="form.is_for_kids"
                    placeholder="Bu video çocuklar için yapıldı" type="fancyCheck">
 
       </FormElement>
@@ -295,7 +295,7 @@ const props = defineProps({
 
 const mainArtistSelect = ref();
 const featuringArtistSelect = ref();
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue','onVideoTypeChange']);
 
 
 const onArtistCreated = (e) => {
@@ -312,6 +312,11 @@ const onArtistCreated = (e) => {
     mainArtistSelect.value.appMultiSelect.insertData(row);
   }
 
+}
+
+const onVideoTypeChanged = (e) => {
+console.log("EEE",e);
+    emits('onVideoTypeChange',e)
 }
 const form = computed({
   get: () => props.modelValue,

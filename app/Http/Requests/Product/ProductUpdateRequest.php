@@ -52,10 +52,10 @@ class ProductUpdateRequest extends FormRequest
         $data = [
             'production_year' => [
                 'nullable',
-                'required_if:video_type,2,false',
+                'required_if:type,2,false',
                 'integer',
                 'min:1900',
-                'max:'.$currentYear
+                'max:' . $currentYear
             ],
 
             'previously_released' => ['required', 'boolean'],
@@ -80,7 +80,7 @@ class ProductUpdateRequest extends FormRequest
             'published_countries' => [
                 'array',
                 function ($attribute, $value, $fail) use ($product) {
-                    if ($product->video_type == 2) {
+                    if ($product->type == 2) {
                         return;
                     }
                     if ($product->publishing_country_type !== ProductPublishedCountryTypeEnum::ALL) {
@@ -95,7 +95,7 @@ class ProductUpdateRequest extends FormRequest
             'platforms.*.id' => ['required', 'exists:platforms,id'],
             'platforms.*.price' => ['nullable', 'numeric', 'min:0'],
             'platforms.*.pre_order_date' => ['nullable', 'date'],
-            'platforms.*.publish_date' => ['nullable', 'required_if:video_type,1,false', 'date'],
+            'platforms.*.publish_date' => ['nullable', 'required_if:type,1,false', 'date'],
 
             // Yeni koşullu zorunlu alanlar
             'platforms.*.isChecked' => ['nullable', 'boolean'],
@@ -105,7 +105,7 @@ class ProductUpdateRequest extends FormRequest
                     $index = explode('.', $attribute)[1]; // platforms.0.description -> 0
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
 
-                    if ($isChecked == true && $product->video_type == 2 && empty($value)) {
+                    if ($isChecked == true && $product->type == 2 && empty($value)) {
                         $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
@@ -115,7 +115,7 @@ class ProductUpdateRequest extends FormRequest
                     $platforms = $request->input('platforms', []);
                     $index = explode('.', $attribute)[1];
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
-                    if ($isChecked == true && $product->video_type == 2 && empty($value)) {
+                    if ($isChecked == true && $product->type == 2 && empty($value)) {
                         $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
@@ -126,7 +126,7 @@ class ProductUpdateRequest extends FormRequest
                     $index = explode('.', $attribute)[1];
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
 
-                    if ($isChecked == true && $product->video_type == 2 && empty($value)) {
+                    if ($isChecked == true && $product->type == 2 && empty($value)) {
                         $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
@@ -137,7 +137,7 @@ class ProductUpdateRequest extends FormRequest
                     $index = explode('.', $attribute)[1];
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
 
-                    if ($isChecked == true && $product->video_type == 2 && empty($value)) {
+                    if ($isChecked == true && $product->type == 2 && empty($value)) {
                         $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
@@ -148,7 +148,7 @@ class ProductUpdateRequest extends FormRequest
                     $index = explode('.', $attribute)[1];
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
 
-                    if ($isChecked == true && $product->video_type == 2 && empty($value)) {
+                    if ($isChecked == true && $product->type == 2 && empty($value)) {
                         $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
@@ -159,7 +159,7 @@ class ProductUpdateRequest extends FormRequest
                     $index = explode('.', $attribute)[1];
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
 
-                    if ($isChecked == true && $product->video_type == 2 && empty($value)) {
+                    if ($isChecked == true && $product->type == 2 && empty($value)) {
                         $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
@@ -185,7 +185,7 @@ class ProductUpdateRequest extends FormRequest
             'mixed_album' => ['required', 'boolean'],
             'genre_id' => ['required', 'integer', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'integer', 'exists:genres,id'],
-            'format_id' => ['required_if:type,'.ProductTypeEnum::SOUND->value],
+            'format_id' => ['required_if:type,' . ProductTypeEnum::SOUND->value],
             'main_artists' => ['array', 'required_if:mixed_album,false'],
             'featuring_artists' => ['array'],
             'label_id' => ['required', 'exists:labels,id'],
@@ -195,10 +195,10 @@ class ProductUpdateRequest extends FormRequest
             'catalog_number' => ['nullable', 'string', 'min:3', 'max:100'],
             'language_id' => ['required', Rule::exists(Country::class, 'id')],
             'main_price' => ['nullable', 'numeric', 'min:0'],
-            'video_type' => ['required_if:type,'.ProductTypeEnum::VIDEO->value],
+
             'description' => ['nullable'],
-            'is_for_kids' => ['required_if:type,'.ProductTypeEnum::VIDEO->value],
-            'grid_code' => ['required_if:type,'.ProductTypeEnum::RINGTONE->value],
+            'is_for_kids' => ['required_if:type,' . ProductTypeEnum::VIDEO->value],
+            'grid_code' => ['required_if:type,' . ProductTypeEnum::RINGTONE->value],
         ];
 
         return array_merge($data, self::common());

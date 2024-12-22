@@ -11,16 +11,16 @@
         </template>
         <AppTableColumn label="Kullanıcı Adı" sortable="type">
             <template #default="scope">
-            <div class="flex justify-start items-center gap-2 w-full">
-                <div class="w-12 h-12 rounded-full overflow-hidden">
+            <div class="flex justify-start items-center gap-3 w-full">
+                <div class="w-10 h-10 rounded-full overflow-hidden">
                 <img :alt="scope.row.name"
                     :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.name)"
                 >
                 </div>
                 <div class="flex flex-col items-start ">
                 <a :href="route('control.user-management.users.show',scope.row.id)"
-                    class="font-poppins table-name-text c-sub-600">{{ scope.row.name }}</a>
-                    <span class="c-sub-600 paragraph-xs">{{scope.row.email}}</span>
+                    class="font-poppins table-name-text c-sub-600 mb-0.5">{{ scope.row.name }}</a>
+                    <span class="c-sub-600 paragraph-xs mb-2">{{scope.row.email}}</span>
 
                     <button class="c-blue-500 label-xs" @click="usersTable.toggleShowSub(scope.index)" v-if="scope.row?.children?.length>0">
                         {{scope.row?.children?.length}} Alt Kullanıcıyı Gör

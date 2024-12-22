@@ -37,7 +37,7 @@
           <p class="label-sm c-strong-950">{{ platform.label }}</p>
         </div>
         <div class="flex-1">
-          <FormElement direction="vertical" type="textarea" v-model="platform.description"
+          <FormElement direction="vertical" type="textarea"  v-model="platform.description"
                        placeholder="Tanım"></FormElement>
           <div class="flex items-center gap-2">
             <FormElement direction="vertical" v-model="platform.content_id" class="flex-1" type="text"

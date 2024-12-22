@@ -7,8 +7,8 @@ export const useDefaultStore = defineStore({
     getters: {},
     actions: {
         profileImage(name: string) {
-            const profileImageColor = '7F9CF5'
-            const profileImageBackgroundColor = 'EBF4FF'
+            const profileImageColor = '0E121B'
+            const profileImageBackgroundColor = 'E1E4EA'
 
             // Get the first letter of the first and second name
             const newNameArr = name.split(' ')

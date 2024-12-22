@@ -12,15 +12,15 @@
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <SearchIcon color="var(--sub-600)" />
                 </div>
-                <input v-model="queryTerm" v-debounce="400" @input="onInput" @change="onChange" type="text" id="voice-search" class="focus:ring-0 focu border-none text-gray-900 text-sm rounded-lg block w-full ps-10 p-1 " placeholder="Yayın Ara" required />
+                <input v-model="queryTerm" v-debounce="400" @input="onInput" @change="onChange" type="text" id="voice-search" class="focus:ring-0 focu border-none text-gray-900 text-sm rounded-lg block w-full ps-10 p-1 " :placeholder="step == 1 ? 'Yayın Ara' : 'Plak şirketi ara'" required />
 
             </div>
 
         </div>
         <div v-if="step == 1">
-            <div v-for="product in products" class="flex items-center  justify-between cursor-pointer" @click="onChoosenItem(product)">
+            <div v-for="product in products" class="flex flex-col items-center  justify-between cursor-pointer p-3 rounded-lg"  :class="choosenProducts?.find((e) => e.id == product.id) ? 'bg-white-600 ' : ''" @click="onChoosenItem(product)">
 
-                <div class="flex items-center gap-2 flex-1">
+                <div class="flex items-center gap-2 flex-1 w-full">
                     <button class="appCheckBox" :class="choosenProducts?.find((e) => e.id == product.id) ? 'checked' : ''">
                             <CheckIcon color="#fff" />
                         </button>
@@ -33,15 +33,55 @@
                         <p class="label-sm c-sub-600">
                             {{product.album_name}}
                         </p>
-                        <p class="paragraph-xs c-sub--600">
-                            {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : 'Zil Sesi') }}
-                        </p>
-                        <p class="paragraph-xs c-sub--600">
-                            Upc: {{product.upc_code }}
-                        </p>
+                       <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-1">
+                                <AudioIcon v-if="product.type == 1" color="var(--sub-600)"/>
+                                <MusicVideoIcon v-if="product.type == 2" color="var(--sub-600)"/>
+                                <RingtoneIcon v-if="product.type == 3" color="var(--sub-600)"/>
+                                <p class="paragraph-xs c-sub-600">
+                                    {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : 'Zil Sesi') }}
+                                </p>
+                            </div>
+                             <span class="label-sm c-soft-300">•</span>
+                            <p class="paragraph-xs c-sub-600">
+                                UPC: {{product.upc_code }}
+                            </p>
+                             <span class="label-sm c-soft-300">•</span>
+                            <p class="paragraph-xs c-sub-600" style="  white-space: nowrap;  overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                                <template v-for="art in product.main_artists">
+                                    {{art.name}}
+                                </template>
+                            </p>
+
+                       </div>
 
                     </div>
+                    <button @click.stop="onOpenProductSong(product)" class="w-5 h-5  flex items-center justify-center rounded-full ms-auto" :class="choosenProductCheckButtons.find((e) => e == product.id) ? 'bg-dark-green-800' : 'bg-soft-200'">
+                        <ChevronRightIcon  :color="choosenProductCheckButtons.find((e) => e == product.id) ? '#fff' : 'var(--sub-600)'"  :class="{
+                                'transform rotate-90 transition-transform duration-300': choosenProductCheckButtons.find((e) => e == product.id),
+                            'transform rotate-0 transition-transform duration-300': !choosenProductCheckButtons.find((e) => e == product.id)
+                            }" />
+
+                    </button>
                 </div>
+                <template v-if="choosenProductCheckButtons.find((e) => e == product.id)">
+                    <div v-for="song in product.songs" class="w-full flex items-center my-2 px-10">
+                        <div class="flex flex-col">
+                            <p class="label-sm c-sub-600 mb-0.5">{{song.name}}</p>
+                            <div class="flex items-center gap-3">
+                                    <p class="paragraph-xs c-sub-600">ISRC:{{song.isrc}}</p>
+                                    <span class="label-sm c-soft-300">•</span>
+                                    <p class="paragraph-xs c-sub-600" style="  white-space: nowrap;  overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                                        <template v-for="art in song.main_artists">
+                                            {{art.name}}
+                                        </template>
+                                    </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </template>
+
 
 
 
@@ -67,7 +107,7 @@
 
 
         <div v-else>
-            <div v-for="label in labels" class="flex items-center  justify-between cursor-pointer" @click="onChoosenItem(label)">
+            <div v-for="label in labels" class="flex items-center  justify-between cursor-pointer p-3 rounded-lg my-2" @click="onChoosenItem(label)" :class="choosenLabels?.find((e) => e.id == label.id) ? 'bg-white-600' : ''">
 
                 <div class="flex items-center gap-2 flex-1">
                     <button class="appCheckBox" :class="choosenLabels?.find((e) => e.id == label.id) ? 'checked' : ''">
@@ -122,10 +162,16 @@
         </RegularButton>
         <PrimaryButton :loading="submitting" @click="submit" class="flex-1" :disabled="choosenProducts.length<=0">
             <template v-if="step == 1">
-                Plak şirketi seç
+                Devam et
             </template>
             <template v-else>
-                Seçilenleri Ata
+                Tamamla
+            </template>
+            <template #suffix v-if="step == 1">
+                <ChevronRightIcon class="ms-2" color="var(--dark-green-500)" />
+            </template>
+            <template #suffix v-else>
+                <CheckIcon class="ms-2" color="var(--dark-green-500)" />
             </template>
         </PrimaryButton>
     </div>
@@ -135,7 +181,7 @@
 <script setup>
 import BaseDialog from '../BaseDialog.vue';
 import {SectionHeader} from '@/Components/Widgets';
-import {PersonIcon,AudioIcon,CheckIcon,SearchIcon,ProgressIcon} from '@/Components/Icons'
+import {PersonIcon,AudioIcon,CheckIcon,SearchIcon,ProgressIcon,ChevronRightIcon,MusicVideoIcon,RingtoneIcon} from '@/Components/Icons'
 import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {computed, ref, onMounted,reactive} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
@@ -161,6 +207,7 @@ const loading = ref(false)
 const products = ref([]);
 const labels = ref([]);
 const choosenProducts = ref([]);
+const choosenProductCheckButtons = ref([]);
 const choosenLabels = ref([]);
 
 const emits = defineEmits(['update:modelValue', 'done']);
@@ -233,7 +280,14 @@ const onChoosenItem =  (item) => {
 
 }
 
-
+const onOpenProductSong = (product) => {
+    const findedIndex = choosenProductCheckButtons.value.findIndex((el) =>el == product.id);
+    if(findedIndex >= 0 ){
+        choosenProductCheckButtons.value.splice(findedIndex,1)
+    }else {
+        choosenProductCheckButtons.value.push(product.id);
+    }
+}
 const submit = async () => {
     if(step.value == 1){
         queryTerm.value = "";

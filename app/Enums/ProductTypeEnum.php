@@ -9,6 +9,7 @@ enum ProductTypeEnum: int
     case SOUND = 1;
     case VIDEO = 2;
     case RINGTONE = 3;
+    case APPLE_VIDEO = 4;
 
     public static function getTitles(): array
     {
@@ -29,6 +30,7 @@ enum ProductTypeEnum: int
             self::SOUND => __('control.song.enums.type_sound'),
             self::VIDEO => __('control.song.enums.type_video'),
             self::RINGTONE => __('control.song.enums.type_ringtone'),
+            self::APPLE_VIDEO => __('control.song.enums.apple_video'),
         };
     }
 }

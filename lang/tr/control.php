@@ -1532,6 +1532,7 @@ return [
             'type_sound' => 'Ses',
             'type_video' => 'Video',
             'type_ringtone' => 'Zil sesi',
+            'apple_video' => 'Apple Video',
         ],
         'form' => [
             'id' => 'ID',

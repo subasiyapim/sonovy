@@ -234,7 +234,10 @@ class ProductController extends Controller
         );
         $total_song_duration = totalDuration($product->songs);
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
-        $video_types = enumToSelectInputFormat(VideoTypeEnum::getTitles());
+        $video_types = [
+            ["label" => "Müzik Video", "value" => 2],
+            ["label" => "Apple Video", "value" => 4],
+        ];
         $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
 
         $completedSteps = ProductServices::stepCompletedStatus($product);
@@ -487,6 +490,13 @@ class ProductController extends Controller
 
         return ISRCServices::make($request->input('type'), $request->has('index') ? $request->input('index') : null);
     }
+    public function changeType(Product $product, Request $request): false|string
+    {
+
+        $product->type =  $request->type;
+        $product->save();
+        return response()->json(['success' => true]); // Could not check
+    }
 
     public function convertAudio(ConvertAudioRequest $request): RedirectResponse
     {
@@ -644,7 +654,7 @@ class ProductController extends Controller
                     'pre_order_date' => isset($platform['pre_order_date']) ? Carbon::parse($platform['pre_order_date'])->format('Y-m-d') : null,
                     'publish_date' => isset($platform['publish_date']) ? Carbon::parse($platform['publish_date'])->format('Y-m-d') : null,
                     'date' => isset($platform['date']) ? Carbon::parse($platform['date'])->format('Y-m-d') : null,
-                    'time' => isset($platform['time']) ? $platform['time']['hours'].':'.$platform['time']['minutes'] : null,
+                    'time' => isset($platform['time']) ? $platform['time']['hours'] . ':' . $platform['time']['minutes'] : null,
                     'hashtags' => isset($platform['hashtags']) ? json_encode($platform['hashtags']) : null,
                     // Ensure it's a valid JSON
                     'description' => isset($platform['description']) ? $platform['description'] : null,
@@ -653,10 +663,7 @@ class ProductController extends Controller
                 ];
 
                 $product->downloadPlatforms()->attach($platform['id'], $data);
-
-
             }
-
         }
     }
 
