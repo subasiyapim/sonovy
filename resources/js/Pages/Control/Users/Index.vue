@@ -18,8 +18,8 @@
                 >
                 </div>
                 <div class="flex flex-col items-start ">
-                <a :href="route('control.user-management.users.show',scope.row.id)"
-                    class="font-poppins table-name-text c-sub-600 mb-0.5">{{ scope.row.name }}</a>
+                    <a :href="route('control.user-management.users.show',scope.row.id)"
+                        class="font-poppins table-name-text c-sub-600 mb-0.5">{{ scope.row.name }}</a>
                     <span class="c-sub-600 paragraph-xs mb-2">{{scope.row.email}}</span>
 
                     <button class="c-blue-500 label-xs" @click="usersTable.toggleShowSub(scope.index)" v-if="scope.row?.children?.length>0">
