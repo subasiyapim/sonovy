@@ -43,6 +43,13 @@
 
         <MenuItem title="Teklif Yönetimi" :icon="TeklifManagementIcon"/>
         <MenuItem title="İstatistikler" :icon="StatisticsIcon"/>
+        <MenuItem title="Finans" wrapper="finance" :icon="WalletIcon">
+          <template #sub>
+            <sub-menu-item :path="'control.finance.payments.index'">Ödeme ve İşlemler</sub-menu-item>
+            <sub-menu-item :path="'control.catalog.songs.index'">Finansal Raporlar</sub-menu-item>
+            <sub-menu-item :path="'control.catalog.artists.index'">Finansal Analiz</sub-menu-item>
+          </template>
+        </MenuItem>
         <MenuItem title="İcra" :icon="IcraIcon"/>
         <MenuItem title="Kazan Yönetimi" :icon="EarningManagementIcon"/>
         <MenuItem title="Bildirimler" :icon="NotificationIcon"/>
@@ -89,6 +96,7 @@ import {ProductDialog} from '@/Components/Dialog';
 import {
   AddIcon,
   SearchIcon,
+  WalletIcon,
   DashboardIcon,
   VerifiedFilledIcon,
   TeklifManagementIcon,

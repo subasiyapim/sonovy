@@ -24,14 +24,14 @@
                                 <slot name="breadcrumb" />
                             </div>
                        </div>
-                       <slot name="toolbar" />
+
                          <IconButton>
                              <SearchIcon color="var(--sub-600)" />
                         </IconButton>
                         <IconButton>
                             <NotificationIcon color="var(--sub-600)" />
                         </IconButton>
-                        <div class="w-[229px]" v-if="showDatePicker">
+                        <div class="w-40" v-if="showDatePicker">
 
 
                             <VueDatePicker  @cleared="onDateCleared" @range-end="onDateChaned"  range v-model="choosenDate" class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
@@ -42,6 +42,7 @@
                                 </template>
                             </VueDatePicker>
                        </div>
+                        <slot name="toolbar" />
 
                 </div>
 

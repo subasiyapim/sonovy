@@ -549,6 +549,22 @@ return [
         'correction_placeholder' => 'Kullanıcının bu yayını düzeltme sebebi...',
         'change_status_modal_title' => 'Platformlara gönderilsin mi ?',
     ],
+    'finance' => [
+        'payments' => [
+            'header' => "Ödeme işlemleri",
+            'table' => [
+                'empty_header' => "Henüz veri bulunmuyor",
+                'column_1' => "Tarih",
+                'column_2' => "İşlem Tipi",
+                'column_3' => "Tanım",
+                'column_4' => "İşlemler",
+                'column_5' => "Bakiye",
+                'column_6' => "Belge",
+
+            ]
+        ]
+
+    ],
     'announcement' => [
         'announcements_management' => 'Duyuru yönetimi',
         'announcements' => 'Duyurular',

@@ -7,7 +7,9 @@
       <span class="label-xs c-soft-400">•</span>
       <span class="label-xs c-soft-400 cursor-pointer" @click="router.visit(route('control.catalog.products.index'))">Tüm Yayınlar</span>
       <span class="label-xs c-soft-400">•</span>
-      <span class="label-xs c-soft-400">{{ product.type_text }}</span>
+      <span class="label-xs c-soft-400">
+          {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : (product.type == 4 ? 'Apple Video' : 'Zil Sesi') ) }}
+      </span>
       <span class="label-xs c-soft-400">•</span>
       <span class="label-xs c-soft-400">{{ product.album_name }}</span>
     </template>

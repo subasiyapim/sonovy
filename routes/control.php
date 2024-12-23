@@ -134,7 +134,10 @@ Route::group(
                 }
             );
         });
-
+        //Finance routes
+        Route::group(['prefix' => 'finance', 'as' => 'finance.'], function () {
+            Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
+        });
         //Statistics Routes
         Route::group(['prefix' => 'statistics', 'as' => 'statistics.'], function () {
             Route::get('statistics', [StatisticController::class, 'index'])->name('statistics.index');

@@ -6,8 +6,29 @@
       <AppTableColumn :label="'Tür'" align="left" sortable="name" width="64">
         <template #default="scope">
           <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
-            <RingtoneIcon color="var(--sub-600)" v-if="scope.row.type == 1"/>
-            <MusicVideoIcon color="var(--sub-600)" v-if="scope.row.type.value == 2"/>
+
+            <tippy :interactive="true" theme="dark" :appendTo="getBody">
+                    <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
+                   <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
+                    <MusicVideoIcon v-if="scope.row.type == 4" color="var(--sub-600)"/>
+                    <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
+
+                <template #content>
+                    <p v-if="scope.row.type == 1">
+                        Ses
+                    </p>
+                    <p v-if="scope.row.type == 2">
+                        Müzik Video
+                    </p>
+                    <p v-if="scope.row.type == 3">
+                        Zil Sesi
+                    </p>
+                    <p v-if="scope.row.type == 4">
+                        Apple Video
+                    </p>
+
+                </template>
+            </tippy>
           </div>
         </template>
       </AppTableColumn>
@@ -94,7 +115,8 @@ import {Howl} from "howler";
 import {
   PlayCircleFillIcon,
   MusicVideoIcon,
-  RingtoneIcon
+  RingtoneIcon,
+  AudioIcon
 } from '@/Components/Icons'
 import {LabelDialog} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
@@ -137,7 +159,9 @@ const playSound = (song) => {
     }
   });
 };
-
+const getBody = computed(() => {
+    return document.querySelector('body');
+})
 const pauseMusic = (song) => {
   if (currentSound.value && currentSound.value.playing()) {
     currentSound.value.pause();

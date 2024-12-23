@@ -4,7 +4,7 @@
 
        </div>
 
-       <div v-if="isDialogOn" :class="dialogWrapperClass" class="absolute inset-0 flex overflow-hidden p-3 pointer-events-none z-10">
+       <div v-if="isDialogOn" :class="dialogWrapperClass" class="absolute inset-0 flex overflow-hidden p-3 pointer-events-none z-10 mx-auto" :style="{'width':width}">
             <div  class="dialogBody pointer-events-auto overflow-hidden flex flex-col"  :style="dialogStyle" >
                 <div class="p-4 flex items-center gap-3.5">
                     <div class="w-10 h-10 rounded-full flex items-center justify-center bg-white-600">
@@ -35,6 +35,9 @@ const props = defineProps({
     },
     height:{
         default:'100%'
+    },
+    width:{
+
     },
     static:{
         default:false

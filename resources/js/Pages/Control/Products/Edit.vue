@@ -13,21 +13,36 @@
               <p class="label-lg c-strong-950">Tüm Yayınlar</p>
               <div class="flex items-center gap-2">
                 <span class="label-xs c-soft-400">Katalog</span>
-                <span class="label-xs c-soft-400">.</span>
+                <span class="label-xs c-soft-400">•</span>
                 <span class="label-xs c-soft-400">Tüm Yayınlar</span>
-                 <span class="label-xs c-soft-400">.</span>
+                 <span class="label-xs c-soft-400">•</span>
                 <span class="label-xs c-soft-400">
                     <template v-if="product.type == 1">
                         Ses
                     </template>
                     <template v-if="product.type == 2">
-                        Video
+                        Müzik Video Oluştur
                     </template>
                     <template v-if="product.type == 3">
                         Zil sesi
                     </template>
                     <template v-if="product.type == 4">
-                        Apple Video
+                        Apple Video Oluştur
+                    </template>
+                </span>
+                 <span class="label-xs c-soft-400">•</span>
+                <span class="label-xs c-soft-400">
+                    <template v-if="step == 1">
+                        Yayın Bilgileri
+                    </template>
+                    <template v-if="step == 2">
+                      {{ product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )}}
+                    </template>
+                    <template v-if="step == 3">
+                       Yayınlama Detayları
+                    </template>
+                    <template v-if="step == 4">
+                        Pazarlama ve Onay
                     </template>
                 </span>
               </div>

@@ -3,6 +3,7 @@
   <div>
 
     <div class="flex items-center mb-4 ">
+    <slot v-if="hasSlot('tableHeader')" name="tableHeader" />
       <div class="flex-1 flex items-center gap-7">
         <div v-for="(filter,index) in config?.filters" class="flex items-end">
           <span class="label-xs c-sub-600"> {{ filter.title }}:</span>
@@ -38,6 +39,7 @@
       </div>
     </div>
   </div>
+
  <div class="relative"  @dragenter="emits('dragenter',$e)" @dragleave="emits('dragleave',e)">
   <div class="relative" >
      <div ref="currentAppTable" class="overflow-x-scroll overflow-y-hidden w-full border border-soft-200 rounded-lg tableWrapper ">

@@ -1,5 +1,5 @@
 <template>
-  <AdminLayout :showDatePicker="false" class="">
+  <AdminLayout :showDatePicker="false" title="Tüm Parçalar" parentTitle="Katalog">
 
     <div class="flex grid grid-cols-3 gap-3 mb-5">
       <AppCard class="flex-1 w-full">
@@ -100,9 +100,31 @@
       <AppTableColumn label="Tür" sortable="type">
         <template #default="scope">
           <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
-            <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
-            <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
-            <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
+
+            <tippy :interactive="true" theme="dark" :appendTo="getBody">
+                    <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
+                   <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
+                    <MusicVideoIcon v-if="scope.row.type == 4" color="var(--sub-600)"/>
+                    <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
+
+                <template #content>
+                    <p v-if="scope.row.type == 1">
+                        Ses Yayını
+                    </p>
+                    <p v-if="scope.row.type == 2">
+                        Müzik Video
+                    </p>
+                    <p v-if="scope.row.type == 3">
+                        Zil Sesi
+                    </p>
+                    <p v-if="scope.row.type == 4">
+                        Apple Video
+                    </p>
+
+                </template>
+            </tippy>
+
+
           </div>
         </template>
       </AppTableColumn>
@@ -267,6 +289,10 @@ const appTableConfig = computed(() => {
   return {
     filters: props.filters,
   }
+})
+
+const getBody = computed(() => {
+    return document.querySelector('body');
 })
 const deleteProduct = (row) => {
   productTable.value.removeRowDataFromRemote(row);

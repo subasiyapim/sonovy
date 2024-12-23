@@ -79,6 +79,7 @@ import RetractedIcon from './RetractedIcon.vue';
 import TidalIcon from './TidalIcon.vue';
 import StarFilledIcon from './StarFilledIcon.vue';
 import ISRCStarsIcon from './ISRCStarsIcon.vue';
+import WalletIcon from './WalletIcon.vue';
 import YoutubeIcon from "./YoutubeIcon.vue";
 import Icon from './Icon.vue';
 import ItunesIcon from './ItunesIcon.vue';
@@ -87,6 +88,11 @@ import StarIcon from './StarIcon.vue';
 import MusicVideoIcon from './MusicVideoIcon.vue';
 import RingtoneIcon from './RingtoneIcon.vue';
 import AudioIcon from './AudioIcon.vue';
+import DownloadIcon from './DownloadIcon.vue';
+import ExitIcon from './ExitIcon.vue';
+import BankLineIcon from './BankLineIcon.vue';
+import SpeedUpIcon from './SpeedUpIcon.vue';
+import WalletLineIcon from './WalletLineIcon.vue';
 
 export {
     Icon,
@@ -98,6 +104,7 @@ export {
     ChevronRightIcon,
     ChevronDownIcon,
     PackagesIcon,
+    WalletIcon,
     ArrowLeftIcon,
     ISRCStarsIcon,
     StarFilledIcon,
@@ -175,4 +182,9 @@ export {
     More2LineIcon,
     StackIcon,
     CreditCardIcon,
+    DownloadIcon,
+    ExitIcon,
+    BankLineIcon,
+    SpeedUpIcon,
+    WalletLineIcon,
 }

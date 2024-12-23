@@ -37,9 +37,10 @@
                             <div class="flex items-center gap-1">
                                 <AudioIcon v-if="product.type == 1" color="var(--sub-600)"/>
                                 <MusicVideoIcon v-if="product.type == 2" color="var(--sub-600)"/>
+                                <MusicVideoIcon v-if="product.type == 4" color="var(--sub-600)"/>
                                 <RingtoneIcon v-if="product.type == 3" color="var(--sub-600)"/>
                                 <p class="paragraph-xs c-sub-600">
-                                    {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : 'Zil Sesi') }}
+                                    {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : (product.type == 4 ? 'Apple Video' : 'Zil Sesi') ) }}
                                 </p>
                             </div>
                              <span class="label-sm c-soft-300">•</span>

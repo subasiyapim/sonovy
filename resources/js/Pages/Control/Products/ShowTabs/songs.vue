@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue';
+import {ref,computed} from 'vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import {IconButton} from '@/Components/Buttons';
 import {SongParticipantModal, SongDetailModal, SongAcrResponseModal, SongDialog,SongMusiciansModal} from '@/Components/Dialog';
@@ -48,6 +48,10 @@ const openEditDialog = (song) => {
   isSongEditModalOn.value = true;
   choosenSong.value = song;
 }
+
+const getBody = computed(() => {
+    return document.querySelector('body');
+})
 
 const onComplete = (e) => {
   location.reload();
@@ -99,9 +103,28 @@ const pauseMusic = (song) => {
       <template #default="scope">
         <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 
-          <RingtoneIcon color="var(--sub-600)" v-if="scope.row.type == 1"/>
-          <MusicVideoIcon color="var(--sub-600)" v-if="scope.row.type == 2"/>
+            <tippy :interactive="true" theme="dark" :appendTo="getBody">
+                    <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
+                   <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
+                    <MusicVideoIcon v-if="scope.row.type == 4" color="var(--sub-600)"/>
+                    <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
 
+                <template #content>
+                    <p v-if="scope.row.type == 1">
+                        Ses
+                    </p>
+                    <p v-if="scope.row.type == 2">
+                        Müzik Video
+                    </p>
+                    <p v-if="scope.row.type == 3">
+                        Zil Sesi
+                    </p>
+                    <p v-if="scope.row.type == 4">
+                        Apple Video
+                    </p>
+
+                </template>
+            </tippy>
         </div>
       </template>
     </AppTableColumn>

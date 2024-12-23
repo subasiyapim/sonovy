@@ -31,8 +31,10 @@ class  PaymentController extends Controller
 
         $payment_requests = Payment::with('user.country', 'account')
             ->when($request->has('d') && $request->d[0] && $request->d[1], function ($query) use ($request) {
-                $query->whereBetween('created_at',
-                    [Carbon::parse($request->d[0])->format('Y-m-d'), Carbon::parse($request->d[1])->format('Y-m-d')]);
+                $query->whereBetween(
+                    'created_at',
+                    [Carbon::parse($request->d[0])->format('Y-m-d'), Carbon::parse($request->d[1])->format('Y-m-d')]
+                );
             })
             ->when($request->has('u_id') && $request->u_id, function ($query) use ($request) {
                 $query->where('user_id', $request->u_id);
@@ -47,7 +49,7 @@ class  PaymentController extends Controller
             $user = [];
         }
 
-        return inertia('Control/Payments/PaymentIndex', compact('payment_requests', 'user'));
+        return inertia('Control/Finance/Payment/Index', compact('payment_requests', 'user'));
     }
 
     public function advanceIndex(Request $request): \Inertia\Response
@@ -119,7 +121,6 @@ class  PaymentController extends Controller
                     'type' => 'success'
                 ]
             ]);
-
     }
 
     public function store(RequestPaymentRequest $request)
@@ -155,15 +156,21 @@ class  PaymentController extends Controller
                 'process_type' => PaymentProcessTypeEnum::MONEY_TRANSFER->value,
                 'status' => PaymentStatusEnum::APPROVED->value,
                 'amount' => $commission_calculate['amount'],
-                'payment_date' => $request->payment_date.' '.$request->payment_time,
+                'payment_date' => $request->payment_date . ' ' . $request->payment_time,
                 'commission_rate' => $commission_calculate['commission_rate'],
                 'commission' => $commission_calculate['commission'],
             ]
         );
 
         if ($request->hasFile('receipt')) {
-            MediaServices::upload($payment, $request->file('receipt'), null, null, 'payment_receipts',
-                'payment_receipts');
+            MediaServices::upload(
+                $payment,
+                $request->file('receipt'),
+                null,
+                null,
+                'payment_receipts',
+                'payment_receipts'
+            );
         }
 
         return to_route('dashboard.payments.index')
@@ -268,7 +275,6 @@ class  PaymentController extends Controller
                     return to_route('dashboard.profile.detail')
                         ->with(['notification' => ['message' => $result->getErrorMessage(), 'type' => 'error']]);
                 }
-
             } else {
 
                 return to_route('dashboard.profile.detail')
