@@ -23,6 +23,7 @@ class SongUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        //dd($this->all());
         return [
             'product_id' => ['required', 'exists:products,id'],
             'name' => ['required', 'string'],
@@ -55,8 +56,32 @@ class SongUpdateRequest extends FormRequest
             'is_cover' => ['nullable', 'boolean'],
             'remixer_artis' => ['nullable', 'exists:artists,id'],
             'released_before' => ['nullable', 'boolean'],
+        ];
+    }
 
-
+    public function attributes(): array
+    {
+        return [
+            'product_id' => __('control.song.fields.product_id'),
+            'name' => __('control.song.fields.name'),
+            'version' => __('control.song.fields.version'),
+            'main_artists' => __('control.song.fields.main_artists'),
+            'featuring_artists' => __('control.song.fields.featuring_artists'),
+            'genre_id' => __('control.song.fields.genre_id'),
+            'sub_genre_id' => __('control.song.fields.sub_genre_id'),
+            'is_instrumental' => __('control.song.fields.is_instrumental'),
+            'lyrics_writers' => __('control.song.fields.lyrics_writers'),
+            'lyrics' => __('control.song.fields.lyrics'),
+            'preview_start' => __('control.song.fields.preview_start'),
+            'musicians' => __('control.song.fields.musicians'),
+            'composers' => __('control.song.fields.composers'),
+            'participants' => __('control.song.fields.participants'),
+            'isrc' => __('control.song.fields.isrc'),
+            'is_explicit' => __('control.song.fields.is_explicit'),
+            'iswc' => __('control.song.fields.iswc'),
+            'is_cover' => __('control.song.fields.is_cover'),
+            'remixer_artis' => __('control.song.fields.remixer_artis'),
+            'released_before' => __('control.song.fields.released_before'),
         ];
     }
 }
