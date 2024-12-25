@@ -84,4 +84,11 @@ class SongUpdateRequest extends FormRequest
             'released_before' => __('control.song.fields.released_before'),
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'lyrics_writers.required_if' => 'Söz yazarı eğer enstrümantal değilse zorunludur.',
+        ];
+    }
 }
