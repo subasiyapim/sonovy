@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
             'is_verified' => 1,
             'commission_rate' => 10,
             'status' => 1,
+            'deleted_at' => null,
         ],
         [
             'name' => 'MD Admin',
@@ -27,6 +28,7 @@ class UserSeeder extends Seeder
             'is_verified' => 1,
             'commission_rate' => 7,
             'status' => 1,
+            'deleted_at' => null,
         ],
         [
             'name' => 'MD User',
@@ -36,6 +38,7 @@ class UserSeeder extends Seeder
             'is_verified' => 1,
             'commission_rate' => 18,
             'status' => 1,
+            'deleted_at' => null,
         ]
     ];
 
