@@ -41,21 +41,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (self::$users as $user) {
-            \App\Models\User::updateOrCreate(
-                [
-                    'email' => $user['email']
-                ],
-                [
-                    'name' => $user['name'],
-                    'remember_token' => Str::random(10),
-                    'email_verified_at' => now(),
-                    'password' => Hash::make($user['password']),
-                    'phone' => $user['phone'] ?? '',
-                    'is_verified' => 1,
-                ]
-            );
-        }
+        User::upsert(self::$users, ['email'], ['name', 'password', 'phone', 'is_verified', 'commission_rate']);
 
         User::factory(100)->create()->each(function ($user) {
             User::factory(rand(1, 5))->create(['parent_id' => $user->id])->each(function ($user) {
