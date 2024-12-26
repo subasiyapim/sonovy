@@ -17,6 +17,7 @@ class UserSeeder extends Seeder
             'phone' => '5325805080',
             'is_verified' => 1,
             'commission_rate' => 10,
+            'status' => 1,
         ],
         [
             'name' => 'MD Admin',
@@ -25,6 +26,7 @@ class UserSeeder extends Seeder
             'phone' => '5325805080',
             'is_verified' => 1,
             'commission_rate' => 7,
+            'status' => 1,
         ],
         [
             'name' => 'MD User',
@@ -33,6 +35,7 @@ class UserSeeder extends Seeder
             'phone' => '5325805080',
             'is_verified' => 1,
             'commission_rate' => 18,
+            'status' => 1,
         ]
     ];
 
