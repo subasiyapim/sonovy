@@ -151,6 +151,7 @@ class SongController extends Controller
                 $query->where('type', $request->type);
             })
             ->whereHas('products')
+            ->where('status', SongStatusEnum::PUBLISHED->value)
             ->advancedFilter();
 
 
