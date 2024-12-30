@@ -21,7 +21,7 @@
             <BankLineIcon color="var(--sub-600)" />
         </div>
         <div class="flex flex-col flex-1">
-            <p class="label-sm c-strong-950">Payoneer Bilgileri</p>
+            <p class="label-sm c-strong-950">Banka bilgileri</p>
             <p class="paragraph-xs c-sub-600">TR *** **** ****9876</p>
         </div>
         <button class="label-sm c-dark-green-500">

@@ -35,7 +35,7 @@
         <template #body>
           <div class="flex flex-col mt-5">
             <p class="paragraph-sm c-sub-600 mb-0.5">Mevcut Bakiye</p>
-            <p class="card-currency-header c-strong-950">$0.00</p>
+            <p class="card-currency-header c-strong-950">${{usePage().props.balance}}</p>
           </div>
         </template>
       </AppCard>
@@ -52,7 +52,7 @@
         <template #body>
           <div class="flex flex-col mt-5">
             <p class="paragraph-sm c-sub-600 mb-0.5">Beklenen ödemde</p>
-            <p class="card-currency-header c-strong-950">$0.00</p>
+            <p class="card-currency-header c-strong-950">${{usePage().props.pending_payment}}</p>
           </div>
         </template>
       </AppCard>
