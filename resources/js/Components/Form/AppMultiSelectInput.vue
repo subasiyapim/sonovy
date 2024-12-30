@@ -1,92 +1,91 @@
 <template>
-
-  <div ref="selectContainer" v-click-outside="handleClickOutside"
-       class="relative w-full flex h-9 border-text-input flex items-center radius-8 c-white-500 px-2.5 ">
-    <div v-if="hasSlot('icon')">
-      <slot name="icon"/>
-    </div>
-    <div @click="open"
-         class="absolute inset-0 flex items-center px-3 radius-8 border-none focus:ring-0 appSelectInput c-strong-950">
-      <span class="label-sm !font-normal c-soft-400" v-if="!element">{{ placeholder }}</span>
-      <slot v-else-if="hasSlot('disabled')" name="disabled"/>
-        <div v-else-if="hasSlot('model')" class="flex items-center w-full">
-           <div class="flex-1 overflow-hidden"> <slot  name="model" :scope="choosenAll"/></div>
-
-           <div class="bg-white w-6 flex justify-center ms-auto">
-             <ChevronRightIcon
-
-                color="var(--soft-400)"
-                :class="{
-                                'transform rotate-90 transition-transform duration-300': isOpen,
-                            'transform -rotate-90 transition-transform duration-300': !isOpen
-                            }"/>
-           </div>
+    <div ref="selectContainer" v-click-outside="handleClickOutside"
+        class="relative w-full flex h-9 border-text-input flex items-center radius-8 c-white-500 px-2.5 ">
+        <div v-if="hasSlot('icon')">
+        <slot name="icon"/>
         </div>
-      <span v-else class="label-sm !font-normal">{{ getShowLabel }}</span>
-    </div>
-    <div
-        class="selectButton bg-blue-300 flex items-center justify-end border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm !font-normal cursor-pointer">
-      <!-- <div  class="flex-1 pointer-events-none c-soft-400">
-          <span v-if="!element">{{placeholder}}</span>
-      </div> -->
-      <ChevronRightIcon
-          v-if="disabled"
-          color="var(--soft-400)"
-          :class="{
-                        'transform rotate-90 transition-transform duration-300': isOpen,
-                    'transform -rotate-90 transition-transform duration-300': !isOpen
-                    }"/>
-    </div>
 
-    <transition name="dropdown">
-      <teleport to="body">
-        <div v-if="isOpen"
-             :class="dropdownDirection"
-             class="absolute dropdownWrapper left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-10"
-             :style="dropdownStyle">
-          <AppTextInput v-if="config.hasSearch" v-model="searchTerm" @change="onSearchChange" class="w-full mb-2"
-                        placeholder="Yayın, Artist ara...">
-            <template #icon>
-              <SearchIcon color="var(--soft-400)"/>
+        <div @click="open"
+            class="absolute inset-0 flex items-center px-3 radius-8 border-none focus:ring-0 appSelectInput c-strong-950">
+            <span class="label-sm !font-normal " :class="disabled ? 'c-soft-300' : 'c-soft-400' "
+                    v-if="element.length <= 0">{{ placeholder }}</span>
+            <slot v-else-if="hasSlot('disabled')" name="disabled"/>
+            <div v-else-if="hasSlot('model')" class="flex items-center w-full">
+            <div class="flex-1 overflow-hidden"> <slot  name="model" :scope="choosenAll"/></div>
+
+            <div class="bg-white w-6 flex justify-center ms-auto">
+                <ChevronRightIcon
+
+                    color="var(--soft-400)"
+                    :class="{
+                                    'transform rotate-90 transition-transform duration-300': isOpen,
+                                'transform -rotate-90 transition-transform duration-300': !isOpen
+                                }"/>
+            </div>
+            </div>
+        <span v-else class="label-sm !font-normal">{{ getShowLabel }}</span>
+        </div>
+        <div
+            class="selectButton bg-blue-300 flex items-center justify-end border-none focus:outline-none focus:border-none focus:border-transparent focus:ring-0 h-full  w-full bg-transparent label-sm !font-normal cursor-pointer">
+
+        <ChevronRightIcon
+            v-if="disabled"
+            color="var(--soft-400)"
+            :class="{
+                            'transform rotate-90 transition-transform duration-300': isOpen,
+                        'transform -rotate-90 transition-transform duration-300': !isOpen
+                        }"/>
+        </div>
+
+        <transition name="dropdown">
+        <teleport to="body">
+            <div v-if="isOpen"
+                :class="dropdownDirection"
+                class="absolute dropdownWrapper left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-10"
+                :style="dropdownStyle">
+            <AppTextInput v-if="config.hasSearch" v-model="searchTerm" @change="onSearchChange" class="w-full mb-2"
+                            placeholder="Yayın, Artist ara...">
+                <template #icon>
+                <SearchIcon color="var(--soft-400)"/>
+                </template>
+            </AppTextInput>
+            <template v-if="config.data != null && config.data.length > 0">
+                <div v-if="hasSlot('first_child')" class="mb-2">
+                <slot name="first_child"/>
+                </div>
             </template>
-          </AppTextInput>
-          <template v-if="config.data != null && config.data.length > 0">
-            <div v-if="hasSlot('first_child')" class="mb-2">
-              <slot name="first_child"/>
+
+            <div class="max-h-[250px] overflow-scroll">
+
+                <div @click="chooseValue(el)" v-for="el in getFilteredData" :data-id="el[config.value ?? 'value']"
+                    :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'"
+                    class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
+                <div
+                    :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-dark-green-600 border-dark-green-600' : 'bg-white  border-soft-200'"
+                    class="w-3 h-3 border flex items-center justify-center  rounded-sm shadow">
+                    <CheckIcon v-if="checkIfChecked(el[config.value ?? 'value'])" color="#fff"/>
+                </div>
+                <slot v-if="hasSlot('option')" name="option" :scope="el"/>
+                <span v-else class="paragraph-sm c-strong-950"> {{ el[config?.label ?? 'label'] }}</span>
+                </div>
             </div>
-          </template>
-
-          <div class="max-h-[250px] overflow-scroll">
-
-            <div @click="chooseValue(el)" v-for="el in getFilteredData" :data-id="el[config.value ?? 'value']"
-                 :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'"
-                 class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
-              <div
-                  :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-dark-green-600 border-dark-green-600' : 'bg-white  border-soft-200'"
-                  class="w-3 h-3 border flex items-center justify-center  rounded-sm shadow">
-                <CheckIcon v-if="checkIfChecked(el[config.value ?? 'value'])" color="#fff"/>
-              </div>
-              <slot v-if="hasSlot('option')" name="option" :scope="el"/>
-              <span v-else class="paragraph-sm c-strong-950"> {{ el[config?.label ?? 'label'] }}</span>
+            <div v-if="getFilteredData?.length <= 0"
+                class="flex flex-col gap-5 items-center justify-center min-h-[224px]">
+                <img src="@/assets/images/empty_state.png" class="w-16 h-16">
+                <p class="label-medium c-strong-950">Maalesef sonuç bulunamadı:(</p>
+                <slot name="empty"/>
             </div>
-          </div>
-          <div v-if="getFilteredData?.length <= 0"
-               class="flex flex-col gap-5 items-center justify-center min-h-[224px]">
-            <img src="@/assets/images/empty_state.png" class="w-16 h-16">
-            <p class="label-medium c-strong-950">Maalesef sonuç bulunamadı:(</p>
-            <slot name="empty"/>
-          </div>
-        </div>
-      </teleport>
-    </transition>
-  </div>
+            </div>
+        </teleport>
+        </transition>
+    </div>
 
-  <div v-if="showTags" class="flex flex-wrap items-center gap-2 mt-2">
-    <StatusBadge v-for="(el,index) in element" :showClose="true" @close="element.splice(index,1)" :showIcon="false">
-      <span
-          class="label-xs c-sub-600">{{ config.data?.find((option) => option[config.value ?? 'value'] == el)[config?.label ?? 'label'] }}</span>
-    </StatusBadge>
-  </div>
+    <div v-if="showTags && config.data" class="flex flex-wrap items-center gap-2 mt-2">
+        <StatusBadge v-for="(el,index) in element" :showClose="true" @close="chooseValue(config.data?.find((option) => option[config.value ?? 'value'] == el))" :showIcon="false">
+        <span
+            class="label-xs c-sub-600">{{ config.data?.find((option) => option[config.value ?? 'value'] == el)[config?.label ?? 'label'] }}</span>
+        </StatusBadge>
+    </div>
 
 </template>
 
@@ -175,13 +174,13 @@ const open = async () => {
 
 const onSearchChange = async (e) => {
 
-
   if (props.config?.remote) {
     try {
       remoteDatas.value = await props.config?.remote(e)
     } catch (error) {
       remoteDatas.value = null;
     }
+    props.config.data = remoteDatas.value;
   }
 
 }
@@ -235,7 +234,19 @@ const adjustDropdownDirection = () => {
   }
 }
 
+const uniqueElements = computed(() => {
+  const seen = new Set();
+  return choosenAll.value.filter((item) => {
+    const key = item.value; // Filtering by the `id` property
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+});
 const chooseValue = (val) => {
+
   const v = val[props.config.value ?? 'value'];
   const vIndex = element.value.findIndex((el) => el == v);
 
@@ -248,6 +259,7 @@ const chooseValue = (val) => {
   }
   element.value = JSON.parse(JSON.stringify(element.value));
 
+    emits('change',uniqueElements.value)
 }
 
 // Handle window resize event to recheck dropdown direction
@@ -266,6 +278,8 @@ const insertData = (e) => {
 
 // Add event listener for window resize on mounted, and remove on unmounted
 onMounted(() => {
+
+
   window.addEventListener('resize', handleResize);
 })
 

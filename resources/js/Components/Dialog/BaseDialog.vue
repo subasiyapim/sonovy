@@ -63,7 +63,7 @@ const closeDialog = () => {
 
 }
 const dialogStyle = computed(() => {
-    let classString = {'height' : props.height, 'max-height' : "100%"};
+    let classString = {'height' : props.height, 'max-height' : "100%",'width' : props.width};
     return classString;
 })
 const dialogWrapperClass = computed(() => {

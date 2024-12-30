@@ -561,7 +561,33 @@ return [
                 'column_5' => "Bakiye",
                 'column_6' => "Belge",
 
+            ],
+            'demanded_table'  => [
+                'empty_header' => "Henüz veri bulunmuyor",
+                'column_1' => "Rapor Dönemi",
+                'column_2' => "Rapor Tipi",
+                'column_3' => "Telif Hakkı Toplam Tutarı",
+                'column_4' => "Oluşturma Tarihi",
+                'column_5' => "Durum",
+
+            ],
+
+        ],
+        'reports' => [
+            'header' => "Finansal Raporlar",
+            'table' => [
+                'empty_header' => "Henüz veri bulunmuyor",
+                'column_1' => "Tarih",
+                'column_2' => "İşlem Tipi",
+                'column_3' => "Tanım",
+                'column_4' => "İşlemler",
+                'column_5' => "Bakiye",
+                'column_6' => "Belge",
+
             ]
+        ],
+        'analysis' => [
+            'header' => "Finansal Analiz",
         ]
 
     ],

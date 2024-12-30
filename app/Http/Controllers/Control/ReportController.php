@@ -20,11 +20,11 @@ class ReportController extends Controller
      */
     public function index()
     {
-        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $reports = Report::advancedFilter();
 
-        return inertia('Control/Reports/Index', compact('reports'));
+        return inertia('Control/Finance/Reports/Index', compact('reports'));
     }
 
     /**

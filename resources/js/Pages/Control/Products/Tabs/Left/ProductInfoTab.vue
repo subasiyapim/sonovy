@@ -354,8 +354,6 @@ const mainArtistSelectConfig = computed(() => {
       const response = await crudStore.get(route('control.search.artists', {
         search: query
       }))
-
-
       const formattedData = response.map(item => ({
         value: item.id,
         label: item.name,

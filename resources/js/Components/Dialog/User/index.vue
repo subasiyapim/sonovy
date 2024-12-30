@@ -233,8 +233,8 @@ const isDialogOn = computed({
 
 const countryConfig = computed(() => {
   return {
-     hasSearch:true,
-    data: usePage().props.countries,
+        hasSearch:true,
+        data: usePage().props.countries,
   };
 })
 

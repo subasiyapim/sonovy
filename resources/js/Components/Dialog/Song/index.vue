@@ -484,6 +484,17 @@ const lyricsConfig = computed(() => {
     data: [],
   }
 })
+
+
+const calcMax = computed(() => {
+    if(props.song.duration){
+       const splitted = props.song.duration?.split(":");
+       if(splitted.length > 2){
+        return parseInt(splitted[0]) * 60 + parseInt(splitted[1]);
+       }
+    }
+    return 0;
+})
 const sliderConfig = computed(() => {
   return {
     range: 15,
@@ -493,7 +504,7 @@ const sliderConfig = computed(() => {
       return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 
     },
-    max:parseInt(props.song.duration.split(":")[0])*60 + parseInt(props.song.duration.split(":")[1]),
+    max:calcMax.value,
     processStyle: {
       'background': 'var(--dark-green-800)'
     }

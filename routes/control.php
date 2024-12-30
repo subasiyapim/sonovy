@@ -56,7 +56,8 @@ use App\Http\Controllers\Control\ShortFormattedVideosController;
 use App\Http\Controllers\Control\FinanceAndEarningController;
 use App\Http\Controllers\Control\EarningController;
 use App\Http\Controllers\Control\EarningReportController;
-
+use App\Http\Controllers\Control\FinanceAnalysController;
+use App\Http\Controllers\Control\FinanceAnalysisController;
 
 Route::group(
     [
@@ -137,6 +138,8 @@ Route::group(
         //Finance routes
         Route::group(['prefix' => 'finance', 'as' => 'finance.'], function () {
             Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
+            Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('analysis', [FinanceAnalysisController::class, 'index'])->name('analysis.index');
         });
         //Statistics Routes
         Route::group(['prefix' => 'statistics', 'as' => 'statistics.'], function () {

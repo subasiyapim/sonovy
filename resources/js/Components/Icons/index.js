@@ -93,6 +93,7 @@ import ExitIcon from './ExitIcon.vue';
 import BankLineIcon from './BankLineIcon.vue';
 import SpeedUpIcon from './SpeedUpIcon.vue';
 import WalletLineIcon from './WalletLineIcon.vue';
+import MultipleDocumentIcon from './MultipleDocumentIcon.vue';
 
 export {
     Icon,
@@ -187,4 +188,5 @@ export {
     BankLineIcon,
     SpeedUpIcon,
     WalletLineIcon,
+    MultipleDocumentIcon,
 }

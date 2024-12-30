@@ -243,3 +243,42 @@
 .dp__disabled{
     background: var(--weak-50) !important;
 }
+.dp__range_end, .dp__range_start, .dp__active_date{
+    background: var(--dark-green-500) !important;
+    border-radius: 4px !important;
+}
+.dp__range_between{
+    background: #476CFF1A !important;
+    color:  var(--dark-green-500) !important;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.006em;
+
+
+}
+.dp__month_year_wrap{
+    background: #F5F7FA !important;
+    border-radius: 4px !important;
+}
+.dp__btn.dp--arrow-btn-nav{
+    background: #fff !important;
+    border-radius: 4px !important;
+    margin: auto;
+     width: 20px;
+     height: 20px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     margin: auto 5px;
+}
+.dp__calendar_header_item{
+    color: var(--soft-400) !important;
+    font-family: Poppins;
+font-size: 14px;
+font-weight: 500;
+line-height: 20px;
+letter-spacing: -0.006em;
+
+
+}

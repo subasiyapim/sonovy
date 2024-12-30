@@ -46,8 +46,8 @@
         <MenuItem title="Finans" wrapper="finance" :icon="WalletIcon">
           <template #sub>
             <sub-menu-item :path="'control.finance.payments.index'">Ödeme ve İşlemler</sub-menu-item>
-            <sub-menu-item :path="'control.catalog.songs.index'">Finansal Raporlar</sub-menu-item>
-            <sub-menu-item :path="'control.catalog.artists.index'">Finansal Analiz</sub-menu-item>
+            <sub-menu-item :path="'control.finance.reports.index'">Finansal Raporlar</sub-menu-item>
+            <sub-menu-item :path="'control.finance.analysis.index'">Finansal Analiz</sub-menu-item>
           </template>
         </MenuItem>
         <MenuItem title="İcra" :icon="IcraIcon"/>

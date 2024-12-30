@@ -15,6 +15,7 @@ import AssignUserProductModal from './User/assign_product.vue';
 import AssignUserLabelModal from './User/assign_labels.vue';
 import ChangePackageDialog from './User/change_package.vue';
 import WithdrawModal from './Finance/withdraw.vue';
+import NewReportModal from './Finance/new_report.vue';
 export {
     ArtistDialog,
     LabelDialog,
@@ -33,5 +34,6 @@ export {
     AssignUserLabelModal,
     ChangePackageDialog,
     WithdrawModal,
+    NewReportModal
 
 }

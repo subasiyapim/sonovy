@@ -142,10 +142,12 @@ class ArtistController extends Controller
     public function show(Artist $artist)
     {
         abort_if(Gate::denies('artist_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $countries = getDataFromInputFormat(CountryServices::get(), 'id', 'name', 'emoji');
+        $countryCodes = CountryServices::getCountryPhoneCodes();
 
         $artist->loadMissing('artistBranches', 'platforms', 'country', 'products.songs');
 
-        return inertia('Control/Artists/Show', compact('artist'));
+        return inertia('Control/Artists/Show', compact('artist', 'countries', 'countryCodes'));
     }
 
     /**

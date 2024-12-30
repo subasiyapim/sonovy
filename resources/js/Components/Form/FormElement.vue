@@ -54,6 +54,7 @@
 
       <AppMultiSelectInput ref="appMultiSelect" v-else-if="type=='multiselect'" :config="config" :type="type"
                            v-model="element"
+                            @change="change"
                            :placeholder="placeholder" :disabled="disabled">
         <template v-if="hasSlot('first_child')" #first_child>
           <slot name="first_child"/>
