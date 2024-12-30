@@ -48,13 +48,13 @@ class EarningService
         if (App::runningInConsole()) {
             return Earning::sum('earning');
         } else {
-            $earning_total = self::getEarnedTotal($user_id);
+            $earned = self::getEarnedTotal($user_id);
 
-            $payment_total = self::getPaymentTotal($user_id);
+            $payments = PaymentService::getTotalPayment($user_id);
 
-            $advance_total = self::getAdvanceTotal();
+            $advances = PaymentService::getAdvancePaymentTotal($user_id);
 
-            return ($earning_total + $advance_total) - $payment_total;
+            return ($earned + $advances) - $payments;
         }
     }
 
@@ -74,35 +74,6 @@ class EarningService
         return $earning_total->sum('earning');
     }
 
-    protected static function getPaymentTotal($user_id = null)
-    {
-        $payment_total = Payment::when($user_id, function ($query) use ($user_id) {
-            $query->where('user_id', $user_id)
-                ->where('process_type', PaymentProcessTypeEnum::MONEY_TRANSFER->value)
-                ->whereNotIn('status', [PaymentStatusEnum::REJECTED->value, PaymentStatusEnum::FAILED->value]);
-        }, function ($query) {
-            $query->where('user_id', auth()->id())
-                ->where('process_type', PaymentProcessTypeEnum::MONEY_TRANSFER->value)
-                ->whereNotIn('status', [PaymentStatusEnum::REJECTED->value, PaymentStatusEnum::FAILED->value]);
-        })->get();
-
-        return $payment_total->sum('amount');
-    }
-
-    protected static function getAdvanceTotal($user_id = null)
-    {
-        $advance_total = Payment::when($user_id, function ($query) use ($user_id) {
-            $query->where('user_id', $user_id)
-                ->where('status', PaymentStatusEnum::APPROVED->value)
-                ->where('process_type', PaymentProcessTypeEnum::APPROVED_ADVANCE->value);
-        }, function ($query) {
-            $query->where('user_id', auth()->id())
-                ->where('status', PaymentStatusEnum::APPROVED->value)
-                ->where('process_type', PaymentProcessTypeEnum::APPROVED_ADVANCE->value);
-        })->get();
-
-        return $advance_total->sum('amount');
-    }
 
     public static function balanceReport(): array
     {

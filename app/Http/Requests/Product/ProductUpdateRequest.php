@@ -55,7 +55,7 @@ class ProductUpdateRequest extends FormRequest
                 'required_if:type,2,false',
                 'integer',
                 'min:1900',
-                'max:' . $currentYear
+                'max:'.$currentYear
             ],
 
             'previously_released' => ['required', 'boolean'],
@@ -185,7 +185,7 @@ class ProductUpdateRequest extends FormRequest
             'mixed_album' => ['required', 'boolean'],
             'genre_id' => ['required', 'integer', 'exists:genres,id'],
             'sub_genre_id' => ['required', 'integer', 'exists:genres,id'],
-            'format_id' => ['required_if:type,' . ProductTypeEnum::SOUND->value],
+            'format_id' => ['required_if:type,'.ProductTypeEnum::SOUND->value],
             'main_artists' => ['array', 'required_if:mixed_album,false'],
             'featuring_artists' => ['array'],
             'label_id' => ['required', 'exists:labels,id'],
@@ -197,8 +197,8 @@ class ProductUpdateRequest extends FormRequest
             'main_price' => ['nullable', 'numeric', 'min:0'],
 
             'description' => ['nullable'],
-            'is_for_kids' => ['required_if:type,' . ProductTypeEnum::VIDEO->value],
-            'grid_code' => ['required_if:type,' . ProductTypeEnum::RINGTONE->value],
+            'is_for_kids' => ['required_if:type,'.ProductTypeEnum::VIDEO->value],
+            'grid_code' => ['required_if:type,'.ProductTypeEnum::RINGTONE->value],
         ];
 
         return array_merge($data, self::common());
@@ -276,6 +276,13 @@ class ProductUpdateRequest extends FormRequest
             'platforms.*.hashtags' => __('control.product.fields.hashtags'),
             'platforms.*.date' => __('control.product.fields.date'),
             'platforms.*.time' => __('control.product.fields.time'),
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'platforms.required' => 'En az bir platform seçmek zorundasınız.',
         ];
     }
 }

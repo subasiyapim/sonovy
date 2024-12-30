@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentProcessTypeEnum;
+use App\Enums\PaymentStatusEnum;
+use App\Enums\PaymentTypeEnum;
 use App\Traits\DataTables\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -58,8 +61,12 @@ class Payment extends Model implements HasMedia
     protected $casts = [
         'payment_date' => 'datetime:d-m-Y H:i',
         'created_at' => 'datetime:d-m-Y H:i',
+        'process_type' => PaymentProcessTypeEnum::class,
+        'payment_type' => PaymentTypeEnum::class,
+        'status' => PaymentStatusEnum::class
     ];
 
+    
     protected $appends = ['receipt'];
 
     public function user(): BelongsTo
