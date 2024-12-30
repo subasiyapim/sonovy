@@ -34,7 +34,7 @@ class  PaymentController extends Controller
 
         $payments = Payment::advancedFilter();
         $balance = EarningService::balance();
-        $pending_payment = null;
+        $pending_payment = PaymentService::getPendingPayment();
 
 
         return inertia('Control/Finance/Payment/Index',
@@ -44,77 +44,6 @@ class  PaymentController extends Controller
                 'pending_payment' => $pending_payment,
             ]
         );
-    }
-
-    public function advanceIndex(Request $request): \Inertia\Response
-    {
-        abort_if(Gate::denies('payment_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $advance_requests = Payment::with('user.country')
-            ->when($request->has('d') && $request->d[0] && $request->d[1], function ($query) use ($request) {
-                $query->whereBetween('created_at', [$request->d[0], $request->d[1]]);
-            })
-            ->when($request->has('u_id') && $request->u_id, function ($query) use ($request) {
-                $query->where('user_id', $request->u_id);
-            })
-            ->where('process_type', PaymentProcessTypeEnum::APPROVED_ADVANCE->value)
-            ->advancedFilter();
-
-        if ($request->has('u_id') && $request->u_id) {
-            $user = User::where('id', $request->u_id)->first();
-        } else {
-            $user = [];
-        }
-
-        return inertia('Control/Payments/AdvanceIndex', compact('advance_requests', 'user'));
-    }
-
-    public function confirmPayments(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|exists:payments,id',
-        ]);
-
-        $payment = Payment::find($request->id);
-
-        $commission_calculate = PaymentService::calculateCommission($request->amount);
-
-        $payment->update([
-            'amount' => $commission_calculate['amount'],
-            'commission_rate' => $commission_calculate['commission_rate'],
-            'commission' => $commission_calculate['commission'],
-            'status' => PaymentStatusEnum::APPROVED->value,
-            'payment_date' => now(),
-        ]);
-
-        return to_route('dashboard.payments.index')
-            ->with([
-                'notification' => [
-                    'message' => 'Ödeme talebi başarıyla onaylandı.',
-                    'type' => 'success'
-                ]
-            ]);
-    }
-
-    public function confirmAdvance(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|exists:payments,id',
-        ]);
-
-        $payment = Payment::find($request->id);
-
-        $payment->update([
-            'status' => PaymentStatusEnum::APPROVED->value,
-        ]);
-
-        return to_route('dashboard.payments.advance-index')
-            ->with([
-                'notification' => [
-                    'message' => 'Avans talebi başarıyla onaylandı.',
-                    'type' => 'success'
-                ]
-            ]);
     }
 
     public function store(RequestPaymentRequest $request)

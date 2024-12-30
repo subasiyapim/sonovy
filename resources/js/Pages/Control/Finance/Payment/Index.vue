@@ -51,7 +51,7 @@
         </template>
         <template #body>
           <div class="flex flex-col mt-5">
-            <p class="paragraph-sm c-sub-600 mb-0.5">Beklenen ödemde</p>
+            <p class="paragraph-sm c-sub-600 mb-0.5">Beklenen Ödeme</p>
             <p class="card-currency-header c-strong-950">$0.00</p>
           </div>
         </template>
@@ -143,7 +143,7 @@
 <script setup>
 import {usePage} from '@inertiajs/vue3';
 
-import {ref, computed} from 'vue';
+import {ref, computed, onMounted} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
@@ -170,9 +170,8 @@ const defaultStore = useDefaultStore();
 const pageTable = ref();
 
 const props = defineProps({
-  filters: {
-    type: Array,
-    default: () => [],
+  currentBalance: {
+    type: Number,
     required: true
   }
 })
@@ -206,6 +205,7 @@ const appTableConfig = computed(() => {
 const onUpdate = (e) => {
   pageTable.value.editRow(e);
 }
+
 </script>
 
 <style lang="scss" scoped>
