@@ -37,13 +37,14 @@ class  PaymentController extends Controller
         $balance = EarningService::balance();
         $pendingPayment = PaymentService::getPendingPayment();
         $account = BankAccount::where('user_id', Auth::id())->first();
-
+        $minPaymentRequest = 50;
         return inertia('Control/Finance/Payment/Index',
             [
                 'payments' => PaymentResource::collection($payments)->resolve(),
                 'balance' => $balance,
                 'pendingPayment' => $pendingPayment,
                 'account' => $account,
+                'minPaymentRequest' => $minPaymentRequest
             ]
         );
     }
