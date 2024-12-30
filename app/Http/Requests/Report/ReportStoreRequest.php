@@ -26,7 +26,7 @@ class    ReportStoreRequest extends FormRequest
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date'],
             'report_type' => ['required', 'string', 'in:all,artists,products,songs,platforms,countries'],
-            'report_data.*' => ['integer'],
+            'ids' => ['array'],
         ];
     }
 }
