@@ -5,7 +5,7 @@ namespace App\Http\Requests\Report;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class ReportStoreRequest extends FormRequest
+class    ReportStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,10 @@ class ReportStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date_1' => ['required', 'date'],
-            'date_2' => ['required', 'date'],
-            'report_type' => ['required', 'string'],
-            'report_data' => ['nullable', 'array'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date'],
+            'report_type' => ['required', 'string', 'in:all,artists,products,songs,platforms,countries'],
+            'report_data.*' => ['integer'],
         ];
     }
 }

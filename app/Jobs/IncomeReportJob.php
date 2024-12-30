@@ -97,12 +97,12 @@ class IncomeReportJob implements ShouldQueue
                 });
             })
             ->when($this->artist_ids, function ($query) {
-                $query->whereHas('report.song.broadcasts.artists', function ($query) {
+                $query->whereHas('report.song.products.artists', function ($query) {
                     $query->whereIn('artist_id', $this->artist_ids);
                 });
             })
             ->when($this->product_ids, function ($query) {
-                $query->whereHas('report.song.broadcasts', function ($query) {
+                $query->whereHas('report.song.products', function ($query) {
                     $query->whereIn('product_id', $this->product_ids);
                 });
             })
@@ -112,7 +112,7 @@ class IncomeReportJob implements ShouldQueue
                 });
             })
             ->when($this->platform_ids, function ($query) {
-                $query->whereHas('report.song.broadcasts.downloadPlatforms', function ($query) {
+                $query->whereHas('report.song.products.downloadPlatforms', function ($query) {
                     $query->whereIn('platform_id', $this->platform_ids);
                 });
             })
