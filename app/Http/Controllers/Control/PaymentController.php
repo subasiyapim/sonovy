@@ -10,13 +10,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Payment\AdvanceYourselfRequest;
 use App\Http\Requests\Payment\PaymentYourselfRequest;
 use App\Http\Requests\Payment\RequestPaymentRequest;
+use App\Http\Resources\Payment\PaymentResource;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\EarningService;
 use App\Services\IyzicoServices;
 use App\Services\MediaServices;
 use App\Services\PaymentService;
+use App\Services\UserServices;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,27 +32,18 @@ class  PaymentController extends Controller
     {
         abort_if(Gate::denies('payment_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $payment_requests = Payment::with('user.country', 'account')
-            ->when($request->has('d') && $request->d[0] && $request->d[1], function ($query) use ($request) {
-                $query->whereBetween(
-                    'created_at',
-                    [Carbon::parse($request->d[0])->format('Y-m-d'), Carbon::parse($request->d[1])->format('Y-m-d')]
-                );
-            })
-            ->when($request->has('u_id') && $request->u_id, function ($query) use ($request) {
-                $query->where('user_id', $request->u_id);
-            })
-            ->where('process_type', PaymentProcessTypeEnum::MONEY_TRANSFER->value)
-            ->advancedFilter();
+        $payments = Payment::advancedFilter();
+        $balance = EarningService::balance();
+        $pending_payment = null;
 
 
-        if ($request->has('u_id') && $request->u_id) {
-            $user = User::where('id', $request->u_id)->first();
-        } else {
-            $user = [];
-        }
-
-        return inertia('Control/Finance/Payment/Index', compact('payment_requests', 'user'));
+        return inertia('Control/Finance/Payment/Index',
+            [
+                'payments' => PaymentResource::collection($payments)->resolve(),
+                'balance' => $balance,
+                'pending_payment' => $pending_payment,
+            ]
+        );
     }
 
     public function advanceIndex(Request $request): \Inertia\Response
@@ -156,7 +150,7 @@ class  PaymentController extends Controller
                 'process_type' => PaymentProcessTypeEnum::MONEY_TRANSFER->value,
                 'status' => PaymentStatusEnum::APPROVED->value,
                 'amount' => $commission_calculate['amount'],
-                'payment_date' => $request->payment_date . ' ' . $request->payment_time,
+                'payment_date' => $request->payment_date.' '.$request->payment_time,
                 'commission_rate' => $commission_calculate['commission_rate'],
                 'commission' => $commission_calculate['commission'],
             ]

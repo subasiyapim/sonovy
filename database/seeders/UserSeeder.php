@@ -17,6 +17,8 @@ class UserSeeder extends Seeder
             'phone' => '5325805080',
             'is_verified' => 1,
             'commission_rate' => 10,
+            'status' => 1,
+            'deleted_at' => null,
         ],
         [
             'name' => 'MD Admin',
@@ -25,6 +27,8 @@ class UserSeeder extends Seeder
             'phone' => '5325805080',
             'is_verified' => 1,
             'commission_rate' => 7,
+            'status' => 1,
+            'deleted_at' => null,
         ],
         [
             'name' => 'MD User',
@@ -33,6 +37,8 @@ class UserSeeder extends Seeder
             'phone' => '5325805080',
             'is_verified' => 1,
             'commission_rate' => 18,
+            'status' => 1,
+            'deleted_at' => null,
         ]
     ];
 
@@ -42,17 +48,20 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         foreach (self::$users as $user) {
-            \App\Models\User::updateOrCreate(
-                [
-                    'email' => $user['email']
-                ],
+            User::updateOrCreate(
+                ['email' => $user['email']],
                 [
                     'name' => $user['name'],
-                    'remember_token' => Str::random(10),
-                    'email_verified_at' => now(),
+                    'email' => $user['email'],
                     'password' => Hash::make($user['password']),
-                    'phone' => $user['phone'] ?? '',
-                    'is_verified' => 1,
+                    'phone' => $user['phone'],
+                    'is_verified' => $user['is_verified'],
+                    'commission_rate' => $user['commission_rate'],
+                    'status' => $user['status'],
+                    'deleted_at' => $user['deleted_at'],
+                    'email_verified_at' => now(),
+                    'remember_token' => Str::random(10),
+                    'uuid' => Str::uuid(),
                 ]
             );
         }

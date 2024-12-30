@@ -14,7 +14,7 @@ class ProductServices
 {
     public static function imageUpload($model, $image): void
     {
-        $name = Str::random(10) . '-' . time();
+        $name = Str::random(10).'-'.time();
         $file_name = Str::slug($name);
         $collection = 'products';
 
@@ -40,7 +40,7 @@ class ProductServices
 
     public static function search($search): mixed
     {
-        return Product::with('songs.mainArtists', 'mainArtists')->where('album_name', 'like', '%' . $search . '%')->get();
+        return Product::with('songs.mainArtists', 'mainArtists')->where('album_name', 'like', '%'.$search.'%')->get();
     }
 
 

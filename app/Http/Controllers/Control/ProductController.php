@@ -445,9 +445,17 @@ class ProductController extends Controller
 
     public function changeStatus(Product $product, Request $request): JsonResponse
     {
+        $request->validate([
+            'status' => ['required', Rule::enum(ProductStatusEnum::class)],
+        ]);
+
         $product->status = $request->status;
         $product->note = $request->note;
         $product->save();
+
+        if ($product->status == ProductStatusEnum::REJECTED->value) {
+            $product->songs()->detach();
+        }
 
         if ($product->status != ProductStatusEnum::DRAFT->value && $product->details == null) {
 
@@ -490,10 +498,11 @@ class ProductController extends Controller
 
         return ISRCServices::make($request->input('type'), $request->has('index') ? $request->input('index') : null);
     }
+
     public function changeType(Product $product, Request $request): false|string
     {
 
-        $product->type =  $request->type;
+        $product->type = $request->type;
         $product->save();
         return response()->json(['success' => true]); // Could not check
     }
@@ -648,13 +657,13 @@ class ProductController extends Controller
             $product->downloadPlatforms()->detach();
 
             foreach ($data['platforms'] as $platform) {
-
+                
                 $data = [
                     'price' => isset($platform['price']) ? $platform['price'] : null,
                     'pre_order_date' => isset($platform['pre_order_date']) ? Carbon::parse($platform['pre_order_date'])->format('Y-m-d') : null,
                     'publish_date' => isset($platform['publish_date']) ? Carbon::parse($platform['publish_date'])->format('Y-m-d') : null,
                     'date' => isset($platform['date']) ? Carbon::parse($platform['date'])->format('Y-m-d') : null,
-                    'time' => isset($platform['time']) ? $platform['time']['hours'] . ':' . $platform['time']['minutes'] : null,
+                    'time' => isset($platform['time']) ? $platform['time']['hours'].':'.$platform['time']['minutes'] : null,
                     'hashtags' => isset($platform['hashtags']) ? json_encode($platform['hashtags']) : null,
                     // Ensure it's a valid JSON
                     'description' => isset($platform['description']) ? $platform['description'] : null,
