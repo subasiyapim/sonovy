@@ -34,14 +34,14 @@ class  PaymentController extends Controller
 
         $payments = Payment::advancedFilter();
         $balance = EarningService::balance();
-        $pending_payment = PaymentService::getPendingPayment();
+        $pendingPayment = PaymentService::getPendingPayment();
 
 
         return inertia('Control/Finance/Payment/Index',
             [
                 'payments' => PaymentResource::collection($payments)->resolve(),
                 'balance' => $balance,
-                'pending_payment' => $pending_payment,
+                'pendingPayment' => $pendingPayment,
             ]
         );
     }

@@ -170,10 +170,14 @@ const defaultStore = useDefaultStore();
 const pageTable = ref();
 
 const props = defineProps({
-  currentBalance: {
+  balance: {
     type: Number,
     required: true
-  }
+  },
+  pendingPayment: {
+    type: Number,
+    required: true
+  },
 })
 
 
