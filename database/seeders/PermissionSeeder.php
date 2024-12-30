@@ -817,33 +817,33 @@ class PermissionSeeder extends Seeder
             'tr' => ['name' => 'Kazanç Rapor Dosyası İndir',],
             'en' => ['name' => 'Report File Download',],
         ],
-//Earning Report
+        //Report
         [
-            'code' => 'earning_report_list',
+            'code' => 'report_list',
             'tr' => ['name' => 'Kazanç Raporu Listele',],
             'en' => ['name' => 'Report List',],
         ],
         [
-            'code' => 'earning_report_create',
+            'code' => 'report_create',
             'tr' => ['name' => 'Kazanç Raporu Ekle',],
             'en' => ['name' => 'Report Create',],
         ],
         [
-            'code' => 'earning_report_edit',
+            'code' => 'report_edit',
             'tr' => ['name' => 'Kazanç Raporu Düzenle',],
             'en' => ['name' => 'Report Edit',],
         ],
         [
-            'code' => 'earning_report_delete',
+            'code' => 'report_delete',
             'tr' => ['name' => 'Kazanç Raporu Sil',],
             'en' => ['name' => 'Report Delete',],
         ],
         [
-            'code' => 'earning_report_show',
+            'code' => 'report_show',
             'tr' => ['name' => 'Kazanç Raporu Görüntüle',],
             'en' => ['name' => 'Report Show',],
         ],
-//Earning
+        //Earning
         [
             'code' => 'earning_list',
             'tr' => ['name' => 'Kazanç Listele',],
