@@ -19,7 +19,7 @@ class PaymentResource extends JsonResource
             'process_type' => $this->process_type,
             'description' => 'Ödeme',
             'amount' => $this->amount,
-            'balance' => 1000
+            'balance' => 1000,
         ];
     }
 }

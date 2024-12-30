@@ -178,6 +178,10 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  account: {
+    type: Object,
+    required: true
+  },
 })
 
 

@@ -11,6 +11,7 @@ use App\Http\Requests\Payment\AdvanceYourselfRequest;
 use App\Http\Requests\Payment\PaymentYourselfRequest;
 use App\Http\Requests\Payment\RequestPaymentRequest;
 use App\Http\Resources\Payment\PaymentResource;
+use App\Models\BankAccount;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Setting;
@@ -35,13 +36,14 @@ class  PaymentController extends Controller
         $payments = Payment::advancedFilter();
         $balance = EarningService::balance();
         $pendingPayment = PaymentService::getPendingPayment();
-
+        $account = BankAccount::where('user_id', Auth::id())->first();
 
         return inertia('Control/Finance/Payment/Index',
             [
                 'payments' => PaymentResource::collection($payments)->resolve(),
                 'balance' => $balance,
                 'pendingPayment' => $pendingPayment,
+                'account' => $account,
             ]
         );
     }
