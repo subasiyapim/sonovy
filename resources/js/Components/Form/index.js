@@ -12,6 +12,7 @@ import ArtistInput from './ArtistInput.vue';
 import AppFancyRadio from './AppFancyRadio.vue';
 import AppSliderInput from './AppSliderInput.vue';
 import AppHashtagInput from './AppHashtagInput.vue';
+import AppSwitchComponent from './AppSwitchComponent.vue';
 export  {
     AppTextInput,
     AppSelectInput,
@@ -27,5 +28,6 @@ export  {
     AppFancyRadio,
     AppHashtagInput,
     AppSliderInput,
+    AppSwitchComponent,
 }
 

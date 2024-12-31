@@ -94,6 +94,8 @@ import BankLineIcon from './BankLineIcon.vue';
 import SpeedUpIcon from './SpeedUpIcon.vue';
 import WalletLineIcon from './WalletLineIcon.vue';
 import MultipleDocumentIcon from './MultipleDocumentIcon.vue';
+import BookReadLineIcon from './BookReadLineIcon.vue';
+import FileChartLineIcon from './FileChartLineIcon.vue';
 
 export {
     Icon,
@@ -106,8 +108,10 @@ export {
     ChevronDownIcon,
     PackagesIcon,
     WalletIcon,
+    BookReadLineIcon,
     ArrowLeftIcon,
     ISRCStarsIcon,
+    FileChartLineIcon,
     StarFilledIcon,
     SearchIcon,
     RetractedIcon,
