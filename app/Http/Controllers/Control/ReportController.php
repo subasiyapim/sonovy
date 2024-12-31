@@ -5,6 +5,11 @@ namespace App\Http\Controllers\Control;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Report\ReportStoreRequest;
 use App\Jobs\IncomeReportJob;
+use App\Models\Artist;
+use App\Models\Label;
+use App\Models\Platform;
+use App\Models\Song;
+use App\Models\Product;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -20,11 +25,20 @@ class ReportController extends Controller
      */
     public function index()
     {
-        // abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $reports = Report::advancedFilter();
+        $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');
+        $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
+        $labels = getDataFromInputFormat(Label::all(), 'value', 'label', 'image');
+        $songs = getDataFromInputFormat(Song::all(), 'id', 'name');
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
-        return inertia('Control/Finance/Reports/Index', compact('reports'));
+        $platforms = getDataFromInputFormat(Platform::all(), 'id', 'name', 'image');
+
+
+        return inertia('Control/Finance/Reports/Index',
+            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms'));
     }
 
     /**
@@ -32,17 +46,17 @@ class ReportController extends Controller
      */
     public function store(ReportStoreRequest $request)
     {
-        $start_date = Carbon::parse($request->date_1)->format('Y-m-d');
-        $end_date = Carbon::parse($request->date_2)->format('Y-m-d');
-        $report_type = $request->report_type;
-        $data = $request->report_data;
+        $start_date = Carbon::parse($request->validated()['start_date'])->format('Y-m-d');
+        $end_date = Carbon::parse($request->validated()['end_date'])->format('Y-m-d');
+        $report_type = $request->validated()['report_type'];
+        $ids = $request->validated()['ids'];
 
         //report_type da all dışındakilerin son harfi s silinmeli
         if ($report_type !== 'all') {
             $report_type = Str::singular($report_type);
         }
 
-        IncomeReportJob::dispatch($start_date, $end_date, Auth::id(), $report_type, $data);
+        IncomeReportJob::dispatch($start_date, $end_date, Auth::id(), $report_type, $ids);
 
         return to_route('dashboard.reports.index');
     }

@@ -23,17 +23,7 @@ class PermissionRoleSeeder extends Seeder
         Role::where('code', 'admin')->first()->permissions()->syncWithoutDetaching(
             Permission::whereNotIn('code',
                 [
-                    'copyright_list',
-                    'finance_earning_list',
-                    'finance_earning_create',
-                    'finance_earning_edit',
-                    'finance_earning_delete',
-                    'finance_earning_show',
-                    'report_list',
-                    'report_create',
-                    'report_edit',
-                    'report_delete',
-                    'report_show',
+
                 ]
             )->get(['id']));
 
