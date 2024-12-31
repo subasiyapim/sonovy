@@ -6,6 +6,7 @@ use App\Enums\PaymentProcessTypeEnum;
 use App\Enums\PaymentStatusEnum;
 use App\Models\Payment;
 use App\Models\Setting;
+use App\Models\User;
 
 class PaymentService
 {
@@ -46,6 +47,14 @@ class PaymentService
                 ->where('status', PaymentStatusEnum::APPROVED->value)
                 ->where('process_type', PaymentProcessTypeEnum::APPROVED_ADVANCE->value);
         })->get()->sum('amount');
+    }
 
+    public static function getPendingPayment(int $user_id = null)
+    {
+        return Payment::when($user_id, function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        })
+            ->where('process_type', PaymentStatusEnum::PENDING->value)
+            ->get()->sum('amount');
     }
 }

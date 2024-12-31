@@ -69,7 +69,17 @@ const isDialogOn = computed({
   set: (value) => emits('update:modelValue', value)
 })
 
-const onSubmit = (e) => {
+const onSubmit = async (e) => {
+    try {
+        const response  = await crudStore.post(route('control.finance.payments.store'),{
+            amount:amount.value,
+            process_type:1,
+        })
+    } catch (error) {
+        console.log("ERROR",error.response.data);
+    // error.response
+     toast.error(error.response.data.message);
+    }
 
 
 }
