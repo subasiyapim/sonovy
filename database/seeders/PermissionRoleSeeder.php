@@ -27,7 +27,6 @@ class PermissionRoleSeeder extends Seeder
                 ]
             )->get(['id']));
 
-
         //User Role
         Role::where('code', 'user')->first()->permissions()->syncWithoutDetaching(
             Permission::whereIn('code',

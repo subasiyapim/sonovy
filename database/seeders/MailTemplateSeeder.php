@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\MailTemplate;
+use App\Models\System\Tenant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -64,17 +65,25 @@ class MailTemplateSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (self::$mailTemplates as $mailTemplate) {
+        $tenants = Tenant::all();
 
-            MailTemplate::firstOrCreate(
-                ['code' => $mailTemplate['code']],
-                [
-                    'name' => $mailTemplate['name'],
-                    'en' => $mailTemplate['en'],
-                    'tr' => $mailTemplate['tr'],
-                ]
-            );
+        foreach ($tenants as $tenant) {
+            tenancy()->initialize($tenant);
 
+            foreach (self::$mailTemplates as $mailTemplate) {
+
+                MailTemplate::firstOrCreate(
+                    ['code' => $mailTemplate['code']],
+                    [
+                        'name' => $mailTemplate['name'],
+                        'en' => $mailTemplate['en'],
+                        'tr' => $mailTemplate['tr'],
+                    ]
+                );
+
+            }
+
+            tenancy()->end();
         }
     }
 }

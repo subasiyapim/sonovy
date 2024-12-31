@@ -6,37 +6,46 @@ use App\Enums\ProductStatusEnum;
 use App\Enums\ProductTypeEnum;
 use App\Models\Setting;
 use App\Models\Song;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Laravel\Reverb\Loggers\Log;
 
 class ISRCServices
 {
-    public static function make($type, $index = null)
+    public static function make($type, $tenant = null)
     {
+        if ($tenant) {
+            tenancy()->initialize($tenant);
+            Log::info('Tenant initialized: '.$tenant->domain);
+        }
 
         // Varsayılan değerleri ayarla
         $country_code = Setting::where('key', 'isrc_country_code')->first()->value ?? 'TR';
-        $year_code = Setting::where('key', 'isrc_year')->first()->value ?? '24';
+        $year_code = Setting::where('key', 'isrc_year')->first()->value ?? Carbon::now()->format('y');
         $registration_code = Setting::where('key', 'isrc_registration_code')->first()->value ?? '001';
 
         // Kod aralığını belirle
         if ($type == ProductTypeEnum::SOUND->value || $type == ProductTypeEnum::RINGTONE->value) {
             $min_code = 1;
             $max_code = 49999;
-        } elseif ($type == ProductTypeEnum::VIDEO->value) {
+        } elseif ($type == ProductTypeEnum::VIDEO->value || ProductTypeEnum::APPLE_VIDEO->value) {
             $min_code = 50000;
             $max_code = 99999;
         } else {
             return false; // Geçersiz bir tip için false döndür
         }
 
+
         // Mevcut ISRC kodlarını al
         $existing_isrcs = Song::where('isrc', 'like', "$country_code-$registration_code-$year_code-%")
             ->whereNotNull('isrc')
+            ->where('isrc', 0)
             ->whereRaw('CAST(SUBSTRING_INDEX(isrc, "-", -1) AS UNSIGNED) BETWEEN ? AND ?', [$min_code, $max_code])
             ->orderByRaw('CAST(SUBSTRING_INDEX(isrc, "-", -1) AS UNSIGNED) ASC')
             ->pluck('isrc')
             ->toArray();
+
 
         // Yeni ISRC kodunu belirle
         $definition_code = $min_code;
@@ -63,6 +72,7 @@ class ISRCServices
 
         // ISRC kodunu oluştur
         $definition_code = str_pad($definition_code, 5, '0', STR_PAD_LEFT);
+
 
         return "$country_code-$registration_code-$year_code-$definition_code";
     }

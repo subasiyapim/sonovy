@@ -300,6 +300,14 @@ return [
         'status' => 'Durum',
         'successfully_published' => 'Başarıyla yayınlandı',
         'search_placeholder' => 'Katalog,Artist vb. ara...',
+        'platform' => [
+            'status_draft' => 'Taslak',
+            'status_under_review' => 'İnceleme altında',
+            'status_published' => 'Yayınlandı',
+            'status_rejected' => 'Reddedildi',
+            'status_withdrawn' => 'Çekildi',
+            'status_planned' => 'Planlandı',
+        ],
         'show' => [
             'artist_albums' => "Sanatçılar",
             'artist_albums_not_fount' => "Sanatçı Bulunamadı",
@@ -562,7 +570,7 @@ return [
                 'column_6' => "Belge",
 
             ],
-            'demanded_table'  => [
+            'demanded_table' => [
                 'empty_header' => "Henüz veri bulunmuyor",
                 'column_1' => "Rapor Dönemi",
                 'column_2' => "Rapor Tipi",
