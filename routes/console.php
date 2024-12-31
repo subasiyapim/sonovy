@@ -9,14 +9,11 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
-
-Schedule::job(new CreateSendAnnouncement())->everyMinute();
-Schedule::job(new SendAnnouncementJob())->everyMinute();
-Schedule::job(new QuartersIncomeJob())->everyMinute();
-Schedule::job(new EarningJob())->everyMinute();
-Schedule::job(new IncomeReportJob())->everyMinute();
+//Schedule::job(new CreateSendAnnouncement())->everyMinute();
+//Schedule::job(new SendAnnouncementJob())->everyMinute();
+//Schedule::job(new QuartersIncomeJob())->everyMinute();
+//Schedule::job(new EarningJob())->everyMinute();
+//Schedule::job(new IncomeReportJob())->everyMinute();
+Schedule::job(new \App\Jobs\IsrcJob())->everyMinute();
 
 

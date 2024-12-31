@@ -32,12 +32,7 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\LabelSeeder::class,
             \Database\Seeders\ArtistBranchSeeder::class,
             \Database\Seeders\ArtistSeeder::class,
-            \Database\Seeders\MailTemplateSeeder::class,
-            \Database\Seeders\PerformingRightsOrganizationSeeder::class,
-            \Database\Seeders\PlanItemSeeder::class,
-            \Database\Seeders\PlanSeeder::class,
 
-            \Database\Seeders\SendNotificationSeeder::class,
             \Database\Seeders\SettingSeeder::class,
 
 
