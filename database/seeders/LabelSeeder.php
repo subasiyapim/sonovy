@@ -20,7 +20,7 @@ class LabelSeeder extends Seeder
     {
         $diskName = 'tenant_'.tenant('domain').'_labels';
 
-        Label::factory(150)->create()->each(function (Label $row) use ($diskName) {
+        Label::factory(10)->create()->each(function (Label $row) use ($diskName) {
 
             $imageUrl = 'https://picsum.photos/id/'.rand(1, 1000).'/500/500';
 

@@ -22,7 +22,7 @@ class ArtistSeeder extends Seeder
         ]);
         $diskName = 'tenant_'.tenant('domain').'_artists';
 
-        Artist::factory(26)
+        Artist::factory(10)
             ->create()
             ->each(function (Artist $artist) use ($diskName) {
                 $randomArtistBranchIds = [];

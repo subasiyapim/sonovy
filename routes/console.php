@@ -14,6 +14,6 @@ use Illuminate\Support\Facades\Schedule;
 //Schedule::job(new QuartersIncomeJob())->everyMinute();
 //Schedule::job(new EarningJob())->everyMinute();
 //Schedule::job(new IncomeReportJob())->everyMinute();
-Schedule::job(new \App\Jobs\IsrcJob())->everyMinute();
+Schedule::job(new \App\Jobs\IsrcJob())->everyTenMinutes();
 
 
