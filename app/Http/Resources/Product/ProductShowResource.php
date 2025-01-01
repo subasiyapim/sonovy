@@ -17,6 +17,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+ini_set('memory_limit', '256M');
+
 class ProductShowResource extends JsonResource
 {
     protected mixed $tab;
