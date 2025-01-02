@@ -13,7 +13,7 @@
     <SectionHeader :title="'TUTAR BİLGİLERİ'"/>
     <div class="bg-[#F2F5F8] flex items-center rounded gap-2 my-2 mx-3 p-2">
         <InfoFilledIcon color="var(--sub-600)" />
-        <p class="paragraph-xs c-sub-600">En Az $50 ve üstü çekim yapabilirsiniz</p>
+        <p class="paragraph-xs c-sub-600">En Az ${{usePage().props.minPaymentRequest}} ve üstü çekim yapabilirsiniz</p>
     </div>
     <hr>
     <div class="p-5 flex gap-4 my-2">

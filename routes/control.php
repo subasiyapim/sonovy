@@ -4,6 +4,7 @@ use App\Http\Controllers\Control\BroadcastController;
 use App\Http\Controllers\Control\DashboardController;
 use App\Http\Controllers\Control\ArtistController;
 use App\Http\Controllers\Control\ArtistBranchController;
+use App\Http\Controllers\Control\BankController;
 use App\Http\Controllers\Control\LabelController;
 use App\Http\Controllers\Control\MediaController;
 use App\Http\Controllers\Control\ProductApplyController;
@@ -93,6 +94,9 @@ Route::group(
             Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
             Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
             Route::get('analysis', [FinanceAnalysisController::class, 'index'])->name('analysis.index');
+        });
+        Route::group(['prefix' => 'bank', 'as' => 'bank.'], function () {
+            Route::post('account', [BankController::class, 'store'])->name('account.store');
         });
 
         //Statistics Routes

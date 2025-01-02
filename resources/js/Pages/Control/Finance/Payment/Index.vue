@@ -61,29 +61,38 @@
           <div class="flex items-center">
             <SpeedUpIcon color="var(--sub-600)"/>
             <div class="flex-1 ms-2"><p class="label-sm c-strong-950 !text-start">Ödeme Bilgileri</p></div>
-            <IconButton class="border border-soft-200 rounded-lg">
+            <IconButton @click="openBankAccountModal" class="border border-soft-200 rounded-lg">
               <EditLineIcon color="var(--sub-600)"/>
             </IconButton>
           </div>
         </template>
 
-        <template #body>
-          <hr class="my-3">
-          <div class="flex items-center mb-2">
-            <BankLineIcon color="var(--sub-600)"/>
-            <span class="flex-1 ms-2 paragraph-sm c-sub-600">IBAN</span>
-            <span class="label-sm c-strong-950">TR 4785 **** **** 1234</span>
-          </div>
-          <div class="flex items-center">
-            <img width="16" src="@/assets/images/circular_color_image.png"/>
-            <span class="flex-1 ms-2 paragraph-sm c-sub-600">E-Mail</span>
-            <span class="label-sm c-strong-950">info@g***.com</span>
-          </div>
-          <div class="bg-[#F2F5F8] absolute left-0 right-0 bottom-0 flex items-center justify-start py-1 ps-4">
-            <span class="paragraph-xs c-sub-600">Değişiklik için Payooner hesabınıza gitmelisiniz.</span>
-          </div>
+        <template  #body>
+            <hr class="my-3">
+            <div v-if="account">
+                <div class="flex items-center mb-2">
+                    <BankLineIcon color="var(--sub-600)"/>
+                    <span class="flex-1 ms-2 paragraph-sm c-sub-600">IBAN</span>
+                    <span class="label-sm c-strong-950">TR 4785 **** **** 1234</span>
+                </div>
+                <div class="flex items-center">
+                    <img width="16" src="@/assets/images/circular_color_image.png"/>
+                    <span class="flex-1 ms-2 paragraph-sm c-sub-600">E-Mail</span>
+                    <span class="label-sm c-strong-950">info@g***.com</span>
+                </div>
+                <div class="bg-[#F2F5F8] absolute left-0 right-0 bottom-0 flex items-center justify-start py-1 ps-4">
+                    <span class="paragraph-xs c-sub-600">Değişiklik için Payooner hesabınıza gitmelisiniz.</span>
+                </div>
+            </div>
+            <div v-else class="flex flex-col gap-2 items-center justify-center">
+                <WalletIcon color="var(--sub-600)" />
+               <p class="label-sm c-strong-950"> Lütfen hesap eklemesi yapınız</p>
+            </div>
+
+
 
         </template>
+
       </AppCard>
 
     </div>
@@ -137,6 +146,7 @@
     </AppTable>
 
     <WithdrawModal @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
+    <BankAccountModal @update="onUpdate" @done="onDone" v-if="isBankAccountModalOn" v-model="isBankAccountModalOn"/>
   </AdminLayout>
 </template>
 
@@ -163,7 +173,7 @@ import {
   EditLineIcon
 } from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
-import {WithdrawModal} from '@/Components/Dialog';
+import {WithdrawModal,BankAccountModal} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 
 const defaultStore = useDefaultStore();
@@ -188,9 +198,14 @@ const props = defineProps({
 const data = ref([])
 const choosenLabel = ref(null);
 const isModalOn = ref(false);
+const isBankAccountModalOn = ref(false);
 const openPaymentModal = () => {
 
   isModalOn.value = !isModalOn.value;
+}
+const openBankAccountModal = () => {
+
+  isBankAccountModalOn.value = !isBankAccountModalOn.value;
 }
 
 const deleteRow = (row) => {

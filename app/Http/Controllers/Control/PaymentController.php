@@ -34,17 +34,21 @@ class  PaymentController extends Controller
         abort_if(Gate::denies('payment_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $payments = Payment::advancedFilter();
-        $balance = 1250;// EarningService::balance();
+        $balance = 1250; // EarningService::balance();
         $pendingPayment = PaymentService::getPendingPayment();
         $account = BankAccount::where('user_id', Auth::id())->first();
-        $minPaymentRequest = 550;
-        return inertia('Control/Finance/Payment/Index',
+        $minPaymentRequest = 50;
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+
+        return inertia(
+            'Control/Finance/Payment/Index',
             [
                 'payments' => PaymentResource::collection($payments)->resolve(),
                 'balance' => $balance,
                 'pendingPayment' => $pendingPayment,
                 'account' => $account,
-                'minPaymentRequest' => $minPaymentRequest
+                'minPaymentRequest' => $minPaymentRequest,
+                'countries' => $countries,
             ]
         );
     }
