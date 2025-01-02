@@ -25,7 +25,7 @@ class BankAccountStoreRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'country_id' => ['required', Rule::exists(Country::class, 'id')],
+            'country_id' => ['required'],
             'name' => 'required|string|max:255',
             'iban' => 'required|string|max:255|unique:bank_accounts,iban',
             'swift' => 'nullable|string|max:255',

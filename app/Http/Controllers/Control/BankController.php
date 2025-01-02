@@ -26,20 +26,9 @@ class BankController extends Controller
 
     public function store(BankAccountStoreRequest $request)
     {
-        $request->validate(
-            [
-                'title' => 'required|string|max:255',
-                'country_id' => 'required|exists:countries,id',
-                'name' => 'required|string|max:255',
-                'iban' => 'required|string|max:255',
-                'swift' => 'nullable|string|max:255',
-                'user_id' => 'nullable|exists:users,id',
-            ]
-        );
-
         $data = $request->all();
         $data['user_id'] = isset($request->user_id) ? $request->user_id : auth()->id();
-
+        
         BankAccount::create($data);
 
         return redirect()
