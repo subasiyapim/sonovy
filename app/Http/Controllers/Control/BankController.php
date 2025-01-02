@@ -9,6 +9,7 @@ use App\Models\System\Country;
 use App\Services\CountryServices;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 
 class BankController extends Controller
 {
@@ -28,16 +29,17 @@ class BankController extends Controller
     {
         $data = $request->all();
         $data['user_id'] = isset($request->user_id) ? $request->user_id : auth()->id();
-        
+
         BankAccount::create($data);
 
         return redirect()
             ->back()
             ->with([
-                'notification' => __('control.notification_created',
-                    ['model' => __('control.bank_account.title_singular')])
+                'notification' => __(
+                    'control.notification_created',
+                    ['model' => __('control.bank_account.title_singular')]
+                )
             ]);
-
     }
 
     public function edit(BankAccount $bankAccount)
@@ -46,7 +48,6 @@ class BankController extends Controller
         $bankAccount->load('country');
 
         return inertia('Control/BankAccount/Edit', compact('bankAccount', 'countries'));
-
     }
 
     public function update(Request $request, BankAccount $bankAccount)
@@ -63,12 +64,13 @@ class BankController extends Controller
 
         $bankAccount->update($request->all());
 
-        return redirect()
-            ->back()
-            ->with([
-                'notification' => __('control.notification_updated',
-                    ['model' => __('control.bank_account.title_singular')])
-            ]);
+        return response()->json($bankAccount, Response::HTTP_OK);
+        // return redirect()
+        //     ->back()
+        //     ->with([
+        //         'notification' => __('control.notification_updated',
+        //             ['model' => __('control.bank_account.title_singular')])
+        //     ]);
 
     }
 
@@ -79,9 +81,10 @@ class BankController extends Controller
         return redirect()
             ->back()
             ->with([
-                'notification' => __('control.notification_deleted',
-                    ['model' => __('control.bank_account.title_singular')])
+                'notification' => __(
+                    'control.notification_deleted',
+                    ['model' => __('control.bank_account.title_singular')]
+                )
             ]);
-
     }
 }

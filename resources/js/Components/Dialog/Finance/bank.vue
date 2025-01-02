@@ -41,7 +41,8 @@
         {{ __('control.general.cancel') }}
       </RegularButton>
       <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
-        Talebi Gönder
+       <template v-if="account"> Güncelle  </template>
+       <template v-else> Kaydet  </template>
       </PrimaryButton>
     </div>
   </BaseDialog>
@@ -64,6 +65,9 @@ const props = defineProps({
   modelValue: {
     default: false,
   },
+  account:{
+    default:null
+  }
 })
 const crudStore = useCrudStore();
 
@@ -76,7 +80,11 @@ const isDialogOn = computed({
 })
 
 const form = ref({
-
+    title:props.account?.title ?? '',
+    name:props.account?.name ?? '',
+    swift_code:props.account?.swift_code ?? '',
+    iban:props.account?.iban ?? '',
+    country_id:props.account?.country_id ?? null,
 });
 
 const countryConfig = computed(() => {
@@ -86,9 +94,23 @@ const countryConfig = computed(() => {
 })
 const onSubmit = async (e) => {
     try {
-        const response  = await crudStore.post(route('control.bank.account.store'),{
-           ...form.value
-        })
+
+        if(props.account){
+            console.log(route('control.bank.account.update',props.account.id));
+
+            const response  = await crudStore.put(route('control.bank.account.update',props.account.id),{
+                ...form.value
+            })
+            emits('update',form.value);
+            isDialogOn.value = false;
+        }else {
+            const response  = await crudStore.post(route('control.bank.account.store'),{
+                ...form.value
+            })
+             emits('done',form.value);
+             isDialogOn.value = false;
+        }
+
     } catch (error) {
         if(error.response?.data){
              toast.error(error.response.data.message);

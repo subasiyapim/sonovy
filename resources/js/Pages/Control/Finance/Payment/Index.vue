@@ -70,15 +70,16 @@
         <template  #body>
             <hr class="my-3">
             <div v-if="account">
+
                 <div class="flex items-center mb-2">
                     <BankLineIcon color="var(--sub-600)"/>
                     <span class="flex-1 ms-2 paragraph-sm c-sub-600">IBAN</span>
-                    <span class="label-sm c-strong-950">TR 4785 **** **** 1234</span>
+                    <span class="label-sm c-strong-950">{{account.iban}}</span>
                 </div>
                 <div class="flex items-center">
                     <img width="16" src="@/assets/images/circular_color_image.png"/>
                     <span class="flex-1 ms-2 paragraph-sm c-sub-600">E-Mail</span>
-                    <span class="label-sm c-strong-950">info@g***.com</span>
+                    <span class="label-sm c-strong-950">{{usePage().props.auth.user.email }}</span>
                 </div>
                 <div class="bg-[#F2F5F8] absolute left-0 right-0 bottom-0 flex items-center justify-start py-1 ps-4">
                     <span class="paragraph-xs c-sub-600">Değişiklik için Payooner hesabınıza gitmelisiniz.</span>
@@ -146,7 +147,7 @@
     </AppTable>
 
     <WithdrawModal @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
-    <BankAccountModal @update="onUpdate" @done="onDone" v-if="isBankAccountModalOn" v-model="isBankAccountModalOn"/>
+    <BankAccountModal :account="account" @update="onUpdate" @done="onDone" v-if="isBankAccountModalOn" v-model="isBankAccountModalOn"/>
   </AdminLayout>
 </template>
 
@@ -226,7 +227,7 @@ const appTableConfig = computed(() => {
   }
 })
 const onUpdate = (e) => {
-  pageTable.value.editRow(e);
+  props.account.iban = e.iban;
 }
 
 </script>

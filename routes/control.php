@@ -97,6 +97,7 @@ Route::group(
         });
         Route::group(['prefix' => 'bank', 'as' => 'bank.'], function () {
             Route::post('account', [BankController::class, 'store'])->name('account.store');
+            Route::put('account/{bankAccount}', [BankController::class, 'update'])->name('account.update');
         });
 
         //Statistics Routes
