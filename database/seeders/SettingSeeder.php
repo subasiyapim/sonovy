@@ -245,6 +245,13 @@ class SettingSeeder extends Seeder
                 'name' => 'Şarkı önizleme başlangıç ve bitiş zamanı',
                 'description' => 'Yayın düzenleme esnasında şarkının önizlemesi için gerekli olan sabit başlangıç ve bitiş zamanı',
                 'input_type' => $input_types->filter(fn($input_type) => $input_type === 'text')->keys()->implode(',')
+            ],
+            [
+                'key' => 'min_payment_request',
+                'value' => 100,
+                'name' => 'Minimum Ödeme Tutarı',
+                'description' => 'Ödeme talebinde talep edilek asgari tutar',
+                'input_type' => $input_types->filter(fn($input_type) => $input_type === 'text')->keys()->implode(',')
             ]
 
         ];

@@ -25,6 +25,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Number;
 use Symfony\Component\HttpFoundation\Response;
 
 class  PaymentController extends Controller
@@ -33,29 +34,30 @@ class  PaymentController extends Controller
     {
         abort_if(Gate::denies('payment_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $payments = Payment::advancedFilter();
-        $balance = 1250; // EarningService::balance();
-        $pendingPayment = PaymentService::getPendingPayment();
+        $payments = Auth::user()->payments()->orderByDesc('id')->advancedFilter();
+        $balance = Number::currency(EarningService::balance(), 'USD', app()->getLocale());
+        $pendingPayment = Number::currency(PaymentService::getPendingPayment(), 'USD', app()->getLocale());
         $account = BankAccount::where('user_id', Auth::id())->first();
-        $minPaymentRequest = 50;
+        $minPaymentRequest = Number::format(Setting::where('key', 'min_payment_request')->first()?->value ?? 100, 2, 2,
+            app()->getLocale());
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
         return inertia(
             'Control/Finance/Payment/Index',
             [
-                'payments' => PaymentResource::collection($payments)->resolve(),
+                'payments' => PaymentResource::collection($payments)->resource,
                 'balance' => $balance,
                 'pendingPayment' => $pendingPayment,
                 'account' => $account,
                 'minPaymentRequest' => $minPaymentRequest,
                 'countries' => $countries,
+                'created_at' => Carbon::parse($request->created_at)->format('d.m.Y')
             ]
         );
     }
 
     public function store(RequestPaymentRequest $request)
     {
-
         Payment::create(
             [
                 'user_id' => Auth::id(),

@@ -31,11 +31,11 @@ enum PaymentStatusEnum: int
     public function title()
     {
         return match ($this) {
-            self::PENDING => 'panel.payment.enums.status.pending',
-            self::PROCESSING => 'panel.payment.enums.status.processing',
-            self::APPROVED => 'panel.payment.enums.status.approved',
-            self::FAILED => 'panel.payment.enums.status.failed',
-            self::REJECTED => 'panel.payment.enums.status.rejected',
+            self::PENDING => __('control.payment.enums.status.pending'),
+            self::PROCESSING => __('control.payment.enums.status.processing'),
+            self::APPROVED => __('control.payment.enums.status.approved'),
+            self::FAILED => __('control.payment.enums.status.failed'),
+            self::REJECTED => __('control.payment.enums.status.rejected')
         };
     }
 }

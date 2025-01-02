@@ -35,7 +35,7 @@
         <template #body>
           <div class="flex flex-col mt-5">
             <p class="paragraph-sm c-sub-600 mb-0.5">Mevcut Bakiye</p>
-            <p class="card-currency-header c-strong-950">${{usePage().props.balance}}</p>
+            <p class="card-currency-header c-strong-950">{{ usePage().props.balance }}</p>
           </div>
         </template>
       </AppCard>
@@ -52,7 +52,7 @@
         <template #body>
           <div class="flex flex-col mt-5">
             <p class="paragraph-sm c-sub-600 mb-0.5">Beklenen ödemde</p>
-            <p class="card-currency-header c-strong-950">${{usePage().props.pending_payment}}</p>
+            <p class="card-currency-header c-strong-950">{{ usePage().props.pending_payment }}</p>
           </div>
         </template>
       </AppCard>
@@ -67,29 +67,28 @@
           </div>
         </template>
 
-        <template  #body>
-            <hr class="my-3">
-            <div v-if="account">
+        <template #body>
+          <hr class="my-3">
+          <div v-if="account">
 
-                <div class="flex items-center mb-2">
-                    <BankLineIcon color="var(--sub-600)"/>
-                    <span class="flex-1 ms-2 paragraph-sm c-sub-600">IBAN</span>
-                    <span class="label-sm c-strong-950">{{account.iban}}</span>
-                </div>
-                <div class="flex items-center">
-                    <img width="16" src="@/assets/images/circular_color_image.png"/>
-                    <span class="flex-1 ms-2 paragraph-sm c-sub-600">E-Mail</span>
-                    <span class="label-sm c-strong-950">{{usePage().props.auth.user.email }}</span>
-                </div>
-                <div class="bg-[#F2F5F8] absolute left-0 right-0 bottom-0 flex items-center justify-start py-1 ps-4">
-                    <span class="paragraph-xs c-sub-600">Değişiklik için Payooner hesabınıza gitmelisiniz.</span>
-                </div>
+            <div class="flex items-center mb-2">
+              <BankLineIcon color="var(--sub-600)"/>
+              <span class="flex-1 ms-2 paragraph-sm c-sub-600">IBAN</span>
+              <span class="label-sm c-strong-950">{{ account.iban }}</span>
             </div>
-            <div v-else class="flex flex-col gap-2 items-center justify-center">
-                <WalletIcon color="var(--sub-600)" />
-               <p class="label-sm c-strong-950"> Lütfen hesap eklemesi yapınız</p>
+            <div class="flex items-center">
+              <img width="16" src="@/assets/images/circular_color_image.png"/>
+              <span class="flex-1 ms-2 paragraph-sm c-sub-600">E-Mail</span>
+              <span class="label-sm c-strong-950">{{ usePage().props.auth.user.email }}</span>
             </div>
-
+            <div class="bg-[#F2F5F8] absolute left-0 right-0 bottom-0 flex items-center justify-start py-1 ps-4">
+              <span class="paragraph-xs c-sub-600">Değişiklik için Payooner hesabınıza gitmelisiniz.</span>
+            </div>
+          </div>
+          <div v-else class="flex flex-col gap-2 items-center justify-center">
+            <WalletIcon color="var(--sub-600)"/>
+            <p class="label-sm c-strong-950"> Lütfen hesap eklemesi yapınız</p>
+          </div>
 
 
         </template>
@@ -99,41 +98,41 @@
     </div>
     <AppTable :showAddButton="false" :buttonLabel="__('control.finance.add_new')" ref="pageTable"
               :config="appTableConfig"
-              v-model="usePage().props.payments" @addNewClicked="openDialog">
+              v-model="usePage().props.payments">
       <template #tableHeader>
         <p class="subheading-regular c-strong-950"> İşlem Tarihçesi</p>
       </template>
       <AppTableColumn :label="__('control.finance.payments.table.column_1')" align="left" sortable="name">
         <template #default="scope">
-
+          <p class="paragraph-xs c-sub-600">{{ scope.row.date }}</p>
 
         </template>
       </AppTableColumn>
       <AppTableColumn :label="__('control.finance.payments.table.column_2')" sortable="name" width="140">
         <template #default="scope">
-
+          <p class="paragraph-xs c-sub-600">{{ scope.row.status_text }}</p>
         </template>
       </AppTableColumn>
 
       <AppTableColumn :label="__('control.finance.payments.table.column_3')" sortable="name">
         <template #default="scope">
-
+          <p class="paragraph-xs c-sub-600">{{ scope.row.description }}</p>
         </template>
       </AppTableColumn>
 
       <AppTableColumn :label="__('control.finance.payments.table.column_4')" sortable="name">
         <template #default="scope">
-
+          <p class="paragraph-xs c-sub-600">{{ scope.row.amount }}</p>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="__('control.finance.payments.table.column_5')" sortable="name">
         <template #default="scope">
-
+          <p class="paragraph-xs c-sub-600">{{ scope.row.balance }}</p>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="__('control.finance.payments.table.column_6')" align="right">
         <template #default="scope">
-
+          pdf dekont
         </template>
       </AppTableColumn>
       <template #empty>
@@ -147,7 +146,8 @@
     </AppTable>
 
     <WithdrawModal @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
-    <BankAccountModal :account="account" @update="onUpdate" @done="onDone" v-if="isBankAccountModalOn" v-model="isBankAccountModalOn"/>
+    <BankAccountModal :account="account" @update="onUpdate" @done="onDone" v-if="isBankAccountModalOn"
+                      v-model="isBankAccountModalOn"/>
   </AdminLayout>
 </template>
 
@@ -174,7 +174,7 @@ import {
   EditLineIcon
 } from '@/Components/Icons'
 import {AppCard} from '@/Components/Cards'
-import {WithdrawModal,BankAccountModal} from '@/Components/Dialog';
+import {WithdrawModal, BankAccountModal} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 
 const defaultStore = useDefaultStore();
@@ -182,11 +182,11 @@ const pageTable = ref();
 
 const props = defineProps({
   balance: {
-    type: Number,
+    type: [Number, String],
     required: true
   },
   pendingPayment: {
-    type: Number,
+    type: [Number, String],
     required: true
   },
   account: {

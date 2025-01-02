@@ -78,6 +78,7 @@ class EarningService
             })->where('user_id', Auth::id())->sum('earning');
         })->get();
 
+
         return $earning_total->sum('earning');
     }
 
