@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Control;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BankAccount\BankAccountStoreRequest;
 use App\Models\BankAccount;
+use App\Models\System\Country;
 use App\Services\CountryServices;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class BankController extends Controller
 {
@@ -63,7 +65,7 @@ class BankController extends Controller
         $request->validate(
             [
                 'title' => 'required|string|max:255',
-                'country_id' => 'required|exists:countries,id',
+                'country_id' => ['required', Rule::exists(Country::class, 'id')],
                 'name' => 'required|string|max:255',
                 'iban' => 'required|string|max:255',
                 'swift' => 'nullable|string|max:255',
