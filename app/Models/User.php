@@ -283,6 +283,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Permission::class, 'permission_user');
     }
 
+    public function accounts(): HasMany
+    {
+        return $this->hasMany(BankAccount::class, 'user_id');
+    }
+
     public function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('d-m-Y H:i');
