@@ -11,6 +11,7 @@ use App\Models\Platform;
 use App\Models\Song;
 use App\Models\Product;
 use App\Models\Report;
+use App\Services\EarningService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -23,9 +24,13 @@ class ReportController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        if ($request->has('demo')) {
+            EarningService::createDemoEarnings();
+        }
 
         $reports = Report::advancedFilter();
         $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');

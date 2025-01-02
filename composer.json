@@ -17,6 +17,7 @@
     "laravel/reverb": "^1.0",
     "laravel/sanctum": "^4.0",
     "laravel/tinker": "^2.9",
+    "maatwebsite/excel": "^3.1",
     "php-ffmpeg/php-ffmpeg": "^1.2",
     "predis/predis": "^2.0",
     "spatie/laravel-activitylog": "^4.9",
@@ -25,7 +26,8 @@
     "stancl/tenancy": "^3.8",
     "stevebauman/location": "^7.4",
     "tightenco/ziggy": "^2.0",
-    "twilio/sdk": "^8.1"
+    "twilio/sdk": "^8.1",
+    "ext-bcmath": "*"
   },
   "require-dev": {
     "fakerphp/faker": "^1.23",

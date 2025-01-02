@@ -5,15 +5,22 @@ namespace App\Services;
 use App\Enums\ProductTypeEnum;
 use App\Enums\PaymentProcessTypeEnum;
 use App\Enums\PaymentStatusEnum;
+use App\Exports\FakerEarningReport;
+use App\Imports\EarningImport;
+use App\Models\EarningReport;
+use App\Models\Product;
+use App\Models\System\Country;
 use App\Models\Earning;
 use App\Models\EarningReportFile;
 use App\Models\Payment;
+use App\Models\Platform;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
+use Maatwebsite\Excel\Facades\Excel;
 use function Psy\debug;
 
 class EarningService
@@ -299,7 +306,7 @@ class EarningService
     {
         // Seçili tarih aralığındaki tüm şarkıların toplam dinleme sayısını al
         $totalPlaysQuery = (clone $query)->whereHas('song', function ($query) {
-            $query->whereHas('broadcasts', function ($query) {
+            $query->whereHas('products', function ($query) {
                 $query->where('type', ProductTypeEnum::SOUND->value);
             });
         });
@@ -309,7 +316,7 @@ class EarningService
         // Gruplama ve toplama işlemlerini uygula
         $songs = $query->selectRaw('song_id, song_name, SUM(quantity) as total_plays')
             ->whereHas('song', function ($query) {
-                $query->whereHas('broadcasts', function ($query) {
+                $query->whereHas('products', function ($query) {
                     $query->where('type', ProductTypeEnum::SOUND->value);
                 });
             })
@@ -322,7 +329,7 @@ class EarningService
             $song->play_percentage = $totalPlays > 0 ? ($song->total_plays / $totalPlays) * 100 : 0;
 
             // İlişkili label ve artist bilgilerini al
-            $songData = $song->song->broadcasts->first();
+            $songData = $song->song->products->first();
             $song->label = $songData ? $songData->label : null;
             $song->artist = $songData ? $songData->artists()->first() : null;
         }
@@ -337,7 +344,7 @@ class EarningService
                 'play_percentage' => $song->play_percentage,
                 'label' => $song->label,
                 'artist' => $song->artist,
-                'broadcast' => $song->song->broadcasts->first(),
+                'product' => $song->song->products->first(),
             ];
         });
     }
@@ -362,7 +369,7 @@ class EarningService
             $album->stream_percentage = $totalStreams > 0 ? ($album->total_streams / $totalStreams) * 100 : 0;
 
             // İlişkili label, artist ve yayın tarihi bilgilerini al
-            $earning = Earning::with(['song.broadcasts'])->where('release_name', $album->release_name)
+            $earning = Earning::with(['song.products'])->where('release_name', $album->release_name)
                 ->where('artist_name', $album->artist_name)
                 ->first();
 
@@ -370,7 +377,7 @@ class EarningService
                 if ($earning->song) {
                     $album->song_name = $earning->song_name;
                     $album->artist_name = $earning->artist_name;
-                    $album->release_date = optional($earning->song->broadcasts->first())->release_date;
+                    $album->release_date = optional($earning->song->products->first())->release_date;
                 } else {
                     // Hata ayıklama: $earning->song null olduğunda
                     $album->song_name = 'No song found';
@@ -528,4 +535,112 @@ class EarningService
 
         return $earnings;
     }
+
+    public static function createDemoEarnings()
+    {
+        $faker = \Faker\Factory::create();
+        $data = [];
+
+        for ($i = 0; $i < 500; $i++) {
+            $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', 'now'))->format('Y-m-d');
+            $report_date = Carbon::parse($faker->dateTimeBetween($sales_date, 'now'))->format('Y-m-d');
+
+            $product = Product::with('songs', 'artists', 'label', 'downloadPlatforms')
+                ->whereHas('songs')
+                ->whereHas('artists')
+                ->whereHas('label')
+                ->whereHas('downloadPlatforms')
+                ->inRandomOrder()
+                ->first();
+
+            if ($product) {
+                $song = $product->songs->first();
+                $earning = number_format($faker->randomFloat(2, 0, 1000), 2, '.', '');
+                $sales_type = $faker->randomElement(['Stream', 'PLATFORM PROMOTION', 'Creation', 'Download']);
+                $label = $product->label;
+                $artist = $product->artists->first();
+                $platform = $product->downloadPlatforms->first();
+                $country = Country::inRandomOrder()->first();
+
+                $row = [
+                    'report_date' => $report_date,
+                    'sales_date' => $sales_date,
+                    'platform' => optional($platform)->name,
+                    'platform_id' => optional($platform)->id,
+                    'country' => optional($country)->name,
+                    'country_id' => optional($country)->id,
+                    'label_name' => optional($label)->name,
+                    'label_id' => optional($label)->id,
+                    'artist_name' => optional($artist)->name,
+                    'artist_id' => optional($artist)->id,
+                    'release_name' => $product->name,
+                    'song_name' => optional($song)->name,
+                    'song_id' => optional($song)->id,
+                    'upc_code' => $product->upc_code ?? '',
+                    'isrc_code' => optional($song)->isrc,
+                    'catalog_number' => $product->catalog_number,
+                    'release_type' => 'Yayın',
+                    'sales_type' => $sales_type,
+                    'quantity' => $faker->numberBetween(1, 1000),
+                    'currency' => 'EUR',
+                    'unit_price' => $faker->randomFloat(2, 0, 10),
+                    'earning' => $sales_type == 'PLATFORM PROMOTION' ? -abs($earning) : $earning,
+                ];
+
+                $data[] = $row;
+            }
+        }
+
+        $file = EarningReportFile::create([
+            'user_id' => Auth::id(),
+            'name' => 'Demo Earning Report '.Carbon::now()->format('Y-m-d'),
+        ]);
+
+        if ($file) {
+            self::createEarning($data, $file->id);
+        }
+
+        return Excel::store(
+            new FakerEarningReport($data),
+            'earnings-'.time().'.csv',
+            'tenant_'.tenant('domain').'_earning_reports'
+        );
+    }
+
+    protected static function createEarning($data, $file_id)
+    {
+        foreach ($data as $row) {
+            EarningReport::updateOrCreate(
+                [
+                    'report_date' => $row['report_date'],
+                    'sales_date' => $row['sales_date'],
+                    'platform' => $row['platform'],
+                    'isrc_code' => $row['isrc_code'],
+                    'net_revenue' => str_replace(',', '.', $row['earning']),
+                ],
+                [
+                    'platform_id' => $row['platform_id'],
+                    'country_id' => $row['country_id'],
+                    'label_id' => $row['label_id'],
+                    'artist_id' => $row['artist_id'],
+                    'song_id' => $row['song_id'],
+                    'earning_report_file_id' => $file_id,
+                    'country' => $row['country'],
+                    'label_name' => $row['label_name'],
+                    'artist_name' => $row['artist_name'],
+                    'release_name' => $row['release_name'],
+                    'song_name' => $row['song_name'],
+                    'upc_code' => $row['upc_code'],
+                    'catalog_number' => $row['catalog_number'],
+                    'release_type' => $row['release_type'],
+                    'sales_type' => $row['sales_type'],
+                    'quantity' => $row['quantity'],
+                    'currency' => $row['currency'],
+                    'unit_price' => isset($row['unit_price']) ? str_replace(',', '.', $row['unit_price']) : null,
+                ]
+            );
+        }
+    }
+
+
 }

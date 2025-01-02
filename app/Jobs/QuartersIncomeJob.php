@@ -13,6 +13,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
@@ -28,37 +29,48 @@ class QuartersIncomeJob implements ShouldQueue
     ];
 
     public $users;
+    protected $tenants;
 
     public function __construct()
     {
-        //  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tenant_app_17_10_2024_15_21_17.earnings' doesn't exist (Connection: tenant, SQL: select * from `users` where exists (select * from `earnings` where `users`.`id` = `earnings`.`user_id`) and `users`.`deleted_at` is null)
-        if (Schema::hasTable('earnings')) {
-            $this->users = User::with('earnings')
-                ->whereHas('earnings')
-                ->get();
-        }
+        $this->tenants = Cache::rememberForever('tenants', function () {
+            return \App\Models\System\Tenant::all();
+        });
+
     }
 
     public function handle(): void
     {
-        foreach ($this->users as $user) {
-            $this->generateQuarterlyReports($user);
+        foreach ($this->tenants as $tenant) {
+
+            tenancy()->initialize($tenant);
+
+            $this->users = User::with('earnings')
+                ->whereHas('earnings')
+                ->get();
+
+            foreach ($this->users as $user) {
+                $this->generateQuarterlyReports($user);
+            }
+
         }
+
+        Cache::forget('tenants');
     }
 
     protected function generateQuarterlyReports($user): void
     {
-        $firstBroadcast = $user->broadcasts()->orderBy('created_at')->first();
-        if (!$firstBroadcast) {
-            Log::warning("User {$user->id} has no broadcasts.");
+        $firstProduct = $user->products()->orderBy('created_at')->first();
+        if (!$firstProduct) {
+            Log::warning("User {$user->id} has no products.");
             return;
         }
 
-        $firstBroadcastYear = $firstBroadcast->created_at->year;
+        $firstProductYear = $firstProduct->created_at->year;
         $currentYear = Carbon::now()->year;
         $currentDate = Carbon::now();
 
-        foreach (range($firstBroadcastYear, $currentYear) as $year) {
+        foreach (range($firstProductYear, $currentYear) as $year) {
             foreach (self::QUARTERS as [$quarterName, $startMonth, $endMonth]) {
                 $start = Carbon::create($year, $startMonth, 1);
                 $end = Carbon::create($year, $endMonth, 1)->endOfMonth();
@@ -75,7 +87,7 @@ class QuartersIncomeJob implements ShouldQueue
 
     protected function generateReport($start_date, $end_date, $quarterName, $year, $userId): void
     {
-        $earnings = Earning::with('report.song.broadcasts', 'user')
+        $earnings = Earning::with('report.song.products', 'user')
             ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
                 $query->whereHas('report', function ($query) use ($start_date, $end_date) {
                     $query->whereBetween('sales_date', [$start_date, $end_date]);

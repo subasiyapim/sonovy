@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -30,11 +31,12 @@ class IncomeReportJob implements ShouldQueue
     public $song_ids;
     public $platform_ids;
     public $country_ids;
+    protected $tenants;
 
     public function __construct($start_date = null, $end_date = null, $user_id = null, $report_type = '', $data = null)
     {
-        $this->start_date = $start_date;
-        $this->end_date = $end_date;
+        $this->start_date = $start_date ?? Carbon::now()->subYear()->startOfYear()->format('Y-m-d');
+        $this->end_date = $end_date ?? Carbon::now()->endOfYear()->format('Y-m-d');
         $this->user_id = $user_id;
         $this->report_type = $report_type;
 
@@ -42,19 +44,31 @@ class IncomeReportJob implements ShouldQueue
             $property = $report_type.'_ids';
             $this->$property = $data;
         }
+
+        $this->tenants = Cache::rememberForever('tenants', function () {
+            return \App\Models\System\Tenant::all();
+        });
     }
 
     public function handle(): void
     {
-        if (!$this->start_date && !$this->end_date) {
-            Log::warning('Start date and end date are required for generating reports.');
-        } else {
-            if ($this->report_type && $this->report_type !== 'all' && $this->{$this->report_type.'_ids'}) {
-                $this->generateReportsWithType();
+        foreach ($this->tenants as $tenant) {
+
+            tenancy()->initialize($tenant);
+
+            if (!$this->start_date && !$this->end_date) {
+                Log::warning('Start date and end date are required for generating reports.');
             } else {
-                $this->generateReports();
+                if ($this->report_type && $this->report_type !== 'all' && $this->{$this->report_type.'_ids'}) {
+                    $this->generateReportsWithType();
+                } else {
+                    $this->generateReports();
+                }
             }
+
         }
+
+        Cache::forget('tenants');
     }
 
     protected function generateReportsWithType(): void
@@ -84,7 +98,7 @@ class IncomeReportJob implements ShouldQueue
         $userId = null,
         $data = null
     ): void {
-        $earnings = Earning::with('report.song.broadcasts', 'user')
+        $earnings = Earning::with('report.song.products', 'user')
             ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
                 $query->whereHas('report', function ($query) use ($start_date, $end_date) {
                     $query->whereBetween('sales_date', [$start_date, $end_date]);
