@@ -22,7 +22,7 @@
 
       </PrimaryButton>
     </div>
-    <div class="flex grid grid-cols-3 gap-3 mb-5">
+    <div class="grid grid-cols-3 gap-3 mb-5">
       <AppCard class="flex-1 w-full">
         <template #header>
           <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
@@ -51,7 +51,7 @@
         </template>
         <template #body>
           <div class="flex flex-col mt-5">
-            <p class="paragraph-sm c-sub-600 mb-0.5">Beklenen ödemde</p>
+            <p class="paragraph-sm c-sub-600 mb-0.5">Beklenen Ödemee</p>
             <p class="card-currency-header c-strong-950">{{ usePage().props.pending_payment }}</p>
           </div>
         </template>
