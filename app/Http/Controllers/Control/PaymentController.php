@@ -11,10 +11,14 @@ use App\Http\Requests\Payment\AdvanceYourselfRequest;
 use App\Http\Requests\Payment\PaymentYourselfRequest;
 use App\Http\Requests\Payment\RequestPaymentRequest;
 use App\Http\Resources\Payment\PaymentResource;
+use App\Models\Artist;
 use App\Models\BankAccount;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Platform;
+use App\Models\Product;
 use App\Models\Setting;
+use App\Models\Song;
 use App\Models\User;
 use App\Services\EarningService;
 use App\Services\IyzicoServices;
@@ -41,6 +45,10 @@ class  PaymentController extends Controller
         $account = BankAccount::where('user_id', Auth::id())->first();
         $minPaymentRequest = Number::format(Setting::where('key', 'min_payment_request')->first()?->value ?? 100, 2, 2,
             app()->getLocale());
+        $artists = Artist::all();
+        $products = Product::all();
+        $songs = Song::all();
+        $platforms = Platform::all();
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
 
         return inertia(
@@ -52,6 +60,10 @@ class  PaymentController extends Controller
                 'pending_payment' => $pending_payment,
                 'account' => $account,
                 'minPaymentRequest' => $minPaymentRequest,
+                'artists' => $artists,
+                'products' => $products,
+                'songs' => $songs,
+                'platforms' => $platforms,
                 'countries' => $countries,
                 'created_at' => Carbon::parse($request->created_at)->format('d.m.Y')
             ]
