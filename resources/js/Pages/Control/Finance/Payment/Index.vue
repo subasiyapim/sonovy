@@ -145,7 +145,7 @@
       </template>
     </AppTable>
 
-    <WithdrawModal @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
+    <WithdrawModal @update="onUpdate"  v-if="isModalOn" v-model="isModalOn"/>
     <BankAccountModal :account="account" @update="onUpdate" @done="onDone" v-if="isBankAccountModalOn"
                       v-model="isBankAccountModalOn"/>
   </AdminLayout>
@@ -218,7 +218,7 @@ const editRow = (label) => {
   isModalOn.value = !isModalOn.value;
 }
 const onDone = (e) => {
-  pageTable.value.addRow(e);
+  props.account = e;
 }
 
 const appTableConfig = computed(() => {
