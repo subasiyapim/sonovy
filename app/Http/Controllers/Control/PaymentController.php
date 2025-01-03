@@ -36,7 +36,8 @@ class  PaymentController extends Controller
 
         $payments = Auth::user()->payments()->orderByDesc('id')->advancedFilter();
         $balance = Number::currency(EarningService::balance(), 'USD', app()->getLocale());
-        $pending_payment = Number::currency(PaymentService::getPendingPayment(), 'USD', app()->getLocale());
+        $total_pending_payment = Number::currency(PaymentService::getTotalPendingPayment(), 'USD', app()->getLocale());
+        $pending_payment = PaymentService::getPendingPayment();
         $account = BankAccount::where('user_id', Auth::id())->first();
         $minPaymentRequest = Number::format(Setting::where('key', 'min_payment_request')->first()?->value ?? 100, 2, 2,
             app()->getLocale());
@@ -47,6 +48,7 @@ class  PaymentController extends Controller
             [
                 'payments' => PaymentResource::collection($payments)->resource,
                 'balance' => $balance,
+                'total_pending_payment' => $total_pending_payment,
                 'pending_payment' => $pending_payment,
                 'account' => $account,
                 'minPaymentRequest' => $minPaymentRequest,

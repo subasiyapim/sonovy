@@ -49,12 +49,21 @@ class PaymentService
         })->get()->sum('amount');
     }
 
+    public static function getTotalPendingPayment(int $user_id = null)
+    {
+        return Payment::when($user_id, function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        })
+            ->where('status', PaymentStatusEnum::PENDING->value)
+            ->get()->sum('amount');
+    }
+
     public static function getPendingPayment(int $user_id = null)
     {
         return Payment::when($user_id, function ($query) use ($user_id) {
             $query->where('user_id', $user_id);
         })
-            ->where('process_type', PaymentStatusEnum::PENDING->value)
-            ->get()->sum('amount');
+            ->where('status', PaymentStatusEnum::PENDING->value)
+            ->first();
     }
 }

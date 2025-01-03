@@ -52,7 +52,7 @@
         <template #body>
           <div class="flex flex-col mt-5">
             <p class="paragraph-sm c-sub-600 mb-0.5">Beklenen Ödemee</p>
-            <p class="card-currency-header c-strong-950">{{ usePage().props.pending_payment }}</p>
+            <p class="card-currency-header c-strong-950">{{ usePage().props.total_pending_payment }}</p>
           </div>
         </template>
       </AppCard>
@@ -96,6 +96,8 @@
       </AppCard>
 
     </div>
+
+    Pending Payment info {{ pending_payment }}
     <AppTable :showAddButton="false" :buttonLabel="__('control.finance.add_new')" ref="pageTable"
               :config="appTableConfig"
               v-model="usePage().props.payments">
@@ -185,8 +187,12 @@ const props = defineProps({
     type: [Number, String],
     required: true
   },
-  pendingPayment: {
+  total_pending_payment: {
     type: [Number, String],
+    required: true
+  },
+  pending_payment: {
+    type: Object,
     required: true
   },
   account: {
