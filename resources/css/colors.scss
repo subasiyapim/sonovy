@@ -5,6 +5,7 @@
   --strong-950: #0E121B;
   --sub-600: #525866;
   --neutral-500: #717784;
+  --neutral-500: #525866;
   --soft-200: #E1E4EA;
   --soft-300: #CACFD8;
   --soft-400: #99A0AE;
@@ -48,6 +49,11 @@
 
 .c-neutral-500 {
   color: var(--neutral-500);
+
+}
+
+.c-neutral-600 {
+  color: var(--neutral-600);
 
 }
 
