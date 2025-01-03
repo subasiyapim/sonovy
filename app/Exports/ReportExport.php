@@ -86,14 +86,16 @@ class ReportExport implements FromCollection, WithHeadings
         ];
     }
 
-    public function saveAndUpload()
+    public function saveAndUpload($disk = 'public')
     {
         $filePath = $this->period.'.xlsx';
-        Excel::store(new self($this->earnings, $this->period, $this->report), $filePath, 'income-reports');
+        Excel::store(new self($this->earnings, $this->period, $this->report), $filePath, $disk);
 
-        $storedFile = Storage::disk('income-reports')->path($filePath);
-        MediaServices::upload($this->report, new File($storedFile), null, $this->period.'.xlsx', 'income-reports',
-            'income-reports');
+        $storedFile = Storage::disk($disk)->path($filePath);
+
+        $this->report->addMedia(new File($storedFile))
+            ->usingFileName($filePath)
+            ->toMediaCollection($disk, $disk);
     }
 
 }

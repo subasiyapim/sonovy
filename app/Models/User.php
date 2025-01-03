@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Number;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\VerifyEmail;
 
@@ -195,7 +196,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getBalanceAttribute()
     {
-        return EarningService::balance();
+        return Number::currency(EarningService::balance(), 'USD', app()->getLocale());
     }
 
     public function roles(): BelongsToMany

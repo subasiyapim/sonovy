@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Song;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Reverb\Loggers\Log;
 
 class MediaServices
 {
@@ -21,6 +22,10 @@ class MediaServices
             return;
         }
 
+        Log::info('MediaServices upload media',
+            ['media' => $media, 'disk' => $disk, 'collection_name' => $collection_name]);
+
+        
         $name = uniqid().'-'.time();
         $file_name = uniqid().'-'.time().'-'.$media->getClientOriginalName();
 

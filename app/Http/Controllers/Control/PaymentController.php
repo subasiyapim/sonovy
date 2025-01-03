@@ -70,15 +70,7 @@ class  PaymentController extends Controller
             ]
         );
 
-        return to_route('dashboard.finance-and-earnings.index')
-            ->with([
-                'notification' => [
-                    'message' => $request->process_type == 4
-                        ? 'Anans talebiniz başarıyla alındı. En kısa sürede işleme alınacaktır.'
-                        : 'Ödeme talebiniz başarıyla alındı. En kısa sürede işleme alınacaktır.',
-                    'type' => 'success'
-                ]
-            ]);
+        return redirect()->back();
     }
 
     public function destroy(Payment $payment)

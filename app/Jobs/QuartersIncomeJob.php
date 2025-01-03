@@ -17,10 +17,13 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
+ini_set('memory_limit', '512M');
+
 class QuartersIncomeJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $disk;
     const QUARTERS = [
         ['Q1', 1, 3],
         ['Q2', 4, 6],
@@ -44,7 +47,7 @@ class QuartersIncomeJob implements ShouldQueue
         foreach ($this->tenants as $tenant) {
 
             tenancy()->initialize($tenant);
-
+            $this->disk = 'tenant_'.$tenant->domain.'_income_reports';
             $this->users = User::with('earnings')
                 ->whereHas('earnings')
                 ->get();
@@ -119,7 +122,7 @@ class QuartersIncomeJob implements ShouldQueue
 
             if ($report->wasRecentlyCreated) {
                 $reportExport = new ReportExport($earnings, $logFileName, $report);
-                $reportExport->saveAndUpload();
+                $reportExport->saveAndUpload($this->disk);
             }
         }
     }

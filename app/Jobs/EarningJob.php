@@ -9,6 +9,7 @@ use App\Models\Song;
 use App\Models\Earning;
 use App\Traits\HelperTrait;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class EarningJob implements ShouldQueue
+class EarningJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use HelperTrait;
@@ -141,7 +142,7 @@ class EarningJob implements ShouldQueue
     protected function calculateLabelShare()
     {
         $labelUser = $this->song->products()->first()->label?->user;
-        $labelCommissionRate = $labelUser->commission_rate;
+        $labelCommissionRate = $labelUser->commission_rate ?? 0;
         $labelShare = bcmul($this->balance, bcdiv($labelCommissionRate, '100'));
         Log::info('Label commission rate: '.$labelCommissionRate.' Label share: '.$labelShare);
         $this->balance = bcsub($this->balance, $labelShare);
@@ -178,7 +179,7 @@ class EarningJob implements ShouldQueue
         try {
             $upperUser = $user->parent_user;
             while ($upperUser) {
-                $upperRate = $upperUser->commission_rate;
+                $upperRate = $upperUser->commission_rate ?? 0;
                 $upperEarning = bcmul($earning, bcdiv($upperRate, '100'));
                 $participantEarnings[] = [
                     'user_id' => $upperUser->id,

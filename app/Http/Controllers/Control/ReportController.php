@@ -33,6 +33,7 @@ class ReportController extends Controller
         }
 
         $reports = Report::advancedFilter();
+
         $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');
         $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
         $labels = getDataFromInputFormat(Label::all(), 'value', 'label', 'image');
@@ -100,7 +101,7 @@ class ReportController extends Controller
 
     public function download(Report $report)
     {
-        $media = $report->getMedia('income-reports')->last();
+        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();

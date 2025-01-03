@@ -22,7 +22,7 @@ class PaymentResource extends JsonResource
             'process_type' => $this->process_type,
             'description' => $this->getDescription(),
             'amount' => Number::currency($this->amount, 'USD', app()->getLocale()),
-            'balance' => Number::currency($this->user->balance, 'USD', app()->getLocale()),
+            'balance' => $this->user->balance,
             'status_text' => PaymentStatusEnum::from($this->status->value)->title(),
         ];
     }
