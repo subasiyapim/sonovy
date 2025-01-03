@@ -98,32 +98,46 @@
     </div>
 
 
-
-    <div class="flex items-start gap-2 bg-[#EBF1FF] p-3.5 rounded-lg my-12">
-        <InfoFilledIcon class="mt-1" color="#335CFF" />
-        <div>
-            <div class="flex items-center  mb-3">
-                <div class="flex items-center gap-1 flex-1">
-                    <span class="label-medium !font-bold c-strong-950">{{pending_payment}}</span>
-                    <span class="label-medium !font-semibold c-strong-950">bakiye çekme talebiniz başarılı bir şekilde iletildi</span>
+    <div class="flex justify-between items-start gap-2 bg-[#EBF1FF] p-3.5 rounded-lg my-12">
+      <InfoFilledIcon class="mt-1" color="#335CFF"/>
+      <div class="flex-1">
+        <div class="flex justify-between items-center  mb-3">
+          <div class="flex items-center gap-1 flex-1">
+            <span
+                class="label-medium !font-semibold c-strong-950">bakiye çekme talebiniz başarılı bir şekilde iletildi</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-dark-green-700 flex items-center justify-center">
+                  <CheckIcon color="#fff"/>
                 </div>
-                <div>
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full bg-dark-green-700 flex items-center justify-center"> <CheckIcon color="#fff" /></div><p class="c-strong-950 paragraph-sm">Talep Edildi</p></div>
-                        <ChevronRightIcon color="var(--sub-600)" />
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full bg-[#FF8447] flex items-center justify-center text-white text-sm font-medium">2</div><p class="c-strong-950 paragraph-sm">İnceleniyor</p></div>
-                        <ChevronRightIcon color="var(--sub-600)" />
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full bg-white border border-soft-200 flex items-center justify-center c-sub-600 text-sm font-medium">3</div><p class="c-sub-600 paragraph-sm">Tutar Gönderilecek</p></div>
-                    </div>
+                <p class="c-strong-950 paragraph-sm">Talep Edildi</p></div>
+              <ChevronRightIcon color="var(--sub-600)"/>
+              <div class="flex items-center gap-2">
+                <div
+                    class="w-5 h-5 rounded-full bg-[#FF8447] flex items-center justify-center text-white text-sm font-medium">
+                  2
                 </div>
+                <p class="c-strong-950 paragraph-sm">İnceleniyor</p></div>
+              <ChevronRightIcon color="var(--sub-600)"/>
+              <div class="flex items-center gap-2">
+                <div
+                    class="w-5 h-5 rounded-full bg-white border border-soft-200 flex items-center justify-center c-sub-600 text-sm font-medium">
+                  3
+                </div>
+                <p class="c-sub-600 paragraph-sm">Tutar Gönderilecek</p></div>
             </div>
-            <div>
-                <p class="paragraph-sm c-neutral-600 w-3/4">
-                    10 EKim 2024 - 09:30 tarihinde $500 tutarında MDS00411488 ödeme talep ettiniz.
-                    Ödeme isteğiniz ekibimiz tarafından onaylanacak ve 10/15/2024 tarihinde aracı şirkete gönderilecek.
-                </p>
-            </div>
+          </div>
         </div>
+        <div>
+          <p class="paragraph-sm c-neutral-600 w-3/4">
+            {{ pending_payment.date }} tarihinde {{ pending_payment.amount }} tutarında ödeme talep
+            ettiniz. Ödeme isteğiniz ekibimiz tarafından onaylanacak ve {{ pending_payment.planned_payment_date }}
+            tarihine kadar aracı şirkete gönderilecek.
+          </p>
+        </div>
+      </div>
     </div>
     <AppTable :showAddButton="false" :buttonLabel="__('control.finance.add_new')" ref="pageTable"
               :config="appTableConfig"
@@ -174,7 +188,7 @@
       </template>
     </AppTable>
 
-    <WithdrawModal @update="onUpdate"  v-if="isModalOn" v-model="isModalOn"/>
+    <WithdrawModal @update="onUpdate" v-if="isModalOn" v-model="isModalOn"/>
     <BankAccountModal :account="account" @update="onUpdate" @done="onDone" v-if="isBankAccountModalOn"
                       v-model="isBankAccountModalOn"/>
   </AdminLayout>
@@ -193,7 +207,7 @@ import {
   AddIcon,
   InfoFilledIcon,
   CheckIcon,
-ChevronRightIcon,
+  ChevronRightIcon,
   LabelsIcon,
   WalletIcon,
   DownloadIcon,

@@ -57,7 +57,7 @@ class  PaymentController extends Controller
                 'payments' => PaymentResource::collection($payments)->resource,
                 'balance' => $balance,
                 'total_pending_payment' => $total_pending_payment,
-                'pending_payment' => $pending_payment,
+                'pending_payment' => new PaymentResource($pending_payment),
                 'account' => $account,
                 'minPaymentRequest' => $minPaymentRequest,
                 'artists' => $artists,

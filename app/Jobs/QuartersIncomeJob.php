@@ -110,6 +110,7 @@ class QuartersIncomeJob implements ShouldQueue
 
             $report = Report::firstOrCreate(
                 [
+                    'is_auto_report' => true,
                     'period' => $logFileName,
                     'user_id' => $userId,
                 ],

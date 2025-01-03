@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Payment;
 
 use App\Enums\PaymentStatusEnum;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,7 @@ class PaymentResource extends JsonResource
             'amount' => Number::currency($this->amount, 'USD', app()->getLocale()),
             'balance' => $this->user->balance,
             'status_text' => PaymentStatusEnum::from($this->status->value)->title(),
+            'planned_payment_date' => Carbon::parse($this->created_at)->addDays(7)->format('d.m.Y')
         ];
     }
 

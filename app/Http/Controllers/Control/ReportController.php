@@ -27,12 +27,23 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $request->validate([
+            'slug' => ['nullable', 'string', 'in:auto-reports,demanded-reports'],
+            'demo' => ['nullable', 'boolean'],
+        ]);
 
-        if ($request->has('demo')) {
+        if ($request->boolean('demo')) {
             EarningService::createDemoEarnings();
         }
 
-        $reports = Report::advancedFilter();
+        $query = Report::query();
+
+        if (!empty($request->slug)) {
+            $isAutoReport = $request->slug === 'auto-reports';
+            $query->where('is_auto_report', $isAutoReport);
+        }
+
+        $reports = $query->advancedFilter();
 
         $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');
         $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
