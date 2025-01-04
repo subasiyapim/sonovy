@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Report\ReportStoreRequest;
+use App\Http\Resources\Report\ReportResource;
 use App\Jobs\IncomeReportJob;
 use App\Models\Artist;
 use App\Models\Label;
@@ -43,9 +44,9 @@ class ReportController extends Controller
             $query->where('is_auto_report', $isAutoReport);
         }
 
-        $reports = $query->advancedFilter();
-
-        $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');
+        $reports = ReportResource::collection($query->advancedFilter())->resource;
+       
+        $artists = Artist::with('platforms')->get();
         $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
         $labels = getDataFromInputFormat(Label::all(), 'value', 'label', 'image');
         $songs = getDataFromInputFormat(Song::all(), 'id', 'name');
