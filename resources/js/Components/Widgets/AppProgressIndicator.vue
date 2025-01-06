@@ -1,7 +1,7 @@
 <template>
 
     <div class="flex items-center relative bg-white-600 rounded overflow-hidden w-full" :style="{'height' : `${height}px`}">
-        <div class="absolute"   :style="{'width' : element+'%','height' : `${height}px`,'background' : color}">
+        <div class="absolute rounded-full"   :style="{'width' : element+'%','height' : `${height}px`,'background' : color}">
         </div>
     </div>
 </template>

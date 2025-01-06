@@ -15,6 +15,9 @@
                         <p class="label-sm c-strong-950">{{title}}</p>
                         <p class="paragraph-xs c-sub-600">{{description}}</p>
                     </div>
+                    <div v-if="showClose" class="ms-auto">
+                        <button class="p-2" @click="isDialogOn = false"><CloseIcon color="var(--sub-600)" /></button>
+                    </div>
                 </div>
                 <div class="overflow-scroll h-full">
 
@@ -27,6 +30,7 @@
 
 <script setup>
 import {computed} from 'vue';
+import {CloseIcon} from '@/Components/Icons'
 const props = defineProps({
     modelValue: {
         default:false,
@@ -41,7 +45,7 @@ const props = defineProps({
 
     },
     static:{
-        default:false
+        default:true
     },
     title:{},
     description:{},
@@ -50,6 +54,9 @@ const props = defineProps({
     },
     showHeader:{
         default:true
+    },
+    showClose:{
+        default:false,
     }
 })
 const emits  =defineEmits(['update:modelValue']);

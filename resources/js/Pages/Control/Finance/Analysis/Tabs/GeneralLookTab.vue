@@ -2,9 +2,16 @@
 
 <script setup>
 import {ref} from 'vue';
-import {FileChartLineIcon,SpotifyIcon,YoutubeIcon,AppleMusicIcon,WorldIcon,EyeOnIcon,DownloadIcon,BookReadLineIcon} from '@/Components/Icons';
+import {FileChartLineIcon,SpotifyIcon,YoutubeIcon,AppleMusicIcon,InfoFilledIcon,WorldIcon,EyeOnIcon,DownloadIcon,BookReadLineIcon} from '@/Components/Icons';
 import {AppProgressIndicator} from '@/Components/Widgets';
+import {FinanceIncomePlatforms,FinanceIncomeCountries,FinanceIncomeSales} from '@/Components/Dialog';
+import {AppSwitchComponent} from '@/Components/Form'
 import Vue3Apexcharts from 'vue3-apexcharts'
+const showYoutubeFremium = ref(false);
+
+const isFinanceIncomePlatforms = ref(false);
+const isFinanceIncomeCountries = ref(false);
+const isFinanceIncomeSales = ref(false);
 
 
 const options = ref({
@@ -75,6 +82,8 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
 </script>
 
 <template>
+
+
     <div class="flex flex-col gap-6">
         <div class="bg-white rounded-xl border border-soft-200 p-4 flex flex-col gap-4">
             <div class="flex items-center">
@@ -148,15 +157,30 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                 </div>
                 <div class="flex gap-4 flex-1">
                     <div v-for="i in 12" class="h-80 flex-1 flex flex-col items-center justify-between">
-                        <div class="h-72 flex flex-col justify-end w-full gap-0.5">
-                            <div class="bg-weak-50 h-[40%] flex items-end justify-center">
-                                <span class="c-sub-600 label-sm !text-[10px] ">$96,000.00</span>
+
+                        <tippy :allowHtml="true" :interactiveBorder="30" theme="light" followCursor :sticky="true" :interactive="false">
+                            <div class="h-72 flex flex-col justify-end w-full gap-0.5">
+                                <div class="bg-weak-50 h-[40%] flex items-end justify-center">
+                                    <span class="c-sub-600 label-sm !text-[10px] ">$96,000.00</span>
+                                </div>
+                                <div class="bg-youtube h-[20%]"></div>
+                                <div class="bg-spotify h-[10%]"></div>
+                                <div class="bg-apple-music h-[25%]"></div>
+                                <div class="bg-other-platforms h-[5%]"></div>
                             </div>
-                            <div class="bg-youtube h-[20%]"></div>
-                            <div class="bg-spotify h-[10%]"></div>
-                            <div class="bg-apple-music h-[25%]"></div>
-                            <div class="bg-other-platforms h-[5%]"></div>
-                        </div>
+                            <template #content>
+                                <div class="flex flex-col gap-2 w-64 p-1">
+                                    <p class="label-sm c-strong-950">Mayıs 2024</p>
+                                    <div v-for="i in 6" class="flex items-center gap-2">
+                                        <SpotifyIcon />
+                                        <p class="paragraph-sm c-strong-950 flex-1">Spotify</p>
+                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">$500,57</p></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </tippy>
+
+
                         <span class="paragraph-xs c-sub-600">Ocak</span>
                     </div>
                 </div>
@@ -194,14 +218,40 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                     <span class="paragraph-xs c-sub-600">0</span>
                 </div>
                 <div class="flex gap-4 flex-1">
+
+
                     <div v-for="i in 12" class="h-80 flex-1 flex flex-col items-center justify-between">
-                        <div class="h-72 flex flex-col justify-end w-full gap-0.5">
-                            <div class="bg-weak-50 h-[40%] flex items-end justify-center">
-                                <span class="c-sub-600 label-sm !text-[10px] ">$96,000.00</span>
+
+                        <tippy :allowHtml="true"  :maxWidth="600" theme="light" followCursor :sticky="true" :interactive="false">
+                             <div class="h-72 flex flex-col justify-end w-full gap-0.5">
+                                <div class="bg-weak-50 h-[40%] flex items-end justify-center">
+                                    <span class="c-sub-600 label-sm !text-[10px] ">$96,000.00</span>
+                                </div>
+                                <div class="bg-spotify h-[40%]"></div>
+                                <div class="bg-[#BDECCD] h-[20%]"></div>
                             </div>
-                            <div class="bg-spotify h-[40%]"></div>
-                            <div class="bg-[#BDECCD] h-[20%]"></div>
-                        </div>
+                            <template #content>
+                                <div class="flex flex-col gap-2 w-96 p-1">
+                                    <div class="flex items-center">
+
+                                        <p class="label-sm c-strong-950 flex-1">Ocak 2024</p>
+                                        <p class="label-sm c-strong-950 ">$500</p>
+
+                                    </div>
+                                    <div  class="flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-spotify"></div>
+                                        <p class="paragraph-sm c-strong-950 flex-1">Tahmini kazanılan gelir MD Spotify Keşif Modunda katalog optimizasyonu ile</p>
+                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">$500,57</p></div>
+                                    </div>
+                                    <div  class="flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-[#BDECCD]"></div>
+                                        <p class="paragraph-sm c-strong-950 flex-1">Regular Spotify Revenue</p>
+                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">$500,57</p></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </tippy>
+
                         <span class="paragraph-xs c-sub-600">Ocak</span>
                     </div>
                 </div>
@@ -217,7 +267,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                         <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
                     </div>
                     <div class="flex gap-3">
-                        <button><EyeOnIcon color="var(--sub-600)" /></button>
+                        <button @click="isFinanceIncomePlatforms = !isFinanceIncomePlatforms"><EyeOnIcon color="var(--sub-600)" /></button>
                         <button><DownloadIcon color="var(--sub-600)" /></button>
                     </div>
 
@@ -234,7 +284,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                         <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
                     </div>
                     <div class="flex gap-3">
-                        <button><EyeOnIcon color="var(--sub-600)" /></button>
+                        <button @click="isFinanceIncomeCountries = !isFinanceIncomeCountries"><EyeOnIcon color="var(--sub-600)" /></button>
                         <button><DownloadIcon color="var(--sub-600)" /></button>
                     </div>
 
@@ -249,7 +299,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
             <div class="flex items-center">
                 <div class="flex items-center gap-2 flex-1">
                     <YoutubeIcon />
-                    <p class="label-medium c-strong-950">Youtube toplam gelirinde öne çıkan noktalar</p>
+                    <p class="label-medium c-strong-950 ms-2">Youtube toplam gelirinde öne çıkan noktalar</p>
                     <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
                 </div>
                 <span class="label-sm c-strong-950">$23.758,00</span>
@@ -258,29 +308,89 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
             <hr>
             <div class="flex gap-4 items-center">
                 <span class="paragraph-xs c-strong-950">Prim/Fremium gelirini göster</span>
+                <AppSwitchComponent v-model="showYoutubeFremium" />
             </div>
             <hr>
-            <div class="flex flex-col gap-3">
-                <div>
+            <div class="flex flex-col gap-3" v-if="!showYoutubeFremium">
+                <div v-for="i in 5">
                     <span class="label-xs">Youtube Official Content</span>
-                    <AppProgressIndicator :height="8" :modelValue="12" color="#D02533" />
+
+                    <tippy :allowHtml="true"  :maxWidth="600" theme="light" followCursor :sticky="true" :interactive="false">
+                        <AppProgressIndicator :height="8" :modelValue="12" color="#D02533" />
+                        <template #content>
+                            <div class="flex flex-col gap-2 w-96 p-1">
+                                <div class="flex items-center">
+                                    <YoutubeIcon />
+                                    <p class="label-sm c-strong-950 flex-1">Ocak 2024</p>
+                                    <p class="label-sm c-strong-950 ">$500</p>
+
+                                </div>
+                                 <div class="flex items-start gap-2 bg-[#F2F5F8] py-2 px-4 mt-2 rounded-lg">
+                                    <InfoFilledIcon width="24" class="mt-1" color="#717784" />
+                                    <span class="c-strong-950 c-sub-600">Reklam destekli videolar, Youtube müzikleri ve Youtube Premium ücretli abonelik gelirleri </span>
+                                </div>
+
+                            </div>
+                        </template>
+                    </tippy>
+
                 </div>
-                <div>
-                    <span class="label-xs">Youtube UGC</span>
-                    <AppProgressIndicator :height="8" :modelValue="2" color="#D02533" />
+
+            </div>
+
+            <div v-else>
+                <div class="flex items-center gap-3">
+                    <div class="flex gap-2 items-center c-strong-950 paragraph-xs"><div class="w-2 h-2 rounded-full bg-youtube-premium"></div>Premium</div>
+                    <div class="flex gap-2 items-center c-strong-950 paragraph-xs"><div class="w-2 h-2 rounded-full bg-youtube"></div>Freemium</div>
+                    <div class="flex gap-2 items-center c-strong-950 paragraph-xs"><div class="w-2 h-2 rounded-full bg-other"></div>Diğer</div>
                 </div>
-                <div>
-                    <span class="label-xs">Youtube Shorts</span>
-                    <AppProgressIndicator :height="8" :modelValue="45" color="#D02533" />
-                </div>
-                <div>
-                    <span class="label-xs">Youtube Audio Tier</span>
-                    <AppProgressIndicator :height="8" :modelValue="24" color="#D02533" />
-                </div>
-                <div>
-                    <span class="label-xs">MD Right Services(Youtube)</span>
-                    <AppProgressIndicator :height="8" :modelValue="5" color="#D02533" />
-                </div>
+
+
+                <tippy  v-for="i in 3" :allowHtml="true"  :maxWidth="600" theme="light" followCursor :sticky="true" :interactive="false">
+                    <div class="mt-3">
+                        <p class="label-sm c-strong-950 mb-1">Youtube Official Content</p>
+                        <div class="flex items-center gap-1 h-4 w-full">
+                            <div class="h-full rounded bg-youtube-premium w-[12%]"></div>
+                            <div class="h-full rounded bg-youtube w-[68%]"></div>
+                            <div class="h-full rounded bg-other w-[20%]"></div>
+                        </div>
+
+                    </div>
+                    <template #content>
+                        <div class="flex flex-col gap-2 w-96 p-1">
+                            <div class="flex items-center">
+                                <YoutubeIcon />
+                                <p class="label-sm c-strong-950 flex-1 ms-2">Youtube Official Content</p>
+                                <p class="label-sm c-strong-950 ">$500</p>
+
+                            </div>
+                            <div class="flex flex-col items-start gap-3">
+                                <div class="flex gap-2 items-center w-full">
+                                    <div class="w-2 h-2 rounded-full bg-youtube-premium"></div>
+                                  <div class="flex-1">  <p class=" paragraph-xs c-strong-950">Premium</p></div>
+                                    <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">$500,57</p></div>
+
+                                </div>
+                                <div class="flex gap-2 items-center w-full">
+                                    <div class="w-2 h-2 rounded-full bg-youtube"></div>
+                                    <div class="flex-1"> <p class="flex-1 paragraph-xs c-strong-950">Freemium</p></div>
+                                    <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">$500,57</p></div>
+
+                                </div>
+                                <div class="flex gap-2 items-center w-full">
+                                    <div class="w-2 h-2 rounded-full bg-other"></div>
+                                   <div class="flex-1">  <p class="flex-1 paragraph-xs c-strong-950">Diğer</p></div>
+                                    <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">$500,57</p></div>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </template>
+                </tippy>
+
             </div>
         </div>
 
@@ -293,7 +403,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                         <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
                     </div>
                     <div class="flex gap-3">
-                        <button><EyeOnIcon color="var(--sub-600)" /></button>
+                        <button @click="isFinanceIncomeSales = !isFinanceIncomeSales"><EyeOnIcon color="var(--sub-600)" /></button>
                         <button><DownloadIcon color="var(--sub-600)" /></button>
                     </div>
 
@@ -331,6 +441,10 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
             </div>
         </div>
     </div>
+
+    <FinanceIncomePlatforms v-model="isFinanceIncomePlatforms" v-if="isFinanceIncomePlatforms"></FinanceIncomePlatforms>
+    <FinanceIncomeCountries v-model="isFinanceIncomeCountries" v-if="isFinanceIncomeCountries"></FinanceIncomeCountries>
+    <FinanceIncomeSales v-model="isFinanceIncomeSales" v-if="isFinanceIncomeSales"></FinanceIncomeSales>
 </template>
 
 <style  scoped>

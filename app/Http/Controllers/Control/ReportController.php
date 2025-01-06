@@ -55,8 +55,10 @@ class ReportController extends Controller
         $platforms = getDataFromInputFormat(Platform::all(), 'id', 'name', 'image');
 
 
-        return inertia('Control/Finance/Reports/Index',
-            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms'));
+        return inertia(
+            'Control/Finance/Reports/Index',
+            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms')
+        );
     }
 
     /**
@@ -113,7 +115,7 @@ class ReportController extends Controller
 
     public function download(Report $report)
     {
-        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
+        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();

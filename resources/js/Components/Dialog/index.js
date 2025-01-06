@@ -17,6 +17,10 @@ import ChangePackageDialog from './User/change_package.vue';
 import WithdrawModal from './Finance/withdraw.vue';
 import NewReportModal from './Finance/new_report.vue';
 import BankAccountModal from './Finance/bank.vue';
+
+import FinanceIncomePlatforms from './Finance/Income/platforms.vue';
+import FinanceIncomeCountries from './Finance/Income/countries.vue';
+import FinanceIncomeSales from './Finance/Income/sales.vue';
 export {
     ArtistDialog,
     LabelDialog,
@@ -36,6 +40,9 @@ export {
     ChangePackageDialog,
     WithdrawModal,
     NewReportModal,
-    BankAccountModal
+    BankAccountModal,
+    FinanceIncomePlatforms,
+FinanceIncomeCountries,
+FinanceIncomeSales,
 
 }
