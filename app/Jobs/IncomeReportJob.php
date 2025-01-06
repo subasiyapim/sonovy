@@ -142,7 +142,7 @@ class IncomeReportJob implements ShouldQueue
             ->get();
 
         // Log the earnings to check if data is fetched
-        Log::info('Earnings: '.$earnings->toJson());
+        // Log::info('Earnings: '.$earnings->toJson());
 
         $monthlyAmounts = $earnings->groupBy(function ($earning) {
             return Carbon::parse($earning->report->sales_date)->format('m');
