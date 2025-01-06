@@ -73,19 +73,37 @@ class QuartersIncomeJob implements ShouldQueue
         $currentYear = Carbon::now()->year;
         $currentDate = Carbon::now();
 
+//        foreach (range($firstProductYear, $currentYear) as $year) {
+//            foreach (self::QUARTERS as [$quarterName, $startMonth, $endMonth]) {
+//                $start = Carbon::create($year, $startMonth, 1);
+//                $end = Carbon::create($year, $endMonth, 1)->endOfMonth();
+//
+//                if ($year == $currentYear && ($start->greaterThan($currentDate) || $end->greaterThan($currentDate))) {
+//                    continue;
+//                }
+//
+//                $userId = $user->id;
+//                $this->generateReport($start, $end, $quarterName, $year, $userId);
+//            }
+//        }
+
         foreach (range($firstProductYear, $currentYear) as $year) {
             foreach (self::QUARTERS as [$quarterName, $startMonth, $endMonth]) {
                 $start = Carbon::create($year, $startMonth, 1);
                 $end = Carbon::create($year, $endMonth, 1)->endOfMonth();
 
-                if ($year == $currentYear && ($start->greaterThan($currentDate) || $end->greaterThan($currentDate))) {
+                // Geçerli çeyrekten daha ileri bir tarih ise işlem yapma
+                if ($start->greaterThan($currentDate)) {
                     continue;
                 }
 
-                $userId = $user->id;
-                $this->generateReport($start, $end, $quarterName, $year, $userId);
+                $logFileName = "{$quarterName}-{$year}";
+                Log::info("Processing report: {$logFileName}");
+
+                $this->generateReport($start, $end, $quarterName, $year, $user->id);
             }
         }
+
     }
 
     protected function generateReport($start_date, $end_date, $quarterName, $year, $userId): void
