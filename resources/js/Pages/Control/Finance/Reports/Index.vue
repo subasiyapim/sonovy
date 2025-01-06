@@ -1,36 +1,37 @@
 <template>
-  <AdminLayout  :title="__('control.finance.reports.header')" parentTitle="Katalog">
+  <AdminLayout :title="__('control.finance.reports.header')" parentTitle="Katalog">
     <template #toolbar>
-        <RegularButton>
-            <template #icon>
-                <DownloadIcon color="var(--sub-600)" />
-            </template>
-           <p class="ms-2"> Raporu İndir</p>
-        </RegularButton>
+      <RegularButton>
+        <template #icon>
+          <DownloadIcon color="var(--sub-600)"/>
+        </template>
+        <p class="ms-2"> Raporu İndir</p>
+      </RegularButton>
     </template>
     <div class="flex items-start my-6">
-        <div class="flex-1">
-            <h1 class="subheading-regular c-strong-950 mb-0.5"> Mevcut Raporlar</h1>
-            <p class="label-sm c-neutral-500">Lorem ipsum dolor sit amet consectetur. Aliquet ac at odio ultricies amet commodo.</p>
-        </div>
-        <PrimaryButton @click="openPaymentModal" class="w-60">
-            <template #icon>
-                <DocumentIcon color="var(--dark-green-500)" />
-            </template>
-            <p>Yeni Rapor Oluştur</p>
+      <div class="flex-1">
+        <h1 class="subheading-regular c-strong-950 mb-0.5"> Mevcut Raporlar</h1>
+        <p class="label-sm c-neutral-500">Lorem ipsum dolor sit amet consectetur. Aliquet ac at odio ultricies amet
+          commodo.</p>
+      </div>
+      <PrimaryButton @click="openPaymentModal" class="w-60">
+        <template #icon>
+          <DocumentIcon color="var(--dark-green-500)"/>
+        </template>
+        <p>Yeni Rapor Oluştur</p>
 
-        </PrimaryButton>
+      </PrimaryButton>
     </div>
 
     <div>
-      <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"></AppTabs>
+      <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"/>
     </div>
 
     <div class="px-8 pb-10">
-      <component  :is="tabs.find(e => e.slug == currentTab)?.component"></component>
+      <component :is="tabs.find(e => e.slug == currentTab)?.component"/>
     </div>
 
-    <NewReportModal  @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
+    <NewReportModal @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -41,15 +42,28 @@ import {ref, computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 
 import {AppTabs} from '@/Components/Widgets'
-import {PrimaryButton, IconButton,RegularButton} from '@/Components/Buttons'
+import {PrimaryButton, IconButton, RegularButton} from '@/Components/Buttons'
 import {StatusBadge} from '@/Components/Badges'
-import {AddIcon, LabelsIcon,DocumentIcon,DownloadIcon, BankLineIcon, TrashIcon, EditIcon, ExitIcon, WalletLineIcon,SpeedUpIcon,EditLineIcon} from '@/Components/Icons'
+import {
+  AddIcon,
+  LabelsIcon,
+  DocumentIcon,
+  DownloadIcon,
+  BankLineIcon,
+  TrashIcon,
+  EditIcon,
+  ExitIcon,
+  WalletLineIcon,
+  SpeedUpIcon,
+  EditLineIcon
+} from '@/Components/Icons'
 import {router} from '@inertiajs/vue3';
 
 import {NewReportModal} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 import AutomaticReports from './Tabs/AutomaticReports.vue';
 import DemandedReports from './Tabs/DemandedReports.vue';
+
 const defaultStore = useDefaultStore();
 const pageTable = ref();
 
@@ -63,11 +77,11 @@ const props = defineProps({
 
 
 const data = ref([])
-const choosenLabel = ref(null);
+const chosenLabel = ref(null);
 const isModalOn = ref(false);
 const openPaymentModal = () => {
 
-    isModalOn.value = !isModalOn.value;
+  isModalOn.value = !isModalOn.value;
 }
 let params = new URLSearchParams(window.location.search)
 
@@ -95,7 +109,7 @@ const onDone = (e) => {
 }
 
 const onTabChange = (tab) => {
-    console.log("TAB",tab);
+  console.log("TAB", tab);
 
   router.visit(route(route().current()), {
     data: {slug: tab.slug}

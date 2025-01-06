@@ -562,12 +562,11 @@ return [
             'header' => "Ödeme işlemleri",
             'table' => [
                 'empty_header' => "Henüz veri bulunmuyor",
-                'column_1' => "Tarih",
-                'column_2' => "İşlem Tipi",
-                'column_3' => "Tanım",
-                'column_4' => "İşlemler",
-                'column_5' => "Bakiye",
-                'column_6' => "Belge",
+                'column_1' => "Otomatik rapor dönemi",
+                'column_2' => "Rapor Tipi",
+                'column_3' => "Telif hakkı toplam tutarı",
+                'column_4' => "Durum",
+                'column_5' => "Belge",
 
             ],
             'demanded_table' => [

@@ -43,7 +43,8 @@ class Report extends Model implements HasMedia
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i',
         'monthly_amount' => 'array',
-        'is_auto_report' => 'boolean'
+        'is_auto_report' => 'boolean',
+        'status' => 'boolean',
     ];
 
     protected $appends = ['files'];
