@@ -80,13 +80,25 @@ const isDialogOn = computed({
   set: (value) => emits('update:modelValue', value)
 })
 
-const onSubmit = (e) => {
+const onSubmit = async (e) => {
   if (currentTab.value < 3) {
     currentTab.value++;
   } else {
-    
-    //TODO SUBMİT REPORT DATA
+    try {
+      await crudStore.post(route('control.finance.reports.store'), {
+        start_date: form.value.date[0],
+        end_date: form.value.date[1],
+        report_type: form.value.report_content_type,
+        ids: form.value.choosenValues,
+      })
+
+    } catch (error) {
+      console.log("ERROR", error.response);
+      // error.response
+      toast.error(error.response);
+    }
   }
+  //TODO SUBMİT REPORT DATA
 
 }
 
