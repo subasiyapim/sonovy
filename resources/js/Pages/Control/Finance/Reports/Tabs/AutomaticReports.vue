@@ -40,7 +40,7 @@ const data = usePage().props.reports;
     </AppTableColumn>
     <AppTableColumn :label="__('control.finance.payments.table.column_5')" sortable="name">
       <template #default="scope">
-        pdf
+        excel export
       </template>
     </AppTableColumn>
     <template #empty>

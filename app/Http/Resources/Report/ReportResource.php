@@ -29,7 +29,7 @@ class ReportResource extends JsonResource
                 })
                 ->implode('<br>'),
             'status' => $this->status,
-            'status_text' => $this->status === 1 ? 'İşlendi' : 'İşleniyor',
+            'status_text' => $this->status == 1 ? 'İşlendi' : 'İşleniyor',
         ];
     }
 }
