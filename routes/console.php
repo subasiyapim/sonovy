@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Schedule;
 //Schedule::job(new CreateSendAnnouncement())->everyMinute();
 //Schedule::job(new SendAnnouncementJob())->everyMinute();
 Schedule::job(new QuartersIncomeJob())->everyMinute();
-//Schedule::job(new EarningJob())->everyMinute();
+Schedule::job(new EarningJob())->everyMinute();
 //Schedule::job(new IncomeReportJob())->everyMinute();
-//Schedule::job(new IsrcJob())->everyTenMinutes();
-
-
+Schedule::job(new IsrcJob())->everyTenMinutes();
