@@ -1,20 +1,13 @@
 <template>
-  <AdminLayout :title="__('control.finance.reports.header')" parentTitle="Katalog">
-    <template #toolbar>
-      <RegularButton>
-        <template #icon>
-          <DownloadIcon color="var(--sub-600)"/>
-        </template>
-        <p class="ms-2"> Raporu İndir</p>
-      </RegularButton>
-    </template>
+  <AdminLayout :showDatePicker="false" :title="__('control.finance.reports.header')" parentTitle="Katalog">
+
     <div class="flex items-start my-6">
       <div class="flex-1">
         <h1 class="subheading-regular c-strong-950 mb-0.5"> Mevcut Raporlar</h1>
         <p class="label-sm c-neutral-500">Lorem ipsum dolor sit amet consectetur. Aliquet ac at odio ultricies amet
           commodo.</p>
       </div>
-      <PrimaryButton @click="openPaymentModal" class="w-60">
+      <PrimaryButton v-if="currentTab == 'demanded-reports'" @click="openPaymentModal" class="w-60">
         <template #icon>
           <DocumentIcon color="var(--dark-green-500)"/>
         </template>

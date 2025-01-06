@@ -95,8 +95,7 @@
           <tippy v-else :allowHtml="true" :sticky="true" :interactive="true"
                  :trigger="Object.values(props.completed_steps).filter((e) => e == false).length > 0 ? 'mouseenter' : 'manual'">
 
-            <PrimaryButton @click="submitStep"
-                           :disabled="Object.values(props.completed_steps).filter((e) => e == false).length > 0">
+            <PrimaryButton @click="submitStep">
 
 
               Yayına gönder

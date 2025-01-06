@@ -210,8 +210,8 @@ const countryRadioConfig = computed(() => {
 })
 
 const onChangeIsPublishedBefore = (e) => {
-  if (!e) {
-    form.value.publish_year = null;
+  if (e) {
+    form.value.previous_release_date = null;
   }
 }
 
