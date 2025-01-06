@@ -41,11 +41,11 @@ class ReportController extends Controller
 
         if (!empty($request->slug)) {
             $isAutoReport = $request->slug === 'auto-reports';
-            $query->where('is_auto_report', $isAutoReport);
+            $query->where('is_auto_report', $isAutoReport)->where('user_id', Auth::id());
         }
 
         $reports = ReportResource::collection($query->advancedFilter())->resource;
-       
+
         $artists = Artist::with('platforms')->get();
         $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
         $labels = getDataFromInputFormat(Label::all(), 'value', 'label', 'image');
