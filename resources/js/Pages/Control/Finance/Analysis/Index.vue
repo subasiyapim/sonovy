@@ -1,6 +1,12 @@
 <template>
-  <AdminLayout  :title="__('control.finance.analysis.header')" parentTitle="Katalog">
+  <AdminLayout @dateChoosen="onDateChoosen" :title="__('control.finance.analysis.header')" parentTitle="Katalog">
 
+    <template #toolbar>
+   <div v-if="choosenDates" class="flex items-center jusitfy-center gap-2 border border-soft-200 rounded px-3 py-1 hover:bg-grey-300">
+        <p class="paragraph-xs c-sub-600">{{moment(choosenDates[0]).format('DD/MM/YYYY')+ ' - '+ moment(choosenDates[1]).format('DD/MM/YYYY') }}</p>
+        <button @click="removeDateFilter"><CloseIcon color="var(--sub-600)" /></button>
+    </div>
+    </template>
     <div class="flex grid grid-cols-2 gap-3 mb-5">
         <AppCard class="flex-1 w-full">
             <template #header>
@@ -53,11 +59,12 @@ import {usePage} from '@inertiajs/vue3';
 import {ref, computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {AppCard} from '@/Components/Cards';
+import moment from 'moment';
 
 import {AppTabs} from '@/Components/Widgets'
 import {PrimaryButton, IconButton,RegularButton} from '@/Components/Buttons'
 import {StatusBadge} from '@/Components/Badges'
-import {AddIcon, LabelsIcon,DocumentIcon,DownloadIcon, BankLineIcon, TrashIcon, EditIcon, ExitIcon, WalletLineIcon,SpeedUpIcon,EditLineIcon} from '@/Components/Icons'
+import {AddIcon, LabelsIcon,CloseIcon,DocumentIcon,DownloadIcon, BankLineIcon, TrashIcon, EditIcon, ExitIcon, WalletLineIcon,SpeedUpIcon,EditLineIcon} from '@/Components/Icons'
 import {router} from '@inertiajs/vue3';
 
 import {NewReportModal} from '@/Components/Dialog';
@@ -88,6 +95,28 @@ const openPaymentModal = () => {
 }
 let params = new URLSearchParams(window.location.search)
 
+const choosenDates = ref(null);
+if(params.get('start_date') && params.get('end_date')){
+   choosenDates.value = [params.get('start_date'),params.get('end_date')]
+}
+const removeDateFilter = () => {
+    choosenDates.value = null;
+   router.visit(route(route().current()), {
+
+        preserveScroll: true,
+    });
+}
+const onDateChoosen = (e) => {
+
+      router.visit(route(route().current()), {
+        data: {
+            end_date:e[1],
+            start_date:e[0],
+        },
+        preserveScroll: true,
+    });
+
+}
 const currentTab = ref(params.get('slug') ?? 'general')
 const tabs = ref([
   {
