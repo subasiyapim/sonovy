@@ -1,7 +1,7 @@
 <script setup>
 import {ref,computed} from 'vue';
 import {FormElement} from '@/Components/Form'
-import {Icon} from '@/Components/Icons'
+import {Icon,CloseIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {useDefaultStore} from '@/Stores/default';
 import {StatusBadge} from '@/Components/Badges';
@@ -39,7 +39,7 @@ const mainArtistSelectConfig = computed(() => {
 const productsSelectConfig = computed(() => {
     return {
         value:'id',
-        label:'name',
+        label:'album_name',
         showTags: false,
         hasSearch: true,
         data: usePage().props.products,
@@ -57,6 +57,8 @@ const songsSelectConfig = computed(() => {
 });
 const platformsSelectConfig = computed(() => {
   return {
+        value : 'id',
+        label:'name',
         showTags: false,
         hasSearch: true,
         data: usePage().props.platforms,
@@ -91,7 +93,7 @@ const changeContentTab = (tab) => {
 
 const onChangeValue = (e) => {
 
-//    element.value.choosenValues = e;
+//  element.value.choosenValues = e;
 
 };
 </script>
@@ -104,7 +106,6 @@ const onChangeValue = (e) => {
 
             </div>
         </div>
-    <!-- {{mainArtistSelectConfig}} -->
         <div v-if="element.type == 1" class="flex items-center gap-3 flex-1 my-6">
             <button class="flex items-center gap-2 label-sm c-sub-600" @click="changeContentTab(1)" ><div class="w-4 h-4 rounded-full flex items-center justify-center drop-shadow" :class="element.report_content_type == 1 ? 'bg-dark-green-500' :'bg-white'"><div class="w-2.5 h-2.5 rounded-full bg-white"></div> </div>Tam Rapor</button>
             <button class="flex items-center gap-2 label-sm c-sub-600" @click="changeContentTab(2)" ><div class="w-4 h-4 rounded-full flex items-center justify-center drop-shadow" :class="element.report_content_type == 2 ? 'bg-dark-green-500' :'bg-white'"><div class="w-2.5 h-2.5 rounded-full bg-white"></div> </div>Sanatçı Seç</button>
@@ -120,62 +121,172 @@ const onChangeValue = (e) => {
             <button class="flex items-center gap-2 label-sm c-sub-600" @click="changeContentTab(10)" ><div class="w-4 h-4 rounded-full flex items-center justify-center drop-shadow" :class="element.report_content_type == 10 ? 'bg-dark-green-500' :'bg-white'"><div class="w-2.5 h-2.5 rounded-full bg-white"></div> </div>Mağazaya Göre</button>
             <button class="flex items-center gap-2 label-sm c-sub-600" @click="changeContentTab(11)" ><div class="w-4 h-4 rounded-full flex items-center justify-center drop-shadow" :class="element.report_content_type == 11 ? 'bg-dark-green-500' :'bg-white'"><div class="w-2.5 h-2.5 rounded-full bg-white"></div> </div>Ülkeye Göre</button>
         </div>
-        <div class="w-64">
+        <div class="">
+            <div v-if="element.report_content_type == 2">
+                <div class="w-64">
+                    <FormElement  v-model="element.choosenValues" direction="vertical" label="Sanatçı Seçimi" placeholder="Sanatçı Seç" type="multiselect" :config="mainArtistSelectConfig">
+                        <template #option="scope">
+                            <div class="w-full flex justify-between gap-2">
+                                <div class="flex flex-1 gap-2">
+                                <div class="w-6 h-6 rounded-lg overflow-hidden">
+                                    <img :src="scope.data.image?.url"/>
+                                </div>
+                                <p class="paragraph-sm c-strong-950">{{ scope.data.name }}</p>
+                                </div>
 
-            <FormElement v-if="element.report_content_type == 2" v-model="choosenIds" @change="onChangeValue" direction="vertical" label="Sanatçı Seçimi" placeholder="Sanatçı Seç" type="multiselect" :config="mainArtistSelectConfig">
-                <template #option="scope">
-                    <div class="w-full flex justify-between gap-2">
-                        <div class="flex flex-1 gap-2">
-                        <div class="w-6 h-6 rounded-lg overflow-hidden">
-                            <img :src="scope.data.image"/>
-                        </div>
-                        <p class="paragraph-sm c-strong-950">{{ scope.data.name }}</p>
-                        </div>
-
-                        <template v-if="scope.data.platforms">
-                        <div class="flex" v-for="platform in scope.data.platforms">
-                            <a v-if="platform.code == 'spotify' || platform.code == 'apple'"
-                            :href="platform.pivot.url"
-                            target="_blank">
-                            <Icon :icon="platform.icon"/>
-                            </a>
-                        </div>
+                                <template v-if="scope.data.platforms">
+                                <div class="flex" v-for="platform in scope.data.platforms">
+                                    <a v-if="platform.code == 'spotify' || platform.code == 'apple'"
+                                    :href="platform.pivot.url"
+                                    target="_blank">
+                                    <Icon :icon="platform.icon"/>
+                                    </a>
+                                </div>
+                                </template>
+                            </div>
                         </template>
-                    </div>
-                </template>
-                <template #model="scope">
-                    <div class="flex items-center relative gap-2">
-                        <div class="flex -space-x-3 rtl:space-x-reverse">
-                            <template v-for="artist in scope.data.slice(0,2)">
-                                <span class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
-                                    {{ artist.name[0] }}
-                                </span>
-                            </template>
-                            <span v-if="scope.data.length > 2" class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
-                                +{{scope.data.length-2}}
-                            </span>
-                        </div>
+                        <template #model="scope">
+                            <div class="flex items-center relative gap-2">
+                                <div class="flex -space-x-3 rtl:space-x-reverse">
+                                    <template v-for="artist in scope.data.slice(0,2)">
+                                        <span class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                                            {{ artist.name[0] }}
+                                        </span>
+                                    </template>
+                                    <span v-if="scope.data.length > 2" class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                                        +{{scope.data.length-2}}
+                                    </span>
+                                </div>
 
-                        <p class="label-sm !font-normal" style="white-space:nowrap;">
-                        <template v-for="(artist,artistIndex) in scope.data.slice(0,2)">
-                            {{ artist.name }}
-                            <template v-if="artistIndex < scope.data.length-1">
-                            , &nbsp;
-                            </template>
+                                <p class="label-sm !font-normal" style="white-space:nowrap;">
+                                    <template v-for="(artist,artistIndex) in scope.data.slice(0,2)">
+                                        {{ artist.name }}
+                                        <template v-if="artistIndex < scope.data.length-1">
+                                        , &nbsp;
+                                        </template>
+
+                                    </template>
+                                </p>
+                            </div>
+                        </template>
+                    </FormElement>
+                 </div>
+                <div  class="flex items-center gap-2">
+                    <div v-for="(choosenValue,i) in element.choosenValues" class="border border-soft-200 rounded px-2 py-1 flex items-center gap-1">
+                       <img class="rounded-full" width="24" height="24" :src="mainArtistSelectConfig.data.find((e) => e.id == choosenValue)?.image?.url">
+
+                      <div class="whitespace-nowrap w-auto"> <p class="label-xs c-sub-600 !text-start"> {{mainArtistSelectConfig.data.find((e) => e.id == choosenValue)?.name}}</p></div>
+                        <button @click="element.choosenValues.splice(i,1)"><CloseIcon color="var(--sub-600)" /></button>
+                    </div>
+                </div>
+            </div>
+            <div v-if="element.report_content_type == 3">
+                <div class="w-64">
+                    <FormElement v-model="element.choosenValues"  direction="vertical" label="Albüm Seçimi" placeholder="Albüm Seç" type="multiselect" :config="productsSelectConfig">
+                        <template #option="scope">
+                            <div class="w-full flex justify-between gap-2">
+                                <div class="flex flex-1 gap-2">
+                                    <div class="w-10 h-10 rounded-lg overflow-hidden">
+                                        <img :src="scope.data.image?.url"/>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <p class="paragraph-sm c-strong-950">{{ scope.data.album_name }}</p>
+                                        <p class="paragraph-xs c-sub-600">{{ scope.data.type == 1 ? 'Ses Dosyası' : (scope.data.type == 2 ? 'Müzik Video' : (scope.data.type == 2 ? 'Zil Sesi'  : 'Apple Video')) }}</p>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </template>
+
+
+
+                    </FormElement>
+                </div>
+                <div  class="flex items-center gap-2">
+                    <div v-for="(choosenValue,i) in element.choosenValues" class="border border-soft-200 rounded px-2 py-1 flex items-center gap-1">
+                       <img class="rounded-full" width="24" height="24" :src="productsSelectConfig.data.find((e) => e.id == choosenValue)?.image?.url">
+
+                      <div class="whitespace-nowrap w-auto"> <p class="label-xs c-sub-600 !text-start"> {{productsSelectConfig.data.find((e) => e.id == choosenValue)?.album_name}}</p></div>
+                        <button @click="element.choosenValues.splice(i,1)"><CloseIcon color="var(--sub-600)" /></button>
+                    </div>
+                </div>
+            </div>
+            <div  v-else-if="element.report_content_type == 4">
+                <div class="w-64">
+                    <FormElement v-model="element.choosenValues"  direction="vertical" label="Şarkı Seçimi" placeholder="Şarkı Seç" type="multiselect" :config="songsSelectConfig">
+                    </FormElement>
+                </div>
+                <div  class="flex items-center gap-2">
+                    <div v-for="(choosenValue,i) in element.choosenValues" class="border border-soft-200 rounded px-2 py-1 flex items-center gap-1">
+                    <div class="whitespace-nowrap w-auto"> <p class="label-xs c-sub-600 !text-start"> {{songsSelectConfig.data.find((e) => e.id == choosenValue)?.name}}</p></div>
+                        <button @click="element.choosenValues.splice(i,1)"><CloseIcon color="var(--sub-600)" /></button>
+                    </div>
+                </div>
+            </div>
+            <div  v-else-if="element.report_content_type == 5">
+
+                 <div class="w-64">
+                    <FormElement v-model="element.choosenValues"  direction="vertical" label="Platform Seçimi" placeholder="Platform Seç" type="multiselect" :config="platformsSelectConfig">
+                        <template #option="scope">
+                            <div class="w-full flex justify-between gap-2">
+                                <div class="flex flex-1 gap-2">
+
+                                        <Icon :icon="scope.data.icon"/>
+
+                                    <div class="flex flex-col">
+                                        <p class="paragraph-sm c-strong-950">{{ scope.data.name }}</p>
+
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </template>
+                        <template #model="scope">
+
+                           <div class="flex items-center relative gap-2">
+                                <div class="flex -space-x-3 rtl:space-x-reverse">
+                                    <template v-for="platform in scope.data.slice(0,2)">
+                                        <span class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                                            <Icon :icon="platform.icon" />
+                                        </span>
+                                    </template>
+                                    <span v-if="scope.data.length > 2" class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                                        +{{scope.data.length-2}}
+                                    </span>
+
+                                </div>
+                                <p class="label-sm !font-normal" style="white-space:nowrap;">
+                                        <template v-for="(platform,index) in scope.data.slice(0,2)">
+                                            {{ platform.name }}
+                                            <template v-if="index < scope.data.slice(0,2).length-1">
+                                                , &nbsp;
+                                            </template>
+
+                                        </template>
+                                    </p>
+                            </div>
 
                         </template>
-                        </p>
+                    </FormElement>
+                   <div  class="flex items-center gap-2">
+                        <div v-for="(choosenValue,i) in element.choosenValues" class="border border-soft-200 rounded px-2 py-1 flex items-center gap-1">
+                            <Icon :icon="platformsSelectConfig.data.find((e) => e.id == choosenValue)?.icon" />
+                            <div class="whitespace-nowrap w-auto ">  <p class="label-xs c-sub-600 !text-start">    {{platformsSelectConfig.data.find((e) => e.id == choosenValue)?.name}}</p></div>
+                            <button @click="element.choosenValues.splice(i,1)"><CloseIcon color="var(--sub-600)" /></button>
+                        </div>
                     </div>
-                </template>
-            </FormElement>
-            <FormElement v-else-if="element.report_content_type == 3" v-model="choosenIds"  @change="onChangeValue" direction="vertical" label="Albüm Seçimi" placeholder="Albüm Seç" type="multiselect" :config="productsSelectConfig">
-            </FormElement>
-            <FormElement v-else-if="element.report_content_type == 4" v-model="choosenIds"  @change="onChangeValue" direction="vertical" label="Şarkı Seçimi" placeholder="Şarkı Seç" type="multiselect" :config="songsSelectConfig">
-            </FormElement>
-            <FormElement v-else-if="element.report_content_type == 5" v-model="choosenIds"  @change="onChangeValue" direction="vertical" label="Platform Seçimi" placeholder="Platform Seç" type="multiselect" :config="platformsSelectConfig">
-            </FormElement>
-            <FormElement v-else-if="element.report_content_type == 6" v-model="choosenIds" @change="onChangeValue" direction="vertical" label="Ülke Seçimi" placeholder="Ülke Seç" type="multiselect" :config="countriesSelectConfig">
-            </FormElement>
+                </div>
+            </div>
+            <div  v-else-if="element.report_content_type == 6">
+                <div class="w-64">
+                    <FormElement  v-model="element.choosenValues" direction="vertical" label="Ülke Seçimi" placeholder="Ülke Seç" type="multiselect" :config="countriesSelectConfig">
+                    </FormElement>
+                </div>
+            </div>
+
         </div>
 </template>
 

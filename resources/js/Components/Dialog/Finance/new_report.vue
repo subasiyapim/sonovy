@@ -84,6 +84,15 @@ const onSubmit = async (e) => {
   if (currentTab.value < 3) {
     currentTab.value++;
   } else {
+
+    console.log("SDDAS",{
+        start_date: form.value.date[0],
+        end_date: form.value.date[1],
+        report_type: form.value.report_content_type,
+        ids: form.value.choosenValues,
+      });
+
+
     try {
       await crudStore.post(route('control.finance.reports.store'), {
         start_date: form.value.date[0],
@@ -91,10 +100,11 @@ const onSubmit = async (e) => {
         report_type: form.value.report_content_type,
         ids: form.value.choosenValues,
       })
-
+         toast.success("işlem başarılı");
+         location.reload();
     } catch (error) {
-      console.log("ERROR", error.response);
-      // error.response
+      console.log("ERROR", error);
+
       toast.error(error.response);
     }
   }

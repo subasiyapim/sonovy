@@ -52,7 +52,7 @@ class ReportController extends Controller
         $songs = getDataFromInputFormat(Song::all(), 'id', 'name');
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
         $products = Product::all();
-        $platforms = getDataFromInputFormat(Platform::all(), 'id', 'name', 'image');
+        $platforms = Platform::all();
 
 
         return inertia(
@@ -115,7 +115,7 @@ class ReportController extends Controller
 
     public function download(Report $report)
     {
-        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
+        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();

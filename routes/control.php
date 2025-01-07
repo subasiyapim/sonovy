@@ -93,6 +93,7 @@ Route::group(
             Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
             Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
             Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::post('reports', [ReportController::class, 'index'])->name('reports.store');
             Route::get('analysis', [FinanceAnalysisController::class, 'index'])->name('analysis.index');
         });
         Route::group(['prefix' => 'bank', 'as' => 'bank.'], function () {

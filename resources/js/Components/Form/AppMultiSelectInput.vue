@@ -58,7 +58,7 @@
             <div class="max-h-[250px] overflow-scroll">
 
                 <div @click="chooseValue(el)" v-for="el in getFilteredData" :data-id="el[config.value ?? 'value']"
-                    :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'"
+                    :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-600' :  'bg-white'"
                     class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
                 <div
                     :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-dark-green-600 border-dark-green-600' : 'bg-white  border-soft-200'"
@@ -107,7 +107,7 @@ const props = defineProps({
   type: {},
   disabled: {},
 })
-const emits = defineEmits(['update:modelValue'])
+const emits = defineEmits(['update:modelValue','change'])
 const element = computed({
   get: () => props.modelValue ?? [],
   set: (value) => emits('update:modelValue', value),
@@ -123,7 +123,7 @@ const onClose = () => {
 }
 
 const choosenAll = computed({
-  get: () => props.config?.data.filter((e) => element.value.includes(e.value)),
+  get: () => props.config?.data.filter((e) => element.value.includes(e[props.config.value ?? 'value'])),
   set: (value) => element.value
 });
 const onChangeForSearch = (e) => {
@@ -253,11 +253,16 @@ const chooseValue = (val) => {
   if (vIndex < 0) {
     element.value.push(v);
     choosenAll.value.push(val);
+    console.log("EKLENDi",val);
+
   } else {
+    console.log("SİLDİİ");
+
     element.value.splice(vIndex, 1);
     choosenAll.value.splice(vIndex, 1);
   }
   element.value = JSON.parse(JSON.stringify(element.value));
+    console.log("CHOOSEN ALL",choosenAll.value);
 
     emits('change',uniqueElements.value)
 }
