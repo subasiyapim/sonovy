@@ -51,13 +51,13 @@ class ReportController extends Controller
         $labels = getDataFromInputFormat(Label::all(), 'value', 'label', 'image');
         $songs = getDataFromInputFormat(Song::all(), 'id', 'name');
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
-
+        $products = Product::all();
         $platforms = getDataFromInputFormat(Platform::all(), 'id', 'name', 'image');
 
 
         return inertia(
             'Control/Finance/Reports/Index',
-            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms')
+            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms', 'products')
         );
     }
 
@@ -115,7 +115,7 @@ class ReportController extends Controller
 
     public function download(Report $report)
     {
-        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
+        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();
