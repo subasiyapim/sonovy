@@ -1,6 +1,6 @@
 <script setup>
 import {usePage} from '@inertiajs/vue3';
-import {DownloadIcon,DocumentsIcon} from '@/Components/Icons';
+import {DownloadIcon,DocumentIcon} from '@/Components/Icons';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 
@@ -18,7 +18,7 @@ const data = usePage().props.reports;
       <template #default="scope">
         <div class="flex items-center gap-2">
             <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                <DocumentsIcon color="var(--sub-600)" />
+                <DocumentIcon color="var(--sub-600)" />
             </div>
             <p class="label-sm c-neutral-500">{{ scope.row.created_at }}</p>
         </div>
