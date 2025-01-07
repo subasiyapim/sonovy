@@ -94,6 +94,7 @@ Route::group(
             Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
             Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
             Route::post('reports', [ReportController::class, 'index'])->name('reports.store');
+            Route::get('reports/download/{report}', [ReportController::class, 'download'])->name('reports.download');
             Route::get('analysis', [FinanceAnalysisController::class, 'index'])->name('analysis.index');
         });
         Route::group(['prefix' => 'bank', 'as' => 'bank.'], function () {
@@ -158,8 +159,8 @@ Route::group(
         Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
 
-        require __DIR__ . '/control/modules/search.php';
-        require __DIR__ . '/control/modules/last.php';
-        require __DIR__ . '/control/modules/find.php';
+        require __DIR__.'/control/modules/search.php';
+        require __DIR__.'/control/modules/last.php';
+        require __DIR__.'/control/modules/find.php';
     }
 );

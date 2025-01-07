@@ -17,6 +17,7 @@ class ReportResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'created_at' => Carbon::parse($this->created_at)
                 ->locale(app()->getLocale())
                 ->translatedFormat('d F Y H:i'),
@@ -25,7 +26,7 @@ class ReportResource extends JsonResource
             'monthly_amount' => collect($this->monthly_amount)
                 ->map(function ($value, $key) {
                     $monthName = Carbon::create(null, $key)->locale(app()->getLocale())->translatedFormat('F');
-                    return "<b>$monthName: </b>".Number::currency($value, 'USD', app()->getLocale());
+                    return "$monthName: ".Number::currency($value, 'USD', app()->getLocale());
                 })
                 ->implode('<br>'),
             'status' => $this->status,
