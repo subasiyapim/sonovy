@@ -197,6 +197,7 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
 
     protected function createEarnings(EarningReport $earningReport, $amount, $userId, $name)
     {
+        Log::info($earningReport->release_name);
         Earning::create([
             'earning_report_id' => $earningReport->id,
             'name' => $name,

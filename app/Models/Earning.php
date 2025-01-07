@@ -107,6 +107,11 @@ class Earning extends Model
         return $this->belongsTo(Song::class);
     }
 
+    public function product(): HasOne
+    {
+        return $this->hasOne(Product::class, 'upc_code', 'upc_code');
+    }
+
     public function uploadedUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'uploaded_user_id');

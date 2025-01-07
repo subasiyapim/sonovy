@@ -35,8 +35,8 @@ class IncomeReportJob implements ShouldQueue
 
     public function __construct($start_date = null, $end_date = null, $user_id = null, $report_type = '', $data = null)
     {
-        $this->start_date = $start_date ?? Carbon::now()->subYear()->startOfYear()->format('Y-m-d');
-        $this->end_date = $end_date ?? Carbon::now()->endOfYear()->format('Y-m-d');
+        $this->start_date = $start_date ? Carbon::parse($this->start_date)->format('Y-m-d') : Carbon::parse(now())->startOfMonth()->format('Y-m-d');
+        $this->end_date = $end_date ? Carbon::parse($this->end_date)->format('Y-m-d') : Carbon::parse(now())->endOfMonth()->format('Y-m-d');
         $this->user_id = $user_id;
         $this->report_type = $report_type;
 

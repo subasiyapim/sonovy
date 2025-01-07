@@ -4,11 +4,13 @@ namespace App\Http\Resources\Finance;
 
 use App\Models\Earning;
 use App\Models\Platform;
+use App\Models\Product;
 use App\Services\EarningService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class AnalyseResource extends JsonResource
@@ -73,6 +75,9 @@ class AnalyseResource extends JsonResource
             'spotify_discovery_mode_earnings' => $this->spotifyDiscoveryModeEarnings(),
             'earning_from_platforms' => $this->earningFromPlatforms(),
             'earning_from_countries' => $this->earningFromCountries(),
+            'earning_from_youtube' => $this->earningFromYoutube(),
+            'earning_from_sales_type' => $this->earningFromSalesType(),
+            'trending_albums' => $this->trendingAlbums(),
         ];
     }
 
@@ -126,7 +131,6 @@ class AnalyseResource extends JsonResource
             'items' => $items->toArray(),
         ];
     }
-
 
     private function spotifyDiscoveryModeEarnings(): array
     {
@@ -211,4 +215,58 @@ class AnalyseResource extends JsonResource
         })->toArray();
     }
 
+    private function earningFromYoutube(): array
+    {
+        $platformEarnings = $this->data->filter(function ($item) {
+            return stripos($item->platform, 'Youtube') !== false;
+        })->groupBy('platform')->map(function ($platformData) {
+            return $platformData->sum('earning');
+        });
+
+        $totalEarnings = $platformEarnings->sum();
+
+        $result = $platformEarnings->mapWithKeys(function ($earning, $platform) use ($totalEarnings) {
+            $percentage = $totalEarnings > 0 ? ($earning / $totalEarnings) * 100 : 0;
+            return [
+                $platform => [
+                    'earning' => Number::currency($earning, 'USD', app()->getLocale()),
+                    'percentage' => round($percentage, 2),
+                ]
+            ];
+        });
+
+        return $result->toArray();
+    }
+
+    private function earningFromSalesType(): array
+    {
+        $salesTypeEarnings = $this->data->groupBy('sales_type')->map(function ($salesTypeData) {
+            return $salesTypeData->sum('earning');
+        });
+
+        $sortedEarnings = $salesTypeEarnings->sortDesc();
+
+        $topSalesTypes = $sortedEarnings->take(5);
+
+        return $topSalesTypes->mapWithKeys(function ($earning, $salesType) {
+            return [$salesType => Number::currency($earning, 'USD', app()->getLocale())];
+        })->toArray();
+    }
+
+    private function trendingAlbums(): array
+    {
+        return $this->data->groupBy('upc_code')->take(10)->map(function ($items) {
+            $firstItem = $items->first();
+            $product = $firstItem->product;
+
+            return [
+                'earning' => Number::currency($items->sum('earning'), 'USD', app()->getLocale()),
+                'product_name' => $product->album_name,
+                'product_id' => $product->id,
+            ];
+        })->toArray();
+    }
+
+
 }
+
