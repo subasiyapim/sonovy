@@ -94,8 +94,85 @@ class AnalyseResource extends JsonResource
 
     private function platforms(): array
     {
-        return [];
+        $platforms = ['Spotify', 'Facebook', 'Youtube', 'Apple', 'Tiktok'];
+
+        $platformEarnings = $this->data->groupBy('platform')->map(function ($platformData, $platform) use ($platforms) {
+            $totalEarnings = $platformData->sum('earning');
+            $totalQuantity = $platformData->sum('quantity');
+            $earnings = $platformData->groupBy('release_name')->map(function ($releaseData) use ($totalEarnings) {
+                $releaseEarnings = $releaseData->sum('earning');
+                $percentage = $totalEarnings > 0 ? ($releaseEarnings / $totalEarnings) * 100 : 0;
+
+                return [
+                    'release_name' => $releaseData->first()->release_name,
+                    'total_quantity' => $releaseData->sum('quantity'),
+                    'total_earning' => Number::currency($releaseEarnings, 'USD', app()->getLocale()),
+                    'percentage' => round($percentage, 2),
+                    'quantity' => $releaseData->sum('quantity'),
+                ];
+            });
+
+            return [
+                'total_earning' => $totalEarnings,
+                'total_quantity' => $totalQuantity,
+                'releases' => $earnings->toArray(),
+            ];
+        });
+
+        $sortedEarnings = $platformEarnings->sortDesc();
+
+        $topPlatforms = $sortedEarnings->only($platforms);
+        $otherEarnings = $sortedEarnings->except($platforms)->sum('total_earning');
+
+        $topPlatforms['Other'] = [
+            'total_earning' => $otherEarnings,
+            'total_quantity' => $sortedEarnings->except($platforms)->sum('total_quantity'),
+            'releases' => [],
+        ];
+
+        $releases = $this->data->groupBy('release_name')->map(function ($releaseData) use ($platforms) {
+            $platformData = [];
+            $otherEarnings = 0;
+            $otherQuantity = 0;
+
+            foreach ($releaseData->groupBy('platform') as $platform => $data) {
+                $platformEarnings = $data->sum('earning');
+                $totalEarnings = $releaseData->sum('earning');
+                $percentage = $totalEarnings > 0 ? ($platformEarnings / $totalEarnings) * 100 : 0;
+                $quantity = $data->sum('quantity');
+
+                if (in_array($platform, $platforms)) {
+                    $platformData[strtolower($platform)] = [
+                        'earning' => Number::currency($platformEarnings, 'USD', app()->getLocale()),
+                        'percentage' => round($percentage, 2),
+                        'quantity' => $quantity,
+                    ];
+                } else {
+                    $otherEarnings += $platformEarnings;
+                    $otherQuantity += $quantity;
+                }
+            }
+
+            $platformData['others'] = [
+                'earning' => Number::currency($otherEarnings, 'USD', app()->getLocale()),
+                'percentage' => $totalEarnings > 0 ? round(($otherEarnings / $totalEarnings) * 100, 2) : 0,
+                'quantity' => $otherQuantity,
+            ];
+
+            return [
+                'release_name' => $releaseData->first()->release_name,
+                'total_quantity' => $releaseData->sum('quantity'),
+                'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
+                'platforms' => $platformData,
+            ];
+        })->values()->toArray();
+
+        return [
+            'platforms' => array_merge($platforms, ['Others']),
+            'releases' => $releases,
+        ];
     }
+
 
     private function countries(): array
     {

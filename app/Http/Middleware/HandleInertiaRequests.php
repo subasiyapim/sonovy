@@ -16,18 +16,9 @@ use Tighten\Ziggy\Ziggy;
 class HandleInertiaRequests extends Middleware
 {
     /**
-     * The root template that is loaded on the first page visit.
-     *
-     * @var string
-     */
-    // Eğer root template tanımı gerekiyorsa buraya ekleyin.
-
-    /**
      * Cache duration in seconds.
-     *
-     * @var int
      */
-    protected $cacheTime = 480; // 8 dakika
+    protected $cacheTime = 480; // 8 minutes
 
     /**
      * Determine the current asset version.
@@ -39,35 +30,34 @@ class HandleInertiaRequests extends Middleware
 
     /**
      * Define the props that are shared by default.
-     *
-     * @return array<string, mixed>
      */
     public function share(Request $request): array
     {
         $user = $request->user();
 
-        // Locale belirleme
+        // Locale setting
         $appLocale = session('appLocale', $user->interface_language ?? config('app.locale'));
 
-        // Çevirileri cache'leme
-        $translations = Cache::remember("translations_{$appLocale}", $this->cacheTime, function () use ($appLocale) {
-            return LocaleService::getLanguageFile($appLocale, ['client', 'control', 'sidebar', 'auth']);
-        });
+        // Cached translations
+        $translations = Cache::remember(
+            "translations_{$appLocale}",
+            $this->cacheTime,
+            fn() => LocaleService::getLanguageFile($appLocale, ['client', 'control', 'sidebar', 'auth'])
+        );
 
-        //site ayarları
-        $settings = Cache::remember('settings', $this->cacheTime, function () {
-            return Setting::pluck('value', 'key')->toArray();
-        });
+        // Cached site settings
+        $settings = Cache::remember(
+            'settings',
+            $this->cacheTime,
+            fn() => Setting::pluck('value', 'key')->toArray()
+        );
 
         $data = [
-            'ziggy' => function () use ($request) {
-                return array_merge(
-                    (new Ziggy)->toArray(),
-                    ['location' => $request->url()]
-                );
-            },
+            'ziggy' => fn() => array_merge((new Ziggy)->toArray(), ['location' => $request->url()]),
             'auth' => [
                 'user' => $user,
+                'roles' => Auth::check() ? $user->roles : [],
+                'permissions' => Auth::check() ? PermissionService::getUserPermissions($user) : [],
             ],
             'intent' => fn() => $request->session()->get('intent', []),
             'notification' => fn() => $request->session()->get('notification', []),
@@ -84,42 +74,13 @@ class HandleInertiaRequests extends Middleware
             'defaultLocale' => config('project.default_locale'),
             'supportedLocales' => LocaleService::getLocalizationList(),
             'translations' => $translations,
-            'notifications' => [],
-            'maintenance' => null,
+            'notifications' => fn() => $this->getNotifications($user),
+            'maintenance' => fn() => $this->getMaintenanceNotification($user),
             'site_settings' => $settings,
         ];
 
         if ($this->isTenant()) {
             $data['verification_code_expire'] = (int) ($settings['verification_code_expire'] ?? 1);
-
-            // $data['site_settings'] = fn() => $settings;
-        }
-
-        if (Auth::check()) {
-            // Roller ve izinler
-            $data['auth']['user']['roles'] = $user->roles;
-            $data['auth']['user']['permissions'] = PermissionService::getUserPermissions($user);
-
-            // Bildirimler
-            $notifications = AnnouncementUser::with('announcement')
-                ->where('user_id', $user->id)
-                ->where('type', AnnouncementTypeEnum::SITE->value)
-                ->latest()
-                ->get();
-
-            if ($notifications->isNotEmpty()) {
-                $data['notifications'] = $notifications;
-            }
-
-            // Bakım bildirimi
-            $maintenance = AnnouncementUser::where('user_id', $user->id)
-                ->where('type', AnnouncementTypeEnum::MAINTENANCE->value)
-                ->latest()
-                ->first();
-
-            if ($maintenance) {
-                $data['maintenance'] = $maintenance;
-            }
         }
 
         return array_merge(parent::share($request), $data);
@@ -127,11 +88,41 @@ class HandleInertiaRequests extends Middleware
 
     /**
      * Check if the current request is for a tenant.
-     *
-     * @return bool
      */
     protected function isTenant(): bool
     {
         return function_exists('tenant') && tenant();
+    }
+
+    /**
+     * Fetch user notifications.
+     */
+    protected function getNotifications($user)
+    {
+        if (!$user) {
+            return [];
+        }
+
+        return AnnouncementUser::with('announcement')
+            ->where('user_id', $user->id)
+            ->where('type', AnnouncementTypeEnum::SITE->value)
+            ->latest()
+            ->get()
+            ->toArray();
+    }
+
+    /**
+     * Fetch maintenance notification for the user.
+     */
+    protected function getMaintenanceNotification($user)
+    {
+        if (!$user) {
+            return null;
+        }
+
+        return AnnouncementUser::where('user_id', $user->id)
+            ->where('type', AnnouncementTypeEnum::MAINTENANCE->value)
+            ->latest()
+            ->first();
     }
 }
