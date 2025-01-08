@@ -41,12 +41,12 @@ class AnalyseResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            $this->content(),
-            $this->metadata()
+            'metadata' => $this->metadata(),
+            'data' => $this->tab(),
         ];
     }
 
-    private function content(): array
+    private function metadata(): array
     {
         return [
             'all_time_earning' => Number::currency($this->data->sum('earning'), 'USD', app()->getLocale()),
@@ -57,14 +57,13 @@ class AnalyseResource extends JsonResource
         ];
     }
 
-    private function metadata(): array
+    private function tab(): array
     {
         return match ($this->tab) {
-            'general' => $this->general(),
             'top-lists' => $this->topLists(),
             'platforms' => $this->platforms(),
             'countries' => $this->countries(),
-            default => $this->metadata(),
+            default => $this->general(),
         };
     }
 
@@ -84,7 +83,12 @@ class AnalyseResource extends JsonResource
 
     private function topLists(): array
     {
-        return [];
+        return [
+            'top_artists' => $this->topArtists(),
+            'top_albums' => $this->topAlbums(),
+            'top_songs' => $this->topSongs(),
+            'top_labels' => $this->topLabels(),
+        ];
     }
 
     private function platforms(): array
@@ -292,6 +296,36 @@ class AnalyseResource extends JsonResource
                 'product_id' => $product->id,
             ];
         })->toArray();
+    }
+
+    private function topArtists(): array
+    {
+        return $this->data->groupBy('artist_id')->map(function ($artistData) {
+            return [
+                'artist_id' => $artistData->first()->artist_id,
+                'artist_name' => $artistData->first()->artist_name,
+                'earning' => Number::currency($artistData->sum('earning'), 'USD', app()->getLocale()),
+                'streams' => $artistData->sum('quantity'),
+            ];
+        })->sortByDesc('earning')->take(10)->toArray();
+
+
+    }
+
+    private function topAlbums(): array
+    {
+        return [];
+
+    }
+
+    private function topSongs(): array
+    {
+        return [];
+    }
+
+    private function topLabels(): array
+    {
+        return [];
     }
 
 

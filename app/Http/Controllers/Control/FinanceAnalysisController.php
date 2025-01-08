@@ -33,9 +33,7 @@ class FinanceAnalysisController extends Controller
         $tab = $request->input('slug') ?? $tab;
         $earning = Earning::with('product', 'song')->whereBetween('sales_date', [$start_date, $end_date])->get();
         $response = new AnalyseResource($earning, $tab);
-
-        dd($response->resolve());
-
+        
         return inertia('Control/Finance/Analysis/Index', [
             'data' => $response->resolve()
         ]);
