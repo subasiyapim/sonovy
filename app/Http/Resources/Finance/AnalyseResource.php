@@ -176,7 +176,83 @@ class AnalyseResource extends JsonResource
 
     private function countries(): array
     {
-        return [];
+        $countries = ['Turkey', 'United states', 'United kingdom', 'Portugal', 'Spain'];
+
+        $countryEarnings = $this->data->groupBy('country')->map(function ($countryData, $country) use ($countries) {
+            $totalEarnings = $countryData->sum('earning');
+            $totalQuantity = $countryData->sum('quantity');
+            $earnings = $countryData->groupBy('release_name')->map(function ($releaseData) use ($totalEarnings) {
+                $releaseEarnings = $releaseData->sum('earning');
+                $percentage = $totalEarnings > 0 ? ($releaseEarnings / $totalEarnings) * 100 : 0;
+
+                return [
+                    'release_name' => $releaseData->first()->release_name,
+                    'total_quantity' => $releaseData->sum('quantity'),
+                    'total_earning' => Number::currency($releaseEarnings, 'USD', app()->getLocale()),
+                    'percentage' => round($percentage, 2),
+                    'quantity' => $releaseData->sum('quantity'),
+                ];
+            });
+
+            return [
+                'total_earning' => $totalEarnings,
+                'total_quantity' => $totalQuantity,
+                'releases' => $earnings->toArray(),
+            ];
+        });
+
+        $sortedEarnings = $countryEarnings->sortDesc();
+
+        $topCountries = $sortedEarnings->only($countries);
+        $otherEarnings = $sortedEarnings->except($countries)->sum('total_earning');
+
+        $topCountries['Others'] = [
+            'total_earning' => $otherEarnings,
+            'total_quantity' => $sortedEarnings->except($countries)->sum('total_quantity'),
+            'releases' => [],
+        ];
+
+        $releases = $this->data->groupBy('release_name')->map(function ($releaseData) use ($countries) {
+            $countryData = [];
+            $otherEarnings = 0;
+            $otherQuantity = 0;
+
+            foreach ($releaseData->groupBy('country') as $country => $data) {
+                $countryEarnings = $data->sum('earning');
+                $totalEarnings = $releaseData->sum('earning');
+                $percentage = $totalEarnings > 0 ? ($countryEarnings / $totalEarnings) * 100 : 0;
+                $quantity = $data->sum('quantity');
+
+                if (in_array($country, $countries)) {
+                    $countryData[strtolower($country)] = [
+                        'earning' => Number::currency($countryEarnings, 'USD', app()->getLocale()),
+                        'percentage' => round($percentage, 2),
+                        'quantity' => $quantity,
+                    ];
+                } else {
+                    $otherEarnings += $countryEarnings;
+                    $otherQuantity += $quantity;
+                }
+            }
+
+            $countryData['others'] = [
+                'earning' => Number::currency($otherEarnings, 'USD', app()->getLocale()),
+                'percentage' => $totalEarnings > 0 ? round(($otherEarnings / $totalEarnings) * 100, 2) : 0,
+                'quantity' => $otherQuantity,
+            ];
+
+            return [
+                'release_name' => $releaseData->first()->release_name,
+                'total_quantity' => $releaseData->sum('quantity'),
+                'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
+                'countries' => $countryData,
+            ];
+        })->values()->toArray();
+
+        return [
+            'countries' => array_merge($countries, ['Others']),
+            'releases' => $releases,
+        ];
     }
 
     private function monthlyNetEarning(): array
