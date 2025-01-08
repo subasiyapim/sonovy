@@ -2,15 +2,9 @@
 
 namespace App\Http\Resources\Finance;
 
-use App\Models\Earning;
-use App\Models\Platform;
-use App\Models\Product;
-use App\Services\EarningService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class AnalyseResource extends JsonResource
@@ -113,23 +107,44 @@ class AnalyseResource extends JsonResource
         $platforms = ['Spotify', 'Amazon', 'Youtube'];
 
         $calculateEarnings = function ($data) use ($platforms) {
-            $earnings = $data->groupBy('platform')->mapWithKeys(function ($platformData, $platform) use ($platforms) {
+            $totalEarnings = $data->sum('earning');
+            $earnings = $data->groupBy('platform')->mapWithKeys(function ($platformData, $platform) use (
+                $platforms,
+                $totalEarnings
+            ) {
                 $sum = $platformData->sum('earning');
+                $percentage = $totalEarnings > 0 ? ($sum / $totalEarnings) * 100 : 0;
                 if (in_array($platform, $platforms)) {
-                    return [$platform => Number::currency($sum, 'USD', app()->getLocale())];
+                    return [
+                        $platform => [
+                            'earning' => Number::currency($sum, 'USD', app()->getLocale()),
+                            'percentage' => round($percentage, 2),
+                        ]
+                    ];
                 }
-                return ['other' => $sum];
+                return [
+                    'other' => [
+                        'earning' => $sum,
+                        'percentage' => round($percentage, 2),
+                    ]
+                ];
             });
 
             foreach ($platforms as $platform) {
                 if (!isset($earnings[$platform])) {
-                    $earnings[$platform] = Number::currency(0, 'USD', app()->getLocale());
+                    $earnings[$platform] = [
+                        'earning' => Number::currency(0, 'USD', app()->getLocale()),
+                        'percentage' => 0,
+                    ];
                 }
             }
 
-            $earnings['other'] = isset($earnings['other'])
-                ? Number::currency($earnings['other'], 'USD', app()->getLocale())
-                : Number::currency(0, 'USD', app()->getLocale());
+            if (!isset($earnings['other'])) {
+                $earnings['other'] = [
+                    'earning' => Number::currency(0, 'USD', app()->getLocale()),
+                    'percentage' => 0,
+                ];
+            }
 
             return $earnings;
         };
