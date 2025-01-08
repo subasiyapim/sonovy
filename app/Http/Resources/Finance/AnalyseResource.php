@@ -330,7 +330,7 @@ class AnalyseResource extends JsonResource
             $artistName = $firstItem->artist_name;
 
             return [
-                'album_name' => $firstItem->product->album_name,
+                'album_name' => $firstItem->product->album_name ?? '',
                 'upc_code' => $firstItem->upc_code,
                 'product_id' => $firstItem->product->id,
                 'artist_name' => $artistName,
