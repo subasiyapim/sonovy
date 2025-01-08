@@ -38,6 +38,7 @@ class EarningReport extends Model
         'upc_code',
         'isrc_code',
         'catalog_number',
+        'streaming_subscription_type',
         'release_type',
         'sales_type',
         'quantity',

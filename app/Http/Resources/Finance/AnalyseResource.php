@@ -76,6 +76,7 @@ class AnalyseResource extends JsonResource
             'earning_from_platforms' => $this->earningFromPlatforms(),
             'earning_from_countries' => $this->earningFromCountries(),
             'earning_from_youtube' => $this->earningFromYoutube(),
+            'earning_from_youtube_with_premium' => $this->earningFromYoutubeWithPremium(),
             'earning_from_sales_type' => $this->earningFromSalesType(),
             'trending_albums' => $this->trendingAlbums(),
         ];
@@ -231,6 +232,32 @@ class AnalyseResource extends JsonResource
                 $platform => [
                     'earning' => Number::currency($earning, 'USD', app()->getLocale()),
                     'percentage' => round($percentage, 2),
+                ]
+            ];
+        });
+
+        return $result->toArray();
+    }
+
+    private function earningFromYoutubeWithPremium(): array
+    {
+        $platformEarnings = $this->data->filter(function ($item) {
+            return stripos($item->platform, 'Youtube') !== false && !empty($item->streaming_subscription_type);
+        })->groupBy(['platform', 'streaming_subscription_type'])->map(function ($platformData) {
+            return $platformData->sum('earning');
+        });
+
+        $totalEarnings = $platformEarnings->sum();
+
+        $result = $platformEarnings->mapWithKeys(function ($earning, $keys) use ($totalEarnings) {
+            list($platform, $subscriptionType) = explode('.', $keys);
+            $percentage = $totalEarnings > 0 ? ($earning / $totalEarnings) * 100 : 0;
+            return [
+                $platform => [
+                    $subscriptionType => [
+                        'earning' => Number::currency($earning, 'USD', app()->getLocale()),
+                        'percentage' => round($percentage, 2),
+                    ]
                 ]
             ];
         });
