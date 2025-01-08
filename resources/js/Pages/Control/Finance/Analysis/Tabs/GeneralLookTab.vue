@@ -130,9 +130,6 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
 
 <template>
 
-    <!-- {{Object.keys(data)}} -->
-
-    <!-- {{data.trending_albums}} -->
 
     <div class="flex flex-col gap-6">
         <div class="bg-white rounded-xl border border-soft-200 p-4 flex flex-col gap-4">

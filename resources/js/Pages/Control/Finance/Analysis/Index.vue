@@ -114,6 +114,7 @@ const onDateChoosen = (e) => {
         data: {
             end_date:e[1],
             start_date:e[0],
+            slug:currentTab.value,
         },
         preserveScroll: true,
     });
@@ -154,9 +155,15 @@ const onDone = (e) => {
 
 const onTabChange = (tab) => {
     console.log("TAB",tab);
-
+    let query = {
+        slug:tab.slug,
+    }
+    if(choosenDates.value){
+        query['start_date'] =choosenDates.value[0];
+        query['end_date'] =choosenDates.value[1];
+    }
   router.visit(route(route().current()), {
-    data: {slug: tab.slug}
+    data: query
   });
 }
 
