@@ -19,6 +19,7 @@ class AnalyseResource extends JsonResource
     protected string $start_date;
     protected string $end_date;
     protected $data;
+    protected $totalEarnings;
     protected $groupedData;
 
     public function __construct($resource, $tab)
@@ -29,6 +30,7 @@ class AnalyseResource extends JsonResource
         $this->groupedData = $this->data->groupBy(function ($item) {
             return Carbon::parse($item->sales_date)->format('F Y');
         });
+        $this->totalEarnings = $this->data->sum('earning');
 
     }
 
@@ -300,32 +302,77 @@ class AnalyseResource extends JsonResource
 
     private function topArtists(): array
     {
-        return $this->data->groupBy('artist_id')->map(function ($artistData) {
+        return $this->data->groupBy('artist_id')->values()->map(function ($artistData) {
+            $artistEarnings = $artistData->sum('earning');
+            $percentage = $this->totalEarnings > 0 ? ($artistEarnings / $this->totalEarnings) * 100 : 0;
+
             return [
                 'artist_id' => $artistData->first()->artist_id,
                 'artist_name' => $artistData->first()->artist_name,
-                'earning' => Number::currency($artistData->sum('earning'), 'USD', app()->getLocale()),
+                'earning' => Number::currency($artistEarnings, 'USD', app()->getLocale()),
                 'streams' => $artistData->sum('quantity'),
+                'percentage' => round($percentage, 2),
             ];
-        })->sortByDesc('earning')->take(10)->toArray();
-
-
+        })->sortByDesc('earning')->toArray();
     }
 
     private function topAlbums(): array
     {
-        return [];
+        return $this->data->groupBy('release_name')->values()->map(function ($albumData) {
+            $albumEarnings = $albumData->sum('earning');
+            $percentage = $this->totalEarnings > 0 ? ($albumEarnings / $this->totalEarnings) * 100 : 0;
+            $firstItem = $albumData->first();
+            $artistName = $firstItem->artist_name;
 
+            return [
+                'album_name' => $firstItem->product->album_name,
+                'upc_code' => $firstItem->upc_code,
+                'product_id' => $firstItem->product->id,
+                'artist_name' => $artistName,
+                'earning' => Number::currency($albumEarnings, 'USD', app()->getLocale()),
+                'streams' => $albumData->sum('quantity'),
+                'percentage' => round($percentage, 2),
+            ];
+        })->sortByDesc('earning')->values()->toArray();
     }
 
     private function topSongs(): array
     {
-        return [];
+        return $this->data->groupBy('isrc_code')->values()->map(function ($songData) {
+            $songEarnings = $songData->sum('earning');
+            $percentage = $this->totalEarnings > 0 ? ($songEarnings / $this->totalEarnings) * 100 : 0;
+            $firstItem = $songData->first();
+
+            return [
+                'song_id' => $firstItem->song_id,
+                'song_name' => $firstItem->song_name,
+                'isrc_code' => $firstItem->isrc_code,
+                'artist_id' => $firstItem->artist_id,
+                'artist_name' => $firstItem->artist_name,
+                'earning' => Number::currency($songEarnings, 'USD', app()->getLocale()),
+                'streams' => $songData->sum('quantity'),
+                'percentage' => round($percentage, 2),
+            ];
+
+        })->values()->toArray();
+
+
     }
 
     private function topLabels(): array
     {
-        return [];
+        return $this->data->groupBy('label_id')->values()->map(function ($labelData) {
+            $labelEarnings = $labelData->sum('earning');
+            $percentage = $this->totalEarnings > 0 ? ($labelEarnings / $this->totalEarnings) * 100 : 0;
+            $firstItem = $labelData->first();
+
+            return [
+                'label_id' => $firstItem->label_id,
+                'label_name' => $firstItem->label_name,
+                'earning' => Number::currency($labelEarnings, 'USD', app()->getLocale()),
+                'percentage' => round($percentage, 2),
+            ];
+        })->sortByDesc('earning')->values()->toArray();
     }
 
 
