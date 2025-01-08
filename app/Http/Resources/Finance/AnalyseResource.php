@@ -300,7 +300,7 @@ class AnalyseResource extends JsonResource
             return [
                 'earning' => Number::currency($items->sum('earning'), 'USD', app()->getLocale()),
                 'product_name' => $product->album_name ?? $firstItem->release_name,
-                'product_id' => $product->id,
+                'product_id' => $product->id ?? '',
             ];
         })->toArray();
     }
