@@ -110,7 +110,8 @@ class Earning extends Model
 
     public function product(): HasOne
     {
-        return $this->hasOne(Product::class, 'upc_code', 'upc_code');
+        return $this->hasOne(Product::class, 'upc_code', 'upc_code')
+            ->whereNotNull('upc_code');
     }
 
     public function uploadedUser(): BelongsTo
