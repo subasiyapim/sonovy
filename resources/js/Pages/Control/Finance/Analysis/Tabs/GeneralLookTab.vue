@@ -480,11 +480,9 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                 <hr>
                 <table>
                     <tbody>
-                        <tr v-for="i in 6" class="">
-                            <td class="paragraph-xs c-sub-600 py-1.5">Albüm adı gelecek</td>
-                            <td class="paragraph-xs text-[#377C4E]">+201.77%</td>
-                            <td class="paragraph-xs c-sub-600">Albüm adı gelecek</td>
-                            <td class="paragraph-xs text-[#D02533]">-201.77%</td>
+                        <tr v-for="album in data.trending_albums" class="">
+                            <td class="paragraph-xs c-sub-600 py-1.5">{{album.product_name}}</td>
+                            <td class="paragraph-xs text-[#377C4E]">{{album.earning}}</td>
                         </tr>
                     </tbody>
                 </table>

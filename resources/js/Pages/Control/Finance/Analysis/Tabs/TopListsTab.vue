@@ -4,17 +4,26 @@
 import {ref} from 'vue';
 import {PersonIcon,EyeOnIcon,DownloadIcon,BookReadLineIcon,LabelsIcon,AudioIcon} from '@/Components/Icons';
 import {AppProgressIndicator} from '@/Components/Widgets';
+const props = defineProps({
+    data : {
 
+    },
+    formattedDate:{
+
+    }
+});
 </script>
 
 <template>
+
+
     <div class="flex flex-col gap-6">
         <div class="flex-1 bg-white rounded-xl border border-soft-200 p-4 flex flex-col gap-4">
             <div class="flex items-center">
                 <div class="flex items-center gap-2 flex-1">
                     <PersonIcon color="var(--sub-600)" />
                     <p class="label-medium c-strong-950">Sanatçıya Göre Gelir</p>
-                    <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                    <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
                     <button><EyeOnIcon color="var(--sub-600)" /></button>
@@ -33,18 +42,18 @@ import {AppProgressIndicator} from '@/Components/Widgets';
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="i in 6">
+                    <tr v-for="artist in data.top_artists">
                         <td class="py-2">
-                            <span class="label-sm c-strong-950">Ed Stoltenberg</span>
+                            <span class="label-sm c-strong-950">{{artist.artist_name}}</span>
                         </td>
                         <td style="width:65%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="24" />
-                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">60.90 %</span>
+                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="artist.percentage" />
+                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{artist.percentage}} </span>
                             </div>
                         </td>
-                        <td class=" ps-3"> <span class="paragraph-xs c-sub-600">$1200.00,25</span></td>
-                        <td class="ps-3"> <span class="paragraph-xs c-sub-600">901.458.758</span></td>
+                        <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{artist.earning}}</span></td>
+                        <td class="ps-3"> <span class="paragraph-xs c-sub-600">{{artist.streams}}</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -56,7 +65,7 @@ import {AppProgressIndicator} from '@/Components/Widgets';
                 <div class="flex items-center gap-2 flex-1">
                     <BookReadLineIcon color="var(--sub-600)" />
                     <p class="label-medium c-strong-950">Albüme Göre Gelir</p>
-                    <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                    <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
                     <button><EyeOnIcon color="var(--sub-600)" /></button>
@@ -77,24 +86,24 @@ import {AppProgressIndicator} from '@/Components/Widgets';
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="i in 6">
+                    <tr v-for="album in data.top_albums">
                         <td class="py-2">
-                            <span class="label-sm c-strong-950">Ed Stoltenberg</span>
+                            <span class="label-sm c-strong-950">{{album.album_name}}</span>
                         </td>
                         <td class="py-2">
-                            <span class="paragraph-xs c-sub-600">48584295354283</span>
+                            <span class="paragraph-xs c-sub-600">{{album.upc_code}}</span>
                         </td>
                         <td class="py-2">
-                            <span class="paragraph-xs c-sub-600">Becky Keeling</span>
+                            <span class="paragraph-xs c-sub-600">{{album.artist_name}}</span>
                         </td>
                         <td style="width:35%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="24" />
-                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">60.90 %</span>
+                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="album.percentage" />
+                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{album.percentage}} %</span>
                             </div>
                         </td>
-                        <td class=" ps-3"> <span class="paragraph-xs c-sub-600">$1200.00,25</span></td>
-                        <td class="ps-3"> <span class="paragraph-xs c-sub-600">901.458.758</span></td>
+                        <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{album.earning}}</span></td>
+                        <td class="ps-3"> <span class="paragraph-xs c-sub-600">{{album.streams}}</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -105,7 +114,7 @@ import {AppProgressIndicator} from '@/Components/Widgets';
                 <div class="flex items-center gap-2 flex-1">
                     <AudioIcon color="var(--sub-600)" />
                     <p class="label-medium c-strong-950">Parçaya Göre Gelir</p>
-                    <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                    <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
                     <button><EyeOnIcon color="var(--sub-600)" /></button>
@@ -126,24 +135,24 @@ import {AppProgressIndicator} from '@/Components/Widgets';
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="i in 6">
+                    <tr v-for="song in data.top_songs">
                         <td class="py-2">
-                            <span class="label-sm c-strong-950">Ed Stoltenberg</span>
+                            <span class="label-sm c-strong-950">{{song.song_name}}</span>
                         </td>
                         <td class="py-2">
-                            <span class="paragraph-xs c-sub-600">48584295354283</span>
+                            <span class="paragraph-xs c-sub-600">{{song.isrc_code}}</span>
                         </td>
                         <td class="py-2">
-                            <span class="paragraph-xs c-sub-600">Becky Keeling</span>
+                            <span class="paragraph-xs c-sub-600">{{song.artist_name}}</span>
                         </td>
                         <td style="width:35%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="24" />
-                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">60.90 %</span>
+                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="song.percentage" />
+                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{song.percentage}} %</span>
                             </div>
                         </td>
-                        <td class=" ps-3"> <span class="paragraph-xs c-sub-600">$1200.00,25</span></td>
-                        <td class="ps-3"> <span class="paragraph-xs c-sub-600">901.458.758</span></td>
+                        <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{song.earning}}</span></td>
+                        <td class="ps-3"> <span class="paragraph-xs c-sub-600">{{song.streams}}</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -154,7 +163,7 @@ import {AppProgressIndicator} from '@/Components/Widgets';
                 <div class="flex items-center gap-2 flex-1">
                     <LabelsIcon color="var(--sub-600)" />
                     <p class="label-medium c-strong-950">Plak Şirketine Göre Gelir</p>
-                    <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                    <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
                     <button><EyeOnIcon color="var(--sub-600)" /></button>
@@ -172,17 +181,17 @@ import {AppProgressIndicator} from '@/Components/Widgets';
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="i in 6">
+                    <tr v-for="label in data.top_labels">
                         <td class="py-2">
-                            <span class="label-sm c-strong-950">Ed Stoltenberg</span>
+                            <span class="label-sm c-strong-950">{{label.label_name}}</span>
                         </td>
                         <td style="width:65%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="24" />
-                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">60.90 %</span>
+                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="label.percentage" />
+                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{label.percentage}} %</span>
                             </div>
                         </td>
-                        <td class=" ps-3"> <span class="paragraph-xs c-sub-600">$1200.00,25</span></td>
+                        <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{label.earning}}</span></td>
                     </tr>
                 </tbody>
             </table>
