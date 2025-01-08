@@ -124,7 +124,7 @@ class AnalyseResource extends JsonResource
                 }
                 return [
                     'other' => [
-                        'earning' => $sum,
+                        'earning' => Number::currency($sum, 'USD', app()->getLocale()),
                         'percentage' => round($percentage, 2),
                     ]
                 ];
