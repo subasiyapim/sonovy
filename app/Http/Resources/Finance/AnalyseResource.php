@@ -293,7 +293,7 @@ class AnalyseResource extends JsonResource
 
     private function trendingAlbums(): array
     {
-        return $this->data->groupBy('upc_code')->take(10)->map(function ($items) {
+        return $this->data->groupBy('upc_code')->take(10)->values()->map(function ($items) {
             $firstItem = $items->first();
             $product = $firstItem->product;
 
