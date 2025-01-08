@@ -7,6 +7,7 @@ use App\Http\Requests\Report\ReportStoreRequest;
 use App\Http\Resources\Report\ReportResource;
 use App\Jobs\IncomeReportJob;
 use App\Models\Artist;
+use App\Models\Earning;
 use App\Models\Label;
 use App\Models\Platform;
 use App\Models\Song;
@@ -74,47 +75,9 @@ class ReportController extends Controller
         $report_type = $request->validated()['report_type'];
         $ids = $request->validated()['ids'];
 
-        //report_type da all dışındakilerin son harfi s silinmeli
-        if ($report_type !== 'all') {
-            $report_type = Str::singular($report_type);
-        }
-
-        dd($start_date, $end_date, $report_type, $ids);
         IncomeReportJob::dispatch($start_date, $end_date, Auth::id(), $report_type, $ids);
 
-        return to_route('dashboard.reports.index');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Report $report)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Report $report)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Report $report)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Report $report)
-    {
-        //
+        return to_route('control.finance.reports.index');
     }
 
     public function download(Report $report)

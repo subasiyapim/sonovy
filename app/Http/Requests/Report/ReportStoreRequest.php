@@ -22,11 +22,14 @@ class    ReportStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        dd($this->all());
+        //dd($this->all());
         return [
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date'],
-            'report_type' => ['required', 'string', 'in:all,artists,products,songs,platforms,countries'],
+            'report_type' => [
+                'required', 'string',
+                'in:all,artists,multiple_artists,products,multiple_products,songs,multiple_songs,platforms,multiple_platforms,countries,multiple_countries,labels,multiple_labels',
+            ],
             'ids' => ['array'],
         ];
     }
