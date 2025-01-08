@@ -332,7 +332,7 @@ class AnalyseResource extends JsonResource
             return [
                 'album_name' => $firstItem->product->album_name ?? '',
                 'upc_code' => $firstItem->upc_code,
-                'product_id' => $firstItem->product->id,
+                'product_id' => $firstItem->product->id ?? '',
                 'artist_name' => $artistName,
                 'earning' => Number::currency($albumEarnings, 'USD', app()->getLocale()),
                 'streams' => $albumData->sum('quantity'),
