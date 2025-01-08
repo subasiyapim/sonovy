@@ -80,28 +80,38 @@ const isDialogOn = computed({
   set: (value) => emits('update:modelValue', value)
 })
 
+
+const reporttypes = {
+    1: "all",
+    2:"artists",
+    3:"labels",
+    4:"songs",
+    5:"platforms",
+    6:"countries",
+    7:"multiple_labels",
+    8:"multiple_artists",
+    9:"multiple_products",
+    10:"multiple_platforms",
+    11:"multiple_countries",
+}
+
 const onSubmit = async (e) => {
   if (currentTab.value < 3) {
     currentTab.value++;
   } else {
 
-    console.log("SDDAS",{
-        start_date: form.value.date[0],
-        end_date: form.value.date[1],
-        report_type: form.value.report_content_type,
-        ids: form.value.choosenValues,
-      });
 
 
     try {
       await crudStore.post(route('control.finance.reports.store'), {
         start_date: form.value.date[0],
         end_date: form.value.date[1],
-        report_type: form.value.report_content_type,
+        report_type: form.value.type == 1 ? reporttypes[form.value.report_content_type] : reporttypes[form.value.report_content_type],
+
         ids: form.value.choosenValues,
       })
          toast.success("işlem başarılı");
-         location.reload();
+        //  location.reload();
     } catch (error) {
       console.log("ERROR", error);
 

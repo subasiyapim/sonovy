@@ -46,7 +46,7 @@
     </div>
 
     <div>
-      <component :data="data.data" :is="tabs.find(e => e.slug == currentTab)?.component"></component>
+      <component :data="data.data" :formattedDate="formattedDates" :is="tabs.find(e => e.slug == currentTab)?.component"></component>
     </div>
 
     <NewReportModal  @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
@@ -152,6 +152,18 @@ const editRow = (label) => {
 const onDone = (e) => {
   pageTable.value.addRow(e);
 }
+
+const formattedDates = computed(() => {
+      if (choosenDates.value.length === 0) {
+        return moment().format('D MMMM YYYY');
+      } else if (choosenDates.value.length === 2) {
+        const startDate = moment(choosenDates.value[0]).format('D MMMM YYYY');
+        const endDate = moment(choosenDates.value[1]).format('D MMMM YYYY');
+        return `${startDate} - ${endDate}`;
+      }
+      return '';
+    });
+
 
 const onTabChange = (tab) => {
     console.log("TAB",tab);

@@ -122,7 +122,7 @@ const onChangeValue = (e) => {
             <button class="flex items-center gap-2 label-sm c-sub-600" @click="changeContentTab(11)" ><div class="w-4 h-4 rounded-full flex items-center justify-center drop-shadow" :class="element.report_content_type == 11 ? 'bg-dark-green-500' :'bg-white'"><div class="w-2.5 h-2.5 rounded-full bg-white"></div> </div>Ülkeye Göre</button>
         </div>
         <div class="">
-            <div v-if="element.report_content_type == 2">
+            <div v-if="element.report_content_type == 2 && element.type == 1">
                 <div class="w-64">
                     <FormElement  v-model="element.choosenValues" direction="vertical" label="Sanatçı Seçimi" placeholder="Sanatçı Seç" type="multiselect" :config="mainArtistSelectConfig">
                         <template #option="scope">

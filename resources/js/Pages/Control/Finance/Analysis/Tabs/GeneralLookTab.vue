@@ -11,6 +11,9 @@ const showYoutubeFremium = ref(false);
 const props = defineProps({
     data : {
 
+    },
+    formattedDate:{
+
     }
 })
 const isFinanceIncomePlatforms = ref(false);
@@ -137,7 +140,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                 <div class="flex items-center gap-2 flex-1">
                     <FileChartLineIcon color="var(--sub-600)"> </FileChartLineIcon>
                     <p class="label-medium c-strong-950">Aylık Net Gelir</p>
-                    <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                    <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="paragraph-xs c-strong-950">Spotify</span>
@@ -155,7 +158,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     </div>
                     <div class="flex flex-col items-start gap-0.5">
                         <span class="subheading-2xs c-soft-400">SPOTIFY</span>
-                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings.total.Spotify}}</span>
+                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings?.total?.Spotify?.earning}}</span>
                     </div>
                 </div>
                 <span class="w-[1px] bg-[#E1E4EA] h-10"></span>
@@ -166,7 +169,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     </div>
                     <div class="flex flex-col items-start gap-0.5">
                         <span class="subheading-2xs c-soft-400">APPLE MUSIC</span>
-                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings.total.Amazon}}</span>
+                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings?.total?.Amazon?.earning}}</span>
                     </div>
 
                 </div>
@@ -178,7 +181,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     </div>
                     <div class="flex flex-col items-start gap-0.5">
                         <span class="subheading-2xs c-soft-400">YOUTUBE</span>
-                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings.total.Youtube}}</span>
+                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings?.total?.Youtube?.earning}}</span>
                     </div>
 
                 </div>
@@ -189,7 +192,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     </div>
                     <div class="flex flex-col items-start gap-0.5">
                         <span class="subheading-2xs c-soft-400">DİĞER</span>
-                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings.total.other}}</span>
+                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings?.total?.other?.earning}}</span>
                     </div>
 
                 </div>
@@ -210,10 +213,10 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                                 <div class="bg-weak-50 h-[40%] flex items-end justify-center">
                                     <span class="c-sub-600 label-sm !text-[10px] ">$96,000.00</span>
                                 </div>
-                                <div class="bg-youtube h-[20%]"></div>
-                                <div class="bg-spotify h-[10%]"></div>
+                                <div v-for="p in Object.keys(data.monthly_net_earnings.items[key])" :style="{height:data.monthly_net_earnings.items[key][p].percentage+'%'}" :class="'bg-'+p.toLowerCase()"></div>
+                                <!-- <div class="bg-spotify h-[10%]"></div>
                                 <div class="bg-apple-music h-[25%]"></div>
-                                <div class="bg-other-platforms h-[5%]"></div>
+                                <div class="bg-other-platforms h-[5%]"></div> -->
                             </div>
                             <template #content>
                                 <div class="flex flex-col gap-2 w-64 p-1">
@@ -221,7 +224,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                                     <div v-for="platform in Object.keys(data.monthly_net_earnings.items[key])" class="flex items-center gap-2">
                                         <SpotifyIcon />
                                         <p class="paragraph-sm c-strong-950 flex-1">{{platform}}</p>
-                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">{{data.monthly_net_earnings.items[key][platform]}}</p></div>
+                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">{{data.monthly_net_earnings.items[key][platform].earning}}</p></div>
                                     </div>
                                 </div>
                             </template>
@@ -240,7 +243,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                 <div class="flex items-center gap-2 flex-1">
                     <SpotifyIcon color="var(--sub-600)"> </SpotifyIcon>
                     <p class="label-medium c-strong-950">Katalog Optimizasyon ile Spotify Discovery Mode</p>
-                    <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                    <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
 
             </div>
@@ -311,7 +314,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     <div class="flex items-center gap-2 flex-1">
                         <BookReadLineIcon color="var(--sub-600)" />
                         <p class="label-medium c-strong-950">Mağazaya Göre Gelir</p>
-                        <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                        <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                     </div>
                     <div class="flex gap-3">
                         <button @click="isFinanceIncomePlatforms = !isFinanceIncomePlatforms"><EyeOnIcon color="var(--sub-600)" /></button>
@@ -328,7 +331,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     <div class="flex items-center gap-2 flex-1">
                         <WorldIcon color="var(--sub-600)" />
                         <p class="label-medium c-strong-950">Ülkelere Göre Gelir</p>
-                        <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                        <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                     </div>
                     <div class="flex gap-3">
                         <button @click="isFinanceIncomeCountries = !isFinanceIncomeCountries"><EyeOnIcon color="var(--sub-600)" /></button>
@@ -347,7 +350,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                 <div class="flex items-center gap-2 flex-1">
                     <YoutubeIcon />
                     <p class="label-medium c-strong-950 ms-2">Youtube toplam gelirinde öne çıkan noktalar</p>
-                    <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                    <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <span class="label-sm c-strong-950">$23.758,00</span>
 
@@ -447,7 +450,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     <div class="flex items-center gap-2 flex-1">
                         <BookReadLineIcon color="var(--sub-600)" />
                         <p class="label-medium c-strong-950">Satış Tipi Gelir</p>
-                        <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                        <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                     </div>
                     <div class="flex gap-3">
                         <button @click="isFinanceIncomeSales = !isFinanceIncomeSales"><EyeOnIcon color="var(--sub-600)" /></button>
@@ -466,7 +469,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     <div class="flex items-center gap-2 flex-1">
                         <WorldIcon color="var(--sub-600)" />
                         <p class="label-medium c-strong-950">Trendler-Albüm</p>
-                        <p class="c-soft-400 label-sm">Ocak 2024 - Haziran 2024</p>
+                        <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                     </div>
                     <div class="flex gap-3">
                         <button><EyeOnIcon color="var(--sub-600)" /></button>
