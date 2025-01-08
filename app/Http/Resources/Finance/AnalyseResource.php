@@ -29,7 +29,6 @@ class AnalyseResource extends JsonResource
         $this->groupedData = $this->data->groupBy(function ($item) {
             return Carbon::parse($item->sales_date)->format('F Y');
         });
-
     }
 
 
@@ -51,9 +50,14 @@ class AnalyseResource extends JsonResource
         return [
             'all_time_earning' => Number::currency($this->data->sum('earning'), 'USD', app()->getLocale()),
             'current_month' => now()->format('F Y'),
-            'current_month_earning' => Number::currency($this->data->whereBetween('sales_date',
-                [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->sum('earning'), 'USD',
-                app()->getLocale()),
+            'current_month_earning' => Number::currency(
+                $this->data->whereBetween(
+                    'sales_date',
+                    [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]
+                )->sum('earning'),
+                'USD',
+                app()->getLocale()
+            ),
         ];
     }
 
@@ -198,7 +202,7 @@ class AnalyseResource extends JsonResource
         $topPlatforms['others'] = $otherEarnings;
 
         return $topPlatforms->mapWithKeys(function ($earning, $platform) {
-            return [$platform => Number::currency($earning, 'USD', app()->getLocale())];
+            return [$platform => $earning];
         })->toArray();
     }
 
@@ -216,7 +220,7 @@ class AnalyseResource extends JsonResource
         $topCountries['others'] = $otherEarnings;
 
         return $topCountries->mapWithKeys(function ($earning, $country) {
-            return [$country => Number::currency($earning, 'USD', app()->getLocale())];
+            return [$country => $earning];
         })->toArray();
     }
 
@@ -280,7 +284,7 @@ class AnalyseResource extends JsonResource
         $topSalesTypes = $sortedEarnings->take(5);
 
         return $topSalesTypes->mapWithKeys(function ($earning, $salesType) {
-            return [$salesType => Number::currency($earning, 'USD', app()->getLocale())];
+            return [$salesType => $earning];
         })->toArray();
     }
 
@@ -308,14 +312,11 @@ class AnalyseResource extends JsonResource
                 'streams' => $artistData->sum('quantity'),
             ];
         })->sortByDesc('earning')->take(10)->toArray();
-
-
     }
 
     private function topAlbums(): array
     {
         return [];
-
     }
 
     private function topSongs(): array
@@ -327,7 +328,4 @@ class AnalyseResource extends JsonResource
     {
         return [];
     }
-
-
 }
-

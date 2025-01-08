@@ -18,7 +18,7 @@
             <template #body>
                 <div class="flex flex-col mt-5">
                     <p class="paragraph-sm c-sub-600 mb-0.5">Tüm zamanların Geliri</p>
-                    <p class="card-currency-header c-strong-950">$0.00</p>
+                    <p class="card-currency-header c-strong-950">{{data?.metadata?.all_time_earning}}</p>
                 </div>
             </template>
         </AppCard>
@@ -32,8 +32,8 @@
                 </template>
               <template #body>
                 <div class="flex flex-col mt-5">
-                    <p class="paragraph-sm c-sub-600 mb-0.5">Ocak 2024 - Haziran 2024 Geliri</p>
-                    <p class="card-currency-header c-strong-950">$0.00</p>
+                    <p class="paragraph-sm c-sub-600 mb-0.5">{{data?.metadata?.current_month}} Geliri</p>
+                    <p class="card-currency-header c-strong-950">{{data?.metadata?.current_month_earning}}</p>
                 </div>
             </template>
         </AppCard>
@@ -46,7 +46,7 @@
     </div>
 
     <div>
-      <component  :is="tabs.find(e => e.slug == currentTab)?.component"></component>
+      <component :data="data.data" :is="tabs.find(e => e.slug == currentTab)?.component"></component>
     </div>
 
     <NewReportModal  @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
@@ -78,6 +78,9 @@ const defaultStore = useDefaultStore();
 const pageTable = ref();
 
 const props = defineProps({
+    data:{
+
+    },
   filters: {
     type: Array,
     default: () => [],
@@ -86,7 +89,6 @@ const props = defineProps({
 })
 
 
-const data = ref([])
 const choosenLabel = ref(null);
 const isModalOn = ref(false);
 const openPaymentModal = () => {

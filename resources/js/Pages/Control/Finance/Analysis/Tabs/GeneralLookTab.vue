@@ -8,7 +8,11 @@ import {FinanceIncomePlatforms,FinanceIncomeCountries,FinanceIncomeSales} from '
 import {AppSwitchComponent} from '@/Components/Form'
 import Vue3Apexcharts from 'vue3-apexcharts'
 const showYoutubeFremium = ref(false);
+const props = defineProps({
+    data : {
 
+    }
+})
 const isFinanceIncomePlatforms = ref(false);
 const isFinanceIncomeCountries = ref(false);
 const isFinanceIncomeSales = ref(false);
@@ -19,7 +23,7 @@ const options = ref({
     type: 'donut',
     height: 200,
   },
-  labels: ['Kategori 1', 'Kategori 2', 'Kategori 3', 'Kategori 4'], // Donut dilim etiketleri
+  labels: Object.keys(props.data.earning_from_platforms) ,
   colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'], // Dilim renkleri
   legend: {
     show: true, // Göstergeyi etkinleştir
@@ -45,44 +49,90 @@ const options = ref({
       },
     },
   },
-//   plotOptions: {
-//     pie: {
-//       donut: {
-//         size: '70%', // Donut iç çap boyutu
-//         labels: {
-//           show: true,
-//           name: {
-//             show: true,
-//             fontSize: '16px',
-//             fontWeight: 600,
-//           },
-//           value: {
-//             show: true,
-//             fontSize: '14px',
-//             fontWeight: 400,
-//             formatter: (val) => `${val}`, // Değeri formatla
-//           },
-//           total: {
-//             show: true,
-//             label: 'Toplam',
-//             fontSize: '16px',
-//             fontWeight: 600,
-//             formatter: function (w) {
-//               return w.globals.seriesTotals.reduce((a, b) => a + b, 0); // Toplam değer
-//             },
-//           },
-//         },
-//       },
-//     },
-//   },
+
 });
 
-const series = ref([44, 55, 13, 33]); // Donut dilim verileri
+const series = ref(Object.values(props.data.earning_from_platforms)); // Donut dilim verileri
+
+
+const optionsCountries = ref({
+  chart: {
+    type: 'donut',
+    height: 200,
+  },
+  labels: Object.keys(props.data.earning_from_countries) ,
+  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'], // Dilim renkleri
+  legend: {
+    show: true, // Göstergeyi etkinleştir
+    position: 'right', // Gösterge pozisyonu
+  },
+  dataLabels: {
+    enabled: true, // Dilim üzerindeki değerleri göster
+    style: {
+      fontSize: '13px',
+      colors: ['#fff'], // Yazı rengi
+    },
+  },
+  stroke: {
+    show: true,
+    width: 1,
+    colors: ['#fff'], // Dilim kenarlık rengi
+  },
+  tooltip: {
+    enabled: true, // Tooltip etkinleştir
+    y: {
+      formatter: function (val) {
+        return `${val}`; // Tooltip içeriği
+      },
+    },
+  },
+
+});
+
+const seriesCountries = ref(Object.values(props.data.earning_from_countries)); // Donut dilim verileri
+const optionsSales = ref({
+  chart: {
+    type: 'donut',
+    height: 200,
+  },
+  labels: Object.keys(props.data.earning_from_sales_type) ,
+  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'], // Dilim renkleri
+  legend: {
+    show: true, // Göstergeyi etkinleştir
+    position: 'right', // Gösterge pozisyonu
+  },
+  dataLabels: {
+    enabled: true, // Dilim üzerindeki değerleri göster
+    style: {
+      fontSize: '13px',
+      colors: ['#fff'], // Yazı rengi
+    },
+  },
+  stroke: {
+    show: true,
+    width: 1,
+    colors: ['#fff'], // Dilim kenarlık rengi
+  },
+  tooltip: {
+    enabled: true, // Tooltip etkinleştir
+    y: {
+      formatter: function (val) {
+        return `${val}`; // Tooltip içeriği
+      },
+    },
+  },
+
+});
+
+const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // Donut dilim verileri
 
 </script>
 
 <template>
 
+    <!-- {{Object.keys(data)}} -->
+
+    <!-- {{data.trending_albums}} -->
 
     <div class="flex flex-col gap-6">
         <div class="bg-white rounded-xl border border-soft-200 p-4 flex flex-col gap-4">
@@ -108,7 +158,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                     </div>
                     <div class="flex flex-col items-start gap-0.5">
                         <span class="subheading-2xs c-soft-400">SPOTIFY</span>
-                        <span class="label-medium c-strong-950">$96.000,00</span>
+                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings.total.Spotify}}</span>
                     </div>
                 </div>
                 <span class="w-[1px] bg-[#E1E4EA] h-10"></span>
@@ -119,7 +169,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                     </div>
                     <div class="flex flex-col items-start gap-0.5">
                         <span class="subheading-2xs c-soft-400">APPLE MUSIC</span>
-                        <span class="label-medium c-strong-950">$24.000,00</span>
+                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings.total.Amazon}}</span>
                     </div>
 
                 </div>
@@ -131,7 +181,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                     </div>
                     <div class="flex flex-col items-start gap-0.5">
                         <span class="subheading-2xs c-soft-400">YOUTUBE</span>
-                        <span class="label-medium c-strong-950">$24.000,00</span>
+                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings.total.Youtube}}</span>
                     </div>
 
                 </div>
@@ -142,7 +192,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                     </div>
                     <div class="flex flex-col items-start gap-0.5">
                         <span class="subheading-2xs c-soft-400">DİĞER</span>
-                        <span class="label-medium c-strong-950">$14.000,00</span>
+                        <span class="label-medium c-strong-950">{{data.monthly_net_earnings.total.other}}</span>
                     </div>
 
                 </div>
@@ -156,7 +206,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                     <span class="paragraph-xs c-sub-600">0</span>
                 </div>
                 <div class="flex gap-4 flex-1">
-                    <div v-for="i in 12" class="h-80 flex-1 flex flex-col items-center justify-between">
+                    <div v-for="key in Object.keys(data.monthly_net_earnings.items)" class="h-80 flex-1 flex flex-col items-center justify-between">
 
                         <tippy :allowHtml="true" :interactiveBorder="30" theme="light" followCursor :sticky="true" :interactive="false">
                             <div class="h-72 flex flex-col justify-end w-full gap-0.5">
@@ -171,17 +221,17 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                             <template #content>
                                 <div class="flex flex-col gap-2 w-64 p-1">
                                     <p class="label-sm c-strong-950">Mayıs 2024</p>
-                                    <div v-for="i in 6" class="flex items-center gap-2">
+                                    <div v-for="platform in Object.keys(data.monthly_net_earnings.items[key])" class="flex items-center gap-2">
                                         <SpotifyIcon />
-                                        <p class="paragraph-sm c-strong-950 flex-1">Spotify</p>
-                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">$500,57</p></div>
+                                        <p class="paragraph-sm c-strong-950 flex-1">{{platform}}</p>
+                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">{{data.monthly_net_earnings.items[key][platform]}}</p></div>
                                     </div>
                                 </div>
                             </template>
                         </tippy>
 
 
-                        <span class="paragraph-xs c-sub-600">Ocak</span>
+                        <span class="paragraph-xs c-sub-600">{{key}}</span>
                     </div>
                 </div>
             </div>
@@ -220,7 +270,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                 <div class="flex gap-4 flex-1">
 
 
-                    <div v-for="i in 12" class="h-80 flex-1 flex flex-col items-center justify-between">
+                    <div v-for="key in Object.keys(data.spotify_discovery_mode_earnings.items)" class="h-80 flex-1 flex flex-col items-center justify-between">
 
                         <tippy :allowHtml="true"  :maxWidth="600" theme="light" followCursor :sticky="true" :interactive="false">
                              <div class="h-72 flex flex-col justify-end w-full gap-0.5">
@@ -234,25 +284,25 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                                 <div class="flex flex-col gap-2 w-96 p-1">
                                     <div class="flex items-center">
 
-                                        <p class="label-sm c-strong-950 flex-1">Ocak 2024</p>
-                                        <p class="label-sm c-strong-950 ">$500</p>
+                                        <p class="label-sm c-strong-950 flex-1">{{key}}</p>
+                                        <p class="label-sm c-strong-950 ">{{data.spotify_discovery_mode_earnings.items[key].total}}</p>
 
                                     </div>
                                     <div  class="flex items-center gap-2">
                                         <div class="w-2 h-2 rounded-full bg-spotify"></div>
                                         <p class="paragraph-sm c-strong-950 flex-1">Tahmini kazanılan gelir MD Spotify Keşif Modunda katalog optimizasyonu ile</p>
-                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">$500,57</p></div>
+                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">{{data.spotify_discovery_mode_earnings.items[key].promotion}}</p></div>
                                     </div>
                                     <div  class="flex items-center gap-2">
                                         <div class="w-2 h-2 rounded-full bg-[#BDECCD]"></div>
                                         <p class="paragraph-sm c-strong-950 flex-1">Regular Spotify Revenue</p>
-                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">$500,57</p></div>
+                                       <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">{{data.spotify_discovery_mode_earnings.items[key].earning}}</p></div>
                                     </div>
                                 </div>
                             </template>
                         </tippy>
 
-                        <span class="paragraph-xs c-sub-600">Ocak</span>
+                        <span class="paragraph-xs c-sub-600">{{key}}</span>
                     </div>
                 </div>
             </div>
@@ -290,7 +340,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
 
                 </div>
                 <hr>
-            <Vue3Apexcharts height="250" :options="options" :series="series"></Vue3Apexcharts>
+            <Vue3Apexcharts height="250" :options="optionsCountries" :series="seriesCountries"></Vue3Apexcharts>
 
             </div>
         </div>
@@ -312,17 +362,17 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
             </div>
             <hr>
             <div class="flex flex-col gap-3" v-if="!showYoutubeFremium">
-                <div v-for="i in 5">
-                    <span class="label-xs">Youtube Official Content</span>
+                <div v-for="key in Object.keys(data.earning_from_youtube)">
+                    <span class="label-xs">{{key}}</span>
 
                     <tippy :allowHtml="true"  :maxWidth="600" theme="light" followCursor :sticky="true" :interactive="false">
-                        <AppProgressIndicator :height="8" :modelValue="12" color="#D02533" />
+                        <AppProgressIndicator :height="8" :modelValue="data.earning_from_youtube[key].percentage" color="#D02533" />
                         <template #content>
                             <div class="flex flex-col gap-2 w-96 p-1">
                                 <div class="flex items-center">
-                                    <YoutubeIcon />
-                                    <p class="label-sm c-strong-950 flex-1">Ocak 2024</p>
-                                    <p class="label-sm c-strong-950 ">$500</p>
+                                   <div> <YoutubeIcon /></div>
+                                    <p class="label-sm c-strong-950 flex-1 ms-2">Ocak 2024</p>
+                                    <p class="label-sm c-strong-950 ">{{data.earning_from_youtube[key].earning}}</p>
 
                                 </div>
                                  <div class="flex items-start gap-2 bg-[#F2F5F8] py-2 px-4 mt-2 rounded-lg">
@@ -410,7 +460,7 @@ const series = ref([44, 55, 13, 33]); // Donut dilim verileri
                 </div>
                 <hr>
 
-            <Vue3Apexcharts height="250" :options="options" :series="series"></Vue3Apexcharts>
+            <Vue3Apexcharts height="250" :options="optionsSales" :series="seriesSales"></Vue3Apexcharts>
 
 
             </div>
