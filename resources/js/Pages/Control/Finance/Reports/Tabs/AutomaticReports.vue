@@ -40,8 +40,6 @@ const data = usePage().props.reports;
               <p class="label-sm c-neutral-500" v-text="scope.row.monthly_amount"/>
             </template>
           </tippy>
-
-
         </div>
       </template>
     </AppTableColumn>
@@ -67,7 +65,6 @@ const data = usePage().props.reports;
         <div>
           <h2 class="label-medium c-strong-950">{{ __('control.finance.payments.table.empty_header') }}</h2>
         </div>
-
       </div>
     </template>
   </AppTable>

@@ -39,10 +39,13 @@ class ReportController extends Controller
 
         $query = Report::query();
 
+        $isAutoReport = true; // Varsayılan olarak true
+
         if (!empty($request->slug)) {
             $isAutoReport = $request->slug === 'auto-reports';
-            $query->where('is_auto_report', $isAutoReport)->where('user_id', Auth::id());
         }
+
+        $query->where('is_auto_report', $isAutoReport)->where('user_id', Auth::id());
 
         $reports = ReportResource::collection($query->advancedFilter())->resource;
 
@@ -76,6 +79,7 @@ class ReportController extends Controller
             $report_type = Str::singular($report_type);
         }
 
+        dd($start_date, $end_date, $report_type, $ids);
         IncomeReportJob::dispatch($start_date, $end_date, Auth::id(), $report_type, $ids);
 
         return to_route('dashboard.reports.index');
@@ -115,7 +119,7 @@ class ReportController extends Controller
 
     public function download(Report $report)
     {
-        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
+        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();

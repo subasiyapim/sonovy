@@ -31,7 +31,6 @@ class IncomeReportJob implements ShouldQueue
     public $song_ids;
     public $platform_ids;
     public $country_ids;
-    protected $tenants;
 
     public function __construct($start_date = null, $end_date = null, $user_id = null, $report_type = '', $data = null)
     {
@@ -45,30 +44,23 @@ class IncomeReportJob implements ShouldQueue
             $this->$property = $data;
         }
 
-        $this->tenants = Cache::rememberForever('tenants', function () {
-            return \App\Models\System\Tenant::all();
-        });
     }
 
     public function handle(): void
     {
-        foreach ($this->tenants as $tenant) {
 
-            tenancy()->initialize($tenant);
 
-            if (!$this->start_date && !$this->end_date) {
-                Log::warning('Start date and end date are required for generating reports.');
+        if (!$this->start_date && !$this->end_date) {
+            Log::warning('Start date and end date are required for generating reports.');
+        } else {
+            if ($this->report_type && $this->report_type !== 'all' && $this->{$this->report_type.'_ids'}) {
+                $this->generateReportsWithType();
             } else {
-                if ($this->report_type && $this->report_type !== 'all' && $this->{$this->report_type.'_ids'}) {
-                    $this->generateReportsWithType();
-                } else {
-                    $this->generateReports();
-                }
+                $this->generateReports();
             }
-
         }
 
-        Cache::forget('tenants');
+
     }
 
     protected function generateReportsWithType(): void

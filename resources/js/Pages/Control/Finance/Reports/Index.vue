@@ -35,20 +35,9 @@ import {ref, computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 
 import {AppTabs} from '@/Components/Widgets'
-import {PrimaryButton, IconButton, RegularButton} from '@/Components/Buttons'
-import {StatusBadge} from '@/Components/Badges'
+import {PrimaryButton} from '@/Components/Buttons'
 import {
-  AddIcon,
-  LabelsIcon,
   DocumentIcon,
-  DownloadIcon,
-  BankLineIcon,
-  TrashIcon,
-  EditIcon,
-  ExitIcon,
-  WalletLineIcon,
-  SpeedUpIcon,
-  EditLineIcon
 } from '@/Components/Icons'
 import {router} from '@inertiajs/vue3';
 
@@ -69,11 +58,8 @@ const props = defineProps({
 })
 
 
-const data = ref([])
-const chosenLabel = ref(null);
 const isModalOn = ref(false);
 const openPaymentModal = () => {
-
   isModalOn.value = !isModalOn.value;
 }
 let params = new URLSearchParams(window.location.search)
