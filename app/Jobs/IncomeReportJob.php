@@ -3,20 +3,16 @@
 namespace App\Jobs;
 
 use App\Exports\ReportExport;
-use App\Models\Country;
 use App\Models\Earning;
-use App\Models\Platform;
 use App\Models\Report;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Facades\Excel;
 
 class IncomeReportJob implements ShouldQueue
 {
@@ -42,16 +38,15 @@ class IncomeReportJob implements ShouldQueue
 
     public function handle(): void
     {
-        // Temel sorgu oluşturma
         $query = Earning::with('report.song.products', 'user')
             ->whereBetween('sales_date', [$this->start_date, $this->end_date])
             ->where('user_id', $this->user_id);
 
-        // Rapor türüne göre filtreleme
         if ($this->report_type !== 'all') {
             switch ($this->report_type) {
                 case 'artists':
                 case 'songs':
+                case 'labels':
                 case 'platforms':
                     $type = Str::singular($this->report_type);
                     $query->whereIn("{$type}_id", $this->data);
@@ -67,32 +62,31 @@ class IncomeReportJob implements ShouldQueue
                 default:
                     if (Str::startsWith($this->report_type, 'multiple_')) {
                         $type = Str::singular(str_replace('multiple_', '', $this->report_type));
-                        $query->groupBy("{$type}_id");
+                        $query->selectRaw("{$type}_id, SUM(earning) as total_earning")
+                            ->groupBy("{$type}_id");
                     }
                     break;
             }
         }
 
-        // Rapor başlığını belirleme
-        $this->period = $this->generatePeriodName();
+        // Sorguyu logla
+        Log::info('SQL Query: '.$query->toSql());
+        Log::info('Bindings: '.json_encode($query->getBindings()));
 
-        // Kazançları alma
+        $this->period = $this->generatePeriodName();
         $this->earnings = $query->get();
 
-        // Eğer kazançlar boşsa işlemi sonlandır
         if ($this->earnings->isEmpty()) {
             Log::info('Kazanç bulunamadı.');
             return;
         }
 
-        // Aylık miktarları hesaplama
         $this->monthly_amount = $this->earnings->groupBy(function ($earning) {
             return Carbon::parse($earning->sales_date)->format('m');
         })->map(function ($monthEarnings) {
             return $monthEarnings->sum('earning');
         })->toArray();
 
-        // Rapor oluşturma
         $this->generateReport();
     }
 
@@ -105,7 +99,13 @@ class IncomeReportJob implements ShouldQueue
             'products' => 'Product',
             'countries' => 'Country',
             'labels' => 'Label',
-            'all' => 'Tüm'
+            'all' => 'Tüm',
+            'multiple_artists' => 'Birden Fazla Artist',
+            'multiple_songs' => 'Birden Fazla Song',
+            'multiple_platforms' => 'Birden Fazla Platform',
+            'multiple_products' => 'Birden Fazla Product',
+            'multiple_countries' => 'Birden Fazla Country',
+            'multiple_labels' => 'Birden Fazla Label',
         ];
 
         $type = $typeMap[$this->report_type] ?? 'Unknown';
@@ -123,7 +123,8 @@ class IncomeReportJob implements ShouldQueue
         ]);
 
         // Rapor dışa aktarma ve kaydetme
-        $reportExport = new ReportExport($this->earnings, 'lofilename', $report);
-        $reportExport->saveAndUpload();
+        $disk = 'tenant_'.tenant('domain').'_income_reports';
+        $reportExport = new ReportExport($this->earnings, $this->period, $report);
+        $reportExport->saveAndUpload($disk);
     }
 }

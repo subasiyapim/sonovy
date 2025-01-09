@@ -35,7 +35,7 @@ class ReportExport implements FromCollection, WithHeadings
         foreach ($this->earnings as $earning) {
             $data[] = [
                 '#' => $count++,
-                'name' => $earning->report->name,
+                'name' => $earning->report?->name ?? $this->period,
                 'report_date' => $earning->report_date,
                 'sales_date' => $earning->sales_date,
                 'platform' => $earning->platform,

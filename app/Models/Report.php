@@ -51,12 +51,12 @@ class Report extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('tenant_'.tenant('domain').'_income_reports');
+        $this->addMediaCollection('income_reports');
     }
 
     public function getFilesAttribute()
     {
-        $file = $this->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
+        $file = $this->getMedia('income_reports')->last();
         if ($file) {
             $file->url = $file->getUrl();
         }
