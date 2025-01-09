@@ -24,10 +24,9 @@ const submit = () => {
         <Head title="Confirm Password" />
 
         <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            This is a secure area of the application. Please confirm your
-            password before continuing.
-        </div>
+            {{ __('pages.confirm_password_warning') }}
 
+        </div>
         <form @submit.prevent="submit">
             <div>
                 <InputLabel for="password" value="Password" />
@@ -49,7 +48,7 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Confirm
+                    {{ __('pages.confirm') }}
                 </PrimaryButton>
             </div>
         </form>

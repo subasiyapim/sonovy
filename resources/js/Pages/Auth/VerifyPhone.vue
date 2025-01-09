@@ -70,17 +70,16 @@ const resetCode = () => {
       <MessageIcon2 color="var(--strong-950)"/>
     </template>
     <template #loading>
-      <p class="c-strong-950 label-xl">Doğrulanıyor...</p>
-      <p class="label-sm c-sub-600 !text-center">Telefon numaranız doğrulanıyor, <br>
-        lütfen bekleyiniz.</p>
+      <p class="c-strong-950 label-xl"> {{ __('auth.verifying') }} </p>
+      <p class="label-sm c-sub-600 !text-center"> {{ __('auth.verifying_description') }} </p>
     </template>
     <template #completed>
-      <p class="c-strong-950 label-xl">Tebrikler, aramıza hoşgeldiniz.</p>
+      <p class="c-strong-950 label-xl"> {{ __('auth.congratulations') }} </p>
       <p class="paragraph-sm c-sub-600 !text-center">
-        Hesabınız başarılı bir şekilde oluşturuldu.<br>
-        Hemen ilk yayınızı oluşturabilirsiniz.</p>
+        {{ __('auth.account_created') }}<br>
+        {{ __('auth.create_your_first_publication') }}</p>
       <PrimaryButton class="mt-6" @click="onContinueClicked">
-        Hemen Başla
+        {{ __('auth.start_now') }}
         <template #suffix>
           <ChevronRightIcon color="var(--dark-green-500)"/>
         </template>

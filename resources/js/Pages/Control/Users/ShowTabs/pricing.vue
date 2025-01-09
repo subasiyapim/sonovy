@@ -46,7 +46,7 @@ const onChangeComissonRate = (e) => {
     commission_rate: commission_rate.value
   });
   props.user.commission_rate = commission_rate.value;
-  toast.success('işlem başarılı');
+    toast.success('işlem başarılı');
 };
 const onChangeThreshold = (e) => {
   const response = crudStore.post(route('control.user-management.users.assign-to-payment-threshold', props.user.id), {
@@ -74,7 +74,7 @@ const onChangeClicked = () => {
       <template #description>
         <div class="text-end">
           <button @click="onChangeComissonRate" class="paragraph-xs c-blue-500">
-            kaydet
+            {{ __('control.user.save') }}
           </button>
         </div>
       </template>

@@ -112,8 +112,8 @@
     <template #empty>
       <div class="flex flex-col items-center justify-center gap-8">
         <div>
-          <h2 class="label-medium c-strong-950">Henüz yayınız bulunmamaktadır.</h2>
-          <h3 class="paragraph-medium c-neutral-500">Oluşturucağınız tüm yayınlar burada listelenecektir.</h3>
+          <h2 class="label-medium c-strong-950">{{ __('control.user.no_publication') }}</h2>
+          <h3 class="paragraph-medium c-neutral-500">{{ __('control.user.all_publications') }}</h3>
         </div>
 
       </div>

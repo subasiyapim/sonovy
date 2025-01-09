@@ -23,7 +23,7 @@
                     <span class="c-sub-600 paragraph-xs mb-2">{{scope.row.email}}</span>
 
                     <button class="c-blue-500 label-xs" @click="usersTable.toggleShowSub(scope.index)" v-if="scope.row?.children?.length>0">
-                        {{scope.row?.children?.length}} Alt Kullanıcıyı Gör
+                        {{scope.row?.children?.length}} {{ __('control.user.view_sub_users') }}
 
                     </button>
 

@@ -3,7 +3,7 @@
   <AdminLayout :showDatePicker="false" :title="__('control.user.show_header')" parentTitle="Katalog"
                subParent="Tüm Şarkılar" :hasPadding="false">
     <template #breadcrumb>
-      <span class="label-xs c-soft-400">Kullanıcı Yönetimi</span>
+      <span class="label-xs c-soft-400">{{ __('control.user.title_management') }}</span>
       <span class="label-xs c-soft-400">•</span>
       <span class="label-xs c-soft-400">{{ user.name }}</span>
     </template>
@@ -13,10 +13,10 @@
             <EyeOnIcon color="var(--sub-600)"/>
           </template>
           <template v-if="isInViewMode">
-            Admin'e geri dön
+                {{ __('control.user.back_to_admin') }}
           </template>
            <template v-else>
-             Kullanıcının Gözünden Gör
+             {{ __('control.user.view_from_user') }}
           </template>
 
         </RegularButton>
@@ -33,11 +33,11 @@
 
              <div v-if="user.status == 1" class="border border-soft-200 px-2 py-1 rounded-full flex items-center gap-2">
                 <CheckFilledIcon color="var(--sub-600)" />
-                <p class="label-xs text-[#122368]">  Aktif</p>
+                <p class="label-xs text-[#122368]">         {{ __('control.user.active') }}</p>
             </div>
              <div v-else class="border border-soft-200 px-2 py-1 rounded-full flex items-center gap-2">
                 <WarningIcon color="var(--sub-600)" />
-                <p class="label-xs text-[#122368]">  Pasif</p>
+                <p class="label-xs text-[#122368]">  {{ __('control.user.passive') }}</p>
             </div>
         </div>
         <span class="c-neutral-400 paragraph-xs" v-text="'#'+user.id"/>
@@ -66,7 +66,7 @@
       </div>
 
         <div class=" absolute bottom-2 right-5">
-        <span class="label-xs !font-semibold c-sub-600">Son giriş: </span>
+        <span class="label-xs !font-semibold c-sub-600">  {{ __('control.user.last_login') }}: </span>
         <span class="label-xs !font-regular c-sub-600">02.09.2024 - 09:30</span>
         </div>
     </div>

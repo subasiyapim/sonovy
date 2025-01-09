@@ -37,7 +37,7 @@ const showingNavigationDropdown = ref(false);
                     :href="route('control.dashboard')"
                     :active="route().current('dashboard')"
                 >
-                  Dashboard
+                  {{ __('pages.dashboard') }}
                 </NavLink>
               </div>
             </div>
@@ -74,14 +74,14 @@ const showingNavigationDropdown = ref(false);
                     <DropdownLink
                         :href="route('control.profile.edit')"
                     >
-                      Profile
+                      {{ __('pages.profile') }}
                     </DropdownLink>
                     <DropdownLink
                         :href="route('logout')"
                         method="post"
                         as="button"
                     >
-                      Log Out
+                      {{ __('auth.logout') }}
                     </DropdownLink>
                   </template>
                 </Dropdown>

@@ -1,14 +1,15 @@
 <?php
 
 return array (
-  'general' => 
+  'general' =>
   array (
     'optional' => '(Optional)',
     'read_more' => 'Read more',
     'privacy_policy' => 'Privacy Policy',
     'terms_of_service' => 'Terms of Service',
+    'back_btn' => 'Back to login',
   ),
-  'home' => 
+  'home' =>
   array (
     'header_title' => 'Beautiful analytics to grow smarter',
     'header_description' => 'Powerful, self-serve product and growth analytics to help you convert, engage, and
@@ -25,14 +26,14 @@ return array (
     'contact_us_title' => 'If you have anything else on your mind, you can write to us.',
     'contact_us_description' => 'Our teams will be happy to assist you.',
   ),
-  'contact_us' => 
+  'contact_us' =>
   array (
     'name' => 'Name-Surname',
     'email' => 'E-mail',
     'phone' => 'phone number',
     'message' => 'Message',
   ),
-  'support_center' => 
+  'support_center' =>
   array (
     'main_title' => 'support center',
     'search_subtitle' => 'Do you have any questions in your mind? We are ready to help you.',

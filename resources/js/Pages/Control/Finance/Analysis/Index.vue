@@ -23,7 +23,7 @@
         </template>
         <template #body>
           <div class="flex flex-col mt-5">
-            <p class="paragraph-sm c-sub-600 mb-0.5">Tüm zamanların Geliri</p>
+            <p class="paragraph-sm c-sub-600 mb-0.5">{{ __('control.finance.analysis.all_time_earnings') }}</p>
             <p class="card-currency-header c-strong-950">{{ data?.metadata?.all_time_earning }}</p>
           </div>
         </template>
@@ -40,7 +40,7 @@
         </template>
         <template #body>
           <div class="flex flex-col mt-5">
-            <p class="paragraph-sm c-sub-600 mb-0.5">{{ data?.metadata?.current_month }} Geliri</p>
+            <p class="paragraph-sm c-sub-600 mb-0.5">{{ data?.metadata?.current_month }} {{ __('control.finance.analysis.earnings') }}</p>
             <p class="card-currency-header c-strong-950">{{ data?.metadata?.current_month_earning }}</p>
           </div>
         </template>

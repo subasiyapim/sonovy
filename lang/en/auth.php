@@ -1,6 +1,14 @@
 <?php
 
 return array (
+    'login' => 'Login',
+    'logout' => 'Logout',
+    'verifying' => 'Verifying...',
+    'verifying_description' => 'Your email address is being verified, please wait.',
+    'congratulations' => 'Congratulations, welcome to our community.',
+    'account_created' => 'Your account has been successfully created.',
+    'create_your_first_publication' => 'Start Now',
+    'start_now' => 'Start Now',
   'failed' => 'The information provided does not match our records.',
   'password' => 'The entered password is incorrect.',
   'throttle' => 'Too many login attempts have been made. Please try again in :seconds seconds.',
@@ -9,6 +17,7 @@ return array (
   'reset_password_email' => 'E-mail',
   'reset_password_email_placeholder' => 'Enter your email address',
   'reset_password_button' => 'Send Link',
+  'back_btn' => 'Back to login',
   'register' => 'Sign Up',
   'register_description' => 'By registering, you can distribute your music to all platforms and track your streaming income.',
   'register_error' => 'Mistake',

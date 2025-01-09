@@ -10,7 +10,7 @@ import {DocumentIcon, DownloadIcon} from "@/Components/Icons/index.js";
   <AppTable :showAddButton="false" :buttonLabel="__('control.finance.add_new')" ref="pageTable"
             v-model="usePage().props.reports">
     <template #tableHeader>
-      <p class="subheading-regular c-strong-950"> İşlem Tarihçesi</p>
+      <p class="subheading-regular c-strong-950">{{ __('control.finance.payments.transaction_history') }}</p>
     </template>
     <AppTableColumn :label="__('control.finance.payments.table.column_1')" align="left" sortable="name">
       <template #default="scope">

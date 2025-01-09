@@ -15,13 +15,12 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
         <Link :href="route('logout')"
               method="post"
               class="btn btn-primary font-bold text-lg"
-              as="button">Çıkış yap
-        </Link>
+              as="button"> {{ __('auth.logout') }} </Link>
       </form>
 
     </template>
     <template v-else>
-      <Link href="/login" class="btn btn-primary font-bold text-lg">Giriş yap</Link>
+      <Link href="/login" class="btn btn-primary font-bold text-lg"> {{ __('auth.login') }} </Link>
     </template>
 
 

@@ -10,11 +10,11 @@
               <ArrowLeftIcon color="var(--sub-600)"/>
             </IconButton>
             <div class="flex flex-col flex-1">
-              <p class="label-lg c-strong-950">Tüm Yayınlar</p>
+              <p class="label-lg c-strong-950">{{ __('control.user.all_publications') }}</p>
               <div class="flex items-center gap-2">
-                <span class="label-xs c-soft-400">Katalog</span>
+                <span class="label-xs c-soft-400">{{ __('control.user.catalog') }}</span>
                 <span class="label-xs c-soft-400">.</span>
-                <span class="label-xs c-soft-400">Tüm Yayınlar</span>
+                <span class="label-xs c-soft-400">{{ __('control.user.all_publications') }}</span>
               </div>
             </div>
 
@@ -27,7 +27,7 @@
         <AppStepper :modelValue="currentTab" @change="onChangeTab">
           <AppStepperElement :showWarning="!completed_steps.step1" title="Yayın Bilgileri"></AppStepperElement>
           <AppStepperElement :showWarning="!completed_steps.step2"
-                             :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
+                            :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
           <AppStepperElement :showWarning="!completed_steps.step3" title="Yayınlama Detayları"></AppStepperElement>
           <AppStepperElement :showWarning="!completed_steps.step4" title="Pazarlama ve Onay"></AppStepperElement>
 
@@ -47,14 +47,14 @@
         </div>
         <div class="flex items-center justify-center w-full">
           <div class="flex-1 flex items-center gap-2 justify-center">
-            <p class="label-medium">%{{ progress }} Tamamlandı</p>
+            <p class="label-medium">%{{ progress }} {{ __('control.user.completed') }}</p>
             <div class="w-48">
               <AppProgressIndicator v-model="progress"/>
             </div>
           </div>
           <PrimaryButton v-if="currentTab < 3" @click="submitStep">
 
-            Devam Et
+            {{ __('control.user.continue') }}
 
 
           </PrimaryButton>
@@ -65,13 +65,13 @@
                            :disabled="Object.values(props.completed_steps).filter((e) => e == false).length > 0">
 
 
-              Yayına gönder
+              {{ __('control.user.send_to_publish') }}
 
 
             </PrimaryButton>
 
             <template #content>
-              Yayına göndermek için tüm eksikleri tamamlamalısınız!
+              {{ __('control.user.you_must_complete_all_missing') }}
             </template>
           </tippy>
 
@@ -84,7 +84,7 @@
         <div class="w-12 h-12 bg-dark-green-800 border border-soft-200 rounded-full flex items-center justify-center">
           <StickyNoteFilledIcon color="var(--dark-green-500)"/>
         </div>
-        <h1 class="label-lg c-strong-950">Yayın özeti</h1>
+        <h1 class="label-lg c-strong-950">{{ __('control.user.publication_summary') }}</h1>
 
 
       </div>

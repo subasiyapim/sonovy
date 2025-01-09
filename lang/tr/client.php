@@ -6,6 +6,7 @@ return [
         'read_more' => 'Devamını oku',
         'privacy_policy' => 'Privacy Policy',
         'terms_of_service' => 'Terms of Service',
+        'back_btn' => 'Giriş sayfasına dön',
     ],
     'notification' => [
         'deleted_success' => ':model Başarıyla silindi.',

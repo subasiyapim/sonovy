@@ -15,16 +15,16 @@
 
                 <template #content>
                     <p v-if="scope.row.type == 1">
-                        Ses
+                        {{ __('control.song.audio') }}
                     </p>
                     <p v-if="scope.row.type == 2">
-                        Müzik Video
+                        {{ __('control.song.music_video') }}
                     </p>
                     <p v-if="scope.row.type == 3">
-                        Zil Sesi
+                        {{ __('control.song.ringtone') }}
                     </p>
                     <p v-if="scope.row.type == 4">
-                        Apple Video
+                        {{ __('control.song.apple_video') }}
                     </p>
 
                 </template>
@@ -66,7 +66,7 @@
               <PlayCircleFillIcon color="var(--dark-green-500)"/>
             </div>
             <p class="label-sm c-strong-950">
-              Durdur
+                {{ __('control.song.pause') }}
             </p>
           </div>
         </template>
@@ -84,7 +84,7 @@
       <AppTableColumn :label="'Katılımcı'" sortable="name">
         <template #default="scope">
           <div class="border border-soft-200 rounded c-strong-950 label-sm px-3 py-1">
-            {{ scope.row.participants.length }} Katılımcı
+            {{ scope.row.participants.length }} {{ __('control.song.participant') }}
           </div>
         </template>
       </AppTableColumn>

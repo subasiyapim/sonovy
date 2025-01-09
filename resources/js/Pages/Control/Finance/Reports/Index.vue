@@ -3,15 +3,14 @@
 
     <div class="flex items-start my-6">
       <div class="flex-1">
-        <h1 class="subheading-regular c-strong-950 mb-0.5"> Mevcut Raporlar</h1>
-        <p class="label-sm c-neutral-500">Lorem ipsum dolor sit amet consectetur. Aliquet ac at odio ultricies amet
-          commodo.</p>
+        <h1 class="subheading-regular c-strong-950 mb-0.5">{{ __('control.finance.reports.current_reports') }}</h1>
+        <p class="label-sm c-neutral-500">{{ __('control.finance.reports.current_reports_description') }}</p>
       </div>
       <PrimaryButton v-if="currentTab == 'demanded-reports'" @click="openPaymentModal" class="w-60">
         <template #icon>
           <DocumentIcon color="var(--dark-green-500)"/>
         </template>
-        <p>Yeni Rapor Oluştur</p>
+        <p>{{ __('control.finance.reports.create_new_report') }}</p>
 
       </PrimaryButton>
     </div>

@@ -51,7 +51,7 @@ const props = defineProps({
         </AppTableColumn>
 
         <template #empty>
-            Tarih Detayı Bulunamadı
+            {{ __('control.user.date_detail_not_found') }}
         </template>
     </AppTable>
 </template>

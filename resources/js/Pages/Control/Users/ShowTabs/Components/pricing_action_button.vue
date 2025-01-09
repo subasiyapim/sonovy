@@ -33,7 +33,7 @@ const onCancel = () => {
         </button>
         <template #content>
             <div class="flex flex-col py-3 px-1">
-                <p class="label-sm !font-bold c-sub-600 mb-2 px-3">İşlemler</p>
+                <p class="label-sm !font-bold c-sub-600 mb-2 px-3">{{ __('control.general.actions') }}</p>
                 <button @click="onChangePackage" class="flex items-center gap-2 label-sm c-sub-600 py-3 rounded-lg px-3 hover:bg-[#FAF9F8]"><ChangePackageIcon color="var(--sub-600)" />Paketi Değiştir</button>
             </div>
         </template>

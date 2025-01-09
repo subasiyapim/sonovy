@@ -24,23 +24,23 @@ const props = defineProps({
 
     <div class="border border-soft-200 w-full p-3 rounded-lg my-5">
         <div class="flex items-center justify-between w-1/2 mb-2">
-            <p class="c-strong-950 label-medium w-36 !text-start">Current Balance</p>
+            <p class="c-strong-950 label-medium w-36 !text-start">{{ __('control.user.current_balance') }}</p>
             <p class="c-strong-950 label-medium w-6 text-center">+</p>
             <p class="c-strong-950 label-medium w-24">{{usePage().props.user.tab.current_balance}}</p>
         </div>
          <div class="flex items-center justify-between w-1/2 mb-2">
-            <p class="c-strong-950 label-medium w-36 !text-start">Pending Outpayments</p>
+            <p class="c-strong-950 label-medium w-36 !text-start">{{ __('control.user.pending_outpayments') }}</p>
             <p class="c-strong-950 label-medium w-6 text-center">-</p>
             <p class="c-strong-950 label-medium w-24">{{usePage().props.user.tab.pending_out_payments}}</p>
         </div>
          <div class="flex items-center justify-between w-1/2 mb-2">
-            <p class="c-strong-950 label-medium w-36 !text-start">Pending Invoices</p>
+            <p class="c-strong-950 label-medium w-36 !text-start">{{ __('control.user.pending_invoices') }}</p>
             <p class="c-strong-950 label-medium w-6 text-center">-</p>
             <p class="c-strong-950 label-medium w-24">{{usePage().props.user.tab.pending_invoices}}</p>
         </div>
         <hr>
          <div class="flex items-center justify-between w-1/2 mt-2">
-            <p class="c-strong-950 label-medium w-36 !text-start">Confirmed Total</p>
+            <p class="c-strong-950 label-medium w-36 !text-start">{{ __('control.user.confirmed_total') }}</p>
             <p class="c-strong-950 label-medium w-6">=</p>
             <p class="c-strong-950 label-medium w-24">{{usePage().props.user.tab.confirmed_total}}</p>
         </div>
@@ -70,7 +70,7 @@ const props = defineProps({
         </AppTableColumn>
 
         <template #empty>
-            Tarih Detayı Bulunamadı
+            {{ __('control.user.date_detail_not_found') }}
         </template>
     </AppTable>
 </template>

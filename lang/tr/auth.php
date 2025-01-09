@@ -12,7 +12,14 @@ return [
     | gereksinimlerine göre düzenlemekte özgürsünüz.
     |
     */
-
+    'login' => 'Giriş yap',
+    'logout' => 'Çıkış yap',
+    'verifying' => 'Doğrulanıyor...',
+    'verifying_description' => 'E-Posta adresiniz doğrulanıyor, lütfen bekleyiniz.',
+    'congratulations' => 'Tebrikler, aramıza hoşgeldiniz.',
+    'account_created' => 'Hesabınız başarılı bir şekilde oluşturuldu.',
+    'create_your_first_publication' => 'Hemen Başla',
+    'start_now' => 'Hemen Başla',
     'failed' => 'Verilen bilgiler kayıtlarımızla eşleşmiyor.',
     'password' => 'Girilen şifre yanlış.',
     'throttle' => 'Çok fazla giriş denemesi yapıldı. Lütfen :seconds saniye sonra yeniden deneyin.',
@@ -21,6 +28,7 @@ return [
     'reset_password_email' => 'Email',
     'reset_password_email_placeholder' => 'Email adresini gir',
     'reset_password_button' => 'Bağlantıyı Gönder',
+    'back_btn' => 'Giriş sayfasına dön',
     'register' => 'Kayıt Ol',
     'register_description' => 'Kayıt olarak, müziğini tüm platformalara dağıtabilir ve dinlenme gelirlerini takip edebilirsin.',
     'register_error' => 'Hata',

@@ -22,7 +22,7 @@ const props = defineProps({
             <div class="flex items-center">
                 <div class="flex items-center gap-2 flex-1">
                     <PersonIcon color="var(--sub-600)" />
-                    <p class="label-medium c-strong-950">Sanatçıya Göre Gelir</p>
+                    <p class="label-medium c-strong-950">{{ __('control.finance.analysis.artists_earnings') }}</p>
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
@@ -35,10 +35,10 @@ const props = defineProps({
             <table>
                 <thead>
                     <tr>
-                        <td class="label-sm c-strong-950 !font-semibold">Sanatçı Adı</td>
-                        <td class="label-sm c-strong-950 !font-semibold pe-3 !text-end">Oran</td>
-                        <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
-                        <td class="label-sm c-strong-950 !font-semibold ps-3">Streams</td>
+                        <td class="label-sm c-strong-950 !font-semibold">{{ __('control.finance.analysis.artist_name') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold pe-3 !text-end">{{ __('control.finance.analysis.rate') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold ps-3">{{ __('control.finance.analysis.earnings') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold ps-3">{{ __('control.finance.analysis.streams') }}</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,7 +64,7 @@ const props = defineProps({
             <div class="flex items-center">
                 <div class="flex items-center gap-2 flex-1">
                     <BookReadLineIcon color="var(--sub-600)" />
-                    <p class="label-medium c-strong-950">Albüme Göre Gelir</p>
+                    <p class="label-medium c-strong-950">{{ __('control.finance.analysis.albums_earnings') }}</p>
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
@@ -77,12 +77,12 @@ const props = defineProps({
             <table>
                 <thead>
                     <tr>
-                        <td class="label-sm c-strong-950 !font-semibold">Albüm Adı</td>
-                        <td class="label-sm c-strong-950 !font-semibold">UPC</td>
-                        <td class="label-sm c-strong-950 !font-semibold">Sanatçı</td>
-                        <td class="label-sm c-strong-950 !font-semibold pe-3 !text-end">Oran</td>
-                        <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
-                        <td class="label-sm c-strong-950 !font-semibold ps-3">Streams</td>
+                        <td class="label-sm c-strong-950 !font-semibold">{{ __('control.finance.analysis.album_name') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold">{{ __('control.finance.analysis.upc') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold">{{ __('control.finance.analysis.artist_name') }}</td>
+                            <td class="label-sm c-strong-950 !font-semibold pe-3 !text-end">{{ __('control.finance.analysis.rate') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold ps-3">{{ __('control.finance.analysis.earnings') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold ps-3">{{ __('control.finance.analysis.streams') }}</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -113,7 +113,7 @@ const props = defineProps({
             <div class="flex items-center">
                 <div class="flex items-center gap-2 flex-1">
                     <AudioIcon color="var(--sub-600)" />
-                    <p class="label-medium c-strong-950">Parçaya Göre Gelir</p>
+                    <p class="label-medium c-strong-950">{{ __('control.finance.analysis.songs_earnings') }}</p>
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
@@ -126,12 +126,12 @@ const props = defineProps({
             <table>
                 <thead>
                     <tr>
-                        <td class="label-sm c-strong-950 !font-semibold">Parça Adı</td>
-                        <td class="label-sm c-strong-950 !font-semibold">ISRC</td>
-                        <td class="label-sm c-strong-950 !font-semibold">Sanatçı</td>
-                        <td class="label-sm c-strong-950 !font-semibold pe-3 !text-end">Oran</td>
-                        <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
-                        <td class="label-sm c-strong-950 !font-semibold ps-3">Streams</td>
+                        <td class="label-sm c-strong-950 !font-semibold">{{ __('control.finance.analysis.song_name') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold">{{ __('control.finance.analysis.isrc') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold">{{ __('control.finance.analysis.artist_name') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold pe-3 !text-end">{{ __('control.finance.analysis.rate') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold ps-3">{{ __('control.finance.analysis.earnings') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold ps-3">{{ __('control.finance.analysis.streams') }}</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -162,7 +162,7 @@ const props = defineProps({
             <div class="flex items-center">
                 <div class="flex items-center gap-2 flex-1">
                     <LabelsIcon color="var(--sub-600)" />
-                    <p class="label-medium c-strong-950">Plak Şirketine Göre Gelir</p>
+                    <p class="label-medium c-strong-950">{{ __('control.finance.analysis.labels_earnings') }}</p>
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
@@ -175,9 +175,9 @@ const props = defineProps({
             <table>
                 <thead>
                     <tr>
-                        <td class="label-sm c-strong-950 !font-semibold">Plak Şirketi Ado Adı</td>
-                        <td class="label-sm c-strong-950 !font-semibold pe-3 !text-end">Oran</td>
-                        <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
+                        <td class="label-sm c-strong-950 !font-semibold">{{ __('control.finance.analysis.label_name') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold pe-3 !text-end">{{ __('control.finance.analysis.rate') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold ps-3">{{ __('control.finance.analysis.earnings') }}</td>
                     </tr>
                 </thead>
                 <tbody>

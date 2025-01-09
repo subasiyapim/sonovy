@@ -47,11 +47,11 @@ onMounted(() => {
             class=" px-3 py-2 rounded-lg text-white  label-sm">
       <template v-if="user.status == 1">
 
-        Kullanıcıyı Blokla
+        {{ __('control.user.block_user') }}
       </template>
       <template v-else>
 
-        Bloğu Kaldır
+        {{ __('control.user.remove_block') }}
       </template>
     </button>
 
@@ -85,7 +85,7 @@ onMounted(() => {
     </AppTableColumn>
 
     <template #empty>
-      Tarih Detayı Bulunamadı
+      {{ __('control.user.date_detail_not_found') }}
     </template>
   </AppTable>
 </template>

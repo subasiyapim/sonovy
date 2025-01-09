@@ -78,12 +78,12 @@ const submit = () => {
             :class="{ 'opacity-25': form.processing }"
             :disabled="form.processing"
         >
-          Reset Password
+          {{ __('auth.reset_password') }}
         </PrimaryButton>
         <div class="text-end">
           <Link :href="route('login')" class="label-xs c-neutral-500 flex items-center gap-1 justify-center mt-2">
             <ChevronLeftIcon color="var(--neutral-500)"/>
-            Ana Sayfaya Dön
+            {{ __('auth.back_btn') }}
           </Link>
         </div>
 

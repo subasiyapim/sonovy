@@ -69,7 +69,7 @@
       <template #empty>
         <div class="flex flex-col items-center justify-center gap-8">
           <div>
-            <h2 class="label-medium c-strong-950">Henüz plak şirketi bulunamadı</h2>
+            <h2 class="label-medium c-strong-950">{{ __('control.user.no_label_company') }}</h2>
           </div>
 
         </div>

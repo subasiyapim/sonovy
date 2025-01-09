@@ -7,8 +7,8 @@
       <div class="p-3 flex  gap-3 items-center ">
         <img class="cursor-pointer w-10 h-10 " alt="" src="@/assets/images/logo.png">
         <div class="flex flex-col gap-1">
-          <p class="label-sm c-strong-950">Müzik Dağıtım</p>
-          <p class="paragraph-xs c-sub-600">Müzik dağıtım yönetimi</p>
+          <p class="label-sm c-strong-950">{{ __('control.sidebar.music_distribution') }}</p>
+          <p class="paragraph-xs c-sub-600">{{ __('control.sidebar.music_distribution_management') }}</p>
         </div>
       </div>
     </div>
@@ -23,7 +23,7 @@
         <template #icon>
           <AddIcon/>
         </template>
-        Yeni Yayın Oluştur
+        {{ __('control.general.create') }}
       </SecondaryButton>
 
 
@@ -33,11 +33,11 @@
         </MenuItem>
         <MenuItem title="Katalog" wrapper="catalog" :icon="DashboardIcon">
           <template #sub>
-            <sub-menu-item :path="'control.catalog.products.index'">Yayınlar</sub-menu-item>
-            <sub-menu-item :path="'control.catalog.songs.index'">Parçalar</sub-menu-item>
-            <sub-menu-item :path="'control.catalog.artists.index'">Sanatçılar</sub-menu-item>
-            <sub-menu-item :path="'control.catalog.labels.index'">Plak Şirketleri</sub-menu-item>
-            <sub-menu-item :path="'#'">Tarzlar</sub-menu-item>
+            <sub-menu-item :path="'control.catalog.products.index'">{{ __('control.catalog.products') }}</sub-menu-item>
+            <sub-menu-item :path="'control.catalog.songs.index'">{{ __('control.catalog.songs') }}</sub-menu-item>
+            <sub-menu-item :path="'control.catalog.artists.index'">{{ __('control.catalog.artists') }}</sub-menu-item>
+            <sub-menu-item :path="'control.catalog.labels.index'">{{ __('control.catalog.labels') }}</sub-menu-item>
+            <sub-menu-item :path="'#'">{{ __('control.catalog.styles') }}</sub-menu-item>
           </template>
         </MenuItem>
 
@@ -45,9 +45,9 @@
         <MenuItem title="İstatistikler" :icon="StatisticsIcon"/>
         <MenuItem title="Finans" wrapper="finance" :icon="WalletIcon">
           <template #sub>
-            <sub-menu-item :path="'control.finance.payments.index'">Ödeme ve İşlemler</sub-menu-item>
-            <sub-menu-item :path="'control.finance.reports.index'">Finansal Raporlar</sub-menu-item>
-            <sub-menu-item :path="'control.finance.analysis.index'">Finansal Analiz</sub-menu-item>
+            <sub-menu-item :path="'control.finance.payments.index'">{{ __('control.finance.payments') }}</sub-menu-item>
+            <sub-menu-item :path="'control.finance.reports.index'">{{ __('control.finance.reports') }}</sub-menu-item>
+            <sub-menu-item :path="'control.finance.analysis.index'">{{ __('control.finance.analysis') }}</sub-menu-item>
           </template>
         </MenuItem>
         <MenuItem title="İcra" :icon="IcraIcon"/>

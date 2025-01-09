@@ -5,20 +5,19 @@
         <template #icon>
           <DownloadIcon color="var(--sub-600)"/>
         </template>
-        <p class="ms-2"> Raporu İndir</p>
+        <p class="ms-2">{{ __('control.finance.payments.download_report') }}</p>
       </RegularButton>
     </template>
     <div class="flex items-start my-6">
       <div class="flex-1">
-        <h1 class="subheading-regular c-strong-950 mb-0.5"> Mevcut Bakiye Durumu</h1>
-        <p class="label-sm c-neutral-500">Mevcut bakiyenizi ve yakın zamanda gelecek olan ödemelerinizi buradan takip
-          edebilrsiniz.</p>
+        <h1 class="subheading-regular c-strong-950 mb-0.5">{{ __('control.finance.payments.current_balance_status') }}</h1>
+        <p class="label-sm c-neutral-500">{{ __('control.finance.payments.current_balance_status_description') }}</p>
       </div>
       <PrimaryButton @click="openPaymentModal" class="w-60">
         <template #icon>
           <WalletIcon color="var(--dark-green-500)"/>
         </template>
-        <p>Para Çek</p>
+        <p>{{ __('control.finance.payments.withdraw_money') }}</p>
 
       </PrimaryButton>
     </div>
@@ -34,7 +33,7 @@
         </template>
         <template #body>
           <div class="flex flex-col mt-5">
-            <p class="paragraph-sm c-sub-600 mb-0.5">Mevcut Bakiye</p>
+            <p class="paragraph-sm c-sub-600 mb-0.5">{{ __('control.finance.payments.current_balance') }}</p>
             <p class="card-currency-header c-strong-950">{{ usePage().props.balance }}</p>
           </div>
         </template>
@@ -51,7 +50,7 @@
         </template>
         <template #body>
           <div class="flex flex-col mt-5">
-            <p class="paragraph-sm c-sub-600 mb-0.5">Beklenen Ödemee</p>
+            <p class="paragraph-sm c-sub-600 mb-0.5">{{ __('control.finance.payments.expected_payment') }}</p>
             <p class="card-currency-header c-strong-950">{{ usePage().props.total_pending_payment }}</p>
           </div>
         </template>
@@ -60,7 +59,7 @@
         <template #header>
           <div class="flex items-center">
             <SpeedUpIcon color="var(--sub-600)"/>
-            <div class="flex-1 ms-2"><p class="label-sm c-strong-950 !text-start">Ödeme Bilgileri</p></div>
+            <div class="flex-1 ms-2"><p class="label-sm c-strong-950 !text-start">{{ __('control.finance.payments.payment_information') }}</p></div>
             <IconButton @click="openBankAccountModal" class="border border-soft-200 rounded-lg">
               <EditLineIcon color="var(--sub-600)"/>
             </IconButton>
@@ -73,21 +72,21 @@
 
             <div class="flex items-center mb-2">
               <BankLineIcon color="var(--sub-600)"/>
-              <span class="flex-1 ms-2 paragraph-sm c-sub-600">IBAN</span>
+              <span class="flex-1 ms-2 paragraph-sm c-sub-600">{{ __('control.finance.payments.iban') }}</span>
               <span class="label-sm c-strong-950">{{ account.iban }}</span>
             </div>
             <div class="flex items-center">
               <img width="16" src="@/assets/images/circular_color_image.png"/>
-              <span class="flex-1 ms-2 paragraph-sm c-sub-600">E-Mail</span>
+              <span class="flex-1 ms-2 paragraph-sm c-sub-600">{{ __('control.finance.payments.email') }}</span>
               <span class="label-sm c-strong-950">{{ usePage().props.auth.user.email }}</span>
             </div>
             <div class="bg-[#F2F5F8] absolute left-0 right-0 bottom-0 flex items-center justify-start py-1 ps-4">
-              <span class="paragraph-xs c-sub-600">Değişiklik için Payooner hesabınıza gitmelisiniz.</span>
+              <span class="paragraph-xs c-sub-600">{{ __('control.finance.payments.change_email_description') }}</span>
             </div>
           </div>
           <div v-else class="flex flex-col gap-2 items-center justify-center">
             <WalletIcon color="var(--sub-600)"/>
-            <p class="label-sm c-strong-950"> Lütfen hesap eklemesi yapınız</p>
+            <p class="label-sm c-strong-950">{{ __('control.finance.payments.add_account_description') }}</p>
           </div>
 
 
@@ -104,7 +103,7 @@
         <div class="flex justify-between items-center  mb-3">
           <div class="flex items-center gap-1 flex-1">
             <span
-                class="label-medium !font-semibold c-strong-950">bakiye çekme talebiniz başarılı bir şekilde iletildi</span>
+                class="label-medium !font-semibold c-strong-950">{{ __('control.finance.payments.withdraw_request_success') }}</span>
           </div>
           <div>
             <div class="flex items-center gap-3">
@@ -112,29 +111,27 @@
                 <div class="w-5 h-5 rounded-full bg-dark-green-700 flex items-center justify-center">
                   <CheckIcon color="#fff"/>
                 </div>
-                <p class="c-strong-950 paragraph-sm">Talep Edildi</p></div>
+                <p class="c-strong-950 paragraph-sm">{{ __('control.finance.payments.withdraw_request_success_description') }}</p></div>
               <ChevronRightIcon color="var(--sub-600)"/>
               <div class="flex items-center gap-2">
                 <div
                     class="w-5 h-5 rounded-full bg-[#FF8447] flex items-center justify-center text-white text-sm font-medium">
                   2
                 </div>
-                <p class="c-strong-950 paragraph-sm">İnceleniyor</p></div>
+                <p class="c-strong-950 paragraph-sm">{{ __('control.finance.payments.under_review') }}</p></div>
               <ChevronRightIcon color="var(--sub-600)"/>
               <div class="flex items-center gap-2">
                 <div
                     class="w-5 h-5 rounded-full bg-white border border-soft-200 flex items-center justify-center c-sub-600 text-sm font-medium">
                   3
                 </div>
-                <p class="c-sub-600 paragraph-sm">Tutar Gönderilecek</p></div>
+                <p class="c-sub-600 paragraph-sm">{{ __('control.finance.payments.amount_will_be_sent') }}</p></div>
             </div>
           </div>
         </div>
         <div>
           <p class="paragraph-sm c-neutral-600 w-3/4">
-            {{ pending_payment.date }} tarihinde {{ pending_payment.amount }} tutarında ödeme talep
-            ettiniz. Ödeme isteğiniz ekibimiz tarafından onaylanacak ve {{ pending_payment.planned_payment_date }}
-            tarihine kadar aracı şirkete gönderilecek.
+            {{ pending_payment.date }} {{ __('control.finance.payments.requested_payment', { amount: pending_payment.amount }) }}. {{ __('control.finance.payments.payment_request_approval') }} {{ pending_payment.planned_payment_date }} {{ __('control.finance.payments.payment_request_sent') }}.
           </p>
         </div>
       </div>
@@ -143,7 +140,7 @@
               :config="appTableConfig"
               v-model="usePage().props.payments">
       <template #tableHeader>
-        <p class="subheading-regular c-strong-950"> İşlem Tarihçesi</p>
+        <p class="subheading-regular c-strong-950">{{ __('control.finance.payments.transaction_history') }}</p>
       </template>
       <AppTableColumn :label="__('control.finance.payments.table.column_1')" align="left" sortable="name">
         <template #default="scope">

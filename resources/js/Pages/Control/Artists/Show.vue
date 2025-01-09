@@ -159,8 +159,8 @@
                 <img src="https://placehold.co/400x400"/>
               </div>
               <div>
-                <p class="text-sm c-strong-950">Parça Adı</p>
-                <span class="paragraph-xs c-blue-500">Albüm Adı</span>
+                <p class="text-sm c-strong-950">{{ __('control.artist.song_name') }}</p>
+                <span class="paragraph-xs c-blue-500">{{ __('control.artist.album_name') }}</span>
               </div>
             </div>
             <div class="flex items-end gap-2">

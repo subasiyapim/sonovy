@@ -30,7 +30,7 @@ onMounted(() => {
             <div class="flex items-center">
                 <div class="flex items-center gap-2 flex-1">
                     <PersonIcon color="var(--sub-600)" />
-                    <p class="label-medium c-strong-950">Mağazaya Göre Gelir</p>
+                    <p class="label-medium c-strong-950">{{ __('control.finance.platforms') }}</p>
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
@@ -48,10 +48,10 @@ onMounted(() => {
             <table>
                 <thead>
                     <tr>
-                        <td class="label-sm c-strong-950 !font-semibold">Albüm Adı</td>
-                        <td class="label-sm c-strong-950 !font-semibold pe-3 ">Seçili Mağazalar Gelir & Streams</td>
-                        <td class="label-sm c-strong-950 !font-semibold ps-3">Top. Gelir</td>
-                        <td class="label-sm c-strong-950 !font-semibold ps-3">Top. Streams</td>
+                        <td class="label-sm c-strong-950 !font-semibold">{{ __('control.finance.analysis.album_name') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold pe-3 ">{{ __('control.finance.analysis.selected_stores_earnings_streams') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold ps-3">{{ __('control.finance.analysis.total_earnings') }}</td>
+                        <td class="label-sm c-strong-950 !font-semibold ps-3">{{ __('control.finance.analysis.total_streams') }}</td>
                     </tr>
                 </thead>
                 <tbody>
