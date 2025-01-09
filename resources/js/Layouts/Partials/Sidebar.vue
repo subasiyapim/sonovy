@@ -45,16 +45,16 @@
         <MenuItem title="İstatistikler" :icon="StatisticsIcon"/>
         <MenuItem title="Finans" wrapper="finance" :icon="WalletIcon">
           <template #sub>
-            <sub-menu-item :path="'control.finance.payments.index'">{{ __('control.finance.payments') }}</sub-menu-item>
-            <sub-menu-item :path="'control.finance.reports.index'">{{ __('control.finance.reports') }}</sub-menu-item>
-            <sub-menu-item :path="'control.finance.analysis.index'">{{ __('control.finance.analysis') }}</sub-menu-item>
+            <sub-menu-item :path="'control.finance.payments.index'">{{ __('control.finance.payments.header') }}</sub-menu-item>
+            <sub-menu-item :path="'control.finance.reports.index'">{{ __('control.finance.reports.header') }}</sub-menu-item>
+            <sub-menu-item :path="'control.finance.analysis.index'">{{ __('control.finance.analysis.header') }}</sub-menu-item>
           </template>
         </MenuItem>
         <MenuItem title="İcra" :icon="IcraIcon"/>
         <MenuItem title="Kazan Yönetimi" :icon="EarningManagementIcon"/>
         <MenuItem title="Bildirimler" :icon="NotificationIcon"/>
         <div class="mt-4 p-2">
-          <p class="subheading-xs c-soft-400">Diğer</p>
+          <p class="subheading-xs c-soft-400"> {{ __('control.other') }}</p>
         </div>
         <MenuItem title="Kullanıcı Yönetimi" :icon="PersonSettingsIcon"
                   :path="route('control.user-management.users.index')"/>
