@@ -222,7 +222,12 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                                 <div class="flex flex-col gap-2 w-64 p-1">
                                     <p class="label-sm c-strong-950">Mayıs 2024</p>
                                     <div v-for="platform in Object.keys(data.monthly_net_earnings.items[key])" class="flex items-center gap-2">
-                                        <SpotifyIcon />
+                                        <SpotifyIcon v-if="platform=='Spotify'" />
+                                        <YoutubeIcon v-else-if="platform == 'Youtube'" />
+                                        <AppleMusicIcon v-else-if="platform == 'Apple'" />
+
+                                            <span v-else-if="platform == 'other'"  class="bg-[#717784] w-4 h-4 rounded-full"></span>
+
                                         <p class="paragraph-sm c-strong-950 flex-1">{{platform}}</p>
                                        <div class="border border-soft-200 rounded px-2 py-1"> <p class="paragraph-xs c-sub-600">{{data.monthly_net_earnings.items[key][platform].earning}}</p></div>
                                     </div>
