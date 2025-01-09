@@ -12,6 +12,7 @@ import More2LineIcon from './More2LineIcon.vue';
 import WorldIcon from './WorldIcon.vue';
 import PhoneIcon from './PhoneIcon.vue';
 import MessageIcon from './MessageIcon.vue';
+import PdfIcon from './PdfIcon.vue';
 import MessageIcon2 from './MessageIcon2.vue';
 import CheckIcon from './CheckIcon.vue';
 import HistoryIcon from './HistoryIcon.vue';
@@ -112,6 +113,7 @@ export {
     ArrowLeftIcon,
     ISRCStarsIcon,
     FileChartLineIcon,
+    PdfIcon,
     StarFilledIcon,
     SearchIcon,
     RetractedIcon,
