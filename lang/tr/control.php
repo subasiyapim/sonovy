@@ -20,6 +20,7 @@ return [
     ],
     'other' => 'Diğer',
     'payments' => [
+        'expected_payment_description' => 'Önümüzdeki 30 gün içinde ',
         'download_report' => 'Raporu İndir',
         'current_balance_status' => 'Mevcut Bakiye Durumu',
         'current_balance_status_description' => 'Mevcut bakiyenizi ve yakın zamanda gelecek olan ödemelerinizi buradan takip edebilrsiniz.',
