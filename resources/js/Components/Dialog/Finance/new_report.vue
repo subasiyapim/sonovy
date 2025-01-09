@@ -82,24 +82,23 @@ const isDialogOn = computed({
 
 
 const reporttypes = {
-    1: "all",
-    2:"artists",
-    3:"labels",
-    4:"songs",
-    5:"platforms",
-    6:"countries",
-    7:"multiple_labels",
-    8:"multiple_artists",
-    9:"multiple_products",
-    10:"multiple_platforms",
-    11:"multiple_countries",
+  1: "all",
+  2: "artists",
+  3: "labels",
+  4: "songs",
+  5: "platforms",
+  6: "countries",
+  7: "multiple_labels",
+  8: "multiple_artists",
+  9: "multiple_products",
+  10: "multiple_platforms",
+  11: "multiple_countries",
 }
 
 const onSubmit = async (e) => {
   if (currentTab.value < 3) {
     currentTab.value++;
   } else {
-
 
 
     try {
@@ -110,8 +109,8 @@ const onSubmit = async (e) => {
 
         ids: form.value.choosenValues,
       })
-         toast.success("işlem başarılı");
-        //  location.reload();
+      toast.success("işlem başarılı");
+      location.reload();
     } catch (error) {
       console.log("ERROR", error);
 
