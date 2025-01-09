@@ -2,41 +2,49 @@
   <AdminLayout @dateChoosen="onDateChoosen" :title="__('control.finance.analysis.header')" parentTitle="Katalog">
 
     <template #toolbar>
-   <div v-if="choosenDates" class="flex items-center jusitfy-center gap-2 border border-soft-200 rounded px-3 py-1 hover:bg-grey-300">
-        <p class="paragraph-xs c-sub-600">{{moment(choosenDates[0]).format('DD/MM/YYYY')+ ' - '+ moment(choosenDates[1]).format('DD/MM/YYYY') }}</p>
-        <button @click="removeDateFilter"><CloseIcon color="var(--sub-600)" /></button>
-    </div>
+      <div v-if="choosenDates"
+           class="flex items-center jusitfy-center gap-2 border border-soft-200 rounded px-3 py-1 hover:bg-grey-300">
+        <p class="paragraph-xs c-sub-600">
+          {{ moment(choosenDates[0]).format('DD/MM/YYYY') + ' - ' + moment(choosenDates[1]).format('DD/MM/YYYY') }}</p>
+        <button @click="removeDateFilter">
+          <CloseIcon color="var(--sub-600)"/>
+        </button>
+      </div>
     </template>
     <div class="flex grid grid-cols-2 gap-3 mb-5">
-        <AppCard class="flex-1 w-full">
-            <template #header>
-                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center"><WalletLineIcon color="var(--sub-600)" /></div>
-            </template>
-            <template #tool>
+      <AppCard class="flex-1 w-full">
+        <template #header>
+          <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+            <WalletLineIcon color="var(--sub-600)"/>
+          </div>
+        </template>
+        <template #tool>
 
-            </template>
-            <template #body>
-                <div class="flex flex-col mt-5">
-                    <p class="paragraph-sm c-sub-600 mb-0.5">Tüm zamanların Geliri</p>
-                    <p class="card-currency-header c-strong-950">{{data?.metadata?.all_time_earning}}</p>
-                </div>
-            </template>
-        </AppCard>
-        <AppCard class="flex-1 w-full">
-                <template #header>
-                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center"><ExitIcon color="var(--sub-600)" /></div>
+        </template>
+        <template #body>
+          <div class="flex flex-col mt-5">
+            <p class="paragraph-sm c-sub-600 mb-0.5">Tüm zamanların Geliri</p>
+            <p class="card-currency-header c-strong-950">{{ data?.metadata?.all_time_earning }}</p>
+          </div>
+        </template>
+      </AppCard>
+      <AppCard class="flex-1 w-full">
+        <template #header>
+          <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+            <ExitIcon color="var(--sub-600)"/>
+          </div>
 
-                </template>
-                <template #tool>
+        </template>
+        <template #tool>
 
-                </template>
-              <template #body>
-                <div class="flex flex-col mt-5">
-                    <p class="paragraph-sm c-sub-600 mb-0.5">{{data?.metadata?.current_month}} Geliri</p>
-                    <p class="card-currency-header c-strong-950">{{data?.metadata?.current_month_earning}}</p>
-                </div>
-            </template>
-        </AppCard>
+        </template>
+        <template #body>
+          <div class="flex flex-col mt-5">
+            <p class="paragraph-sm c-sub-600 mb-0.5">{{ data?.metadata?.current_month }} Geliri</p>
+            <p class="card-currency-header c-strong-950">{{ data?.metadata?.current_month_earning }}</p>
+          </div>
+        </template>
+      </AppCard>
 
     </div>
 
@@ -46,10 +54,11 @@
     </div>
 
     <div>
-      <component :data="data.data" :formattedDate="formattedDates" :is="tabs.find(e => e.slug == currentTab)?.component"></component>
+      <component :data="data.data" :formattedDate="formattedDates"
+                 :is="tabs.find(e => e.slug == currentTab)?.component"></component>
     </div>
 
-    <NewReportModal  @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
+    <NewReportModal @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
   </AdminLayout>
 </template>
 
@@ -62,9 +71,22 @@ import {AppCard} from '@/Components/Cards';
 import moment from 'moment';
 
 import {AppTabs} from '@/Components/Widgets'
-import {PrimaryButton, IconButton,RegularButton} from '@/Components/Buttons'
+import {PrimaryButton, IconButton, RegularButton} from '@/Components/Buttons'
 import {StatusBadge} from '@/Components/Badges'
-import {AddIcon, LabelsIcon,CloseIcon,DocumentIcon,DownloadIcon, BankLineIcon, TrashIcon, EditIcon, ExitIcon, WalletLineIcon,SpeedUpIcon,EditLineIcon} from '@/Components/Icons'
+import {
+  AddIcon,
+  LabelsIcon,
+  CloseIcon,
+  DocumentIcon,
+  DownloadIcon,
+  BankLineIcon,
+  TrashIcon,
+  EditIcon,
+  ExitIcon,
+  WalletLineIcon,
+  SpeedUpIcon,
+  EditLineIcon
+} from '@/Components/Icons'
 import {router} from '@inertiajs/vue3';
 
 import {NewReportModal} from '@/Components/Dialog';
@@ -78,9 +100,7 @@ const defaultStore = useDefaultStore();
 const pageTable = ref();
 
 const props = defineProps({
-    data:{
-
-    },
+  data: {},
   filters: {
     type: Array,
     default: () => [],
@@ -93,31 +113,31 @@ const choosenLabel = ref(null);
 const isModalOn = ref(false);
 const openPaymentModal = () => {
 
-    isModalOn.value = !isModalOn.value;
+  isModalOn.value = !isModalOn.value;
 }
 let params = new URLSearchParams(window.location.search)
 
 const choosenDates = ref(null);
-if(params.get('start_date') && params.get('end_date')){
-   choosenDates.value = [params.get('start_date'),params.get('end_date')]
+if (params.get('start_date') && params.get('end_date')) {
+  choosenDates.value = [params.get('start_date'), params.get('end_date')]
 }
 const removeDateFilter = () => {
-    choosenDates.value = null;
-   router.visit(route(route().current()), {
+  choosenDates.value = null;
+  router.visit(route(route().current()), {
 
-        preserveScroll: true,
-    });
+    preserveScroll: true,
+  });
 }
 const onDateChoosen = (e) => {
 
-      router.visit(route(route().current()), {
-        data: {
-            end_date:e[1],
-            start_date:e[0],
-            slug:currentTab.value,
-        },
-        preserveScroll: true,
-    });
+  router.visit(route(route().current()), {
+    data: {
+      end_date: e[1],
+      start_date: e[0],
+      slug: currentTab.value,
+    },
+    preserveScroll: true,
+  });
 
 }
 const currentTab = ref(params.get('slug') ?? 'general')
@@ -166,14 +186,14 @@ const formattedDates = computed(() => {
 
 
 const onTabChange = (tab) => {
-    console.log("TAB",tab);
-    let query = {
-        slug:tab.slug,
-    }
-    if(choosenDates.value){
-        query['start_date'] =choosenDates.value[0];
-        query['end_date'] =choosenDates.value[1];
-    }
+  console.log("TAB", tab);
+  let query = {
+    slug: tab.slug,
+  }
+  if (choosenDates.value) {
+    query['start_date'] = choosenDates.value[0];
+    query['end_date'] = choosenDates.value[1];
+  }
   router.visit(route(route().current()), {
     data: query
   });

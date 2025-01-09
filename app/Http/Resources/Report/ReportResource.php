@@ -26,7 +26,7 @@ class ReportResource extends JsonResource
             'monthly_amount' => collect($this->monthly_amount)
                 ->map(function ($value, $key) {
                     $monthName = Carbon::create(null, $key)->locale(app()->getLocale())->translatedFormat('F');
-                    return "$monthName: ".Number::currency($value, 'USD', app()->getLocale());
+                    return "$monthName: ".$value;
                 })
                 ->implode('<br>'),
             'status' => $this->status,

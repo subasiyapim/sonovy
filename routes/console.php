@@ -14,5 +14,4 @@ use Illuminate\Support\Facades\Schedule;
 //Schedule::job(new SendAnnouncementJob())->everyMinute();
 Schedule::job(new QuartersIncomeJob())->dailyAt('00:01');
 Schedule::job(new EarningJob())->everyTenMinutes();
-Schedule::job(new IncomeReportJob())->everyMinute();
 Schedule::job(new IsrcJob())->everyTenMinutes();

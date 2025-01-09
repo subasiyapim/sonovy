@@ -15,6 +15,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class IncomeReportJob implements ShouldQueue
@@ -25,161 +26,104 @@ class IncomeReportJob implements ShouldQueue
     public $end_date;
     public $user_id;
     public $report_type;
-    public $label_ids;
-    public $artist_ids;
-    public $product_ids;
-    public $song_ids;
-    public $platform_ids;
-    public $country_ids;
+    public $data;
+    public $earnings;
+    protected $period;
+    protected $monthly_amount;
 
-    public function __construct($start_date = null, $end_date = null, $user_id = null, $report_type = '', $data = null)
+    public function __construct($start_date, $end_date, $user_id, $report_type, $data)
     {
-        $this->start_date = $start_date ? Carbon::parse($this->start_date)->format('Y-m-d') : Carbon::parse(now())->startOfMonth()->format('Y-m-d');
-        $this->end_date = $end_date ? Carbon::parse($this->end_date)->format('Y-m-d') : Carbon::parse(now())->endOfMonth()->format('Y-m-d');
+        $this->start_date = $start_date;
+        $this->end_date = $end_date;
         $this->user_id = $user_id;
         $this->report_type = $report_type;
-
-        if ($report_type && $report_type !== 'all' && $data) {
-            $property = $report_type.'_ids';
-            $this->$property = $data;
-        }
-
+        $this->data = $data;
     }
 
     public function handle(): void
     {
+        // Temel sorgu oluşturma
+        $query = Earning::with('report.song.products', 'user')
+            ->whereBetween('sales_date', [$this->start_date, $this->end_date])
+            ->where('user_id', $this->user_id);
 
-
-        if (!$this->start_date && !$this->end_date) {
-            Log::warning('Start date and end date are required for generating reports.');
-        } else {
-            if ($this->report_type && $this->report_type !== 'all' && $this->{$this->report_type.'_ids'}) {
-                $this->generateReportsWithType();
-            } else {
-                $this->generateReports();
+        // Rapor türüne göre filtreleme
+        if ($this->report_type !== 'all') {
+            switch ($this->report_type) {
+                case 'artists':
+                case 'songs':
+                case 'platforms':
+                    $type = Str::singular($this->report_type);
+                    $query->whereIn("{$type}_id", $this->data);
+                    break;
+                case 'products':
+                    $query->whereHas('product', function ($q) {
+                        $q->whereIn('id', $this->data);
+                    });
+                    break;
+                case 'countries':
+                    $query->whereIn('country_id', $this->data);
+                    break;
+                default:
+                    if (Str::startsWith($this->report_type, 'multiple_')) {
+                        $type = Str::singular(str_replace('multiple_', '', $this->report_type));
+                        $query->groupBy("{$type}_id");
+                    }
+                    break;
             }
         }
 
+        // Rapor başlığını belirleme
+        $this->period = $this->generatePeriodName();
 
+        // Kazançları alma
+        $this->earnings = $query->get();
+
+        // Eğer kazançlar boşsa işlemi sonlandır
+        if ($this->earnings->isEmpty()) {
+            Log::info('Kazanç bulunamadı.');
+            return;
+        }
+
+        // Aylık miktarları hesaplama
+        $this->monthly_amount = $this->earnings->groupBy(function ($earning) {
+            return Carbon::parse($earning->sales_date)->format('m');
+        })->map(function ($monthEarnings) {
+            return $monthEarnings->sum('earning');
+        })->toArray();
+
+        // Rapor oluşturma
+        $this->generateReport();
     }
 
-    protected function generateReportsWithType(): void
+    protected function generatePeriodName(): string
     {
-        $userIds = $this->user_id ? [$this->user_id] : Earning::distinct()->pluck('user_id');
+        $typeMap = [
+            'artists' => 'Artist',
+            'songs' => 'Song',
+            'platforms' => 'Platform',
+            'products' => 'Product',
+            'countries' => 'Country',
+            'labels' => 'Label',
+            'all' => 'Tüm'
+        ];
 
-        foreach ($userIds as $userId) {
-            $this->generateReport($this->start_date, $this->end_date, null, null, $userId,
-                $this->{$this->report_type.'_ids'});
-        }
+        $type = $typeMap[$this->report_type] ?? 'Unknown';
+        return $this->start_date.' - '.$this->end_date.' '.$type.' Raporu';
     }
 
-    protected function generateReports(): void
+    protected function generateReport(): void
     {
-        $userIds = $this->user_id ? [$this->user_id] : Earning::distinct()->pluck('label_id');
+        $report = Report::create([
+            'period' => $this->period,
+            'user_id' => $this->user_id,
+            'amount' => $this->earnings->sum('earning'),
+            'monthly_amount' => $this->monthly_amount,
+            'status' => 1,
+        ]);
 
-        foreach ($userIds as $userId) {
-            $this->generateReport($this->start_date, $this->end_date, null, null, $userId);
-        }
+        // Rapor dışa aktarma ve kaydetme
+        $reportExport = new ReportExport($this->earnings, 'lofilename', $report);
+        $reportExport->saveAndUpload();
     }
-
-    protected function generateReport(
-        $start_date,
-        $end_date,
-        $quarterName = null,
-        $year = null,
-        $userId = null,
-        $data = null
-    ): void {
-        $earnings = Earning::with('report.song.products', 'user')
-            ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-                $query->whereHas('report', function ($query) use ($start_date, $end_date) {
-                    $query->whereBetween('sales_date', [$start_date, $end_date]);
-                });
-            })
-            ->when($this->label_ids, function ($query) {
-                $query->whereHas('report', function ($query) {
-                    Log::info('Labels: '.json_encode($this->label_ids));
-                    $query->whereIn('label_id', $this->label_ids);
-                });
-            })
-            ->when($this->artist_ids, function ($query) {
-                $query->whereHas('report.song.products.artists', function ($query) {
-                    $query->whereIn('artist_id', $this->artist_ids);
-                });
-            })
-            ->when($this->product_ids, function ($query) {
-                $query->whereHas('report.song.products', function ($query) {
-                    $query->whereIn('product_id', $this->product_ids);
-                });
-            })
-            ->when($this->song_ids, function ($query) {
-                $query->whereHas('report.song', function ($query) {
-                    $query->whereIn('id', $this->song_ids);
-                });
-            })
-            ->when($this->platform_ids, function ($query) {
-                $query->whereHas('report.song.products.downloadPlatforms', function ($query) {
-                    $query->whereIn('platform_id', $this->platform_ids);
-                });
-            })
-            ->when($this->country_ids, function ($query) {
-                $country = Country::find($this->country_ids);
-                if ($country) {
-                    $query->where('country', $country->name);
-                }
-            })
-            ->when($userId, function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })
-            ->get();
-
-        // Log the earnings to check if data is fetched
-        // Log::info('Earnings: '.$earnings->toJson());
-
-        $monthlyAmounts = $earnings->groupBy(function ($earning) {
-            return Carbon::parse($earning->report->sales_date)->format('m');
-        })->map(function ($month) {
-            return $month->sum('earning');
-        });
-
-        $logFileName = $quarterName && $year ? "{$quarterName}-{$year}" : Carbon::parse($start_date)->format('Y-m-d').'-'.Carbon::parse($end_date)->format('Y-m-d').'-'.$this->report_type;
-
-        if ($earnings->isNotEmpty()) {
-            if ($quarterName && $year) {
-                $report = Report::firstOrCreate(
-                    [
-                        'period' => $logFileName,
-                        'user_id' => $userId,
-                    ],
-                    [
-                        'amount' => $earnings->sum('earning'),
-                        'monthly_amount' => $monthlyAmounts,
-                        'status' => 0,
-                    ]
-                );
-
-                if ($report->wasRecentlyCreated) {
-                    $reportExport = new ReportExport($earnings, $logFileName, $report);
-                    $reportExport->saveAndUpload();
-                }
-            } else {
-                $report = Report::create(
-                    [
-                        'period' => $logFileName,
-                        'user_id' => $userId,
-                        'amount' => $earnings->sum('earning'),
-                        'monthly_amount' => $monthlyAmounts,
-                        'status' => 0,
-                    ]
-                );
-
-                // Log the report to check if it includes monthly_amount
-                Log::info('Report Created: '.$report->toJson());
-
-                $reportExport = new ReportExport($earnings, $logFileName, $report);
-                $reportExport->saveAndUpload();
-            }
-        }
-    }
-
 }
