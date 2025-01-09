@@ -24,9 +24,7 @@ onMounted(() => {
 </script>
 
 <template>
- <!-- {{Object.keys(data)}}
-    {{data.releases}} -->
-    {{showPlatforms}}
+
     <div class="flex flex-col gap-6">
         <div class="flex-1 bg-white rounded-xl border border-soft-200 p-4 flex flex-col gap-4">
             <div class="flex items-center">

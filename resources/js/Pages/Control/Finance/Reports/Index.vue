@@ -91,7 +91,10 @@ const onTabChange = (tab) => {
   console.log("TAB", tab);
 
   router.visit(route(route().current()), {
-    data: {slug: tab.slug}
+    data: {
+        slug: tab.slug,
+        page:params.get('page') ?? 1,
+    }
   });
 }
 

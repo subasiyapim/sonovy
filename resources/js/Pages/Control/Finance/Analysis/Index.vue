@@ -154,7 +154,7 @@ const onDone = (e) => {
 }
 
 const formattedDates = computed(() => {
-      if (choosenDates.value.length === 0) {
+      if (!choosenDates.value) {
         return moment().format('D MMMM YYYY');
       } else if (choosenDates.value.length === 2) {
         const startDate = moment(choosenDates.value[0]).format('D MMMM YYYY');

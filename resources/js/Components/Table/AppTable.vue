@@ -243,6 +243,7 @@ const query = ref({
   'e_date': params.get('s') ?? null,
   'e_date': params.get('e_date') ?? null,
   's_date': params.get('s_date') ?? null,
+  'slug' : params.get('slug') ?? null,
 })
 const totalPage = ref(16)
 const props = defineProps({
