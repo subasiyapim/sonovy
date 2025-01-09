@@ -37,7 +37,7 @@ const data = usePage().props.reports;
           <tippy :allowHtml="true" :sticky="true">
             <p class="label-sm c-neutral-500">{{ scope.row.amount }}</p>
             <template #content>
-              <p class="label-sm c-neutral-500" v-text="scope.row.monthly_amount"/>
+              <p style="color: white !important" class="label-sm" v-html="scope.row.monthly_amount"/>
             </template>
           </tippy>
         </div>
