@@ -25,6 +25,7 @@ class PaymentResource extends JsonResource
             'amount' => Number::currency($this->amount, 'USD', app()->getLocale()),
             'balance' => $this->user->balance,
             'status_text' => PaymentStatusEnum::from($this->status->value)->title(),
+            'status' => $this->status,
             'planned_payment_date' => Carbon::parse($this->created_at)->addDays(7)->format('d.m.Y')
         ];
     }

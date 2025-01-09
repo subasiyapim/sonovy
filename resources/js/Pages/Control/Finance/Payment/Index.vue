@@ -30,12 +30,15 @@
           </div>
         </template>
         <template #tool>
-
+            <Vue3Apexcharts height="40" width="60" :options="options" :series="series"></Vue3Apexcharts>
         </template>
         <template #body>
           <div class="flex flex-col mt-5">
             <p class="paragraph-sm c-sub-600 mb-0.5">Mevcut Bakiye</p>
-            <p class="card-currency-header c-strong-950">{{ usePage().props.balance }}</p>
+           <div class="flex items-center gap-2">
+             <p class="card-currency-header c-strong-950">{{ usePage().props.balance }}</p>
+            <span class="px-2 py-0.5 rounded-full bg-[#BDECCD] text-[#0D2D23] label-xs" >+2%</span>
+           </div>
           </div>
         </template>
       </AppCard>
@@ -52,7 +55,10 @@
         <template #body>
           <div class="flex flex-col mt-5">
             <p class="paragraph-sm c-sub-600 mb-0.5">Beklenen Ödemee</p>
-            <p class="card-currency-header c-strong-950">{{ usePage().props.total_pending_payment }}</p>
+            <div class="flex items-center gap-2">
+                <p class="card-currency-header c-strong-950">{{ usePage().props.total_pending_payment }}</p>
+                <span class="px-2 py-0.5 rounded-full bg-[#CAC0FF] text-[#351A75] label-xs" >Önümüzdeki 30 gün içinde </span>
+            </div>
           </div>
         </template>
       </AppCard>
@@ -147,13 +153,17 @@
       </template>
       <AppTableColumn :label="__('control.finance.payments.table.column_1')" align="left" sortable="name">
         <template #default="scope">
-          <p class="paragraph-xs c-sub-600">{{ scope.row.date }}</p>
+          <p class="label-sm c-strong-950">{{ scope.row.date }}</p>
 
         </template>
       </AppTableColumn>
-      <AppTableColumn :label="__('control.finance.payments.table.column_2')" sortable="name" width="140">
+      <AppTableColumn :label="__('control.finance.payments.table.column_2')" sortable="name" >
         <template #default="scope">
-          <p class="paragraph-xs c-sub-600">{{ scope.row.status_text }}</p>
+
+            <div class="rounded-full px-2 py-0.5" :class="scope.row.status == 1 ? 'bg-[#FFD5C0]' : (scope.row.status == 2 ? 'bg-[#D8E5ED]' : (scope.row.status == 4 ? 'bg-[#FFC0C5]' : 'bg-[#BDECCD]') )">
+                <p class="label-xs c-sub-600 whitespace-nowrap " :class="scope.row.status == 1 ? 'text-[#682F12]' : (scope.row.status == 2 ? 'text-[#060E2F]' : (scope.row.status == 4 ? 'text-[#681219]' : 'text-[#0D2D23]') )">{{ scope.row.status_text }}</p>
+            </div>
+
         </template>
       </AppTableColumn>
 
@@ -165,17 +175,21 @@
 
       <AppTableColumn :label="__('control.finance.payments.table.column_4')" sortable="name">
         <template #default="scope">
-          <p class="paragraph-xs c-sub-600">{{ scope.row.amount }}</p>
+            <div class="border border-soft-200 rounded px-2 py-1">
+                <p class="paragraph-xs c-sub-600">{{ scope.row.amount }}</p>
+            </div>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="__('control.finance.payments.table.column_5')" sortable="name">
         <template #default="scope">
-          <p class="paragraph-xs c-sub-600">{{ scope.row.balance }}</p>
+            <div class="border border-soft-200 rounded px-2 py-1">
+                <p class="paragraph-xs c-sub-600">{{ scope.row.balance }}</p>
+            </div>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="__('control.finance.payments.table.column_6')" align="right">
         <template #default="scope">
-          pdf dekont
+         <button><PdfIcon /></button>
         </template>
       </AppTableColumn>
       <template #empty>
@@ -203,9 +217,12 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton, IconButton, RegularButton} from '@/Components/Buttons'
 import {StatusBadge} from '@/Components/Badges'
+import Vue3Apexcharts from 'vue3-apexcharts'
+
 import {
   AddIcon,
   InfoFilledIcon,
+  PdfIcon,
   CheckIcon,
   ChevronRightIcon,
   LabelsIcon,
@@ -279,6 +296,58 @@ const appTableConfig = computed(() => {
 const onUpdate = (e) => {
   props.account.iban = e.iban;
 }
+
+
+const series = ref([
+        {
+          name: "Data",
+          data: [10, 20, 15, 25, 20, 30],
+        },
+      ]);
+const options = ref({
+        chart: {
+          type: "area",
+          toolbar: {
+            show: false,
+          },
+          sparkline: {
+            enabled: true, // Removes extra padding for a compact chart
+          },
+        },
+        stroke: {
+          curve: "smooth", // Smoothens the line
+          width: 2,
+        },
+        fill: {
+          type: "gradient",
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.4,
+            opacityTo: 0.1,
+            stops: [0, 90, 100],
+          },
+        },
+        xaxis: {
+          labels: {
+            show: false,
+          },
+          axisBorder: {
+            show: false,
+          },
+          axisTicks: {
+            show: false,
+          },
+        },
+        yaxis: {
+          show: false,
+        },
+        grid: {
+          show: false,
+        },
+        tooltip: {
+          enabled: false,
+        },
+      });
 
 </script>
 
