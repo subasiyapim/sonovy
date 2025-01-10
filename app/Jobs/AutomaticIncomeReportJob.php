@@ -25,6 +25,7 @@ class AutomaticIncomeReportJob implements ShouldQueue
     public $data;
     public $earnings;
     protected $period;
+    protected $name;
     protected $monthly_amount;
 
     public function __construct($start_date, $end_date, $user_id, $report_type, $data)
@@ -43,7 +44,8 @@ class AutomaticIncomeReportJob implements ShouldQueue
             ->where('user_id', $this->user_id);
 
 
-        $this->period = $this->generatePeriodName();
+        $this->name = $this->generateName();
+        $this->period = Carbon::parse($this->start_date)->format('m-Y').' '.Carbon::parse($this->end_date)->format('m-Y');
         $this->earnings = $query->get();
 
         $this->monthly_amount = $this->earnings->groupBy(function ($earning) {
@@ -55,7 +57,7 @@ class AutomaticIncomeReportJob implements ShouldQueue
         $this->generateReport();
     }
 
-    protected function generatePeriodName(): string
+    protected function generateName(): string
     {
         $typeMap = [
             'artists' => 'Sanatçılar hakkında tek rapor',
@@ -67,14 +69,14 @@ class AutomaticIncomeReportJob implements ShouldQueue
             'all' => 'Tam katalog hakkında tek rapor',
         ];
 
-        $type = $typeMap[$this->report_type] ?? 'Unknown';
-        return $this->start_date.' - '.$this->end_date.' '.$type;
+        return $typeMap[$this->report_type] ?? 'Unknown';
     }
 
     protected function generateReport(): void
     {
         $report = Report::create([
             'period' => $this->period,
+            'name' => $this->name,
             'user_id' => $this->user_id,
             'amount' => $this->earnings->sum('earning'),
             'monthly_amount' => $this->monthly_amount,

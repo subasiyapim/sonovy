@@ -45,4 +45,9 @@ class FinanceAnalysisController extends Controller
         ]);
     }
 
+    public function show()
+    {
+
+    }
+
 }

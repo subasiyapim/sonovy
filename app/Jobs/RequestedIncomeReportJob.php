@@ -25,6 +25,7 @@ class RequestedIncomeReportJob implements ShouldQueue
     public $data;
     public $earnings;
     protected $period;
+    protected $name;
     protected $monthly_amount;
 
     public function __construct($start_date, $end_date, $user_id, $report_type, $data)
@@ -46,7 +47,8 @@ class RequestedIncomeReportJob implements ShouldQueue
             ->whereBetween('report_date', [$this->start_date, $this->end_date])
             ->get();
 
-        $this->period = $this->generatePeriodName();
+        $this->name = $this->generateName();
+        $this->period = $this->start_date->format('m-Y').' '.$this->end_date->format('m-Y');
 
         $batchId = (string) \Illuminate\Support\Str::uuid();
 
@@ -87,6 +89,7 @@ class RequestedIncomeReportJob implements ShouldQueue
     {
         $report = Report::create([
             'period' => $this->period,
+            'name' => $this->name,
             'user_id' => $this->user_id,
             'amount' => $earnings->sum('earning'),
             'monthly_amount' => $this->calculateMonthlyAmount($earnings),
@@ -108,12 +111,12 @@ class RequestedIncomeReportJob implements ShouldQueue
         return $earnings->sum('earning') / max($months, 1);
     }
 
-    protected function generateFilePath($groupName): string
+    protected function generateFilePath(): string
     {
         return 'multiple_reports/'.$this->user_id.'/'.Str::slug($this->period).'/';
     }
 
-    protected function generatePeriodName(): string
+    protected function generateName(): string
     {
         $typeMap = [
             'multiple_artists' => 'Sanatçılar hakkında çoklu rapor',

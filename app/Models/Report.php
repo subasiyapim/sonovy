@@ -20,6 +20,7 @@ class Report extends Model implements HasMedia
     protected $fillable = [
         'is_auto_report',
         'period',
+        'name',
         'amount',
         'monthly_amount',
         'user_id',
@@ -29,16 +30,12 @@ class Report extends Model implements HasMedia
 
     protected array $filterable = [
         'period',
-        'amount',
-        'user_id',
-        'status',
+        'name',
     ];
 
     protected array $orderable = [
         'period',
-        'amount',
-        'user_id',
-        'status',
+        'name'
     ];
 
     protected $casts = [
