@@ -101,8 +101,6 @@ Route::group(
             Route::get('analysis', [FinanceAnalysisController::class, 'index'])
                 ->name('analysis.index');
 
-            Route::get('analysis/download', [FinanceAnalysisController::class, 'download'])->name('analysis.download');
-
             Route::get('analysis/show', [FinanceAnalysisController::class, 'show'])->name('analysis.show');
 
 
