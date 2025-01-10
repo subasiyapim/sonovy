@@ -11,7 +11,8 @@ const props = defineProps({
     },
     formattedDate:{
 
-    }
+    },
+    choosenDates:{},
 })
 
 

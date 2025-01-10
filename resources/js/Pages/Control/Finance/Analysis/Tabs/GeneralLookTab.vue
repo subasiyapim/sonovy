@@ -14,7 +14,8 @@ const props = defineProps({
     },
     formattedDate:{
 
-    }
+    },
+    choosenDates:{},
 })
 const isFinanceIncomePlatforms = ref(false);
 const isFinanceIncomeCountries = ref(false);
@@ -495,9 +496,9 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
         </div>
     </div>
 
-    <FinanceIncomePlatforms v-model="isFinanceIncomePlatforms" v-if="isFinanceIncomePlatforms"></FinanceIncomePlatforms>
-    <FinanceIncomeCountries v-model="isFinanceIncomeCountries" v-if="isFinanceIncomeCountries"></FinanceIncomeCountries>
-    <FinanceIncomeSales v-model="isFinanceIncomeSales" v-if="isFinanceIncomeSales"></FinanceIncomeSales>
+    <FinanceIncomePlatforms :choosenDates="choosenDates"  v-model="isFinanceIncomePlatforms" v-if="isFinanceIncomePlatforms"></FinanceIncomePlatforms>
+    <FinanceIncomeCountries :choosenDates="choosenDates" v-model="isFinanceIncomeCountries" v-if="isFinanceIncomeCountries"></FinanceIncomeCountries>
+    <FinanceIncomeSales :choosenDates="choosenDates"  v-model="isFinanceIncomeSales" v-if="isFinanceIncomeSales"></FinanceIncomeSales>
 </template>
 
 <style  scoped>

@@ -47,15 +47,18 @@
 import BaseDialog from '@/Components/Dialog/BaseDialog.vue';
 
 import {BankLineIcon,InfoFilledIcon} from '@/Components/Icons'
-
+import {useCrudStore} from '@/Stores/useCrudStore'
+import moment from 'moment';
 import {computed, ref, onMounted} from 'vue';
 import {AppProgressIndicator} from '@/Components/Widgets';
 
 
+
+const crudStore = useCrudStore();
 const props = defineProps({
-  modelValue: {
-    default: false,
-  },
+    modelValue: {
+        default: false,
+    },
 })
 
 
@@ -65,6 +68,20 @@ const isDialogOn = computed({
   set: (value) => emits('update:modelValue', value)
 })
 
+const loading = ref(false);
 
+const getData =  async ()  =>  {
+    loading.value = true;
+    const response = await crudStore.get(route('control.finance.analysis.show'),{
+        slug:'earning_from_platforms',
+        request_type:'view',
+        start_date:props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year'),
+        end_date:props.choosenDates != null ? props.choosenDates[1] : moment(),
+    })
+    loading.value = false;
+}
+onMounted(() => {
+    getData();
+});
 
 </script>
