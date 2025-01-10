@@ -4,6 +4,7 @@ import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {usePage} from '@inertiajs/vue3';
 import {DocumentIcon, DownloadIcon} from "@/Components/Icons/index.js";
 
+
 </script>
 
 <template>

@@ -24,6 +24,7 @@ class Report extends Model implements HasMedia
         'monthly_amount',
         'user_id',
         'status',
+        'batch_id'
     ];
 
     protected array $filterable = [

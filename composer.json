@@ -27,7 +27,8 @@
     "stevebauman/location": "^7.4",
     "tightenco/ziggy": "^2.0",
     "twilio/sdk": "^8.1",
-    "ext-bcmath": "*"
+    "ext-bcmath": "*",
+    "ext-zip": "*"
   },
   "require-dev": {
     "fakerphp/faker": "^1.23",
