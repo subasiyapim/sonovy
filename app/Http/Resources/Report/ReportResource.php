@@ -22,11 +22,12 @@ class ReportResource extends JsonResource
                 ->locale(app()->getLocale())
                 ->translatedFormat('d F Y'),
             'period' => $this->period,
+            'name' => $this->name,
             'amount' => Number::currency($this->amount, 'USD', app()->getLocale()),
             'monthly_amount' => collect($this->monthly_amount)
                 ->map(function ($value, $key) {
                     $monthName = Carbon::create(null, $key)->locale(app()->getLocale())->translatedFormat('F');
-                    return "$monthName: " . $value;
+                    return "$monthName: ".$value;
                 })
                 ->implode('<br>'),
             'status' => $this->status,
