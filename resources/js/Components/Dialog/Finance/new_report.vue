@@ -28,7 +28,7 @@
       <RegularButton @click="isDialogOn = false" class="flex-1">
         {{ __('control.general.cancel') }}
       </RegularButton>
-      <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
+      <PrimaryButton :loading="adding" @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
         <template v-if="currentTab <3">Devam Et</template>
         <template v-else>Raporu Olluştur</template>
         <template #suffix>
@@ -63,6 +63,8 @@ const props = defineProps({
     default: false,
   },
 })
+
+
 const crudStore = useCrudStore();
 const currentTab = ref(0);
 const adding = ref(false)
@@ -101,7 +103,14 @@ const onSubmit = async (e) => {
     currentTab.value++;
   } else {
 
-
+    if(adding.value){
+        return;
+    }
+    if(!form.value.date ){
+         toast.error("lütfen tarih giriniz");
+         return;
+    }
+    adding.value = true;
     try {
       await crudStore.post(route('control.finance.reports.store'), {
         start_date: form.value.date[0],
@@ -111,11 +120,16 @@ const onSubmit = async (e) => {
         ids: form.value.choosenValues,
       })
       toast.success("işlem başarılı");
+
+
       location.reload();
+          adding.value = false;
+
     } catch (error) {
       console.log("ERROR", error);
 
       toast.error(error.response);
+       adding.value = false;
     }
   }
   //TODO SUBMİT REPORT DATA

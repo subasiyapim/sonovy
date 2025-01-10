@@ -54,7 +54,7 @@
     </div>
 
     <div>
-      <component :data="data.data" :formattedDate="formattedDates"
+      <component :choosenDates="choosenDates" :data="data.data" :formattedDate="formattedDates"
                  :is="tabs.find(e => e.slug == currentTab)?.component"></component>
     </div>
 
