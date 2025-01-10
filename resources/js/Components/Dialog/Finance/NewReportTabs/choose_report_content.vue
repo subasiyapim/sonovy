@@ -109,7 +109,31 @@ const onChangeValue = (e) => {
 
 };
 
+const onCountryCheck = (e) => {
+  const findedIndex = element.value.choosenValues.findIndex((el) => el == e.value);
+  if (findedIndex >= 0) {
+    element.value.choosenValues.splice(findedIndex, 1);
+  } else {
+    element.value.choosenValues.push(e.value);
+  }
+
+  Object.keys(usePage().props.countriesGroupedByRegion.data).forEach((key) => {
+
+    let total = 0;
+    usePage().props.countriesGroupedByRegion.data[key].forEach(element => {
+      if (element.value.choosenValues.includes(element.value)) {
+        total++;
+      }
+
+    });
+
+    usePage().props.countriesGroupedByRegion.countries.counts[key].selected_count = total;
+
+  })
+}
+
 const chooseAll = (key) => {
+console.log("KEY",key);
 
 
   usePage().props.countriesGroupedByRegion.data[key].forEach((e) => {
@@ -118,7 +142,7 @@ const chooseAll = (key) => {
       element.value.choosenValues.push(e.value);
     }
   });
-    usePage().props.countriesGroupedByRegion.counts[key].selected_count = usePage().props.countriesGroupedByRegion.countries.data[key].length;
+
 
 }
 const unChooseAll = (key) => {
@@ -128,10 +152,18 @@ const unChooseAll = (key) => {
             element.value.choosenValues.splice(findedIndex, 1);
         }
     });
-    usePage().props.countriesGroupedByRegion.counts[key].selected_count = 0;
 
+};
+
+const chooseAllCountries = () => {
+    removeChoosingCountries();
+    Object.keys(usePage().props.countriesGroupedByRegion.data).forEach(key => {
+        chooseAll(key)
+    });
 }
-
+const removeChoosingCountries = () => {
+    element.value.choosenValues = [];
+};
 
 </script>
 
@@ -319,21 +351,30 @@ const unChooseAll = (key) => {
                 </div>
             </div>
             <div  v-else-if="element.report_content_type == 6">
-            <!-- {{usePage().props.countriesGroupedByRegion}} -->
+
                 <div class="flex flex-col" >
-                    <div class="w-[190px] label-sm c-strong-950 mb-2">Yayınlanacak Ülkeler</div>
+
+                    <div class="mb-2 flex items-center ">
+                        <p class="label-sm c-strong-950 flex-1">Yayınlanacak Ülkeler</p>
+                        <div>
+                            <button @click="chooseAllCountries" class="label-sm c-blue-500 hover:underline">Tümünü Seç</button>
+                            <button v-if="element.choosenValues.length > 0 " @click="removeChoosingCountries" class="label-sm c-error-500 hover:underline ms-2">Seçimleri Kaldır</button>
+                        </div>
+                    </div>
                     <div class="flex flex-col w-full gap-3">
 
                         <div class="w-full" v-for="(value,key) in usePage().props.countriesGroupedByRegion.data">
-                            <AppAccordion :title="key">
+                            <AppAccordion :title="key" :description="usePage().props.countriesGroupedByRegion.data[key].filter((e) => element.choosenValues.includes(e.value)).length+' Ülke Seçildi'">
 
                             <div class="flex items-center ">
                                 <div class="flex-1">
-                                <p class="label-medium c-strong-950 !text-start">Ülkeler</p>
+                                    <p class="label-medium c-strong-950 !text-start">Ülkeler</p>
+
                                 </div>
+
                                 <div class="flex items-center gap-2">
-                                <button @click.stop="chooseAll(key)" class="c-blue-500 label-xs hover:underline">Tümünü Seç</button>
-                                <button @click.stop="unChooseAll(key)" class="c-blue-500 label-xs hover:underline">Seçimi Kaldır
+                                    <button @click.stop="chooseAll(key)" class="c-blue-500 label-xs hover:underline">Tümünü Seç</button>
+                                    <button @click.stop="unChooseAll(key)" class="c-blue-500 label-xs hover:underline">Seçimi Kaldır
                                 </button>
                                 </div>
                             </div>

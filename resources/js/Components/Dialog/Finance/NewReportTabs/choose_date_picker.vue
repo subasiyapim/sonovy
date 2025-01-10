@@ -70,8 +70,8 @@ const setDateRange = (type) => {
                 <p class="label-sm c-strong-950">{{getFormatedDate}}</p>
             </div>
         </div>
-        <div class="flex">
-            <div>
+        <div class="flex justify-between">
+            <div class="flex flex-col">
                 <button @click="setDateRange('last7days')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 7 Gün</button>
                 <button @click="setDateRange('last30days')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 30 Gün</button>
                 <button @click="setDateRange('last3months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 3 Ay</button>
@@ -80,7 +80,7 @@ const setDateRange = (type) => {
                 <button @click="setDateRange('lastYear')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Geçen Yıl</button>
                 <button @click="setDateRange('allTime')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Tüm Zamanlar</button>
             </div>
-            <div class="dateWrapper">
+            <div class="dateWrapper ">
                 <VueDatePicker class="w-full" v-model="element.date" auto-apply :enable-time-picker="false" inline range multi-calendars />
             </div>
 
