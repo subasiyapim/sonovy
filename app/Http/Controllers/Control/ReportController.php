@@ -8,14 +8,16 @@ use App\Http\Resources\Report\ReportResource;
 use App\Jobs\AutomaticIncomeReportJob;
 use App\Jobs\RequestedIncomeReportJob;
 use App\Models\Artist;
-use App\Models\Earning;
 use App\Models\Label;
 use App\Models\Platform;
 use App\Models\Song;
 use App\Models\Product;
 use App\Models\Report;
+use App\Models\System\Country;
 use App\Services\CountryServices;
 use App\Services\EarningService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -23,15 +25,18 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Spatie\MediaLibrary\Support\MediaStream;
+use Inertia\ResponseFactory;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use ZipArchive;
 
 class ReportController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): \Inertia\Response|ResponseFactory
     {
         abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $request->validate([
@@ -47,7 +52,7 @@ class ReportController extends Controller
 
         $query = Report::query();
 
-        $isAutoReport = true; // Varsayılan olarak true
+        $isAutoReport = true;
 
         if (!empty($request->slug)) {
             $isAutoReport = $request->slug === 'auto-reports';
@@ -64,7 +69,7 @@ class ReportController extends Controller
         $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
         $labels = Label::all();
         $songs = getDataFromInputFormat(Song::all(), 'id', 'name');
-        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        $countries = getDataFromInputFormat(Country::all(), 'id', 'name', 'emoji');
         $products = Product::all();
         $platforms = Platform::all();
         $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
@@ -79,13 +84,13 @@ class ReportController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ReportStoreRequest $request)
+    public function store(ReportStoreRequest $request): JsonResponse|RedirectResponse
     {
         $start_date = Carbon::parse($request->validated()['start_date'])->format('Y-m-d');
         $end_date = Carbon::parse($request->validated()['end_date'])->format('Y-m-d');
         $report_type = $request->validated()['report_type'];
         $ids = $request->validated()['ids'];
-        
+
         switch ($report_type) {
             case 'all':
             case 'artists':
@@ -111,17 +116,15 @@ class ReportController extends Controller
         return to_route('control.finance.reports.index');
     }
 
-    public function download(Report $report)
+    public function download(Report $report): BinaryFileResponse|StreamedResponse|JsonResponse
     {
         if ($report->whereNotNull('batch_id')->count() > 1) {
 
-            $path = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period));
-
             $zipFilePath = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'.zip');
 
-            $zip = new \ZipArchive;
+            $zip = new ZipArchive;
 
-            if ($zip->open($zipFilePath, \ZipArchive::CREATE) === true) {
+            if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
 
                 $files = Storage::disk('public')->allFiles('tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period));
 
@@ -157,4 +160,15 @@ class ReportController extends Controller
 
         return response()->json(['error' => 'No media found'], 404);
     }
+    
+    public function destroy(Report $report): RedirectResponse
+    {
+        abort_if(Gate::denies('report_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $report->delete();
+
+        return redirect()->back();
+    }
+
+
 }

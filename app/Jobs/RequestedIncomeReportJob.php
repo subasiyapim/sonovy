@@ -47,7 +47,7 @@ class RequestedIncomeReportJob implements ShouldQueue
             ->get();
 
         $this->period = $this->generatePeriodName();
-        
+
         $batchId = (string) \Illuminate\Support\Str::uuid();
 
         $groupedEarnings = match ($this->report_type) {
@@ -124,7 +124,6 @@ class RequestedIncomeReportJob implements ShouldQueue
             'multiple_labels' => 'Labeller hakkında çoklu rapor',
         ];
 
-        $type = $typeMap[$this->report_type] ?? 'Unknown';
-        return $this->start_date->format('d-m-Y').' - '.$this->end_date->format('d-m-Y').' - '.$type;
+        return $typeMap[$this->report_type] ?? 'Unknown';
     }
 }
