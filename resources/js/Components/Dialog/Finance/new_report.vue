@@ -1,6 +1,6 @@
 <template>
 
-  <BaseDialog v-model="isDialogOn" width="740px" height="min-content" align="center" title="Rapor Oluştur"
+  <BaseDialog v-model="isDialogOn" width="824px" height="min-content" align="center" title="Rapor Oluştur"
               description="Adım adım ihtiyacınıza göre rapor oluşturabilirsiniz.">
     <template #icon>
       <BankLineIcon color="var(--dark-green-950)"/>
@@ -93,6 +93,7 @@ const reporttypes = {
   9: "multiple_products",
   10: "multiple_platforms",
   11: "multiple_countries",
+  12: "labels",
 }
 
 const onSubmit = async (e) => {

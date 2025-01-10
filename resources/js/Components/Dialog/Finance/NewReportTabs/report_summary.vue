@@ -38,6 +38,7 @@ const reportContentMap = {
   9: 'Albüme Göre',
   10: 'Mağazaya Göre',
   11: 'Ülkeye Göre',
+  12: 'Label Seç',
 };
 </script>
 

@@ -14,6 +14,7 @@ use App\Models\Platform;
 use App\Models\Song;
 use App\Models\Product;
 use App\Models\Report;
+use App\Services\CountryServices;
 use App\Services\EarningService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -61,16 +62,16 @@ class ReportController extends Controller
 
         $artists = Artist::with('platforms')->get();
         $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
-        $labels = getDataFromInputFormat(Label::all(), 'value', 'label', 'image');
+        $labels = Label::all();
         $songs = getDataFromInputFormat(Song::all(), 'id', 'name');
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
         $products = Product::all();
         $platforms = Platform::all();
-
+        $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
 
         return inertia(
             'Control/Finance/Reports/Index',
-            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms', 'products')
+            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms', 'products', 'countriesGroupedByRegion')
         );
     }
 
@@ -157,7 +158,7 @@ class ReportController extends Controller
         }
 
 
-        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
+        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();
