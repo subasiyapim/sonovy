@@ -19,14 +19,14 @@ import {DocumentIcon, DownloadIcon} from "@/Components/Icons/index.js";
           <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
             <DocumentIcon color="var(--sub-600)"/>
           </div>
-          <p class="label-sm c-neutral-500">{{ scope.row.created_at }}</p>
+          <p class="label-sm c-neutral-500">{{ scope.row.period }}</p>
         </div>
 
       </template>
     </AppTableColumn>
     <AppTableColumn :label="__('control.finance.payments.table.column_2')" sortable="name" width="140">
       <template #default="scope">
-        <p class="label-sm c-neutral-500">{{ scope.row.period }}</p>
+        <p class="label-sm c-neutral-500">{{ scope.row.name }}</p>
       </template>
     </AppTableColumn>
 
