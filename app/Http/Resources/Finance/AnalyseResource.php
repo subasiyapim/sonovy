@@ -22,7 +22,7 @@ class AnalyseResource extends JsonResource
         $this->tab = $tab;
         $this->data = $resource;
         $this->groupedData = $this->data->groupBy(function ($item) {
-            return Carbon::parse($item->sales_date)->format('F Y');
+            return Carbon::parse($item->sales_date)->locale(app()->getLocale())->translatedFormat('F Y');
         });
         $this->totalEarnings = $this->data->sum('earning');
 
@@ -46,7 +46,7 @@ class AnalyseResource extends JsonResource
     {
         return [
             'all_time_earning' => Number::currency($this->data->sum('earning'), 'USD', app()->getLocale()),
-            'current_month' => now()->format('F Y'),
+            'current_month' => Carbon::now()->locale(app()->getLocale())->translatedFormat('F Y'),
             'current_month_earning' => Number::currency(
                 $this->data->whereBetween(
                     'sales_date',
