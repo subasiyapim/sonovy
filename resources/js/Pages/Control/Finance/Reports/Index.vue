@@ -7,7 +7,7 @@
         <p class="label-sm c-neutral-500">Lorem ipsum dolor sit amet consectetur. Aliquet ac at odio ultricies amet
           commodo.</p>
       </div>
-      <PrimaryButton v-if="currentTab == 'demanded-reports'" @click="openPaymentModal" class="w-60">
+      <PrimaryButton @click="openPaymentModal" class="w-60">
         <template #icon>
           <DocumentIcon color="var(--dark-green-500)"/>
         </template>
