@@ -71,7 +71,8 @@ class ReportController extends Controller
 
         return inertia(
             'Control/Finance/Reports/Index',
-            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms', 'products', 'countriesGroupedByRegion')
+            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms', 'products',
+                'countriesGroupedByRegion')
         );
     }
 
@@ -84,14 +85,7 @@ class ReportController extends Controller
         $end_date = Carbon::parse($request->validated()['end_date'])->format('Y-m-d');
         $report_type = $request->validated()['report_type'];
         $ids = $request->validated()['ids'];
-
-
-        $single_report_types = ['artists', 'songs', 'platforms', 'products', 'countries', 'labels'];
-        $requested_report_types = [
-            'multiple_artists', 'multiple_songs', 'multiple_platforms', 'multiple_products', 'multiple_countries',
-            'multiple_labels'
-        ];
-
+        
         switch ($report_type) {
             case 'all':
             case 'artists':
@@ -119,46 +113,34 @@ class ReportController extends Controller
 
     public function download(Report $report)
     {
-        // Eğer batch_id'yi kontrol ediyoruz
         if ($report->whereNotNull('batch_id')->count() > 1) {
 
-            // Path'leri oluşturuyoruz
             $path = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period));
 
-            // Zip dosyasını oluşturacağız
             $zipFilePath = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'.zip');
 
-            // ZipArchive nesnesi oluşturuyoruz
             $zip = new \ZipArchive;
 
-            // Zip dosyasını açıyoruz
             if ($zip->open($zipFilePath, \ZipArchive::CREATE) === true) {
 
-                // Dizindeki dosyaları alıyoruz
                 $files = Storage::disk('public')->allFiles('tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period));
 
-                // Dosyaları zip'e ekliyoruz
                 foreach ($files as $file) {
-                    // Dosya yolunu almak için Storage::disk('public')->path() kullanıyoruz
                     $fullPath = Storage::disk('public')->path($file);
 
-                    // Dosyayı zip'e ekliyoruz
                     $zip->addFile($fullPath, basename($file));  // 'basename($file)' dosya adını ekler
                 }
 
-                // Zip dosyasını kapatıyoruz
                 $zip->close();
 
-                // Zip dosyasını kullanıcıya indirtiyoruz
                 return response()->download($zipFilePath)->deleteFileAfterSend(true);
             } else {
-                // Zip oluşturulamazsa hata döndürüyoruz
                 return response()->json(['error' => 'Could not create zip file'], 500);
             }
         }
 
 
-        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
+        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();
