@@ -64,13 +64,16 @@ class FinanceAnalysisController extends Controller
         $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
         $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
 
+        Cache::put('start_date', $start_date);
+        Cache::put('end_date', $end_date);
+
         $earnings = Earning::with('product', 'song', 'platform', 'country', 'label')
             ->whereBetween('sales_date', [$start_date, $end_date])
             ->get();
 
         $service = new AnalyseService($earnings);
 
-        $data = $this->getDataBySlug($service, $request->slug);
+        $data = $this->getDataBySlug($service, $request->slug, $start_date, $end_date);
 
         if ($request->request_type === 'view') {
             return $this->view($data);
@@ -82,13 +85,13 @@ class FinanceAnalysisController extends Controller
 
     }
 
-    private function getDataBySlug(AnalyseService $service, string $slug)
+    private function getDataBySlug(AnalyseService $service, string $slug, string $start_date, string $end_date): array
     {
         switch ($slug) {
             case 'earning_from_platforms':
-                return $service->earningFromPlatforms();
+                return $service->earningFromPlatforms($start_date, $end_date);
             case 'earning_from_countries':
-                return $service->earningFromCountries();
+                return $service->earningFromCountries($start_date, $end_date);
             case 'earning_from_sales_type':
                 return $service->earningFromSalesType();
             case 'trending_albums':
