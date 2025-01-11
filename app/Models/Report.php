@@ -25,7 +25,8 @@ class Report extends Model implements HasMedia
         'monthly_amount',
         'user_id',
         'status',
-        'batch_id'
+        'parent_id',
+        'file_path'
     ];
 
     protected array $filterable = [
@@ -46,6 +47,11 @@ class Report extends Model implements HasMedia
     ];
 
     protected $appends = ['files'];
+
+    public function child()
+    {
+        return $this->hasMany(Report::class, 'parent_id', 'id');
+    }
 
     public function registerMediaCollections(): void
     {

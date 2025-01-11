@@ -50,43 +50,19 @@ class ReportController extends Controller
 
         DB::statement("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''))");
 
-        $query = Report::query();
-
         $isAutoReport = true;
 
         if (!empty($request->slug)) {
             $isAutoReport = $request->slug === 'auto-reports';
         }
 
-        $reportsWithBatchIdQuery = Report::where('is_auto_report', $isAutoReport)
+        $query = Report::with('child')
+            ->whereNull('parent_id')
+            ->where('is_auto_report', $isAutoReport)
             ->where('user_id', Auth::id())
-            ->whereNotNull('batch_id')
-            ->groupBy('batch_id')
-            ->selectRaw('*, SUM(amount) as total_amount')
-            ->orderBy('created_at', 'desc');
+            ->advancedFilter();
 
-        $reportsWithoutBatchIdQuery = Report::where('is_auto_report', $isAutoReport)
-            ->where('user_id', Auth::id())
-            ->whereNull('batch_id')
-            ->orderBy('created_at', 'desc');
-
-        $reportsWithBatchId = $reportsWithBatchIdQuery->advancedFilter();  // 10, sayfa başına gösterilecek öğe sayısı
-        $reportsWithoutBatchId = $reportsWithoutBatchIdQuery->advancedFilter(); // Aynı sayfa başına öğe sayısı
-
-        $mergedReports = $reportsWithBatchId->getCollection()->merge($reportsWithoutBatchId->getCollection());
-
-        $mergedReports = new \Illuminate\Pagination\LengthAwarePaginator(
-            $mergedReports,
-            $reportsWithBatchId->total() + $reportsWithoutBatchId->total(), // Toplam öğe sayısı
-            $reportsWithBatchId->perPage(),
-            $reportsWithBatchId->currentPage(),
-            ['path' => \Request::url()]
-        );
-
-        $reports = ReportResource::collection($mergedReports)->resource;
-
-        DB::statement("SET SESSION sql_mode=(SELECT CONCAT(@@sql_mode, ',ONLY_FULL_GROUP_BY'))");
-
+        $reports = ReportResource::collection($query)->resource;
         $artists = Artist::with('platforms')->get();
         $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
         $labels = Label::all();
@@ -140,7 +116,7 @@ class ReportController extends Controller
 
     public function download(Report $report): BinaryFileResponse|StreamedResponse|JsonResponse
     {
-        if ($report->whereNotNull('batch_id')->count() > 1) {
+        if ($report->child()->count() > 1) {
 
             $zipFilePath = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'.zip');
 
@@ -148,7 +124,7 @@ class ReportController extends Controller
 
             if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
 
-                $files = Storage::disk('public')->allFiles('tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period));
+                $files = Storage::disk('public')->allFiles('tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'/'.$report->id);
 
                 foreach ($files as $file) {
                     $fullPath = Storage::disk('public')->path($file);

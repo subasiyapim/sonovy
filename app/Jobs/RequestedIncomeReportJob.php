@@ -50,7 +50,15 @@ class RequestedIncomeReportJob implements ShouldQueue
         $this->name = $this->generateName();
         $this->period = $this->start_date->format('m-Y').' '.$this->end_date->format('m-Y');
 
-        $batchId = (string) \Illuminate\Support\Str::uuid();
+        $parentReport = Report::create([
+            'period' => $this->period,
+            'name' => $this->name,
+            'user_id' => $this->user_id,
+            'amount' => $this->earnings->sum('earning'),
+            'monthly_amount' => $this->calculateMonthlyAmount($this->earnings),
+            'status' => 1,
+            'parent_id' => null,
+        ]);
 
         $groupedEarnings = match ($this->report_type) {
             'multiple_artists' => $this->earnings->groupBy('artist_id'),
@@ -78,14 +86,14 @@ class RequestedIncomeReportJob implements ShouldQueue
                 default => 'Unknown Group',
             } ?? 'Unknown Group';
 
-            $filePath = $this->generateFilePath($groupName);
+            $filePath = $this->generateFilePath($parentReport->id);
 
-            $this->generateReport($filePath, $groupName, $earnings, $batchId);
+            $this->generateReport($filePath, $groupName, $earnings, $parentReport->id);
         }
     }
 
 
-    protected function generateReport($filePath, $groupName, $earnings, $batchId): void
+    protected function generateReport($filePath, $groupName, $earnings, $parentId = null): void
     {
         $report = Report::create([
             'period' => $this->period,
@@ -93,8 +101,9 @@ class RequestedIncomeReportJob implements ShouldQueue
             'user_id' => $this->user_id,
             'amount' => $earnings->sum('earning'),
             'monthly_amount' => $this->calculateMonthlyAmount($earnings),
+            'file_path' => $filePath,
             'status' => 1,
-            'batch_id' => $batchId,
+            'parent_id' => $parentId,
         ]);
 
         $disk = 'tenant_'.tenant('domain').'_income_reports';
@@ -111,9 +120,9 @@ class RequestedIncomeReportJob implements ShouldQueue
         return $earnings->sum('earning') / max($months, 1);
     }
 
-    protected function generateFilePath(): string
+    protected function generateFilePath($parent_id): string
     {
-        return 'multiple_reports/'.$this->user_id.'/'.Str::slug($this->period).'/';
+        return 'multiple_reports/'.$this->user_id.'/'.Str::slug($this->period).'/'.$parent_id.'/';
     }
 
     protected function generateName(): string
