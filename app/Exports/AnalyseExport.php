@@ -23,7 +23,7 @@ class AnalyseExport implements FromCollection
      */
     public function collection(): View|Factory|Application
     {
-        return view('excel.exports.analyses.'.$this->slug, [
+        return view('excel.exports.analyses.earning_from_sales_type', [
             'earnings' => $this->earnings
         ]);
     }

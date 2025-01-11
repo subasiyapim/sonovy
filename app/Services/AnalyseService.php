@@ -300,7 +300,7 @@ class AnalyseService
             return [
                 $salesType =>
                     [
-                        'earning' => Number::currency($earning, 'USD', app()->getLocale()),
+                        'earning' => $earning,
                         'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
                     ]
             ];
@@ -375,7 +375,7 @@ class AnalyseService
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
                     'country' => $country,
-                    'earning' => Number::currency($earning, 'USD', app()->getLocale()),
+                    'earning' => $earning,
                     'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
                 ]
             ];
@@ -402,7 +402,7 @@ class AnalyseService
                     'end_date' => Cache::get('end_date'),
                     'platform' => $platform,
                     'quantity' => $this->data->where('platform', $platform)->sum('quantity'),
-                    'earning' => Number::currency($earning, 'USD', app()->getLocale()),
+                    'earning' => $earning,
                     'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
                 ]
             ];
