@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Finance\AnalyseResource;
 use App\Models\Earning;
 use App\Services\AnalyseService;
-use App\Services\EarningService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -68,7 +67,7 @@ class FinanceAnalysisController extends Controller
         $earnings = Earning::with('product', 'song', 'platform', 'country', 'label')
             ->whereBetween('sales_date', [$start_date, $end_date])
             ->get();
-        
+
         $service = new AnalyseService($earnings);
 
         $data = $this->getDataBySlug($service, $request->slug);

@@ -280,7 +280,13 @@ class AnalyseService
         $topSalesTypes = $sortedEarnings->take(5);
 
         return $topSalesTypes->mapWithKeys(function ($earning, $salesType) {
-            return [$salesType => $earning];
+            return [
+                $salesType =>
+                    [
+                        'earning' => Number::currency($earning, 'USD', app()->getLocale()),
+                        'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
+                    ]
+            ];
         })->toArray();
     }
 
@@ -347,7 +353,12 @@ class AnalyseService
         $topCountries['others'] = $otherEarnings;
 
         return $topCountries->mapWithKeys(function ($earning, $country) {
-            return [$country => $earning];
+            return [
+                $country => [
+                    'earning' => Number::currency($earning, 'USD', app()->getLocale()),
+                    'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
+                ]
+            ];
         })->toArray();
     }
 
@@ -365,7 +376,12 @@ class AnalyseService
         $topPlatforms['others'] = $otherEarnings;
 
         return $topPlatforms->mapWithKeys(function ($earning, $platform) {
-            return [$platform => $earning];
+            return [
+                $platform => [
+                    'earning' => Number::currency($earning, 'USD', app()->getLocale()),
+                    'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
+                ]
+            ];
         })->toArray();
     }
 
