@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Control;
 
+use App\Exports\AnalyseExport;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Finance\AnalyseResource;
 use App\Models\Earning;
@@ -47,7 +48,7 @@ class FinanceAnalysisController extends Controller
         ]);
     }
 
-    public function show(Request $request)
+    public function showModalOrDownloadExcel(Request $request)
     {
         $request->validate(
             [
