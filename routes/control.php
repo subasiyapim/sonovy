@@ -101,7 +101,9 @@ Route::group(
             Route::get('analysis', [FinanceAnalysisController::class, 'index'])
                 ->name('analysis.index');
 
-            Route::get('analysis/show', [FinanceAnalysisController::class, 'show'])->name('analysis.show');
+            Route::post('analysis/show-modal-or-download-excel', [
+                FinanceAnalysisController::class, 'showModalOrDownloadExcel'
+            ])->name('analysis.showModalOrDownloadExcel');
 
 
         });
