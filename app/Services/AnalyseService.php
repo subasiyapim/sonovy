@@ -236,10 +236,7 @@ class AnalyseService
                 'streams' => $songData->sum('quantity'),
                 'percentage' => round($percentage, 2),
             ];
-
         })->values()->toArray();
-
-
     }
 
     public function topLabels(): array
