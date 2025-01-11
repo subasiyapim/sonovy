@@ -29,24 +29,24 @@ const goToPlatformCSV = () => {
     router.visit(route('control.finance.analysis.show',{
         slug:'earning_from_platforms',
         request_type:'download',
-        start_date:props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year'),
-        end_date:props.choosenDates != null ? props.choosenDates[1] : moment(),
+        start_date:moment(props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year')).format("YYYY-MM-DD"),
+        end_date:moment(props.choosenDates != null ? props.choosenDates[1] : moment()).format("YYYY-MM-DD"),
     }));
 }
 const goToCountriesCSV = () => {
     router.visit(route('control.finance.analysis.show',{
         slug:'earning_from_countries',
         request_type:'download',
-        start_date:props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year'),
-        end_date:props.choosenDates != null ? props.choosenDates[1] : moment(),
+        start_date:moment(props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year')).format("YYYY-MM-DD"),
+        end_date:moment(props.choosenDates != null ? props.choosenDates[1] : moment()).format("YYYY-MM-DD"),
     }));
 }
 const goToSalesCSV = () => {
     router.visit(route('control.finance.analysis.show',{
         slug:'earning_from_sales_type',
         request_type:'download',
-        start_date:props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year'),
-        end_date:props.choosenDates != null ? props.choosenDates[1] : moment(),
+        start_date:moment(props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year')).format("YYYY-MM-DD"),
+        end_date:moment(props.choosenDates != null ? props.choosenDates[1] : moment()).format("YYYY-MM-DD"),
     }));
 }
 
