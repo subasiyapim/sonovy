@@ -10,6 +10,8 @@ use App\Services\EarningService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
 class FinanceAnalysisController extends Controller
@@ -66,66 +68,57 @@ class FinanceAnalysisController extends Controller
         $earnings = Earning::with('product', 'song', 'platform', 'country', 'label')
             ->whereBetween('sales_date', [$start_date, $end_date])
             ->get();
-
-
+        
         $service = new AnalyseService($earnings);
 
-        $data = [];
-        switch ($request->slug) {
-            case 'earning_from_platforms':
-                $data = $service->earningFromPlatforms();
-                break;
-            case 'earning_from_countries':
-                $data = $service->earningFromCountries();
-                break;
-            case 'earning_from_sales_type':
-                $data = $service->earningFromSalesType();
-                break;
-            case 'trending_albums':
-                $data = $service->trendingAlbums();
-                break;
-            case 'top_artists':
-                $data = $service->topArtists();
-                break;
-            case 'top_albums':
-                $data = $service->topAlbums();
-                break;
-            case 'top_songs':
-                $data = $service->topSongs();
-                break;
-            case 'top_labels':
-                $data = $service->topLabels();
-                break;
-            case 'platforms':
-                $data = $service->platforms();
-                break;
-            case 'countries':
-                $data = $service->countries();
-                break;
-        }
-
+        $data = $this->getDataBySlug($service, $request->slug);
 
         if ($request->request_type === 'view') {
-            return $data;
+            return $this->view($data);
         }
 
         if ($request->request_type === 'download') {
-            //Excel export
+            return $this->download($data, $request->slug);
         }
-
 
     }
 
+    private function getDataBySlug(AnalyseService $service, string $slug)
+    {
+        switch ($slug) {
+            case 'earning_from_platforms':
+                return $service->earningFromPlatforms();
+            case 'earning_from_countries':
+                return $service->earningFromCountries();
+            case 'earning_from_sales_type':
+                return $service->earningFromSalesType();
+            case 'trending_albums':
+                return $service->trendingAlbums();
+            case 'top_artists':
+                return $service->topArtists();
+            case 'top_albums':
+                return $service->topAlbums();
+            case 'top_songs':
+                return $service->topSongs();
+            case 'top_labels':
+                return $service->topLabels();
+            case 'platforms':
+                return $service->platforms();
+            case 'countries':
+                return $service->countries();
+            default:
+                return [];
+        }
+    }
 
     private function view($earnings)
     {
-        return 'view';
-
+        return $earnings;
     }
 
-    private function download($earnings)
+    private function download($earnings, $slug): BinaryFileResponse
     {
-        return 'download';
+        return Excel::download(new AnalyseExport($earnings, $slug), $slug.'.xlsx');
     }
 
 
