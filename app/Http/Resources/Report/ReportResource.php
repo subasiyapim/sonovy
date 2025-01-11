@@ -23,7 +23,10 @@ class ReportResource extends JsonResource
                 ->translatedFormat('d F Y'),
             'period' => $this->period,
             'name' => $this->name,
-            'amount' => Number::currency($this->amount, 'USD', app()->getLocale()),
+            'amount' => Number::currency($this->batch_id
+                ? $this->total_amount
+                : $this->amount, 'USD',
+                app()->getLocale()),
             'monthly_amount' => collect($this->monthly_amount)
                 ->map(function ($value, $key) {
                     $monthName = Carbon::create(null, $key)->locale(app()->getLocale())->translatedFormat('F');

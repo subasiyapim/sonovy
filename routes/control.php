@@ -94,9 +94,9 @@ Route::group(
             Route::apiResource('payments', PaymentController::class)
                 ->only(['index', 'store'])->names('payments');
 
-            Route::apiResource('reports', ReportController::class)
-                ->only(['index', 'store', 'show', 'destroy'])->names('reports');
-            Route::get('reports/download/{report}', [ReportController::class, 'download'])->name('reports.download');
+            Route::apiResource('reports', ReportController::class)->names('reports');
+            Route::get('reports/download/{report}', [ReportController::class, 'download'])
+                ->name('reports.download');
 
             Route::get('analysis', [FinanceAnalysisController::class, 'index'])
                 ->name('analysis.index');

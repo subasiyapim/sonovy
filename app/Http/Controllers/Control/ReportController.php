@@ -58,11 +58,31 @@ class ReportController extends Controller
             $isAutoReport = $request->slug === 'auto-reports';
         }
 
-        $query->where('is_auto_report', $isAutoReport)
-            ->where('user_id', Auth::id())->groupBy('batch_id');
+        $reportsWithBatchIdQuery = Report::where('is_auto_report', $isAutoReport)
+            ->where('user_id', Auth::id())
+            ->whereNotNull('batch_id')
+            ->groupBy('batch_id')
+            ->selectRaw('*, SUM(amount) as total_amount');
 
+        $reportsWithoutBatchIdQuery = Report::where('is_auto_report', $isAutoReport)
+            ->where('user_id', Auth::id())
+            ->whereNull('batch_id');
 
-        $reports = ReportResource::collection($query->advancedFilter())->resource;
+        $reportsWithBatchId = $reportsWithBatchIdQuery->orderByDesc('id')->advancedFilter();  // 10, sayfa başına gösterilecek öğe sayısı
+        $reportsWithoutBatchId = $reportsWithoutBatchIdQuery->orderByDesc('id')->advancedFilter(); // Aynı sayfa başına öğe sayısı
+
+        $mergedReports = $reportsWithBatchId->getCollection()->merge($reportsWithoutBatchId->getCollection());
+
+        $mergedReports = new \Illuminate\Pagination\LengthAwarePaginator(
+            $mergedReports,
+            $reportsWithBatchId->total() + $reportsWithoutBatchId->total(), // Toplam öğe sayısı
+            $reportsWithBatchId->perPage(),
+            $reportsWithBatchId->currentPage(),
+            ['path' => \Request::url()]
+        );
+
+        $reports = ReportResource::collection($mergedReports)->resource;
+
         DB::statement("SET SESSION sql_mode=(SELECT CONCAT(@@sql_mode, ',ONLY_FULL_GROUP_BY'))");
 
         $artists = Artist::with('platforms')->get();
@@ -160,7 +180,7 @@ class ReportController extends Controller
 
         return response()->json(['error' => 'No media found'], 404);
     }
-    
+
     public function destroy(Report $report): RedirectResponse
     {
         abort_if(Gate::denies('report_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');

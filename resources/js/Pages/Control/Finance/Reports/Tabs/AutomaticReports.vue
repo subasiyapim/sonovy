@@ -21,7 +21,7 @@ const data = usePage().props.reports;
             <DocumentIcon color="var(--sub-600)"/>
           </div>
           <p class="subheading-xs c-strong-950">
-          {{ scope.row.created_at }}</p>
+            {{ scope.row.created_at }}</p>
         </div>
 
       </template>
@@ -58,6 +58,7 @@ const data = usePage().props.reports;
       <template #default="scope">
         <a :href="route('control.finance.reports.download', scope.row.id)">
           <DownloadIcon color="var(--sub-600)"/>
+
         </a>
       </template>
     </AppTableColumn>
