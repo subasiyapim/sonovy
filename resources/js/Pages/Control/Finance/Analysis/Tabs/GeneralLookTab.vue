@@ -84,7 +84,7 @@ const options = ref({
 
 });
 
-const series = ref([Object.values(props.data.earning_from_platforms).map((e) => e.earning)]); // Donut dilim verileri
+const series = ref(Object.values(props.data.earning_from_platforms).map((e) => e.earning)); // Donut dilim verileri
 
 
 const optionsCountries = ref({
