@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
 
@@ -42,6 +43,8 @@ class AnalyseService
             });
 
             return [
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
                 'total_earning' => $totalEarnings,
                 'total_quantity' => $totalQuantity,
                 'releases' => $earnings->toArray(),
@@ -89,6 +92,8 @@ class AnalyseService
             ];
 
             return [
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
                 'release_name' => $releaseData->first()->release_name,
                 'total_quantity' => $releaseData->sum('quantity'),
                 'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
@@ -170,6 +175,8 @@ class AnalyseService
             ];
 
             return [
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
                 'release_name' => $releaseData->first()->release_name,
                 'total_quantity' => $releaseData->sum('quantity'),
                 'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
@@ -190,6 +197,8 @@ class AnalyseService
             $percentage = $this->totalEarnings > 0 ? ($artistEarnings / $this->totalEarnings) * 100 : 0;
 
             return [
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
                 'artist_id' => $artistData->first()->artist_id,
                 'artist_name' => $artistData->first()->artist_name,
                 'earning' => Number::currency($artistEarnings, 'USD', app()->getLocale()),
@@ -208,6 +217,8 @@ class AnalyseService
             $artistName = $firstItem->artist_name;
 
             return [
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
                 'album_name' => $firstItem->product->album_name ?? '',
                 'upc_code' => $firstItem->upc_code,
                 'product_id' => $firstItem->product->id ?? '',
@@ -227,6 +238,8 @@ class AnalyseService
             $firstItem = $songData->first();
 
             return [
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
                 'song_id' => $firstItem->song_id,
                 'song_name' => $firstItem->song_name,
                 'isrc_code' => $firstItem->isrc_code,
@@ -247,6 +260,8 @@ class AnalyseService
             $firstItem = $labelData->first();
 
             return [
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
                 'label_id' => $firstItem->label_id,
                 'label_name' => $firstItem->label_name,
                 'earning' => Number::currency($labelEarnings, 'USD', app()->getLocale()),
@@ -262,6 +277,8 @@ class AnalyseService
             $product = $firstItem->product;
 
             return [
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
                 'earning' => Number::currency($items->sum('earning'), 'USD', app()->getLocale()),
                 'product_name' => $product->album_name ?? $firstItem->release_name,
                 'product_id' => $product->id ?? '',
@@ -355,6 +372,9 @@ class AnalyseService
         return $topCountries->mapWithKeys(function ($earning, $country) {
             return [
                 $country => [
+                    'start_date' => Cache::get('start_date'),
+                    'end_date' => Cache::get('end_date'),
+                    'country' => $country,
                     'earning' => Number::currency($earning, 'USD', app()->getLocale()),
                     'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
                 ]
@@ -378,6 +398,10 @@ class AnalyseService
         return $topPlatforms->mapWithKeys(function ($earning, $platform) {
             return [
                 $platform => [
+                    'start_date' => Cache::get('start_date'),
+                    'end_date' => Cache::get('end_date'),
+                    'platform' => $platform,
+                    'quantity' => $this->data->where('platform', $platform)->sum('quantity'),
                     'earning' => Number::currency($earning, 'USD', app()->getLocale()),
                     'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
                 ]
