@@ -21,6 +21,7 @@ import BankAccountModal from './Finance/bank.vue';
 import FinanceIncomePlatforms from './Finance/Income/platforms.vue';
 import FinanceIncomeCountries from './Finance/Income/countries.vue';
 import FinanceIncomeSales from './Finance/Income/sales.vue';
+import FinanceIncomeProducts from './Finance/Income/products.vue';
 export {
     ArtistDialog,
     LabelDialog,
@@ -42,7 +43,8 @@ export {
     NewReportModal,
     BankAccountModal,
     FinanceIncomePlatforms,
-FinanceIncomeCountries,
-FinanceIncomeSales,
+    FinanceIncomeCountries,
+    FinanceIncomeSales,
+    FinanceIncomeProducts
 
 }

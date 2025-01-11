@@ -4,10 +4,12 @@
 import {ref} from 'vue';
 import {FileChartLineIcon,SpotifyIcon,YoutubeIcon,AppleMusicIcon,InfoFilledIcon,WorldIcon,EyeOnIcon,DownloadIcon,BookReadLineIcon} from '@/Components/Icons';
 import {AppProgressIndicator} from '@/Components/Widgets';
-import {FinanceIncomePlatforms,FinanceIncomeCountries,FinanceIncomeSales} from '@/Components/Dialog';
+import {FinanceIncomePlatforms,FinanceIncomeCountries,FinanceIncomeSales,FinanceIncomeProducts} from '@/Components/Dialog';
 import {AppSwitchComponent} from '@/Components/Form'
 import Vue3Apexcharts from 'vue3-apexcharts'
 const showYoutubeFremium = ref(false);
+import { router} from '@inertiajs/vue3';
+
 const props = defineProps({
     data : {
 
@@ -20,7 +22,33 @@ const props = defineProps({
 const isFinanceIncomePlatforms = ref(false);
 const isFinanceIncomeCountries = ref(false);
 const isFinanceIncomeSales = ref(false);
+const isFinanceIncomeProducts = ref(false);
 
+
+const goToPlatformCSV = () => {
+    router.visit(route('control.finance.analysis.show'),{
+        slug:'earning_from_platforms',
+        request_type:'download',
+        start_date:props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year'),
+        end_date:props.choosenDates != null ? props.choosenDates[1] : moment(),
+    });
+}
+const goToCountriesCSV = () => {
+    router.visit(route('control.finance.analysis.show'),{
+        slug:'earning_from_countries',
+        request_type:'download',
+        start_date:props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year'),
+        end_date:props.choosenDates != null ? props.choosenDates[1] : moment(),
+    });
+}
+const goToSalesCSV = () => {
+    router.visit(route('control.finance.analysis.show'),{
+        slug:'earning_from_sales_type',
+        request_type:'download',
+        start_date:props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year'),
+        end_date:props.choosenDates != null ? props.choosenDates[1] : moment(),
+    });
+}
 
 const options = ref({
   chart: {
@@ -324,7 +352,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     </div>
                     <div class="flex gap-3">
                         <button @click="isFinanceIncomePlatforms = !isFinanceIncomePlatforms"><EyeOnIcon color="var(--sub-600)" /></button>
-                        <button><DownloadIcon color="var(--sub-600)" /></button>
+                        <button @click="goToPlatformCSV"><DownloadIcon color="var(--sub-600)" /></button>
                     </div>
 
                 </div>
@@ -341,7 +369,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     </div>
                     <div class="flex gap-3">
                         <button @click="isFinanceIncomeCountries = !isFinanceIncomeCountries"><EyeOnIcon color="var(--sub-600)" /></button>
-                        <button><DownloadIcon color="var(--sub-600)" /></button>
+                        <button @click="goToCountriesCSV"><DownloadIcon color="var(--sub-600)" /></button>
                     </div>
 
                 </div>
@@ -450,6 +478,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
             </div>
         </div>
 
+
         <div class="flex gap-6">
             <div class="flex-1 bg-white rounded-xl border border-soft-200 p-4 flex flex-col gap-4">
                 <div class="flex items-center">
@@ -460,7 +489,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                     </div>
                     <div class="flex gap-3">
                         <button @click="isFinanceIncomeSales = !isFinanceIncomeSales"><EyeOnIcon color="var(--sub-600)" /></button>
-                        <button><DownloadIcon color="var(--sub-600)" /></button>
+                        <button @click="goToSalesCSV"><DownloadIcon color="var(--sub-600)" /></button>
                     </div>
 
                 </div>
@@ -478,7 +507,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
                         <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                     </div>
                     <div class="flex gap-3">
-                        <button><EyeOnIcon color="var(--sub-600)" /></button>
+                        <button @click="isFinanceIncomeProducts = true"><EyeOnIcon color="var(--sub-600)" /></button>
                         <button><DownloadIcon color="var(--sub-600)" /></button>
                     </div>
 
@@ -499,6 +528,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // D
     <FinanceIncomePlatforms :choosenDates="choosenDates"  v-model="isFinanceIncomePlatforms" v-if="isFinanceIncomePlatforms"></FinanceIncomePlatforms>
     <FinanceIncomeCountries :choosenDates="choosenDates" v-model="isFinanceIncomeCountries" v-if="isFinanceIncomeCountries"></FinanceIncomeCountries>
     <FinanceIncomeSales :choosenDates="choosenDates"  v-model="isFinanceIncomeSales" v-if="isFinanceIncomeSales"></FinanceIncomeSales>
+    <FinanceIncomeProducts :choosenDates="choosenDates"  v-model="isFinanceIncomeProducts" v-if="isFinanceIncomeProducts"></FinanceIncomeProducts>
 </template>
 
 <style  scoped>

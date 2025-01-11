@@ -1,10 +1,10 @@
 
 <template>
 
-<BaseDialog :showClose="true" v-model="isDialogOn"  height="min-content" align="center" title="Aylık Net Gelir"
+<BaseDialog :showClose="true" v-model="isDialogOn"  height="min-content" align="center" title="Ürüne Tipine Göre Gelir"
               description="Ocak 2024 - Haziran 2024">
     <template #icon>
-      <BankLineIcon color="var(--dark-green-950)"/>
+      <WorldIcon color="var(--dark-green-950)"/>
     </template>
 
 
@@ -49,7 +49,7 @@
 <script setup>
 import BaseDialog from '@/Components/Dialog/BaseDialog.vue';
 
-import {BankLineIcon,InfoFilledIcon} from '@/Components/Icons'
+import {WorldIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore'
 import moment from 'moment';
 import {computed, ref, onMounted} from 'vue';
@@ -59,9 +59,9 @@ import {AppProgressIndicator} from '@/Components/Widgets';
 
 const crudStore = useCrudStore();
 const props = defineProps({
-    modelValue: {
-        default: false,
-    },
+  modelValue: {
+    default: false,
+  },
 })
 
 
@@ -70,28 +70,27 @@ const isDialogOn = computed({
   get: () => props.modelValue,
   set: (value) => emits('update:modelValue', value)
 })
-
+const tableData = ref([]);
 const loading = ref(false);
-const tableData = ref({});
+
 const getData =  async ()  =>  {
     loading.value = true;
    try {
-     const response = await crudStore.get(route('control.finance.analysis.show'),{
-        slug:'earning_from_platforms',
-        request_type:'view',
-        start_date:props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year'),
-        end_date:props.choosenDates != null ? props.choosenDates[1] : moment(),
-    })
-     tableData.value = response;
+        const response = await crudStore.get(route('control.finance.analysis.show'),{
+            slug:'earning_from_sales_type',
+            request_type:'view',
+            start_date:props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year'),
+            end_date:props.choosenDates != null ? props.choosenDates[1] : moment(),
+        })
+        tableData.value = response;
    } catch (error) {
 
    }
     loading.value = false;
-
-
 }
 onMounted(() => {
-    getData();
+        getData();
 });
+
 
 </script>
