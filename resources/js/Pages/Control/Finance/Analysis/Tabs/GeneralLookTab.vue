@@ -84,7 +84,7 @@ const options = ref({
 
 });
 
-const series = ref(Object.values(props.data.earning_from_platforms)); // Donut dilim verileri
+const series = ref([Object.values(props.data.earning_from_platforms).map((e) => e.earning)]); // Donut dilim verileri
 
 
 const optionsCountries = ref({
@@ -121,7 +121,7 @@ const optionsCountries = ref({
 
 });
 
-const seriesCountries = ref(Object.values(props.data.earning_from_countries)); // Donut dilim verileri
+const seriesCountries = ref(Object.values(props.data.earning_from_countries).map((e) => e.earning)); // Donut dilim verileri
 const optionsSales = ref({
   chart: {
     type: 'donut',
@@ -156,7 +156,7 @@ const optionsSales = ref({
 
 });
 
-const seriesSales = ref(Object.values(props.data.earning_from_sales_type)); // Donut dilim verileri
+const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e) => e.earning)); // Donut dilim verileri
 
 </script>
 
