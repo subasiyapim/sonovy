@@ -62,14 +62,16 @@ class ReportController extends Controller
             ->where('user_id', Auth::id())
             ->whereNotNull('batch_id')
             ->groupBy('batch_id')
-            ->selectRaw('*, SUM(amount) as total_amount');
+            ->selectRaw('*, SUM(amount) as total_amount')
+            ->orderBy('created_at', 'desc');
 
         $reportsWithoutBatchIdQuery = Report::where('is_auto_report', $isAutoReport)
             ->where('user_id', Auth::id())
-            ->whereNull('batch_id');
+            ->whereNull('batch_id')
+            ->orderBy('created_at', 'desc');
 
-        $reportsWithBatchId = $reportsWithBatchIdQuery->orderByDesc('id')->advancedFilter();  // 10, sayfa başına gösterilecek öğe sayısı
-        $reportsWithoutBatchId = $reportsWithoutBatchIdQuery->orderByDesc('id')->advancedFilter(); // Aynı sayfa başına öğe sayısı
+        $reportsWithBatchId = $reportsWithBatchIdQuery->advancedFilter();  // 10, sayfa başına gösterilecek öğe sayısı
+        $reportsWithoutBatchId = $reportsWithoutBatchIdQuery->advancedFilter(); // Aynı sayfa başına öğe sayısı
 
         $mergedReports = $reportsWithBatchId->getCollection()->merge($reportsWithoutBatchId->getCollection());
 
