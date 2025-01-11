@@ -3,6 +3,8 @@
     <tr>
         <th>Başlangıç tarihi</th>
         <th>Bitiş tarihi</th>
+        <th>UPC</th>
+        <th>Albüm</th>
         <th>Sanatçı</th>
         <th>Gelir</th>
         <th>Para birimi</th>
@@ -11,10 +13,12 @@
     </tr>
     </thead>
     <tbody>
-    @foreach($eaarnings as $earning)
+    @foreach($earnings as $earning)
         <tr>
             <td>{{ $earning->start_date }}</td>
-            <td>{{ $earning->start_end_date }}</td>
+            <td>{{ $earning->end_date }}</td>
+            <td>{{ $earning->upc_code }}</td>
+            <td>{{ $earning->release_name }}</td>
             <td>{{ $earning->artist }}</td>
             <td>{{ $earning->earning }}</td>
             <td>USD</td>

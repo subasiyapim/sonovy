@@ -119,7 +119,7 @@ class FinanceAnalysisController extends Controller
         return $earnings;
     }
 
-    private function download($earnings, $slug): BinaryFileResponse
+    private function download($earnings, $slug)
     {
         return Excel::download(new AnalyseExport($earnings, $slug), $slug.'.xlsx');
     }

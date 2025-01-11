@@ -10,13 +10,13 @@
     </tr>
     </thead>
     <tbody>
-    @foreach($eaarnings as $earning)
+    @foreach($earnings as $earning)
         <tr>
-            <td>{{ $earning->start_date }}</td>
-            <td>{{ $earning->end_date }}</td>
-            <td>{{ $earning->country }}</td>
+            <td>{{ $earning['start_date'] }}</td>
+            <td>{{ $earning['end_date'] }}</td>
+            <td>{{ $earning['country'] }}</td>
             <td>USD</td>
-            <td>{{ $earning->end_date }}</td>
+            <td>{{ $earning['end_date'] }}</td>
         </tr>
     @endforeach
     </tbody>

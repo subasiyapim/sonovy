@@ -2,12 +2,10 @@
 
 namespace App\Exports;
 
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromView;
 
-class AnalyseExport implements FromCollection
+class AnalyseExport implements FromView
 {
     protected $earnings;
     protected $slug;
@@ -18,13 +16,10 @@ class AnalyseExport implements FromCollection
         $this->slug = $slug;
     }
 
-    /**
-     * @return Factory|View|Application
-     */
-    public function collection(): View|Factory|Application
+    public function view(): View
     {
-        return view('excel.exports.analyses.earning_from_sales_type', [
-            'earnings' => $this->earnings
+        return view('excel.exports.analyses.'.$this->slug, [
+            'earnings' => $this->earnings,
         ]);
     }
 }

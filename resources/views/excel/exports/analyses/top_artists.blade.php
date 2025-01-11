@@ -3,23 +3,23 @@
     <tr>
         <th>Başlangıç tarihi</th>
         <th>Bitiş tarihi</th>
-        <th>Mağaza</th>
-        <th>Streams</th>
+        <th>Sanatçı</th>
         <th>Gelir</th>
         <th>Para birimi</th>
         <th>Yüzde</th>
+        <th>Streams</th>
     </tr>
     </thead>
     <tbody>
-    @foreach($eaarnings as $earning)
+    @foreach($earnings as $earning)
         <tr>
             <td>{{ $earning->start_date }}</td>
-            <td>{{ $earning->end_date }}</td>
-            <td>{{ $earning->platform }}</td>
-            <td>{{ $earning->quantity }}</td>
+            <td>{{ $earning->start_end_date }}</td>
+            <td>{{ $earning->artist }}</td>
             <td>{{ $earning->earning }}</td>
             <td>USD</td>
             <td>{{ $earning->percentage }}</td>
+            <td>{{ $earning->quantity }}</td>
         </tr>
     @endforeach
     </tbody>

@@ -279,6 +279,8 @@ class AnalyseService
             return [
                 'start_date' => Cache::get('start_date'),
                 'end_date' => Cache::get('end_date'),
+                'platform' => $firstItem->platform,
+                'quantity' => $firstItem->quantity,
                 'earning' => Number::currency($items->sum('earning'), 'USD', app()->getLocale()),
                 'product_name' => $product->album_name ?? $firstItem->release_name,
                 'product_id' => $product->id ?? '',
@@ -300,6 +302,10 @@ class AnalyseService
             return [
                 $salesType =>
                     [
+                        'start_date' => Cache::get('start_date'),
+                        'end_date' => Cache::get('end_date'),
+                        'platform' => $salesType,
+                        'quantity' => $this->data->where('sales_type', $salesType)->sum('quantity'),
                         'earning' => $earning,
                         'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
                     ]
@@ -376,6 +382,7 @@ class AnalyseService
                     'end_date' => Cache::get('end_date'),
                     'country' => $country,
                     'earning' => $earning,
+                    'quantity' => $this->data->where('country', $country)->sum('quantity'),
                     'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
                 ]
             ];
