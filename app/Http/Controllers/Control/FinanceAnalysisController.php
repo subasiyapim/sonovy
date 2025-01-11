@@ -48,7 +48,7 @@ class FinanceAnalysisController extends Controller
         ]);
     }
 
-    public function showModalOrDownloadExcel(Request $request)
+    public function show(Request $request)
     {
         $request->validate(
             [
