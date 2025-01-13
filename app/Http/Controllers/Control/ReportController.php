@@ -66,7 +66,7 @@ class ReportController extends Controller
         $artists = Artist::with('platforms')->get();
         $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
         $labels = Label::all();
-        $songs = getDataFromInputFormat(Song::all(), 'id', 'name');
+        $songs = Song::all();
         $countries = getDataFromInputFormat(Country::all(), 'id', 'name', 'emoji');
         $products = Product::all();
         $platforms = Platform::all();
@@ -74,8 +74,17 @@ class ReportController extends Controller
 
         return inertia(
             'Control/Finance/Reports/Index',
-            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms', 'products',
-                'countriesGroupedByRegion')
+            compact(
+                'reports',
+                'artists',
+                'albums',
+                'labels',
+                'songs',
+                'countries',
+                'platforms',
+                'products',
+                'countriesGroupedByRegion'
+            )
         );
     }
 
@@ -118,13 +127,13 @@ class ReportController extends Controller
     {
         if ($report->child()->count() > 1) {
 
-            $zipFilePath = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'.zip');
+            $zipFilePath = storage_path('app/public/tenant_' . tenant('domain') . '_income_reports/multiple_reports/' . $report->user_id . '/' . Str::slug($report->period) . '.zip');
 
             $zip = new ZipArchive;
 
             if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
 
-                $files = Storage::disk('public')->allFiles('tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'/'.$report->id);
+                $files = Storage::disk('public')->allFiles('tenant_' . tenant('domain') . '_income_reports/multiple_reports/' . $report->user_id . '/' . Str::slug($report->period) . '/' . $report->id);
 
                 foreach ($files as $file) {
                     $fullPath = Storage::disk('public')->path($file);
@@ -141,7 +150,7 @@ class ReportController extends Controller
         }
 
 
-        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
+        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();
@@ -167,6 +176,4 @@ class ReportController extends Controller
 
         return redirect()->back();
     }
-
-
 }

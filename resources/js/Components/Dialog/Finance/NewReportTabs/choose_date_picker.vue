@@ -81,7 +81,7 @@ const setDateRange = (type) => {
                 <button @click="setDateRange('allTime')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Tüm Zamanlar</button>
             </div>
             <div class="dateWrapper ">
-                <VueDatePicker class="w-full" v-model="element.date" auto-apply :enable-time-picker="false" inline range multi-calendars />
+                <VueDatePicker class="w-full" v-model="element.date" auto-apply :enable-time-picker="false" month-picker  inline range multi-calendars />
             </div>
 
         </div>

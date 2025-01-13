@@ -239,7 +239,9 @@
   display: none;
 }
 
-
+.dp__overlay_cell_active{
+    background: var(--dark-green-500) !important;
+}
 .dp__disabled{
     background: var(--weak-50) !important;
 }

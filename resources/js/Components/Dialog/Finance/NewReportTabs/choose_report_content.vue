@@ -1,7 +1,7 @@
 <script setup>
 import {ref,computed} from 'vue';
 import {FormElement} from '@/Components/Form'
-import {Icon,CloseIcon} from '@/Components/Icons'
+import {Icon,CloseIcon,RingtoneIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {useDefaultStore} from '@/Stores/default';
 import {StatusBadge} from '@/Components/Badges';
@@ -256,28 +256,57 @@ const removeChoosingCountries = () => {
                         <template #option="scope">
                             <div class="w-full flex justify-between gap-2">
                                 <div class="flex flex-1 gap-2">
-                                    <div class="w-10 h-10 rounded-lg overflow-hidden">
-                                        <img :src="scope.data.image?.url"/>
+                                    <div class="w-6 h-6 rounded-lg overflow-hidden">
+                                        <img :src="scope.data.image"/>
                                     </div>
                                     <div class="flex flex-col">
                                         <p class="paragraph-sm c-strong-950">{{ scope.data.album_name }}</p>
-                                        <p class="paragraph-xs c-sub-600">{{ scope.data.type == 1 ? 'Ses Dosyası' : (scope.data.type == 2 ? 'Müzik Video' : (scope.data.type == 2 ? 'Zil Sesi'  : 'Apple Video')) }}</p>
+                                        <div class="flex items-center gap-1">
+                                            <p class="paragraph-xs c-sub-600 w-max">{{ scope.data.type == 1 ? 'Ses Dosyası' : (scope.data.type == 2 ? 'Müzik Video' : (scope.data.type == 2 ? 'Zil Sesi'  : 'Apple Video')) }}</p>
+                                            <span class="paragraph-xs c-sub-600">{{scope.data.upc_code}}</span>
+                                        </div>
                                     </div>
                                 </div>
 
 
                             </div>
                         </template>
+                        <template #model="scope">
+                            <div class="flex items-center relative gap-2">
+                                <div class="flex -space-x-3 rtl:space-x-reverse">
+                                    <template v-for="song in scope.data.slice(0,2)">
+                                        <span class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                                            {{ song.album_name[0] }}
+                                        </span>
+                                    </template>
+                                    <span v-if="scope.data.length > 2" class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                                        +{{scope.data.length-2}}
+                                    </span>
+                                </div>
 
+                                <p class="label-sm !font-normal" style="white-space:nowrap;">
+                                    <template v-for="(song,songIndex) in scope.data.slice(0,2)">
 
+                                        {{ song.album_name }}
+                                        <template v-if="songIndex < scope.data.length-1">
+                                        , &nbsp;
+                                        </template>
 
+                                    </template>
+                                </p>
+                            </div>
+                        </template>
                     </FormElement>
                 </div>
-                <div  class="flex items-center gap-2">
+                <div  class="flex flex-wrap items-center gap-2">
                     <div v-for="(choosenValue,i) in element.choosenValues" class="border border-soft-200 rounded px-2 py-1 flex items-center gap-1">
-                       <img class="rounded-full" width="24" height="24" :src="productsSelectConfig.data.find((e) => e.id == choosenValue)?.image?.url">
+                       <img class="rounded-full" width="24" height="24" :src="productsSelectConfig.data.find((e) => e.id == choosenValue)?.image">
 
-                      <div class="whitespace-nowrap w-auto"> <p class="label-xs c-sub-600 !text-start"> {{productsSelectConfig.data.find((e) => e.id == choosenValue)?.album_name}}</p></div>
+                      <div class="whitespace-nowrap w-auto">
+                        <p class="label-xs c-sub-600 !text-start"> {{productsSelectConfig.data.find((e) => e.id == choosenValue)?.album_name}}</p>
+                        <span class="paragraph-xs c-sub-600">{{productsSelectConfig.data.find((e) => e.id == choosenValue)?.upc_code}}</span>
+
+                      </div>
                         <button @click="element.choosenValues.splice(i,1)"><CloseIcon color="var(--sub-600)" /></button>
                     </div>
                 </div>
@@ -285,11 +314,66 @@ const removeChoosingCountries = () => {
             <div  v-else-if="element.report_content_type == 4">
                 <div class="w-64">
                     <FormElement v-model="element.choosenValues"  direction="vertical" label="Şarkı Seçimi" placeholder="Şarkı Seç" type="multiselect" :config="songsSelectConfig">
+                         <template #option="scope">
+                            <div class="w-full flex justify-between gap-2 flex-1">
+                                <div class="flex items-center flex-1 gap-2 flex-1">
+
+                                    <RingtoneIcon color="var(--sub-600)" />
+
+                                    <div class="flex-1 flex flex-col">
+                                        <p class="paragraph-sm c-strong-950 flex-1">{{ scope.data.name.substring(0,19)  }} {{scope.data.name.length > 19 ? '...' : ''}}</p>
+                                        <span class="paragraph-xs c-neutral-500">{{scope.data.isrc}}</span>
+                                    </div>
+                                </div>
+
+                                <template v-if="scope.data.platforms">
+                                    <div class="flex" v-for="platform in scope.data.platforms">
+                                        <a v-if="platform.code == 'spotify' || platform.code == 'apple'"
+                                        :href="platform.pivot.url"
+                                        target="_blank">
+                                        <Icon :icon="platform.icon"/>
+                                        </a>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template #model="scope">
+                            <div class="flex items-center relative gap-2">
+                                <div class="flex -space-x-3 rtl:space-x-reverse">
+                                    <template v-for="song in scope.data.slice(0,2)">
+                                        <span class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                                            {{ song.name[0] }}
+                                        </span>
+                                    </template>
+                                    <span v-if="scope.data.length > 2" class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full" >
+                                        +{{scope.data.length-2}}
+                                    </span>
+                                </div>
+
+                                <p class="label-sm !font-normal" style="white-space:nowrap;">
+                                    <template v-for="(song,songIndex) in scope.data.slice(0,2)">
+
+                                        {{ song.name }}
+                                        <template v-if="songIndex < scope.data.length-1">
+                                        , &nbsp;
+                                        </template>
+
+                                    </template>
+                                </p>
+                            </div>
+                        </template>
                     </FormElement>
                 </div>
-                <div  class="flex items-center gap-2">
+                <div  class="flex flex-wrap items-center gap-2">
                     <div v-for="(choosenValue,i) in element.choosenValues" class="border border-soft-200 rounded px-2 py-1 flex items-center gap-1">
-                    <div class="whitespace-nowrap w-auto"> <p class="label-xs c-sub-600 !text-start"> {{songsSelectConfig.data.find((e) => e.id == choosenValue)?.name}}</p></div>
+                        <div class="whitespace-nowrap w-auto flex  items-start gap-2">
+                            <RingtoneIcon class="mt-0.5" color="var(--sub-600)" />
+                           <div>
+                                <p class="label-xs c-sub-600 !text-start">  {{songsSelectConfig.data.find((e) => e.id == choosenValue)?.name}}</p>
+                                <span class="paragraph-xs c-neutral-500">{{songsSelectConfig.data.find((e) => e.id == choosenValue)?.isrc}}</span>
+
+                           </div>
+                        </div>
                         <button @click="element.choosenValues.splice(i,1)"><CloseIcon color="var(--sub-600)" /></button>
                     </div>
                 </div>
