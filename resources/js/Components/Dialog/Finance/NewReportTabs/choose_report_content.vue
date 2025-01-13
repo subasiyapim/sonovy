@@ -300,7 +300,7 @@ const removeChoosingCountries = () => {
                 </div>
                 <div  class="flex flex-wrap items-center gap-2">
                     <div v-for="(choosenValue,i) in element.choosenValues" class="border border-soft-200 rounded px-2 py-1 flex items-center gap-1">
-                       <img class="rounded-full" width="24" height="24" :src="productsSelectConfig.data.find((e) => e.id == choosenValue)?.image">
+                       <img class="rounded-full" width="24" height="24" :src="productsSelectConfig.data.find((e) => e.id == choosenValue)?.iconKey">
 
                       <div class="whitespace-nowrap w-auto">
                         <p class="label-xs c-sub-600 !text-start"> {{productsSelectConfig.data.find((e) => e.id == choosenValue)?.album_name}}</p>
