@@ -64,7 +64,7 @@ class ReportController extends Controller
 
         $reports = ReportResource::collection($query)->resource;
         $artists = Artist::with('platforms')->get();
-        $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
+        $albums = getDataFromInputFormat(Product::all(), 'id', 'album_name', 'image');
         $labels = Label::all();
         $songs = Song::all();
         $countries = getDataFromInputFormat(Country::all(), 'id', 'name', 'emoji');
@@ -127,13 +127,13 @@ class ReportController extends Controller
     {
         if ($report->child()->count() > 1) {
 
-            $zipFilePath = storage_path('app/public/tenant_' . tenant('domain') . '_income_reports/multiple_reports/' . $report->user_id . '/' . Str::slug($report->period) . '.zip');
+            $zipFilePath = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'-'.Str::slug($report->name).'.zip');
 
             $zip = new ZipArchive;
 
             if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
 
-                $files = Storage::disk('public')->allFiles('tenant_' . tenant('domain') . '_income_reports/multiple_reports/' . $report->user_id . '/' . Str::slug($report->period) . '/' . $report->id);
+                $files = Storage::disk('public')->allFiles('tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'/'.$report->id);
 
                 foreach ($files as $file) {
                     $fullPath = Storage::disk('public')->path($file);
@@ -150,7 +150,7 @@ class ReportController extends Controller
         }
 
 
-        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
+        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();
