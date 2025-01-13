@@ -22,6 +22,12 @@ import FinanceIncomePlatforms from './Finance/Income/platforms.vue';
 import FinanceIncomeCountries from './Finance/Income/countries.vue';
 import FinanceIncomeSales from './Finance/Income/sales.vue';
 import FinanceIncomeProducts from './Finance/Income/products.vue';
+
+
+import FinanceTopListsSongs from './Finance/TopLists/songs.vue'
+import FinanceTopListsArtists from './Finance/TopLists/artists.vue'
+import FinanceTopListsLabels from './Finance/TopLists/labels.vue'
+import FinanceTopListsProducts from './Finance/TopLists/products.vue'
 export {
     ArtistDialog,
     LabelDialog,
@@ -45,6 +51,10 @@ export {
     FinanceIncomePlatforms,
     FinanceIncomeCountries,
     FinanceIncomeSales,
-    FinanceIncomeProducts
+    FinanceIncomeProducts,
+    FinanceTopListsSongs,
+    FinanceTopListsArtists,
+    FinanceTopListsLabels,
+    FinanceTopListsProducts
 
 }

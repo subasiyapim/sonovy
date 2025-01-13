@@ -4,6 +4,13 @@
 import {ref} from 'vue';
 import {PersonIcon,EyeOnIcon,DownloadIcon,BookReadLineIcon,LabelsIcon,AudioIcon} from '@/Components/Icons';
 import {AppProgressIndicator} from '@/Components/Widgets';
+import moment from 'moment'
+import {
+    FinanceTopListsSongs,
+    FinanceTopListsArtists,
+    FinanceTopListsLabels,
+    FinanceTopListsProducts
+} from '@/Components/Dialog'
 const props = defineProps({
     data : {
 
@@ -13,6 +20,164 @@ const props = defineProps({
     },
     choosenDates:{},
 });
+
+const isFinanceTopListsSongs = ref(false)
+const isFinanceTopListsArtists = ref(false)
+const isFinanceTopListsLabels = ref(false)
+const isFinanceTopListsProducts = ref(false);
+
+const goToArtists = () => {
+  const params = {
+    slug: 'top_artists',
+    request_type: 'download',
+    start_date: moment(
+        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
+    ).format("YYYY-MM-DD"),
+    end_date: moment(
+        props.choosenDates ? props.choosenDates[1] : moment()
+    ).format("YYYY-MM-DD"),
+  };
+
+  // Parametreleri sorgu dizgesi (query string) olarak oluştur
+  const queryString = new URLSearchParams(params).toString();
+  const url = `${route('control.finance.analysis.show')}?${queryString}`;
+
+  // Fetch API ile indirme işlemini başlat
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    },
+  })
+      .then((response) => response.blob())
+      .then((blob) => {
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch((error) => {
+        console.error('Excel dosyası indirilirken hata oluştu:', error);
+      });
+};
+
+const gotoLabels = () => {
+  const params = {
+    slug: 'top_labels',
+    request_type: 'download',
+    start_date: moment(
+        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
+    ).format("YYYY-MM-DD"),
+    end_date: moment(
+        props.choosenDates ? props.choosenDates[1] : moment()
+    ).format("YYYY-MM-DD"),
+  };
+
+  // Parametreleri sorgu dizgesi (query string) olarak oluştur
+  const queryString = new URLSearchParams(params).toString();
+  const url = `${route('control.finance.analysis.show')}?${queryString}`;
+
+  // Fetch API ile indirme işlemini başlat
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    },
+  })
+      .then((response) => response.blob())
+      .then((blob) => {
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch((error) => {
+        console.error('Excel dosyası indirilirken hata oluştu:', error);
+      });
+};
+
+const gotoProducts = () => {
+  const params = {
+    slug: 'top_albums',
+    request_type: 'download',
+    start_date: moment(
+        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
+    ).format("YYYY-MM-DD"),
+    end_date: moment(
+        props.choosenDates ? props.choosenDates[1] : moment()
+    ).format("YYYY-MM-DD"),
+  };
+
+  // Parametreleri sorgu dizgesi (query string) olarak oluştur
+  const queryString = new URLSearchParams(params).toString();
+  const url = `${route('control.finance.analysis.show')}?${queryString}`;
+
+  // Fetch API ile indirme işlemini başlat
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    },
+  })
+      .then((response) => response.blob())
+      .then((blob) => {
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch((error) => {
+        console.error('Excel dosyası indirilirken hata oluştu:', error);
+      });
+};
+const gotoSongs = () => {
+  const params = {
+    slug: 'top_songs',
+    request_type: 'download',
+    start_date: moment(
+        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
+    ).format("YYYY-MM-DD"),
+    end_date: moment(
+        props.choosenDates ? props.choosenDates[1] : moment()
+    ).format("YYYY-MM-DD"),
+  };
+
+  // Parametreleri sorgu dizgesi (query string) olarak oluştur
+  const queryString = new URLSearchParams(params).toString();
+  const url = `${route('control.finance.analysis.show')}?${queryString}`;
+
+  // Fetch API ile indirme işlemini başlat
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    },
+  })
+      .then((response) => response.blob())
+      .then((blob) => {
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch((error) => {
+        console.error('Excel dosyası indirilirken hata oluştu:', error);
+      });
+};
+
+
 </script>
 
 <template>
@@ -27,8 +192,8 @@ const props = defineProps({
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
-                    <button><EyeOnIcon color="var(--sub-600)" /></button>
-                    <button><DownloadIcon color="var(--sub-600)" /></button>
+                    <button @click="isFinanceTopListsArtists = true"><EyeOnIcon color="var(--sub-600)" /></button>
+                    <button @click="goToArtists"><DownloadIcon color="var(--sub-600)" /></button>
                 </div>
 
             </div>
@@ -69,8 +234,8 @@ const props = defineProps({
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
-                    <button><EyeOnIcon color="var(--sub-600)" /></button>
-                    <button><DownloadIcon color="var(--sub-600)" /></button>
+                    <button @click="isFinanceTopListsProducts = true"><EyeOnIcon color="var(--sub-600)" /></button>
+                    <button @click="gotoProducts"><DownloadIcon color="var(--sub-600)" /></button>
                 </div>
 
             </div>
@@ -118,8 +283,8 @@ const props = defineProps({
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
-                    <button><EyeOnIcon color="var(--sub-600)" /></button>
-                    <button><DownloadIcon color="var(--sub-600)" /></button>
+                    <button @click="isFinanceTopListsSongs = true"><EyeOnIcon color="var(--sub-600)" /></button>
+                    <button @click="gotoSongs"><DownloadIcon color="var(--sub-600)" /></button>
                 </div>
 
             </div>
@@ -167,8 +332,8 @@ const props = defineProps({
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
-                    <button><EyeOnIcon color="var(--sub-600)" /></button>
-                    <button><DownloadIcon color="var(--sub-600)" /></button>
+                    <button @click="isFinanceTopListsLabels = true"><EyeOnIcon color="var(--sub-600)" /></button>
+                    <button @click="gotoLabels"><DownloadIcon color="var(--sub-600)" /></button>
                 </div>
 
             </div>
@@ -199,6 +364,10 @@ const props = defineProps({
         </div>
 
     </div>
+    <FinanceTopListsSongs :choosenDates="choosenDates" v-if="isFinanceTopListsSongs" v-model="isFinanceTopListsSongs"></FinanceTopListsSongs>
+    <FinanceTopListsArtists :choosenDates="choosenDates" v-if="isFinanceTopListsArtists" v-model="isFinanceTopListsArtists"></FinanceTopListsArtists>
+    <FinanceTopListsLabels :choosenDates="choosenDates" v-if="isFinanceTopListsLabels" v-model="isFinanceTopListsLabels"></FinanceTopListsLabels>
+    <FinanceTopListsProducts :choosenDates="choosenDates" v-if="isFinanceTopListsProducts" v-model="isFinanceTopListsProducts"></FinanceTopListsProducts>
 </template>
 
 <style  scoped>

@@ -175,10 +175,10 @@ const onDone = (e) => {
 
 const formattedDates = computed(() => {
       if (!choosenDates.value) {
-        return moment().format('D MMMM YYYY');
+        return moment().format('MMMM YYYY');
       } else if (choosenDates.value.length === 2) {
-        const startDate = moment(choosenDates.value[0]).format('D MMMM YYYY');
-        const endDate = moment(choosenDates.value[1]).format('D MMMM YYYY');
+        const startDate = moment(choosenDates.value[0]).format('MMMM YYYY');
+        const endDate = moment(choosenDates.value[1]).format('MMMM YYYY');
         return `${startDate} - ${endDate}`;
       }
       return '';

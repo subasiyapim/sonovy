@@ -257,7 +257,7 @@ const removeChoosingCountries = () => {
                             <div class="w-full flex justify-between gap-2">
                                 <div class="flex flex-1 gap-2">
                                     <div class="w-6 h-6 rounded-lg overflow-hidden">
-                                        <img :src="scope.data.image"/>
+                                        <img :src="scope.data.iconKey"/>
                                     </div>
                                     <div class="flex flex-col">
                                         <p class="paragraph-sm c-strong-950">{{ scope.data.album_name }}</p>
