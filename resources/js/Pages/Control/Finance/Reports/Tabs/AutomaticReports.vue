@@ -3,7 +3,7 @@ import {usePage} from '@inertiajs/vue3';
 import {DownloadIcon, DocumentIcon} from '@/Components/Icons';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-
+import moment from 'moment';
 const data = usePage().props.reports;
 
 </script>
@@ -14,7 +14,7 @@ const data = usePage().props.reports;
     <template #tableHeader>
       <p class="subheading-regular c-strong-950"> İşlem Tarihçesi</p>
     </template>
-    <AppTableColumn :label="__('control.finance.payments.table.column_1')" align="left" sortable="name">
+    <AppTableColumn :label="__('control.finance.payments.table.column_1')" width="140" align="left" sortable="name">
       <template #default="scope">
         <div class="flex items-center gap-2">
           <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
@@ -26,7 +26,7 @@ const data = usePage().props.reports;
 
       </template>
     </AppTableColumn>
-    <AppTableColumn :label="__('control.finance.payments.table.column_2')" sortable="name" width="140">
+    <AppTableColumn :label="__('control.finance.payments.table.column_2')" sortable="name">
       <template #default="scope">
         <p class="paragraph-xs c-neutral-500">{{ scope.row.period }}</p>
       </template>

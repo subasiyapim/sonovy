@@ -3,7 +3,7 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {usePage} from '@inertiajs/vue3';
 import {DocumentIcon, DownloadIcon} from "@/Components/Icons/index.js";
-
+import moment from 'moment';
 
 </script>
 
@@ -13,24 +13,24 @@ import {DocumentIcon, DownloadIcon} from "@/Components/Icons/index.js";
     <template #tableHeader>
       <p class="subheading-regular c-strong-950"> İşlem Tarihçesi</p>
     </template>
-    <AppTableColumn :label="__('control.finance.payments.table.column_1')" align="left" sortable="name">
+    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_1')" width="100" align="left" sortable="name">
       <template #default="scope">
         <div class="flex items-center gap-2">
           <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
             <DocumentIcon color="var(--sub-600)"/>
           </div>
-          <p class="label-sm c-neutral-500">{{ scope.row.period }}</p>
+          <p class="label-sm c-neutral-500">{{ moment(scope.row.period).format('DDDD Y') }}</p>
         </div>
 
       </template>
     </AppTableColumn>
-    <AppTableColumn :label="__('control.finance.payments.table.column_2')" sortable="name" width="140">
+    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_2')" sortable="name" >
       <template #default="scope">
         <p class="label-sm c-neutral-500">{{ scope.row.name }}</p>
       </template>
     </AppTableColumn>
 
-    <AppTableColumn :label="__('control.finance.payments.table.column_3')" sortable="name">
+    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_3')" sortable="name">
       <template #default="scope">
         <div>
           <tippy :allowHtml="true" :sticky="true">
@@ -43,7 +43,7 @@ import {DocumentIcon, DownloadIcon} from "@/Components/Icons/index.js";
       </template>
     </AppTableColumn>
 
-    <AppTableColumn :label="__('control.finance.payments.table.column_4')" sortable="name">
+    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_4')" sortable="name">
       <template #default="scope">
 
         <div class="border border-soft-200 rounded px-3 py-1 flex items-center gap-2">
@@ -52,11 +52,22 @@ import {DocumentIcon, DownloadIcon} from "@/Components/Icons/index.js";
         </div>
       </template>
     </AppTableColumn>
-    <AppTableColumn :label="__('control.finance.payments.table.column_5')" sortable="name">
+        <AppTableColumn :label="__('control.finance.payments.demanded_table.column_5')" sortable="name">
+      <template #default="scope">
+
+        <p class="label-sm c-neutral-500">{{ scope.row.created_at }}</p>
+      </template>
+    </AppTableColumn>
+    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_6')" sortable="name" align="right">
       <template #default="scope">
         <a :href="route('control.finance.reports.download', scope.row.id)">
           <DownloadIcon color="var(--sub-600)"/>
+
         </a>
+        <a :href="route('control.finance.reports.destroy', scope.row.id)">
+          <TrashIcon color="var(--sub-600)"/>
+        </a>
+
       </template>
     </AppTableColumn>
     <template #empty>

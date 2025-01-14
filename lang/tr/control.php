@@ -576,6 +576,7 @@ return [
                 'column_3' => "Telif Hakkı Toplam Tutarı",
                 'column_4' => "Oluşturma Tarihi",
                 'column_5' => "Durum",
+                'column_6' => "Aksiyon",
 
             ],
 
