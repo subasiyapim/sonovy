@@ -22,10 +22,9 @@ class    ReportStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        //dd($this->all());
         return [
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date'],
+            'start_date' => ['required_with:end_date', 'regex:/^(0?[1-9]|1[0-2])-\d{4}$/'],
+            'end_date' => ['required_with:start_date', 'regex:/^(0?[1-9]|1[0-2])-\d{4}$/'],
             'report_type' => [
                 'required', 'string',
                 'in:all,artists,multiple_artists,products,multiple_products,songs,multiple_songs,platforms,multiple_platforms,countries,multiple_countries,labels,multiple_labels',

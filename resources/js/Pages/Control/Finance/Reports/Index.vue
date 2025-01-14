@@ -29,9 +29,9 @@
 </template>
 
 <script setup>
-import {usePage} from '@inertiajs/vue3';
 
-import {ref, computed} from 'vue';
+
+import {ref, onMounted, onUnmounted} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 
 import {AppTabs} from '@/Components/Widgets'
@@ -39,7 +39,7 @@ import {PrimaryButton} from '@/Components/Buttons'
 import {
   DocumentIcon,
 } from '@/Components/Icons'
-import {router} from '@inertiajs/vue3';
+import {router, usePage} from '@inertiajs/vue3';
 
 import {NewReportModal} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
@@ -92,8 +92,8 @@ const onTabChange = (tab) => {
 
   router.visit(route(route().current()), {
     data: {
-        slug: tab.slug,
-        page:params.get('page') ?? 1,
+      slug: tab.slug,
+      page: params.get('page') ?? 1,
     }
   });
 }
@@ -101,6 +101,17 @@ const onTabChange = (tab) => {
 const onUpdate = (e) => {
   pageTable.value.editRow(e);
 }
+
+onMounted(() => {
+  const channel = Echo.private(`reportProcessed.${usePage().props.auth.user.id}`)
+      .listen('.reportProcessed', (e) => {
+        console.log('Processed Category Data:', e);
+      });
+
+  onUnmounted(() => {
+    channel.stopListening('.reportProcessed');
+  });
+});
 </script>
 
 <style lang="scss" scoped>

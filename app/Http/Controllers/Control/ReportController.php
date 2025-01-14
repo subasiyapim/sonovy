@@ -63,7 +63,7 @@ class ReportController extends Controller
             ->where('is_auto_report', $isAutoReport)
             ->where('user_id', Auth::id())
             ->advancedFilter();
-
+        //dd($query);
         $reports = ReportResource::collection($query)->resource;
         $artists = Artist::with('platforms')->get();
         $albums = getDataFromInputFormat(Product::all(), 'id', 'album_name', 'image');
@@ -95,8 +95,9 @@ class ReportController extends Controller
      */
     public function store(ReportStoreRequest $request): JsonResponse|RedirectResponse
     {
-        $start_date = Carbon::parse($request->validated()['start_date'])->format('Y-m-d');
-        $end_date = Carbon::parse($request->validated()['end_date'])->format('Y-m-d');
+        $start_date = Carbon::createFromFormat('m-Y',
+            $request->validated()['start_date'])->startOfMonth()->format('Y-m-d');
+        $end_date = Carbon::createFromFormat('m-Y', $request->validated()['end_date'])->endOfMonth()->format('Y-m-d');
         $report_type = $request->validated()['report_type'];
         $ids = $request->validated()['ids'];
 
@@ -129,18 +130,18 @@ class ReportController extends Controller
     {
         if ($report->child()->count() > 1) {
 
-            $zipFilePath = storage_path('app/public/tenant_' . tenant('domain') . '_income_reports/multiple_reports/' . $report->user_id . '/' . Str::slug($report->period) . '-' . Str::slug($report->name) . '.zip');
+            $zipFilePath = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'-'.Str::slug($report->name).'.zip');
 
             $zip = new ZipArchive;
 
             if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
 
-                $files = Storage::disk('public')->allFiles('tenant_' . tenant('domain') . '_income_reports/multiple_reports/' . $report->user_id . '/' . Str::slug($report->period) . '/' . $report->id);
+                $files = Storage::disk('public')->allFiles('tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'/'.$report->id);
 
                 foreach ($files as $file) {
                     $fullPath = Storage::disk('public')->path($file);
 
-                    $zip->addFile($fullPath, basename($file));  // 'basename($file)' dosya adını ekler
+                    $zip->addFile($fullPath, basename($file));
                 }
 
                 $zip->close();
@@ -152,7 +153,7 @@ class ReportController extends Controller
         }
 
 
-        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
+        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();
