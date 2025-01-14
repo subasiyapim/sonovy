@@ -23,14 +23,17 @@ const data = usePage().props.reports;
             <DocumentIcon color="var(--sub-600)"/>
           </div>
           <p class="subheading-xs c-strong-950">
-            {{ scope.row.created_at }}</p>
+            {{ scope.row.period }}</p>
         </div>
 
       </template>
     </AppTableColumn>
     <AppTableColumn :label="__('control.finance.payments.table.column_2')" sortable="name">
       <template #default="scope">
-        <p class="paragraph-xs c-neutral-500">{{ scope.row.period }}</p>
+        <p class="paragraph-xs c-neutral-500">
+        <!-- {{ scope.row.period }} -->
+    Tam katalog hakkında Tek Rapor
+        </p>
       </template>
     </AppTableColumn>
 

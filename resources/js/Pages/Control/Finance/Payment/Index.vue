@@ -132,7 +132,7 @@
                     class="w-5 h-5 rounded-full bg-white border border-soft-200 flex items-center justify-center c-sub-600 text-sm font-medium">
                   3
                 </div>
-                <p class="c-sub-600 paragraph-sm">Tutar Gönderilecek</p></div>
+                <p class="c-sub-600 paragraph-sm">Tutar Gönderildi</p></div>
             </div>
           </div>
         </div>
