@@ -301,14 +301,14 @@ class AnalyseService
         return $topSalesTypes->mapWithKeys(function ($earning, $salesType) {
             return [
                 $salesType =>
-                    [
-                        'start_date' => Cache::get('start_date'),
-                        'end_date' => Cache::get('end_date'),
-                        'platform' => $salesType,
-                        'quantity' => $this->data->where('sales_type', $salesType)->sum('quantity'),
-                        'earning' => $earning,
-                        'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
-                    ]
+                [
+                    'start_date' => Cache::get('start_date'),
+                    'end_date' => Cache::get('end_date'),
+                    'platform' => $salesType,
+                    'quantity' => $this->data->where('sales_type', $salesType)->sum('quantity'),
+                    'earning' => $earning,
+                    'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
+                ]
             ];
         })->toArray();
     }
@@ -534,6 +534,7 @@ class AnalyseService
                 if (in_array($platform, $platforms)) {
                     return [
                         $platform => [
+                            'earning_num' => $sum,
                             'earning' => Number::currency($sum, 'USD', app()->getLocale()),
                             'percentage' => round($percentage, 2),
                         ]
@@ -541,6 +542,7 @@ class AnalyseService
                 }
                 return [
                     'other' => [
+                        'earning_num' => $sum,
                         'earning' => Number::currency($sum, 'USD', app()->getLocale()),
                         'percentage' => round($percentage, 2),
                     ]
@@ -550,6 +552,7 @@ class AnalyseService
             foreach ($platforms as $platform) {
                 if (!isset($earnings[$platform])) {
                     $earnings[$platform] = [
+                        'earning_num' => 0,
                         'earning' => Number::currency(0, 'USD', app()->getLocale()),
                         'percentage' => 0,
                     ];
@@ -558,6 +561,7 @@ class AnalyseService
 
             if (!isset($earnings['other'])) {
                 $earnings['other'] = [
+                    'earning_num' => 0,
                     'earning' => Number::currency(0, 'USD', app()->getLocale()),
                     'percentage' => 0,
                 ];

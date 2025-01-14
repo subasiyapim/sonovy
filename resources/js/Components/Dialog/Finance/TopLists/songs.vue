@@ -4,7 +4,7 @@
 <BaseDialog :showClose="true" width="800px" v-model="isDialogOn"  height="min-content" align="center" title="Parçalara Göre Gelir"
               :description="formattedDates">
     <template #icon>
-      <WorldIcon color="var(--dark-green-950)"/>
+      <RingtoneIcon color="var(--dark-green-950)"/>
     </template>
 
 
@@ -35,7 +35,7 @@
                 </td>
                 <td style="width:25%;">
                     <div class="flex items-center gap-2">
-                        <AppProgressIndicator color="#D02533" :modelValue="song.percentage" />
+                         <AppProgressIndicator color="#335CFF" :modelValue="song.percentage" />
                         <span class="paragraph-xs c-sub-600">{{song.percentage}}</span>
                     </div>
 
@@ -56,7 +56,7 @@
 <script setup>
 import BaseDialog from '@/Components/Dialog/BaseDialog.vue';
 import moment from 'moment';
-import {WorldIcon} from '@/Components/Icons'
+import {RingtoneIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore'
 import {computed, ref, onMounted} from 'vue';
 import {AppProgressIndicator} from '@/Components/Widgets';

@@ -9,6 +9,7 @@ import NotificationIcon from './NotificationIcon.vue';
 import CalendarIcon from './CalendarIcon.vue';
 import TableOrderIcon from './TableOrderIcon.vue';
 import More2LineIcon from './More2LineIcon.vue';
+import Building2LineIcon from './Building2LineIcon.vue';
 import WorldIcon from './WorldIcon.vue';
 import PhoneIcon from './PhoneIcon.vue';
 import MessageIcon from './MessageIcon.vue';
@@ -123,6 +124,7 @@ export {
     AppLoadingIcon,
     HistoryIcon,
     DraggableIcon,
+    Building2LineIcon,
     PlayCircleFillIcon,
     CheckIcon,
     MessageIcon,
