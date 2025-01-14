@@ -22,9 +22,9 @@ moment.locale('tr');
           <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
             <DocumentIcon color="var(--sub-600)"/>
           </div>
-          <div v-if="scope.row.period && scope.row.period.split(" ").length > 0" class="flex flex-col items-start">
-              <p class="label-xs c-strong-950">{{ scope.row.period.split(" ")[0] }} -</p>
-            <p class="label-xs c-strong-950">{{ scope.row.period.split(" ")[1] }}</p>
+          <div v-if="scope.row.period" class="flex flex-col items-start">
+              <p class="label-xs c-strong-950">{{ scope.row.period.split(" ")[0] }} - </p>
+                <p class="label-xs c-strong-950">{{ scope.row.period.split(" ")[1] }}</p>
           </div>
 
         </div>
