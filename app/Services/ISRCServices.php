@@ -37,9 +37,10 @@ class ISRCServices
         }
 
         // Hatalı ISRC kodlarını kontrol et ve sil
-        Song::where('isrc', '=', '0')
-            ->orWhereNull('isrc')
-            ->delete(); // Hatalı olanları sil
+        Song::where(function ($query) {
+            $query->where('isrc', '=', '0')
+                ->orWhereNull('isrc');
+        })->delete();
 
         // Mevcut ISRC kodlarını al
         $existing_isrcs = Song::where('isrc', 'like', "$country_code-$registration_code-$year_code-%")
@@ -71,6 +72,12 @@ class ISRCServices
         // Kod sınırlarının dışında kalması durumunda false döndür
         if ($definition_code < $min_code || $definition_code > $max_code) {
             Log::error("Invalid ISRC definition code: $definition_code");
+            return false;
+        }
+
+        // Kodun sıfır olmamasını sağla
+        if ($definition_code === 0) {
+            Log::error("Definition code is zero. Invalid ISRC generation.");
             return false;
         }
 
