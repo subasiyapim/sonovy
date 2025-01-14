@@ -579,7 +579,7 @@ class EarningService
                     'song_name' => optional($song)->name,
                     'song_id' => optional($song)->id,
                     'upc_code' => $product->upc_code ?? Str::random(16),
-                    'isrc_code' => optional($song)->isrc,
+                    'isrc_code' => optional($song)->isrc ?? ISRCServices::make($song->type, tenant()),
                     'catalog_number' => $product->catalog_number,
                     'release_type' => 'Yayın',
                     'sales_type' => $sales_type,
