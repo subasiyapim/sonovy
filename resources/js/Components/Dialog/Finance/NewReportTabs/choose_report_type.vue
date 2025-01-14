@@ -5,7 +5,8 @@ import {MultipleDocumentIcon,DocumentIcon} from '@/Components/Icons'
 import {AppFancyRadio} from '@/Components/Form'
 
 const props = defineProps({
-    modelValue:{}
+    modelValue:{},
+    formattedDates:{},
 })
 
 const emits = defineEmits(['update:modelValue']);

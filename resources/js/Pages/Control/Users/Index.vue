@@ -107,6 +107,8 @@ import {
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
 import moment from 'moment';
+import 'moment/locale/tr';
+moment.locale('tr');
 const usersTable = ref();
 const defaultStore = useDefaultStore();
 const isUserModalOn = ref(false);

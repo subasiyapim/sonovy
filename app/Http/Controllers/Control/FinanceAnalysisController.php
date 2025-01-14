@@ -19,7 +19,7 @@ class FinanceAnalysisController extends Controller
     public function index(Request $request)
     {
 
-        dd($request->all());
+        // dd($request->all());
         $request->validate([
             'slug' => ['sometimes', 'string', 'in:general,top-lists,platforms,countries'],
             'start_date' => ['date', 'required_with:end_date'],

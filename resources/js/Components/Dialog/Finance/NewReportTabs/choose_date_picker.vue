@@ -1,9 +1,12 @@
 <script setup>
 import {ref,computed} from 'vue';
 import moment from 'moment';
+import 'moment/locale/tr';
+moment.locale('tr');
 
 const props = defineProps({
-    modelValue:{}
+    modelValue:{},
+    formattedDates:{},
 })
 
 const emits = defineEmits(['update:modelValue']);
