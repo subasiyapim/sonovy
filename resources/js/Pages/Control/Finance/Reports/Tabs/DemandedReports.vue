@@ -16,12 +16,7 @@ moment.locale('tr');
     <template #tableHeader>
       <p class="subheading-regular c-strong-950"> İşlem Tarihçesi</p>
     </template>
-<<<<<<< HEAD
     <AppTableColumn :label="__('control.finance.payments.demanded_table.column_1')"  align="left" sortable="name">
-=======
-    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_1')" width="100" align="left"
-                    sortable="name">
->>>>>>> 90aa12fc9db5109944009fe9fbf0b44f32dc160c
       <template #default="scope">
         <div class="flex items-center gap-2">
           <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
@@ -65,11 +60,7 @@ moment.locale('tr');
         </div>
       </template>
     </AppTableColumn>
-<<<<<<< HEAD
         <AppTableColumn :label="__('control.finance.payments.demanded_table.column_4')" sortable="name">
-=======
-    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_5')" sortable="name">
->>>>>>> 90aa12fc9db5109944009fe9fbf0b44f32dc160c
       <template #default="scope">
 
         <p class="label-sm c-neutral-500">{{ scope.row.created_at }}</p>
