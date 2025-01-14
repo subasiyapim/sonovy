@@ -301,14 +301,14 @@ class AnalyseService
         return $topSalesTypes->mapWithKeys(function ($earning, $salesType) {
             return [
                 $salesType =>
-                [
-                    'start_date' => Cache::get('start_date'),
-                    'end_date' => Cache::get('end_date'),
-                    'platform' => $salesType,
-                    'quantity' => $this->data->where('sales_type', $salesType)->sum('quantity'),
-                    'earning' => $earning,
-                    'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
-                ]
+                    [
+                        'start_date' => Cache::get('start_date'),
+                        'end_date' => Cache::get('end_date'),
+                        'platform' => $salesType,
+                        'quantity' => $this->data->where('sales_type', $salesType)->sum('quantity'),
+                        'earning' => $earning,
+                        'percentage' => Number::percentage($this->totalEarnings > 0 ? ($earning / $this->totalEarnings) * 100 : 0),
+                    ]
             ];
         })->toArray();
     }
@@ -462,62 +462,6 @@ class AnalyseService
             'items' => $items->toArray(),
         ];
     }
-
-//    public function monthlyNetEarning(): array
-//    {
-//        $platforms = ['Spotify', 'Amazon', 'Youtube'];
-//
-//        $calculateEarnings = function ($data) use ($platforms) {
-//            $totalEarnings = $data->sum('earning');
-//            $earnings = $data->groupBy('platform')->mapWithKeys(function ($platformData, $platform) use (
-//                $platforms,
-//                $totalEarnings
-//            ) {
-//                $sum = $platformData->sum('earning');
-//                $percentage = $totalEarnings > 0 ? ($sum / $totalEarnings) * 100 : 0;
-//                if (in_array($platform, $platforms)) {
-//                    return [
-//                        $platform => [
-//                            'earning' => Number::currency($sum, 'USD', app()->getLocale()),
-//                            'percentage' => round($percentage, 2),
-//                        ]
-//                    ];
-//                }
-//                return [
-//                    'other' => [
-//                        'earning' => Number::currency($sum, 'USD', app()->getLocale()),
-//                        'percentage' => round($percentage, 2),
-//                    ]
-//                ];
-//            });
-//
-//            foreach ($platforms as $platform) {
-//                if (!isset($earnings[$platform])) {
-//                    $earnings[$platform] = [
-//                        'earning' => Number::currency(0, 'USD', app()->getLocale()),
-//                        'percentage' => 0,
-//                    ];
-//                }
-//            }
-//
-//            if (!isset($earnings['other'])) {
-//                $earnings['other'] = [
-//                    'earning' => Number::currency(0, 'USD', app()->getLocale()),
-//                    'percentage' => 0,
-//                ];
-//            }
-//
-//            return $earnings;
-//        };
-//        $items = $this->groupedData->map(fn($monthData) => $calculateEarnings($monthData));
-//
-//        $total = $calculateEarnings($this->data);
-//
-//        return [
-//            'total' => $total->toArray(),
-//            'items' => $items->toArray(),
-//        ];
-//    }
 
     public function monthlyNetEarning(): array
     {
