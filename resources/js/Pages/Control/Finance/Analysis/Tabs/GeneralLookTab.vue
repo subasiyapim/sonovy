@@ -24,7 +24,7 @@ import Vue3Apexcharts from 'vue3-apexcharts'
 const showYoutubeFremium = ref(false);
 import {router} from '@inertiajs/vue3';
 import moment from 'moment';
-import 'moment/locale/tr';
+import  'moment/dist/locale/tr';
 moment.locale('tr');
 
 const props = defineProps({
@@ -346,7 +346,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
               <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
                 <div class="bg-weak-50  flex items-end justify-center h-10 min-w-10">
                     <span class="c-sub-600 label-sm !text-[10px] ">
-                        {{ data.monthly_net_earnings.total.total}}
+                        {{ data.monthly_net_earnings.items[key].total}}
                     </span>
                 </div>
                 <div v-for="p in Object.keys(data.monthly_net_earnings.items[key])"
@@ -422,8 +422,10 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
                 <div class="bg-weak-50  h-10 min-w-10 flex items-end justify-center">
                   <span class="c-sub-600 label-sm !text-[10px] ">{{data.spotify_discovery_mode_earnings.items[key].total}}</span>
                 </div>
-                <div class="bg-spotify h-[40%]"></div>
-                <div class="bg-[#BDECCD] h-[20%]"></div>
+                <div class="bg-spotify " :style="{height:data.spotify_discovery_mode_earnings.items[key].earning_percentage+'%'}">
+
+                </div>
+                <div class="bg-[#BDECCD] h-full"></div>
               </div>
               <template #content>
                 <div class="flex flex-col gap-2 w-96 p-1">

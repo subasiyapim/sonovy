@@ -48,7 +48,7 @@
 <script setup>
 import BaseDialog from '@/Components/Dialog/BaseDialog.vue';
 import moment from 'moment';
-import 'moment/locale/tr';
+import  'moment/dist/locale/tr';
 moment.locale('tr');
 import {WorldIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore'

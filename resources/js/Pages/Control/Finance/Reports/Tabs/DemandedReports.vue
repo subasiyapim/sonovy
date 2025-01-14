@@ -4,7 +4,7 @@ import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {usePage} from '@inertiajs/vue3';
 import {DocumentIcon, DownloadIcon} from "@/Components/Icons/index.js";
 import moment from 'moment';
-import 'moment/locale/tr';
+import  'moment/dist/locale/tr';
 moment.locale('tr');
 
 </script>

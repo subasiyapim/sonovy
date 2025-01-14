@@ -274,7 +274,7 @@ import {
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
 import moment from 'moment';
-import 'moment/locale/tr';
+import  'moment/dist/locale/tr';
 moment.locale('tr');
 
 const productTable = ref();

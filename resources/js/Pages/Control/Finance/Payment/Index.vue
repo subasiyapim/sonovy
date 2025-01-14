@@ -153,7 +153,11 @@
       </template>
       <AppTableColumn :label="__('control.finance.payments.table.column_1')" align="left" sortable="name">
         <template #default="scope">
-          <p class="label-sm c-strong-950">{{ scope.row.date }}</p>
+            <div>
+                <p class="label-sm c-strong-950">{{ moment(scope.row.date).format('D MMMM Y') }}</p>
+                <p class="paragraph-xs c-sub-600">{{ moment(scope.row.date).format('HH:mm:ss') }}</p>
+            </div>
+
 
         </template>
       </AppTableColumn>
@@ -218,6 +222,11 @@ import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {PrimaryButton, IconButton, RegularButton} from '@/Components/Buttons'
 import {StatusBadge} from '@/Components/Badges'
 import Vue3Apexcharts from 'vue3-apexcharts'
+import moment from 'moment'
+import  'moment/dist/locale/tr';
+
+moment.locale('tr');
+
 
 import {
   AddIcon,

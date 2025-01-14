@@ -52,7 +52,7 @@ import BaseDialog from '@/Components/Dialog/BaseDialog.vue';
 import {WorldIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore'
 import moment from 'moment';
-import 'moment/locale/tr';
+import  'moment/dist/locale/tr';
 moment.locale('tr');
 import {computed, ref, onMounted} from 'vue';
 import {AppProgressIndicator} from '@/Components/Widgets';

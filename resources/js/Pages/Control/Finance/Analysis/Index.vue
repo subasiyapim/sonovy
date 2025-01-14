@@ -64,7 +64,6 @@
     </div>
 
     <div>
-
       <component :choosenDates="choosenDates" :data="data.data" :formattedDate="formattedDates"
                  :is="tabs.find(e => e.slug == currentTab)?.component"></component>
     </div>
@@ -135,7 +134,8 @@ let params = new URLSearchParams(window.location.search)
 
 const choosenDates = ref(null);
 if (params.get('start_date') && params.get('end_date')) {
-  choosenDates.value = [params.get('start_date'), params.get('end_date')]
+     choosenDates.value = [moment(params.get('start_date'), "M-YYYY"),moment(params.get('end_date'), "M-YYYY")]
+
 }
 const removeDateFilter = () => {
   choosenDates.value = null;
@@ -199,8 +199,13 @@ const formattedDates = computed(() => {
             return `${startDate} - ${endDate}`;
     } else if (choosenDates.value.length === 2) {
 
+
             const startDate = moment(choosenDates.value[0]).format('MMMM YYYY');
             const endDate = moment(choosenDates.value[1]).format('MMMM YYYY');
+
+            console.log("SDASD",choosenDates.value[0]);
+            console.log("SDASD",choosenDates.value[1]);
+
             return `${startDate} - ${endDate}`;
     }
     return '';
@@ -208,7 +213,6 @@ const formattedDates = computed(() => {
 
 
 const onTabChange = (tab) => {
-  console.log("TAB", tab);
   let query = {
     slug: tab.slug,
   }

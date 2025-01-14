@@ -1,7 +1,7 @@
 <script setup>
 import {ref,computed} from 'vue';
 import moment from 'moment';
-import 'moment/locale/tr';
+import  'moment/dist/locale/tr';
 moment.locale('tr');
 
 const props = defineProps({

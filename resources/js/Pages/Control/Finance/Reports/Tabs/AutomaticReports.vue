@@ -4,7 +4,7 @@ import {DownloadIcon, DocumentIcon} from '@/Components/Icons';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import moment from 'moment';
-import 'moment/locale/tr';
+import  'moment/dist/locale/tr';
 moment.locale('tr');
 const data = usePage().props.reports;
 
