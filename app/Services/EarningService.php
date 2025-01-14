@@ -557,15 +557,26 @@ class EarningService
 
             if ($product) {
                 $song = $product->songs->first();
+
+                // ISRC oluşturma
+                $isrc = $song->isrc ?? ISRCServices::make($song->type, tenant());
+
+                // ISRC kontrolü: Geçersizse işlem yapma
+                if (!$isrc || $isrc === '0') {
+                    Log::error("Failed to generate valid ISRC for song ID: {$song->id}");
+                    continue;
+                }
+
+                $song->isrc = $isrc;
+                $song->save();
+
                 $earning = number_format($faker->randomFloat(2, 0, 1000), 2, '.', '');
                 $sales_type = $faker->randomElement(['Stream', 'PLATFORM PROMOTION', 'Creation', 'Download']);
                 $label = $product->label;
                 $artist = $product->artists->first();
                 $platform = $product->downloadPlatforms->first();
                 $country = Country::inRandomOrder()->first();
-                $isrc = $song->isrc ?? ISRCServices::make($song->type, tenant());
-                $song->isrc = $isrc;
-                $song->save();
+
                 $row = [
                     'report_date' => $report_date,
                     'sales_date' => $sales_date,
@@ -610,6 +621,7 @@ class EarningService
             'tenant_'.tenant('domain').'_earning_reports'
         );
     }
+
 
     protected static function createEarning($data, $file_id)
     {
