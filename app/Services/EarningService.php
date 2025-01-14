@@ -3,26 +3,20 @@
 namespace App\Services;
 
 use App\Enums\ProductTypeEnum;
-use App\Enums\PaymentProcessTypeEnum;
-use App\Enums\PaymentStatusEnum;
 use App\Exports\FakerEarningReport;
-use App\Imports\EarningImport;
 use App\Models\EarningReport;
 use App\Models\Product;
 use App\Models\System\Country;
 use App\Models\Earning;
 use App\Models\EarningReportFile;
-use App\Models\Payment;
-use App\Models\Platform;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use function Psy\debug;
 
 class EarningService
 {
