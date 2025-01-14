@@ -436,6 +436,7 @@ class AnalyseService
                     'promotion' => Number::currency($promotion, 'USD', app()->getLocale()),
                     'earning' => Number::currency($earning, 'USD', app()->getLocale()),
                     'total' => Number::currency($net, 'USD', app()->getLocale()),
+                    'earning_percentage' => $net > 0 ? ($net / $earning) * 100 : 0,
                 ]
             ];
         });
@@ -454,6 +455,7 @@ class AnalyseService
                     'promotion' => Number::currency($promotion, 'USD', app()->getLocale()),
                     'earning' => Number::currency($earning, 'USD', app()->getLocale()),
                     'total' => Number::currency($total, 'USD', app()->getLocale()),
+
                 ];
             });
 
