@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use function Psy\debug;
 
@@ -574,10 +575,10 @@ class EarningService
                     'label_id' => optional($label)->id,
                     'artist_name' => optional($artist)->name,
                     'artist_id' => optional($artist)->id,
-                    'release_name' => $product->name,
+                    'release_name' => $product->album_name,
                     'song_name' => optional($song)->name,
                     'song_id' => optional($song)->id,
-                    'upc_code' => $product->upc_code ?? '',
+                    'upc_code' => $product->upc_code ?? Str::random(16),
                     'isrc_code' => optional($song)->isrc,
                     'catalog_number' => $product->catalog_number,
                     'release_type' => 'Yayın',
