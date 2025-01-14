@@ -205,7 +205,7 @@ class AnalyseService
                 'streams' => $artistData->sum('quantity'),
                 'percentage' => round($percentage, 2),
             ];
-        })->sortByDesc('earning')->toArray();
+        })->sortByDesc('percentage')->toArray();
     }
 
     public function topAlbums(): array
@@ -227,7 +227,7 @@ class AnalyseService
                 'streams' => $albumData->sum('quantity'),
                 'percentage' => round($percentage, 2),
             ];
-        })->sortByDesc('earning')->values()->toArray();
+        })->sortByDesc('percentage')->values()->toArray();
     }
 
     public function topSongs(): array
@@ -249,7 +249,7 @@ class AnalyseService
                 'streams' => $songData->sum('quantity'),
                 'percentage' => round($percentage, 2),
             ];
-        })->values()->toArray();
+        })->sortByDesc('percentage')->values()->toArray();
     }
 
     public function topLabels(): array
@@ -267,7 +267,7 @@ class AnalyseService
                 'earning' => Number::currency($labelEarnings, 'USD', app()->getLocale()),
                 'percentage' => round($percentage, 2),
             ];
-        })->sortByDesc('earning')->values()->toArray();
+        })->sortByDesc('percentage')->values()->toArray();
     }
 
     public function trendingAlbums(): array
