@@ -38,7 +38,7 @@ class ISRCServices
 
         // Hatalı ISRC kodlarını kontrol et ve sil
         Song::where(function ($query) {
-            $query->where('isrc', '=', '0')
+            $query->where('isrc', '=', 0)
                 ->orWhereNull('isrc');
         })->delete();
 
