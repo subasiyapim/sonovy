@@ -263,8 +263,8 @@ const removeChoosingCountries = () => {
                                     <div class="flex flex-col">
                                         <p class="paragraph-sm c-strong-950">{{ scope.data.album_name }}</p>
                                         <div class="flex items-center gap-1">
-                                            <p class="paragraph-xs c-sub-600 w-max">{{ scope.data.type == 1 ? 'Ses Dosyası' : (scope.data.type == 2 ? 'Müzik Video' : (scope.data.type == 2 ? 'Zil Sesi'  : 'Apple Video')) }}</p>
-                                            <span class="paragraph-xs c-sub-600">{{scope.data.upc_code}}</span>
+                                            <!-- <p class="paragraph-xs c-sub-600 w-max">{{ scope.data.type == 1 ? 'Ses Dosyası' : (scope.data.type == 2 ? 'Müzik Video' : (scope.data.type == 2 ? 'Zil Sesi'  : 'Apple Video')) }}</p> -->
+                                            <span class="paragraph-xs c-sub-600">UPC: {{scope.data.upc_code}}</span>
                                         </div>
                                     </div>
                                 </div>
