@@ -305,7 +305,7 @@ const gotoSongs = () => {
                         <td class="py-2">
                             <span class="label-sm c-strong-950">{{song.song_name}}</span>
                         </td>
-                        <td class="py-2">
+                        <td class="py-2" style="width:130px;">
                             <span class="paragraph-xs c-sub-600">{{song.isrc_code}}</span>
                         </td>
                         <td class="py-2">

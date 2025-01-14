@@ -13,7 +13,7 @@
         <thead>
             <tr>
                 <td class="label-sm c-strong-950 !font-semibold">Albüm Adı</td>
-                <td class="label-sm c-strong-950 !font-semibold">ISRC Adı</td>
+                <td class="label-sm c-strong-950 !font-semibold">ISRC</td>
                 <td class="label-sm c-strong-950 !font-semibold">Sanatçı Adı</td>
                 <td class="label-sm c-strong-950  !text-end !font-semibold pe-3 ">Oran</td>
                 <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
@@ -25,9 +25,8 @@
                    <span class="label-sm c-strong-950">{{song.song_name}}</span>
 
                 </td>
-                <td class="py-3">
+                <td class="py-3" style="width:130px;">
                    <span class="paragraph-xs c-strong-950">{{song.isrc_code}}</span>
-
                 </td>
                 <td class="py-3">
                    <span class="paragraph-xs c-strong-950">{{song.artist_name}}</span>
