@@ -563,7 +563,9 @@ class EarningService
                 $artist = $product->artists->first();
                 $platform = $product->downloadPlatforms->first();
                 $country = Country::inRandomOrder()->first();
-
+                $isrc = $song->isrc ?? ISRCServices::make($song->type, tenant());
+                $song->isrc = $isrc;
+                $song->save();
                 $row = [
                     'report_date' => $report_date,
                     'sales_date' => $sales_date,
@@ -579,7 +581,7 @@ class EarningService
                     'song_name' => optional($song)->name,
                     'song_id' => optional($song)->id,
                     'upc_code' => $product->upc_code ?? Str::random(16),
-                    'isrc_code' => optional($song)->isrc ?? ISRCServices::make($song->type, tenant()),
+                    'isrc_code' => $isrc,
                     'catalog_number' => $product->catalog_number,
                     'release_type' => 'Yayın',
                     'sales_type' => $sales_type,
