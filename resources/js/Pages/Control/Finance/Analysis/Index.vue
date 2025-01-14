@@ -64,6 +64,7 @@
     </div>
 
     <div>
+
       <component :choosenDates="choosenDates" :data="data.data" :formattedDate="formattedDates"
                  :is="tabs.find(e => e.slug == currentTab)?.component"></component>
     </div>
@@ -79,6 +80,10 @@ import {ref, computed,nextTick} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {AppCard} from '@/Components/Cards';
 import moment from 'moment';
+import  'moment/dist/locale/tr';
+
+moment.locale('tr');
+
 
 import {AppTabs} from '@/Components/Widgets'
 import {PrimaryButton, IconButton, RegularButton} from '@/Components/Buttons'
@@ -187,15 +192,19 @@ const onDone = (e) => {
 }
 
 const formattedDates = computed(() => {
-      if (!choosenDates.value) {
-        return moment().format('MMMM YYYY');
-      } else if (choosenDates.value.length === 2) {
-        const startDate = moment(choosenDates.value[0]).format('MMMM YYYY');
-        const endDate = moment(choosenDates.value[1]).format('MMMM YYYY');
-        return `${startDate} - ${endDate}`;
-      }
-      return '';
-    });
+    if (!choosenDates.value) {
+            // return moment().locale('tr').format('MMMM YYYY');
+             const startDate = moment().format('MMMM YYYY');
+            const endDate = moment().subtract(1, 'year').format('MMMM YYYY');
+            return `${startDate} - ${endDate}`;
+    } else if (choosenDates.value.length === 2) {
+
+            const startDate = moment(choosenDates.value[0]).format('MMMM YYYY');
+            const endDate = moment(choosenDates.value[1]).format('MMMM YYYY');
+            return `${startDate} - ${endDate}`;
+    }
+    return '';
+});
 
 
 const onTabChange = (tab) => {

@@ -56,6 +56,8 @@
 <script setup>
 import BaseDialog from '@/Components/Dialog/BaseDialog.vue';
 import moment from 'moment';
+import 'moment/locale/tr';
+moment.locale('tr');
 import {RingtoneIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore'
 import {computed, ref, onMounted} from 'vue';
@@ -65,25 +67,17 @@ import {AppProgressIndicator} from '@/Components/Widgets';
 
 const crudStore = useCrudStore();
 const props = defineProps({
-  modelValue: {
-    default: false,
-  },
-  choosenDates:{
+    modelValue: {
+        default: false,
+    },
+    choosenDates:{
 
-  }
+    },
+    formattedDates:{}
 })
 
 
-const formattedDates = computed(() => {
-    if (!props.choosenDates) {
-    return moment().format('MMMM YYYY');
-    } else if (props.choosenDates.length === 2) {
-    const startDate = moment(props.choosenDates[0]).format('MMMM YYYY');
-    const endDate = moment(props.choosenDates[1]).format('MMMM YYYY');
-    return `${startDate} - ${endDate}`;
-    }
-    return '';
-});
+
 const emits = defineEmits(['update:modelValue']);
 const isDialogOn = computed({
   get: () => props.modelValue,

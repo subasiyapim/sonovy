@@ -13,7 +13,8 @@ import { usePage} from '@inertiajs/vue3';
 const crudStore = useCrudStore();
 const defaultStore = useDefaultStore();
 const props = defineProps({
-    modelValue:{}
+    modelValue:{},
+    formattedDates:{},
 })
 
 const emits = defineEmits(['update:modelValue']);

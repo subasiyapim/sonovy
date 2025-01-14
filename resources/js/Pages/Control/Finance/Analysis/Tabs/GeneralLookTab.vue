@@ -24,6 +24,8 @@ import Vue3Apexcharts from 'vue3-apexcharts'
 const showYoutubeFremium = ref(false);
 import {router} from '@inertiajs/vue3';
 import moment from 'moment';
+import 'moment/locale/tr';
+moment.locale('tr');
 
 const props = defineProps({
   data: {},
@@ -417,8 +419,8 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
 
             <tippy :allowHtml="true" :maxWidth="600" theme="light" followCursor :sticky="true" :interactive="false">
               <div class="h-72 flex flex-col justify-end w-full gap-0.5">
-                <div class="bg-weak-50 h-[40%] flex items-end justify-center">
-                  <span class="c-sub-600 label-sm !text-[10px] ">$96,000.00</span>
+                <div class="bg-weak-50  h-10 min-w-10 flex items-end justify-center">
+                  <span class="c-sub-600 label-sm !text-[10px] ">{{data.spotify_discovery_mode_earnings.items[key].total}}</span>
                 </div>
                 <div class="bg-spotify h-[40%]"></div>
                 <div class="bg-[#BDECCD] h-[20%]"></div>
@@ -448,7 +450,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
               </template>
             </tippy>
 
-            <span class="paragraph-xs c-sub-600">{{ key }}</span>
+            <span class="paragraph-xs c-sub-600 !text-center">{{ key }}</span>
           </div>
         </div>
       </div>
@@ -668,13 +670,13 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
     </div>
   </div>
 
-  <FinanceIncomePlatforms :choosenDates="choosenDates" v-model="isFinanceIncomePlatforms"
+  <FinanceIncomePlatforms :formattedDates="formattedDate" :choosenDates="choosenDates" v-model="isFinanceIncomePlatforms"
                           v-if="isFinanceIncomePlatforms"></FinanceIncomePlatforms>
-  <FinanceIncomeCountries :choosenDates="choosenDates" v-model="isFinanceIncomeCountries"
+  <FinanceIncomeCountries :formattedDates="formattedDate" :choosenDates="choosenDates" v-model="isFinanceIncomeCountries"
                           v-if="isFinanceIncomeCountries"></FinanceIncomeCountries>
-  <FinanceIncomeSales :choosenDates="choosenDates" v-model="isFinanceIncomeSales"
+  <FinanceIncomeSales :formattedDates="formattedDate" :choosenDates="choosenDates" v-model="isFinanceIncomeSales"
                       v-if="isFinanceIncomeSales"></FinanceIncomeSales>
-  <FinanceIncomeProducts :choosenDates="choosenDates" v-model="isFinanceIncomeProducts"
+  <FinanceIncomeProducts :formattedDates="formattedDate" :choosenDates="choosenDates" v-model="isFinanceIncomeProducts"
                          v-if="isFinanceIncomeProducts"></FinanceIncomeProducts>
 </template>
 

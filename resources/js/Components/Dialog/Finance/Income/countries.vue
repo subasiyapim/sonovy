@@ -2,7 +2,9 @@
 <template>
 
 <BaseDialog :showClose="true" v-model="isDialogOn"  height="min-content" align="center" title="Ülkelere Göre Gelir"
-              description="Ocak 2024 - Haziran 2024">
+              :description="formattedDates">
+
+
     <template #icon>
       <WorldIcon color="var(--dark-green-950)"/>
     </template>
@@ -46,6 +48,8 @@
 <script setup>
 import BaseDialog from '@/Components/Dialog/BaseDialog.vue';
 import moment from 'moment';
+import 'moment/locale/tr';
+moment.locale('tr');
 import {WorldIcon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore'
 import {computed, ref, onMounted} from 'vue';
@@ -60,7 +64,8 @@ const props = defineProps({
   },
   choosenDates:{
 
-  }
+  },
+   formattedDates:{},
 })
 
 const emits = defineEmits(['update:modelValue']);

@@ -364,10 +364,10 @@ const gotoSongs = () => {
         </div>
 
     </div>
-    <FinanceTopListsSongs :choosenDates="choosenDates" v-if="isFinanceTopListsSongs" v-model="isFinanceTopListsSongs"></FinanceTopListsSongs>
-    <FinanceTopListsArtists :choosenDates="choosenDates" v-if="isFinanceTopListsArtists" v-model="isFinanceTopListsArtists"></FinanceTopListsArtists>
-    <FinanceTopListsLabels :choosenDates="choosenDates" v-if="isFinanceTopListsLabels" v-model="isFinanceTopListsLabels"></FinanceTopListsLabels>
-    <FinanceTopListsProducts :choosenDates="choosenDates" v-if="isFinanceTopListsProducts" v-model="isFinanceTopListsProducts"></FinanceTopListsProducts>
+    <FinanceTopListsSongs :formattedDates="formattedDate" :choosenDates="choosenDates" v-if="isFinanceTopListsSongs" v-model="isFinanceTopListsSongs"></FinanceTopListsSongs>
+    <FinanceTopListsArtists :formattedDates="formattedDate" :choosenDates="choosenDates" v-if="isFinanceTopListsArtists" v-model="isFinanceTopListsArtists"></FinanceTopListsArtists>
+    <FinanceTopListsLabels :formattedDates="formattedDate" :choosenDates="choosenDates" v-if="isFinanceTopListsLabels" v-model="isFinanceTopListsLabels"></FinanceTopListsLabels>
+    <FinanceTopListsProducts :formattedDates="formattedDate" :choosenDates="choosenDates" v-if="isFinanceTopListsProducts" v-model="isFinanceTopListsProducts"></FinanceTopListsProducts>
 </template>
 
 <style  scoped>
