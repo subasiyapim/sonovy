@@ -13,7 +13,7 @@
         <thead>
             <tr>
                 <td class="label-sm c-strong-950 !font-semibold">Plak Şirketi Adı</td>
-                <td class="label-sm c-strong-950  !text-end !font-semibold pe-3 ">Oran</td>
+                <td class="label-sm c-strong-950  !text-end !font-semibold ">Oran</td>
                 <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
             </tr>
         </thead>
@@ -25,12 +25,13 @@
                 </td>
                 <td style="width:55%;">
                     <div class="flex items-center gap-2">
-                        <AppProgressIndicator color="#335CFF" :modelValue="artist.percentage" />
-                        <span class="paragraph-xs c-sub-600">{{artist.percentage}}</span>
+                        <div class="w-64"><AppProgressIndicator color="#335CFF" :modelValue="artist.percentage" /></div>
+                        <span class="paragraph-xs c-sub-600 !text-end flex-1">{{artist.percentage}}%</span>
                     </div>
 
                 </td>
                 <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{artist.earning}}</span></td>
+
             </tr>
         </tbody>
     </table>

@@ -15,6 +15,7 @@
                 <td class="label-sm c-strong-950 !font-semibold">Artist Adı</td>
                 <td class="label-sm c-strong-950  !text-end !font-semibold pe-3 ">Oran</td>
                 <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
+                 <td class="label-sm c-strong-950 !font-semibold ps-3">Streams</td>
             </tr>
         </thead>
         <tbody>
@@ -25,12 +26,13 @@
                 </td>
                 <td style="width:55%;">
                     <div class="flex items-center gap-2">
-                        <AppProgressIndicator color="#335CFF" :modelValue="artist.percentage" />
-                        <span class="paragraph-xs c-sub-600">{{artist.percentage}}</span>
+                        <div class="w-[82%]"><AppProgressIndicator color="#335CFF" :modelValue="artist.percentage" /></div>
+                        <span class="paragraph-xs !text-end flex-1 c-sub-600">{{artist.percentage}} %</span>
                     </div>
 
                 </td>
                 <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{artist.earning}}</span></td>
+                <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{artist.streams}}</span></td>
             </tr>
         </tbody>
     </table>

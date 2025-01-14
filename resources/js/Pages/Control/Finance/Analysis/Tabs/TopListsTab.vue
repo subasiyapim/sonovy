@@ -202,7 +202,7 @@ const gotoSongs = () => {
                 <thead>
                     <tr>
                         <td class="label-sm c-strong-950 !font-semibold">Sanatçı Adı</td>
-                        <td class="label-sm c-strong-950 !font-semibold pe-3 !text-end">Oran</td>
+                        <td class="label-sm c-strong-950 !font-semibold  !text-end">Oran</td>
                         <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
                         <td class="label-sm c-strong-950 !font-semibold ps-3">Streams</td>
                     </tr>
@@ -214,8 +214,8 @@ const gotoSongs = () => {
                         </td>
                         <td style="width:65%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="12" color="#335CFF" :modelValue="artist.percentage" />
-                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{artist.percentage}} </span>
+                                <div class="w-[90%]"><AppProgressIndicator height="12" color="#335CFF" :modelValue="artist.percentage" /></div>
+                                <span class="paragraph-xs !text-end flex-1 c-sub-600 whitespace-nowrap">{{artist.percentage}} </span>
                             </div>
                         </td>
                         <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{artist.earning}}</span></td>
@@ -246,7 +246,7 @@ const gotoSongs = () => {
                         <td class="label-sm c-strong-950 !font-semibold">Albüm Adı</td>
                         <td class="label-sm c-strong-950 !font-semibold">UPC</td>
                         <td class="label-sm c-strong-950 !font-semibold">Sanatçı</td>
-                        <td class="label-sm c-strong-950 !font-semibold pe-3 !text-end">Oran</td>
+                        <td class="label-sm c-strong-950 !font-semibold  !text-end">Oran</td>
                         <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
                         <td class="label-sm c-strong-950 !font-semibold ps-3">Streams</td>
                     </tr>
@@ -264,8 +264,8 @@ const gotoSongs = () => {
                         </td>
                         <td style="width:35%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="12" color="#335CFF" :modelValue="album.percentage" />
-                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{album.percentage}} %</span>
+                                <div class="w-96"><AppProgressIndicator height="12" color="#335CFF" :modelValue="album.percentage" /></div>
+                                <span class="paragraph-xs !text-end flex-1 c-sub-600 whitespace-nowrap">{{album.percentage}} %</span>
                             </div>
                         </td>
                         <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{album.earning}}</span></td>
@@ -313,7 +313,7 @@ const gotoSongs = () => {
                         </td>
                         <td style="width:35%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="12" color="#335CFF" :modelValue="song.percentage" />
+                                <div class="w-96"> <AppProgressIndicator height="12" color="#335CFF" :modelValue="song.percentage" /></div>
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{song.percentage}} %</span>
                             </div>
                         </td>
@@ -353,8 +353,8 @@ const gotoSongs = () => {
                         </td>
                         <td style="width:65%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="12" color="#335CFF" :modelValue="label.percentage" />
-                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{label.percentage}} %</span>
+                                <div class="w-[90%]"><AppProgressIndicator height="12" color="#335CFF" :modelValue="label.percentage" /></div>
+                                <span class="paragraph-xs !text-end c-sub-600 whitespace-nowrap flex-1">{{label.percentage}} %</span>
                             </div>
                         </td>
                         <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{label.earning}}</span></td>

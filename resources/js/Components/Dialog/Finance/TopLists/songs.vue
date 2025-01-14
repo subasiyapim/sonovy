@@ -15,7 +15,7 @@
                 <td class="label-sm c-strong-950 !font-semibold">Albüm Adı</td>
                 <td class="label-sm c-strong-950 !font-semibold">ISRC</td>
                 <td class="label-sm c-strong-950 !font-semibold">Sanatçı Adı</td>
-                <td class="label-sm c-strong-950  !text-end !font-semibold pe-3 ">Oran</td>
+                <td class="label-sm c-strong-950  !text-end !font-semibold ">Oran</td>
                 <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
             </tr>
         </thead>
@@ -34,8 +34,8 @@
                 </td>
                 <td style="width:25%;">
                     <div class="flex items-center gap-2">
-                         <AppProgressIndicator color="#335CFF" :modelValue="song.percentage" />
-                        <span class="paragraph-xs c-sub-600">{{song.percentage}}</span>
+                         <div class="w-[64%]"><AppProgressIndicator color="#335CFF" :modelValue="song.percentage" /></div>
+                        <span class="paragraph-xs c-sub-600 !text-end flex-1">{{song.percentage}}%</span>
                     </div>
 
                 </td>
