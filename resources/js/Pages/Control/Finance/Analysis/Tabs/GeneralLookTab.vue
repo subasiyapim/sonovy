@@ -39,6 +39,9 @@ const isFinanceIncomeProducts = ref(false);
 
 
 const goToPlatformCSV = () => {
+
+
+
   const params = {
     slug: 'earning_from_platforms',
     request_type: 'download',
@@ -49,7 +52,6 @@ const goToPlatformCSV = () => {
         props.choosenDates ? props.choosenDates[1] : moment()
     ).format("YYYY-MM-DD"),
   };
-
   // Parametreleri sorgu dizgesi (query string) olarak oluştur
   const queryString = new URLSearchParams(params).toString();
   const url = `${route('control.finance.analysis.show')}?${queryString}`;

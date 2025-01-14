@@ -113,8 +113,8 @@ const onSubmit = async (e) => {
     adding.value = true;
     try {
       await crudStore.post(route('control.finance.reports.store'), {
-        start_date: form.value.date[0],
-        end_date: form.value.date[1],
+        start_date: (form.value.date[0].month+1)+"-"+form.value.date[0].year,
+        end_date: (form.value.date[1].month+1)+"-"+form.value.date[1].year,
         report_type: form.value.type == 1 ? reporttypes[form.value.report_content_type] : reporttypes[form.value.report_content_type],
 
         ids: form.value.choosenValues,
