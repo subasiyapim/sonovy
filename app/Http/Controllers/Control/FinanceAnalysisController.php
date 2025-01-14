@@ -68,8 +68,7 @@ class FinanceAnalysisController extends Controller
     private function getEarnings(string $cacheKey, string $startDate, string $endDate)
     {
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($startDate, $endDate) {
-            return Earning::with('product', 'song')
-                ->whereBetween('sales_date', [$startDate, $endDate])
+            return Earning::whereBetween('sales_date', [$startDate, $endDate])
                 ->get();
         });
     }
