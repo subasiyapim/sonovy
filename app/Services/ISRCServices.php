@@ -20,7 +20,7 @@ class ISRCServices
             Log::info('Tenant initialized: '.$tenant->domain);
         }
 
-        // Varsayılan değerleri ayarla
+        // Varsayılan değerler
         $country_code = Setting::where('key', 'isrc_country_code')->first()->value ?? 'TR';
         $year_code = Setting::where('key', 'isrc_year')->first()->value ?? Carbon::now()->format('y');
         $registration_code = Setting::where('key', 'isrc_registration_code')->first()->value ?? '001';
@@ -29,50 +29,42 @@ class ISRCServices
         if ($type == ProductTypeEnum::SOUND->value || $type == ProductTypeEnum::RINGTONE->value) {
             $min_code = 1;
             $max_code = 49999;
-        } elseif ($type == ProductTypeEnum::VIDEO->value || ProductTypeEnum::APPLE_VIDEO->value) {
+        } elseif ($type == ProductTypeEnum::VIDEO->value || $type == ProductTypeEnum::APPLE_VIDEO->value) {
             $min_code = 50000;
             $max_code = 99999;
         } else {
-            return false; // Geçersiz bir tip için false döndür
+            return false;
         }
-
 
         // Mevcut ISRC kodlarını al
         $existing_isrcs = Song::where('isrc', 'like', "$country_code-$registration_code-$year_code-%")
             ->whereNotNull('isrc')
-            ->where('isrc', 0)
             ->whereRaw('CAST(SUBSTRING_INDEX(isrc, "-", -1) AS UNSIGNED) BETWEEN ? AND ?', [$min_code, $max_code])
             ->orderByRaw('CAST(SUBSTRING_INDEX(isrc, "-", -1) AS UNSIGNED) ASC')
             ->pluck('isrc')
             ->toArray();
 
-
-        // Yeni ISRC kodunu belirle
+        // Yeni ISRC kodu oluştur
         $definition_code = $min_code;
         foreach ($existing_isrcs as $isrc) {
-            $isrc_parts = explode('-', $isrc);
-            if (isset($isrc_parts[3]) && is_numeric($isrc_parts[3])) {
-                $current_code = intval($isrc_parts[3]);
+            $parts = explode('-', $isrc);
 
-                if ($current_code >= $definition_code) {
-                    $definition_code = $current_code + 1;
-                }
-
-                // Eğer aralık dışına çıkarsa, döngüden çık
+            if (isset($parts[3]) && is_numeric($parts[3])) {
+                $current_code = intval($parts[3]);
+                $definition_code = ($current_code >= $definition_code) ? $current_code + 1 : $definition_code;
                 if ($definition_code > $max_code) {
+                    Log::error("ISRC code exceeded defined range: $definition_code");
                     return false;
                 }
             }
         }
 
-        // Kod sınırlarının dışında kalması durumunda false döndür
-        if ($definition_code < $min_code || $definition_code > $max_code) {
+        if ($definition_code > $max_code || !$definition_code) {
+            Log::error("Failed to generate ISRC: $definition_code is invalid.");
             return false;
         }
 
-        // ISRC kodunu oluştur
         $definition_code = str_pad($definition_code, 5, '0', STR_PAD_LEFT);
-
 
         return "$country_code-$registration_code-$year_code-$definition_code";
     }
