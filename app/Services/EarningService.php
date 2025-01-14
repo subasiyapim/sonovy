@@ -567,8 +567,8 @@ class EarningService
                 $earning = number_format($faker->randomFloat(2, 0, 1000), 2, '.', '');
                 $sales_type = $faker->randomElement(['Stream', 'PLATFORM PROMOTION', 'Creation', 'Download']);
                 $label = $product->label;
-                $artist = $product->artists->first();
-                $platform = $product->downloadPlatforms->first();
+                $artist = $product->artists->inRandomOrder()->first();
+                $platform = $product->downloadPlatforms->inRandomOrder()->first();
                 $country = Country::inRandomOrder()->first();
 
                 $row = [
