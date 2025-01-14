@@ -2,7 +2,7 @@
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {usePage} from '@inertiajs/vue3';
-import {DocumentIcon, DownloadIcon} from "@/Components/Icons/index.js";
+import {DocumentIcon, DownloadIcon,TrashIcon} from "@/Components/Icons/index.js";
 import moment from 'moment';
 import 'moment/dist/locale/tr';
 
@@ -22,14 +22,18 @@ moment.locale('tr');
           <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
             <DocumentIcon color="var(--sub-600)"/>
           </div>
-          <p class="label-sm c-neutral-500">{{ scope.row.period }}</p>
+          <div v-if="scope.row.period && scope.row.period.split(" ").length > 0" class="flex flex-col items-start">
+              <p class="label-xs c-strong-950">{{ scope.row.period.split(" ")[0] }} -</p>
+            <p class="label-xs c-strong-950">{{ scope.row.period.split(" ")[1] }}</p>
+          </div>
+
         </div>
 
       </template>
     </AppTableColumn>
     <AppTableColumn :label="__('control.finance.payments.demanded_table.column_2')" sortable="name">
       <template #default="scope">
-        <p class="label-sm c-neutral-500">
+        <p class="paragraph-xs c-neutral-500">
 
         {{ scope.row.name }}
 
@@ -42,28 +46,29 @@ moment.locale('tr');
       <template #default="scope">
         <div>
           <tippy :allowHtml="true" :sticky="true">
-            <p class="label-sm c-neutral-500">{{ scope.row.amount }}</p>
+            <p class="paragraph-xs c-strong-950">{{ scope.row.amount }}</p>
             <template #content>
-              <p style="color: white !important" class="label-sm" v-html="scope.row.monthly_amount"/>
+              <p style="color: white !important" class="paragraph-xs" v-html="scope.row.monthly_amount"/>
             </template>
           </tippy>
         </div>
       </template>
     </AppTableColumn>
 
-    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_5')" sortable="name">
-      <template #default="scope">
 
-        <div class="border border-soft-200 rounded px-3 py-1 flex items-center gap-2">
-          <div class="w-2 h-2 rounded-full bg-spotify"></div>
-          <p class="label-sm c-neutral-500">{{ scope.row.status_text }}</p>
-        </div>
-      </template>
-    </AppTableColumn>
-        <AppTableColumn :label="__('control.finance.payments.demanded_table.column_4')" sortable="name">
+    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_4')" sortable="name">
       <template #default="scope">
 
         <p class="label-sm c-neutral-500">{{ scope.row.created_at }}</p>
+      </template>
+    </AppTableColumn>
+    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_5')" sortable="name">
+      <template #default="scope">
+
+        <div class="border border-soft-200 rounded-lg px-3 py-1 flex items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-spotify"></div>
+          <p class="label-xs c-neutral-500">{{ scope.row.status_text }}</p>
+        </div>
       </template>
     </AppTableColumn>
     <AppTableColumn :label="__('control.finance.payments.demanded_table.column_6')" sortable="name" align="right">
