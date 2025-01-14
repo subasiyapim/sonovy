@@ -1,4 +1,5 @@
 <script setup>
+import {ref} from 'vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {usePage} from '@inertiajs/vue3';
@@ -11,7 +12,7 @@ moment.locale('tr');
 </script>
 
 <template>
-  <AppTable :showAddButton="false" :buttonLabel="__('control.finance.add_new')" ref="pageTable"
+  <AppTable  :showAddButton="false" :buttonLabel="__('control.finance.add_new')" ref="pageTable"
             v-model="usePage().props.reports">
     <template #tableHeader>
       <p class="subheading-regular c-strong-950"> İşlem Tarihçesi</p>
@@ -58,8 +59,11 @@ moment.locale('tr');
 
     <AppTableColumn :label="__('control.finance.payments.demanded_table.column_4')" sortable="name">
       <template #default="scope">
+        <div>
+            <p class="paragraph-xs c-strong-950">{{ moment(scope.row.created_at).format('D MMMM YYYY') }}</p>
+            <p class="paragraph-xs c-sub-600">{{ moment(scope.row.created_at).format('HH:mm:ss') }}</p>
+        </div>
 
-        <p class="label-sm c-neutral-500">{{ scope.row.created_at }}</p>
       </template>
     </AppTableColumn>
     <AppTableColumn :label="__('control.finance.payments.demanded_table.column_5')" sortable="name">
@@ -77,7 +81,7 @@ moment.locale('tr');
           <DownloadIcon color="var(--sub-600)"/>
 
         </a>
-        <a :href="route('control.finance.reports.destroy', scope.row.id)">
+        <a class="ms-2" :href="route('control.finance.reports.destroy', scope.row.id)">
           <TrashIcon color="var(--sub-600)"/>
         </a>
 
