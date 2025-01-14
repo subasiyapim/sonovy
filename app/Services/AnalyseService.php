@@ -463,6 +463,62 @@ class AnalyseService
         ];
     }
 
+//    public function monthlyNetEarning(): array
+//    {
+//        $platforms = ['Spotify', 'Amazon', 'Youtube'];
+//
+//        $calculateEarnings = function ($data) use ($platforms) {
+//            $totalEarnings = $data->sum('earning');
+//            $earnings = $data->groupBy('platform')->mapWithKeys(function ($platformData, $platform) use (
+//                $platforms,
+//                $totalEarnings
+//            ) {
+//                $sum = $platformData->sum('earning');
+//                $percentage = $totalEarnings > 0 ? ($sum / $totalEarnings) * 100 : 0;
+//                if (in_array($platform, $platforms)) {
+//                    return [
+//                        $platform => [
+//                            'earning' => Number::currency($sum, 'USD', app()->getLocale()),
+//                            'percentage' => round($percentage, 2),
+//                        ]
+//                    ];
+//                }
+//                return [
+//                    'other' => [
+//                        'earning' => Number::currency($sum, 'USD', app()->getLocale()),
+//                        'percentage' => round($percentage, 2),
+//                    ]
+//                ];
+//            });
+//
+//            foreach ($platforms as $platform) {
+//                if (!isset($earnings[$platform])) {
+//                    $earnings[$platform] = [
+//                        'earning' => Number::currency(0, 'USD', app()->getLocale()),
+//                        'percentage' => 0,
+//                    ];
+//                }
+//            }
+//
+//            if (!isset($earnings['other'])) {
+//                $earnings['other'] = [
+//                    'earning' => Number::currency(0, 'USD', app()->getLocale()),
+//                    'percentage' => 0,
+//                ];
+//            }
+//
+//            return $earnings;
+//        };
+//        $items = $this->groupedData->map(fn($monthData) => $calculateEarnings($monthData));
+//
+//        $total = $calculateEarnings($this->data);
+//
+//        return [
+//            'total' => $total->toArray(),
+//            'items' => $items->toArray(),
+//        ];
+//    }
+
     public function monthlyNetEarning(): array
     {
         $platforms = ['Spotify', 'Amazon', 'Youtube'];
@@ -507,14 +563,17 @@ class AnalyseService
                 ];
             }
 
-            return $earnings;
+            return array_merge($earnings->toArray(), [
+                'total' => Number::currency($totalEarnings, 'USD', app()->getLocale()),
+            ]);
         };
+
         $items = $this->groupedData->map(fn($monthData) => $calculateEarnings($monthData));
 
         $total = $calculateEarnings($this->data);
 
         return [
-            'total' => $total->toArray(),
+            'total' => $total,
             'items' => $items->toArray(),
         ];
     }
