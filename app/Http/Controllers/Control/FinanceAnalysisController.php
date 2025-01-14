@@ -16,38 +16,67 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FinanceAnalysisController extends Controller
 {
+    private const CACHE_DURATION = 60 * 60 * 12; // 12 hours
+
     public function index(Request $request)
     {
+        $this->validateRequest($request);
 
-        dd($request->all());
-        $request->validate([
-            'slug' => ['sometimes', 'string', 'in:general,top-lists,platforms,countries'],
-            'start_date' => ['date', 'required_with:end_date'],
-            'end_date' => ['date', 'required_with:start_date'],
-        ]);
+        [$startDate, $endDate] = $this->getDateRange($request);
 
-        $start_date = Carbon::now()->subMonths(11)->startOfMonth()->format('Y-m-d');
-        $end_date = Carbon::now()->endOfMonth()->format('Y-m-d');
+        $defaultTab = 'general';
+        $currentTab = $request->input('slug') ?? $defaultTab;
 
-        if (isset($request->start_date) && isset($request->end_date)) {
-            $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
-            $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
-        }
-
-        $tab = 'general';
-        $tab = $request->input('slug') ?? $tab;
-
-        $cacheKey = 'earning_analysis_' . md5($request->fullUrl());
-
-        $earning = Cache::remember($cacheKey, 60 * 60 * 12, function () use ($start_date, $end_date) {
-            return Earning::with('product', 'song')->whereBetween('sales_date', [$start_date, $end_date])->get();
-        });
-
-        $response = new AnalyseResource($earning, $tab);
+        $cacheKey = $this->generateCacheKey($request);
+        $earnings = $this->getEarnings($cacheKey, $startDate, $endDate);
 
         return inertia('Control/Finance/Analysis/Index', [
-            'data' => $response->resolve()
+            'data' => $this->formatResponse($earnings, $currentTab)
         ]);
+    }
+
+    private function validateRequest(Request $request): void
+    {
+        $request->validate([
+            'slug' => ['sometimes', 'string', 'in:general,top-lists,platforms,countries'],
+            'start_date' => ['required_with:end_date', 'regex:/^(0?[1-9]|1[0-2])-\d{4}$/'],
+            'end_date' => ['required_with:start_date', 'regex:/^(0?[1-9]|1[0-2])-\d{4}$/'],
+        ]);
+    }
+
+    private function getDateRange(Request $request): array
+    {
+        $startDateInput = trim($request->input('start_date'));
+        $endDateInput = trim($request->input('end_date'));
+
+        if ($request->filled(['start_date', 'end_date'])) {
+            $startDate = Carbon::createFromFormat('m-Y', $startDateInput)->startOfMonth()->format('Y-m-d');
+            $endDate = Carbon::createFromFormat('m-Y', $endDateInput)->endOfMonth()->format('Y-m-d');
+        } else {
+            $startDate = Carbon::now()->subMonths(11)->startOfMonth()->format('Y-m-d');
+            $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
+        }
+
+        return [$startDate, $endDate];
+    }
+
+    private function generateCacheKey(Request $request): string
+    {
+        return 'earning_analysis_'.md5($request->fullUrl());
+    }
+
+    private function getEarnings(string $cacheKey, string $startDate, string $endDate)
+    {
+        return Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($startDate, $endDate) {
+            return Earning::with('product', 'song')
+                ->whereBetween('sales_date', [$startDate, $endDate])
+                ->get();
+        });
+    }
+
+    private function formatResponse($earnings, string $tab)
+    {
+        return (new AnalyseResource($earnings, $tab))->resolve();
     }
 
     public function show(Request $request)
@@ -123,6 +152,6 @@ class FinanceAnalysisController extends Controller
 
     private function download($earnings, $slug)
     {
-        return Excel::download(new AnalyseExport($earnings, $slug), $slug . '.xlsx');
+        return Excel::download(new AnalyseExport($earnings, $slug), $slug.'.xlsx');
     }
 }
