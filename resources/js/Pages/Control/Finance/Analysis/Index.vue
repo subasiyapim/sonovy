@@ -142,16 +142,11 @@ const removeDateFilter = () => {
 const choosenDate = ref();
 const onDateChoosen = (e) => {
 
-    // console.log("EEE",{
-    //   end_date: `${e['1'].month}-${e['1'].year}`,
-    //   start_date: `${e['0'].month}-${e['0'].year}`,
-    //   slug: currentTab.value,
-    // },);
 
   router.visit(route(route().current()), {
     data: {
-      end_date: `${e['1'].month}-${e['1'].year}`,
-      start_date: `${e['0'].month}-${e['0'].year}`,
+      end_date: `${e['1'].month+1}-${e['1'].year}`,
+      start_date: `${e['0'].month+1}-${e['0'].year}`,
       slug: currentTab.value,
     },
     preserveScroll: true,

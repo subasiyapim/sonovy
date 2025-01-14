@@ -344,10 +344,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
               <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
                 <div class="bg-weak-50  flex items-end justify-center h-10 min-w-10">
                     <span class="c-sub-600 label-sm !text-[10px] ">
-                        {{ Object.values(data.monthly_net_earnings.total)
-                        .map(item => item.earning_num) // Extract the earning_num values
-                        .reduce((sum, value) => sum + value, 0) // Sum up the values
-                        .toFixed(2)}}
+                        {{ data.monthly_net_earnings.total.total}}
                     </span>
                 </div>
                 <div v-for="p in Object.keys(data.monthly_net_earnings.items[key])"
