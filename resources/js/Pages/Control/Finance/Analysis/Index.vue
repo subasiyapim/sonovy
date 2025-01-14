@@ -3,7 +3,7 @@
 
     <template #toolbar>
     <div class="w-48">
-        <VueDatePicker @update:model-value="onDateChoosen"  v-model="choosenDate"  range  month-picker   multi-calendars  class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+        <VueDatePicker @update:model-value="onDateChoosen"  v-model="choosenDate"  range  month-picker :max-date="new Date()"  class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
             <template #input-icon>
                 <div class="p-3">
                     <CalendarIcon color="var(--sub-600)"/>

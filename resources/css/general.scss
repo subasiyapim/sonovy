@@ -173,7 +173,9 @@
   transform: rotate(90deg);
 }
 
-
+.dp__overlay_cell_disabled{
+    color: #CACFD8 !important;
+}
 .appSelectInput{
     overflow: hidden;
 }
