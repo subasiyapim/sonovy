@@ -341,11 +341,17 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
 
             <tippy :allowHtml="true" :interactiveBorder="30" theme="light" followCursor :sticky="true"
                    :interactive="false">
-              <div class="h-72 flex flex-col justify-end w-full gap-0.5">
-                <div class="bg-weak-50 h-[40%] flex items-end justify-center">
-                  <span class="c-sub-600 label-sm !text-[10px] ">$96,000.00</span>
+              <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
+                <div class="bg-weak-50  flex items-end justify-center h-10 min-w-10">
+                    <span class="c-sub-600 label-sm !text-[10px] ">
+                        {{ Object.values(data.monthly_net_earnings.total)
+                        .map(item => item.earning_num) // Extract the earning_num values
+                        .reduce((sum, value) => sum + value, 0) // Sum up the values
+                        .toFixed(2)}}
+                    </span>
                 </div>
                 <div v-for="p in Object.keys(data.monthly_net_earnings.items[key])"
+                    class="w-full"
                      :style="{height:data.monthly_net_earnings.items[key][p].percentage+'%'}"
                      :class="'bg-'+p.toLowerCase()"></div>
                 <!-- <div class="bg-spotify h-[10%]"></div>
@@ -354,7 +360,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
               </div>
               <template #content>
                 <div class="flex flex-col gap-2 w-64 p-1">
-                  <p class="label-sm c-strong-950">Mayıs 2024</p>
+                  <p class="label-sm c-strong-950">{{key}}</p>
                   <div v-for="platform in Object.keys(data.monthly_net_earnings.items[key])"
                        class="flex items-center gap-2">
                     <SpotifyIcon v-if="platform=='Spotify'"/>
@@ -370,9 +376,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
                 </div>
               </template>
             </tippy>
-
-
-            <span class="paragraph-xs c-sub-600">{{ key }}</span>
+            <span class="paragraph-xs c-sub-600 !text-center">{{ key }}</span>
           </div>
         </div>
       </div>
@@ -519,7 +523,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
           <span class="label-xs">{{ key }}</span>
 
           <tippy :allowHtml="true" :maxWidth="600" theme="light" followCursor :sticky="true" :interactive="false">
-            <AppProgressIndicator :height="8" :modelValue="data.earning_from_youtube[key].percentage" color="#D02533"/>
+            <AppProgressIndicator :height="12" :modelValue="data.earning_from_youtube[key].percentage" color="#D02533"/>
             <template #content>
               <div class="flex flex-col gap-2 w-96 p-1">
                 <div class="flex items-center">

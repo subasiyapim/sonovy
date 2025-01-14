@@ -2,7 +2,7 @@
 
 <script setup>
 import {ref} from 'vue';
-import {PersonIcon,EyeOnIcon,DownloadIcon,BookReadLineIcon,LabelsIcon,AudioIcon} from '@/Components/Icons';
+import {PersonIcon,EyeOnIcon,DownloadIcon,BookReadLineIcon,Building2LineIcon,AudioIcon} from '@/Components/Icons';
 import {AppProgressIndicator} from '@/Components/Widgets';
 import moment from 'moment'
 import {
@@ -214,7 +214,7 @@ const gotoSongs = () => {
                         </td>
                         <td style="width:65%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="artist.percentage" />
+                                <AppProgressIndicator height="12" color="#335CFF" :modelValue="artist.percentage" />
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{artist.percentage}} </span>
                             </div>
                         </td>
@@ -264,7 +264,7 @@ const gotoSongs = () => {
                         </td>
                         <td style="width:35%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="album.percentage" />
+                                <AppProgressIndicator height="12" color="#335CFF" :modelValue="album.percentage" />
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{album.percentage}} %</span>
                             </div>
                         </td>
@@ -313,7 +313,7 @@ const gotoSongs = () => {
                         </td>
                         <td style="width:35%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="song.percentage" />
+                                <AppProgressIndicator height="12" color="#335CFF" :modelValue="song.percentage" />
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{song.percentage}} %</span>
                             </div>
                         </td>
@@ -327,7 +327,7 @@ const gotoSongs = () => {
         <div class="flex-1 bg-white rounded-xl border border-soft-200 p-4 flex flex-col gap-4">
             <div class="flex items-center">
                 <div class="flex items-center gap-2 flex-1">
-                    <LabelsIcon color="var(--sub-600)" />
+                    <Building2LineIcon color="var(--sub-600)" />
                     <p class="label-medium c-strong-950">Plak Şirketine Göre Gelir</p>
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
@@ -353,7 +353,7 @@ const gotoSongs = () => {
                         </td>
                         <td style="width:65%;">
                             <div class="flex items-center gap-2">
-                                <AppProgressIndicator height="8" color="#335CFF" :modelValue="label.percentage" />
+                                <AppProgressIndicator height="12" color="#335CFF" :modelValue="label.percentage" />
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{label.percentage}} %</span>
                             </div>
                         </td>
