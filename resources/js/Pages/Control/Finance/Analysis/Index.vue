@@ -1,7 +1,17 @@
 <template>
-  <AdminLayout @dateChoosen="onDateChoosen" :title="__('control.finance.analysis.header')" parentTitle="Katalog">
+  <AdminLayout :showDatePicker="false"  :title="__('control.finance.analysis.header')" parentTitle="Katalog">
 
     <template #toolbar>
+    <div class="w-48">
+        <VueDatePicker @update:model-value="onDateChoosen" v-model="choosenDate"  range  month-picker   multi-calendars  class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+            <template #input-icon>
+                <div class="p-3">
+                    <CalendarIcon color="var(--sub-600)"/>
+                </div>
+            </template>
+        </VueDatePicker>
+    </div>
+
       <div v-if="choosenDates"
            class="flex items-center jusitfy-center gap-2 border border-soft-200 rounded px-3 py-1 hover:bg-grey-300">
         <p class="paragraph-xs c-sub-600">
@@ -65,7 +75,7 @@
 <script setup>
 import {usePage} from '@inertiajs/vue3';
 
-import {ref, computed} from 'vue';
+import {ref, computed,nextTick} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {AppCard} from '@/Components/Cards';
 import moment from 'moment';
@@ -85,7 +95,8 @@ import {
   ExitIcon,
   WalletLineIcon,
   SpeedUpIcon,
-  EditLineIcon
+  EditLineIcon,
+  CalendarIcon
 } from '@/Components/Icons'
 import {router} from '@inertiajs/vue3';
 
@@ -128,12 +139,19 @@ const removeDateFilter = () => {
     preserveScroll: true,
   });
 }
+const choosenDate = ref();
 const onDateChoosen = (e) => {
+
+    // console.log("EEE",{
+    //   end_date: `${e['1'].month}-${e['1'].year}`,
+    //   start_date: `${e['0'].month}-${e['0'].year}`,
+    //   slug: currentTab.value,
+    // },);
 
   router.visit(route(route().current()), {
     data: {
-      end_date: e[1],
-      start_date: e[0],
+      end_date: `${e['1'].month}-${e['1'].year}`,
+      start_date: `${e['0'].month}-${e['0'].year}`,
       slug: currentTab.value,
     },
     preserveScroll: true,

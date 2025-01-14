@@ -39,6 +39,8 @@ class ReportController extends Controller
     public function index(Request $request): \Inertia\Response|ResponseFactory
     {
         abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+
         $request->validate([
             'slug' => ['nullable', 'string', 'in:auto-reports,demanded-reports'],
             'demo' => ['nullable', 'boolean'],
@@ -127,13 +129,13 @@ class ReportController extends Controller
     {
         if ($report->child()->count() > 1) {
 
-            $zipFilePath = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'-'.Str::slug($report->name).'.zip');
+            $zipFilePath = storage_path('app/public/tenant_' . tenant('domain') . '_income_reports/multiple_reports/' . $report->user_id . '/' . Str::slug($report->period) . '-' . Str::slug($report->name) . '.zip');
 
             $zip = new ZipArchive;
 
             if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
 
-                $files = Storage::disk('public')->allFiles('tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'/'.$report->id);
+                $files = Storage::disk('public')->allFiles('tenant_' . tenant('domain') . '_income_reports/multiple_reports/' . $report->user_id . '/' . Str::slug($report->period) . '/' . $report->id);
 
                 foreach ($files as $file) {
                     $fullPath = Storage::disk('public')->path($file);
@@ -150,7 +152,7 @@ class ReportController extends Controller
         }
 
 
-        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
+        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
 
         if ($media) {
             $path = $media->getPath();

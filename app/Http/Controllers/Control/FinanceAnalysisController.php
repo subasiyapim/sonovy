@@ -18,6 +18,8 @@ class FinanceAnalysisController extends Controller
 {
     public function index(Request $request)
     {
+
+        dd($request->all());
         $request->validate([
             'slug' => ['sometimes', 'string', 'in:general,top-lists,platforms,countries'],
             'start_date' => ['date', 'required_with:end_date'],
@@ -35,7 +37,7 @@ class FinanceAnalysisController extends Controller
         $tab = 'general';
         $tab = $request->input('slug') ?? $tab;
 
-        $cacheKey = 'earning_analysis_'.md5($request->fullUrl());
+        $cacheKey = 'earning_analysis_' . md5($request->fullUrl());
 
         $earning = Cache::remember($cacheKey, 60 * 60 * 12, function () use ($start_date, $end_date) {
             return Earning::with('product', 'song')->whereBetween('sales_date', [$start_date, $end_date])->get();
@@ -53,7 +55,8 @@ class FinanceAnalysisController extends Controller
         $request->validate(
             [
                 'slug' => [
-                    'required', 'string',
+                    'required',
+                    'string',
                     'in:earning_from_platforms,earning_from_countries,earning_from_sales_type,trending_albums,top_artists,top_albums,top_songs,top_labels,platforms,countries'
                 ],
                 'request_type' => ['required', 'string', 'in:view,download'],
@@ -83,7 +86,6 @@ class FinanceAnalysisController extends Controller
         if ($request->request_type === 'download') {
             return $this->download($data, $request->slug);
         }
-
     }
 
     private function getDataBySlug(AnalyseService $service, string $slug, string $start_date, string $end_date): array
@@ -121,8 +123,6 @@ class FinanceAnalysisController extends Controller
 
     private function download($earnings, $slug)
     {
-        return Excel::download(new AnalyseExport($earnings, $slug), $slug.'.xlsx');
+        return Excel::download(new AnalyseExport($earnings, $slug), $slug . '.xlsx');
     }
-
-
 }
