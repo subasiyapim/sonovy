@@ -35,12 +35,17 @@ moment.locale('tr');
     </AppTableColumn>
     <AppTableColumn :label="__('control.finance.payments.demanded_table.column_2')" sortable="name">
       <template #default="scope">
-        <p class="paragraph-xs c-neutral-500">
-
-        {{ scope.row.name }}
 
 
-        </p>
+             <tippy>
+                 <p class="paragraph-xs c-neutral-500">
+                    {{ scope.row.name }}
+                </p>
+                <template #content>
+                    dneeme
+                </template>
+            </tippy>
+
       </template>
     </AppTableColumn>
 
