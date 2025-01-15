@@ -66,20 +66,19 @@ class ReportController extends Controller
         //dd($query);
         $reports = ReportResource::collection($query)->resource;
         $artists = Artist::with('platforms')->get();
-        $albums = getDataFromInputFormat(Product::all(), 'id', 'album_name', 'image');
         $labels = Label::all();
         $songs = Song::all();
         $countries = getDataFromInputFormat(Country::all(), 'id', 'name', 'emoji');
-        $products = Product::all();
+        $products = Product::get('album_name', 'image', 'id');
+
         $platforms = Platform::all();
         $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
-
+        
         return inertia(
             'Control/Finance/Reports/Index',
             compact(
                 'reports',
                 'artists',
-                'albums',
                 'labels',
                 'songs',
                 'countries',
