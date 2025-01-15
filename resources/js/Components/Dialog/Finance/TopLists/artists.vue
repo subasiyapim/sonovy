@@ -7,7 +7,6 @@
       <PersonIcon color="var(--dark-green-950)"/>
     </template>
 
-
    <div class="p-5">
      <table class="w-full" v-if="!loading">
         <thead>
@@ -19,7 +18,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="artist in tableData">
+            <tr v-for="(artist,index) in tableData" :key="index">
                 <td class="py-3">
                    <span class="label-sm c-strong-950">{{artist.artist_name}}</span>
 

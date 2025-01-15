@@ -7,6 +7,7 @@ import {DocumentIcon, DownloadIcon,TrashIcon} from "@/Components/Icons/index.js"
 import moment from 'moment';
 import 'moment/dist/locale/tr';
 
+
 moment.locale('tr');
 
 </script>
@@ -24,8 +25,8 @@ moment.locale('tr');
             <DocumentIcon color="var(--sub-600)"/>
           </div>
           <div v-if="scope.row.period" class="flex flex-col items-start">
-              <p class="label-xs c-strong-950">{{ scope.row.period.split(" ")[0] }} - </p>
-                <p class="label-xs c-strong-950">{{ scope.row.period.split(" ")[1] }}</p>
+               <p class="label-xs c-strong-950">{{ moment(scope.row.period.split(" ")[0],'MM-YYYY').format("MMMM YYYY") }} - </p>
+                <p class="label-xs c-strong-950">{{ moment(scope.row.period.split(" ")[1],'MM-YYYY').format("MMMM YYYY") }}</p>
           </div>
 
         </div>

@@ -65,10 +65,11 @@ onMounted(() => {
                         <td class="py-3">
                            <div class="flex items-center gap-2">
                                 <div class="bg-gray-200 w-8 h-8 rounded">
+                                    <img :src="country.image" class="w-full">
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="label-sm c-strong-950">{{country.release_name}}</span>
-                                    <span class="paragraph-xs c-sub-600">48584295354283</span>
+                                    <span class="paragraph-xs c-sub-600">{{country.upc_code}}</span>
                                 </div>
                            </div>
                         </td>
@@ -76,7 +77,7 @@ onMounted(() => {
                             <div class="flex items-center gap-4">
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{country.total_earning}}</span>
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{country.total_quantity}}</span>
-                                <div class="flex items-center gap-0.5 w-full h-4 bg-white-600">
+                                <div class="w-[90%] flex items-center gap-0.5  h-4 bg-white-600">
                                     <template  v-for="countryKey in Object.keys(country.countries)" >
                                         <div v-show="showPlatforms[countryKey.toLowerCase()]" class="rounded-sm h-full " :class="'bg-'+countryKey.toLowerCase().replace(' ','-')" :style="{width:country.countries[countryKey].percentage+'%'}"></div>
                                     </template>
