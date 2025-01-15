@@ -72,7 +72,7 @@ onMounted(() => {
                             <div class="flex items-center gap-4">
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{album.total_earning}}</span>
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{album.total_quantity}}</span>
-                                <div class="w-[90%] flex items-center gap-0.5 h-4 bg-white-600">
+                                <div class="w-[75%] ms-auto flex items-center gap-0.5 h-4 bg-white-600">
                                     <template v-for="platformKey in Object.keys(album.platforms)" >
                                         <div v-show="showPlatforms[platformKey.toLowerCase()]" :class="'bg-'+platformKey.toLowerCase() " :style="{'width':album.platforms[platformKey].percentage+'%' }" class="rounded-sm h-full bg-spotify w-[10%]"></div>
                                     </template>

@@ -77,7 +77,7 @@ onMounted(() => {
                             <div class="flex items-center gap-4">
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{country.total_earning}}</span>
                                 <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{country.total_quantity}}</span>
-                                <div class="w-[90%] flex items-center gap-0.5  h-4 bg-white-600">
+                                <div class="w-[75%] ms-auto flex items-center gap-0.5  h-4 bg-white-600">
                                     <template  v-for="countryKey in Object.keys(country.countries)" >
                                         <div v-show="showPlatforms[countryKey.toLowerCase()]" class="rounded-sm h-full " :class="'bg-'+countryKey.toLowerCase().replace(' ','-')" :style="{width:country.countries[countryKey].percentage+'%'}"></div>
                                     </template>
