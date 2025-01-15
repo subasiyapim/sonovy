@@ -69,11 +69,11 @@ class ReportController extends Controller
         $labels = Label::all();
         $songs = Song::all();
         $countries = getDataFromInputFormat(Country::all(), 'id', 'name', 'emoji');
-        $products = Product::get('album_name', 'image', 'id');
+        $products = Product::all();
 
         $platforms = Platform::all();
         $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
-        
+
         return inertia(
             'Control/Finance/Reports/Index',
             compact(
