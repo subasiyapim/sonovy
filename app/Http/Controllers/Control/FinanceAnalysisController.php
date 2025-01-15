@@ -67,6 +67,7 @@ class FinanceAnalysisController extends Controller
 
     private function getEarnings(string $cacheKey, string $startDate, string $endDate)
     {
+        //dd($cacheKey, self::CACHE_DURATION, $startDate, $endDate);
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($startDate, $endDate) {
             return Earning::whereBetween('sales_date', [$startDate, $endDate])
                 ->get();
@@ -116,13 +117,13 @@ class FinanceAnalysisController extends Controller
         }
     }
 
-    private function getDataBySlug(AnalyseService $service, string $slug, string $start_date, string $end_date): array
+    private function getDataBySlug(AnalyseService $service, string $slug): array
     {
         switch ($slug) {
             case 'earning_from_platforms':
-                return $service->earningFromPlatforms($start_date, $end_date);
+                return $service->earningFromPlatforms();
             case 'earning_from_countries':
-                return $service->earningFromCountries($start_date, $end_date);
+                return $service->earningFromCountries();
             case 'earning_from_sales_type':
                 return $service->earningFromSalesType();
             case 'trending_albums':
