@@ -29,23 +29,26 @@ class ISRCServices
         if ($type == ProductTypeEnum::SOUND->value || $type == ProductTypeEnum::RINGTONE->value) {
             $min_code = 1;
             $max_code = 49999;
-        } elseif ($type == ProductTypeEnum::VIDEO->value || ProductTypeEnum::APPLE_VIDEO->value) {
+        } elseif ($type == ProductTypeEnum::VIDEO->value || $type == ProductTypeEnum::APPLE_VIDEO->value) {
             $min_code = 50000;
             $max_code = 99999;
         } else {
             return false; // Geçersiz bir tip için false döndür
         }
 
+        // Hatalı ISRC kodlarını kontrol et ve sil
+        Song::where(function ($query) {
+            $query->where('isrc', '=', 0)
+                ->orWhereNull('isrc');
+        })->delete();
 
         // Mevcut ISRC kodlarını al
         $existing_isrcs = Song::where('isrc', 'like', "$country_code-$registration_code-$year_code-%")
             ->whereNotNull('isrc')
-            ->where('isrc', 0)
             ->whereRaw('CAST(SUBSTRING_INDEX(isrc, "-", -1) AS UNSIGNED) BETWEEN ? AND ?', [$min_code, $max_code])
             ->orderByRaw('CAST(SUBSTRING_INDEX(isrc, "-", -1) AS UNSIGNED) ASC')
             ->pluck('isrc')
             ->toArray();
-
 
         // Yeni ISRC kodunu belirle
         $definition_code = $min_code;
@@ -60,6 +63,7 @@ class ISRCServices
 
                 // Eğer aralık dışına çıkarsa, döngüden çık
                 if ($definition_code > $max_code) {
+                    Log::error("ISRC code exceeded defined range: $definition_code");
                     return false;
                 }
             }
@@ -67,14 +71,23 @@ class ISRCServices
 
         // Kod sınırlarının dışında kalması durumunda false döndür
         if ($definition_code < $min_code || $definition_code > $max_code) {
+            Log::error("Invalid ISRC definition code: $definition_code");
+            return false;
+        }
+
+        // Kodun sıfır olmamasını sağla
+        if ($definition_code === 0) {
+            Log::error("Definition code is zero. Invalid ISRC generation.");
             return false;
         }
 
         // ISRC kodunu oluştur
         $definition_code = str_pad($definition_code, 5, '0', STR_PAD_LEFT);
+        $new_isrc = "$country_code-$registration_code-$year_code-$definition_code";
 
+        Log::info("Generated ISRC Code: $new_isrc");
 
-        return "$country_code-$registration_code-$year_code-$definition_code";
+        return $new_isrc;
     }
 
 

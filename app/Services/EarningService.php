@@ -3,25 +3,20 @@
 namespace App\Services;
 
 use App\Enums\ProductTypeEnum;
-use App\Enums\PaymentProcessTypeEnum;
-use App\Enums\PaymentStatusEnum;
 use App\Exports\FakerEarningReport;
-use App\Imports\EarningImport;
 use App\Models\EarningReport;
 use App\Models\Product;
 use App\Models\System\Country;
 use App\Models\Earning;
 use App\Models\EarningReportFile;
-use App\Models\Payment;
-use App\Models\Platform;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use function Psy\debug;
 
 class EarningService
 {
@@ -543,8 +538,8 @@ class EarningService
         $data = [];
 
         for ($i = 0; $i < 500; $i++) {
-            $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', 'now'))->format('Y-m-d');
-            $report_date = Carbon::parse($faker->dateTimeBetween($sales_date, 'now'))->format('Y-m-d');
+            $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', now()))->format('Y-m-d');
+            $report_date = Carbon::parse($faker->dateTimeBetween($sales_date, now()))->format('Y-m-d');
 
             $product = Product::with('songs', 'artists', 'label', 'downloadPlatforms')
                 ->whereHas('songs')
@@ -556,11 +551,24 @@ class EarningService
 
             if ($product) {
                 $song = $product->songs->first();
+
+                // ISRC oluşturma
+                $isrc = $song->isrc ?? ISRCServices::make($song->type, tenant());
+
+                // ISRC kontrolü: Geçersizse işlem yapma
+                if (!$isrc || $isrc === '0') {
+                    Log::error("Failed to generate valid ISRC for song ID: {$song->id}");
+                    continue;
+                }
+
+                $song->isrc = $isrc;
+                $song->save();
+
                 $earning = number_format($faker->randomFloat(2, 0, 1000), 2, '.', '');
                 $sales_type = $faker->randomElement(['Stream', 'PLATFORM PROMOTION', 'Creation', 'Download']);
                 $label = $product->label;
-                $artist = $product->artists->first();
-                $platform = $product->downloadPlatforms->first();
+                $artist = $product->artists->inRandomOrder()->first();
+                $platform = $product->downloadPlatforms->inRandomOrder()->first();
                 $country = Country::inRandomOrder()->first();
 
                 $row = [
@@ -574,15 +582,15 @@ class EarningService
                     'label_id' => optional($label)->id,
                     'artist_name' => optional($artist)->name,
                     'artist_id' => optional($artist)->id,
-                    'release_name' => $product->name,
+                    'release_name' => $product->album_name,
                     'song_name' => optional($song)->name,
                     'song_id' => optional($song)->id,
-                    'upc_code' => $product->upc_code ?? '',
-                    'isrc_code' => optional($song)->isrc,
+                    'upc_code' => $product->upc_code ?? Str::random(16),
+                    'isrc_code' => $isrc,
                     'catalog_number' => $product->catalog_number,
                     'release_type' => 'Yayın',
                     'sales_type' => $sales_type,
-                    'quantity' => $faker->numberBetween(1, 1000),
+                    'quantity' => $faker->numberBetween(1, 100),
                     'currency' => 'EUR',
                     'unit_price' => $faker->randomFloat(2, 0, 10),
                     'earning' => $sales_type == 'PLATFORM PROMOTION' ? -abs($earning) : $earning,
@@ -607,6 +615,7 @@ class EarningService
             'tenant_'.tenant('domain').'_earning_reports'
         );
     }
+
 
     protected static function createEarning($data, $file_id)
     {
