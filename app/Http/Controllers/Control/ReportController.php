@@ -40,7 +40,6 @@ class ReportController extends Controller
     {
         abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-
         $request->validate([
             'slug' => ['nullable', 'string', 'in:auto-reports,demanded-reports'],
             'demo' => ['nullable', 'boolean'],
