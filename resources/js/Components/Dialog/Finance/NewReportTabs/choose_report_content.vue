@@ -258,7 +258,7 @@ const removeChoosingCountries = () => {
                             <div class="w-full flex justify-between gap-2">
                                 <div class="flex flex-1 gap-2">
                                     <div class="w-6 h-6 rounded-lg overflow-hidden">
-                                        <img :src="scope.data.image"/>
+                                        <img :src="scope.data.image?.thumb"/>
                                     </div>
                                     <div class="flex flex-col">
                                         <p class="paragraph-sm c-strong-950">{{ scope.data.album_name }}</p>
@@ -301,7 +301,7 @@ const removeChoosingCountries = () => {
                 </div>
                 <div  class="flex flex-wrap items-center gap-2">
                     <div v-for="(choosenValue,i) in element.choosenValues" class="border border-soft-200 rounded px-2 py-1 flex items-center gap-1">
-                       <img class="rounded-full" width="24" height="24" :src="productsSelectConfig.data.find((e) => e.id == choosenValue)?.iconKey">
+                       <img class="rounded-full" width="24" height="24" :src="productsSelectConfig.data.find((e) => e.id == choosenValue)?.image?.small">
 
                       <div class="whitespace-nowrap w-auto">
                         <p class="label-xs c-sub-600 !text-start"> {{productsSelectConfig.data.find((e) => e.id == choosenValue)?.album_name}}</p>
