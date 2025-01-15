@@ -77,6 +77,12 @@ class ProductController extends Controller
     {
         abort_if(Gate::denies('product_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        if ($request->boolean('generateUpc')) {
+            Product::all()->each(function ($product) {
+                $product->update(['upc_code' => Str::upper(Str::random(12))]);
+            });
+        }
+
         $validator = Validator::make($request->all(), [
             'status' => ['nullable', Rule::enum(ProductStatusEnum::class)],
             'type' => ['nullable', Rule::enum(ProductTypeEnum::class)],
@@ -657,7 +663,7 @@ class ProductController extends Controller
             $product->downloadPlatforms()->detach();
 
             foreach ($data['platforms'] as $platform) {
-                
+
                 $data = [
                     'price' => isset($platform['price']) ? $platform['price'] : null,
                     'pre_order_date' => isset($platform['pre_order_date']) ? Carbon::parse($platform['pre_order_date'])->format('Y-m-d') : null,
