@@ -538,8 +538,8 @@ class EarningService
         $data = [];
 
         for ($i = 0; $i < 500; $i++) {
-            $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', 'now'))->format('Y-m-d');
-            $report_date = Carbon::parse($faker->dateTimeBetween($sales_date, 'now'))->format('Y-m-d');
+            $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', now()))->format('Y-m-d');
+            $report_date = Carbon::parse($faker->dateTimeBetween($sales_date, now()))->format('Y-m-d');
 
             $product = Product::with('songs', 'artists', 'label', 'downloadPlatforms')
                 ->whereHas('songs')
@@ -590,7 +590,7 @@ class EarningService
                     'catalog_number' => $product->catalog_number,
                     'release_type' => 'Yayın',
                     'sales_type' => $sales_type,
-                    'quantity' => $faker->numberBetween(1, 1000),
+                    'quantity' => $faker->numberBetween(1, 100),
                     'currency' => 'EUR',
                     'unit_price' => $faker->randomFloat(2, 0, 10),
                     'earning' => $sales_type == 'PLATFORM PROMOTION' ? -abs($earning) : $earning,
