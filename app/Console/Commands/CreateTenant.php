@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class CreateTenant extends Command
 {
@@ -39,8 +40,29 @@ class CreateTenant extends Command
         $tenant = \App\Models\System\Tenant::where('domain', $domain)->first();
 
         if ($tenant) {
-            $this->error("Tenant with domain {$domain} already exists.");
-            return false;
+            $this->warn("Tenant with domain {$domain} already exists!");
+            
+            if (!$this->confirm('Do you want to delete existing tenant and create a new one?')) {
+                $this->info('Operation cancelled.');
+                return;
+            }
+
+            $this->info("Proceeding with tenant deletion...");
+            
+            try {
+                // Delete the tenant record first
+                $tenant->delete();
+                $this->info("Existing tenant deleted successfully.");
+
+                // Then try to drop the database if it exists
+                if ($this->databaseExists($tenant->tenancy_db_name)) {
+                    $dropQuery = "DROP DATABASE IF EXISTS `{$tenant->tenancy_db_name}`";
+                    DB::statement($dropQuery);
+                    $this->info("Existing database deleted successfully.");
+                }
+            } catch (\Exception $e) {
+                $this->warn("An error occurred but proceeding with new tenant creation: " . $e->getMessage());
+            }
         }
 
         // Prepare tenant data
@@ -109,7 +131,7 @@ class CreateTenant extends Command
     private function databaseExists(string $dbName): bool
     {
         $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?";
-        $result = \DB::select($query, [$dbName]);
+        $result = DB::select($query, [$dbName]);
 
         return !empty($result);
     }

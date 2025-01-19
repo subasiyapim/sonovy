@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\ReportProcessed;
 use App\Exports\ReportExport;
 use App\Models\Earning;
 use App\Models\Report;
@@ -39,6 +40,7 @@ class RequestedIncomeReportJob implements ShouldQueue
 
     public function handle(): void
     {
+
         $this->start_date = \Carbon\Carbon::parse($this->start_date);
         $this->end_date = \Carbon\Carbon::parse($this->end_date);
 
@@ -59,6 +61,7 @@ class RequestedIncomeReportJob implements ShouldQueue
             'status' => 1,
             'parent_id' => null,
         ]);
+        broadcast(new ReportProcessed(['process' => 'Hazırlanıyor', 'id' => $parentReport->id]));
 
         $groupedEarnings = match ($this->report_type) {
             'multiple_artists' => $this->earnings->groupBy('artist_id'),
@@ -111,6 +114,8 @@ class RequestedIncomeReportJob implements ShouldQueue
         $reportExport = new ReportExport($earnings, $this->period, $report);
         $fileName = $filePath.'/'.Str::slug($groupName).'.xlsx';
         Excel::store($reportExport, $fileName, $disk);
+
+        broadcast(new ReportProcessed(['process' => 'Tamamlandı', 'id' => $parentId]));
     }
 
 
