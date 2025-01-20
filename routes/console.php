@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Schema;
 
     if (Schema::hasTable('tenants') && Tenant::count() > 0) {
         Schedule::job(new QuartersIncomeJob())->daily();
-        Schedule::job(new EarningJob())->daily();
-        Schedule::job(new IsrcJob())->everyTenMinutes();
+        Schedule::job(new EarningJob())->everyMinute();
+        Schedule::job(new IsrcJob())->everyMinute();
         Schedule::job(new MonthlyIncomeJob())->daily();
     }
 

@@ -49,7 +49,7 @@ class ProductSeeder extends Seeder
                         ProductTypeEnum::SOUND => SongTypeEnum::SOUND,
                         ProductTypeEnum::VIDEO => SongTypeEnum::VIDEO,
                         ProductTypeEnum::RINGTONE => SongTypeEnum::RINGTONE,
-                        ProductTypeEnum::APPLE_VIDEO => SongTypeEnum::VIDEO, // Apple Video için normal video tipi kullanılıyor
+                        ProductTypeEnum::APPLE_VIDEO => SongTypeEnum::VIDEO,
                     };
 
                     // 1-4 arası rastgele sayıda şarkı oluştur

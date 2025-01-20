@@ -8,8 +8,8 @@ use App\Models\Setting;
 use App\Models\Song;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Laravel\Reverb\Loggers\Log;
 
 class ISRCServices
 {
@@ -17,13 +17,22 @@ class ISRCServices
     {
         if ($tenant) {
             tenancy()->initialize($tenant);
-            Log::info('Tenant initialized: '.$tenant->domain);
+            Log::info('ISRC tenant başlatıldı', [
+                'tenant' => $tenant->domain,
+                'type' => $type
+            ]);
         }
 
         // Varsayılan değerleri ayarla
         $country_code = Setting::where('key', 'isrc_country_code')->first()->value ?? 'TR';
         $year_code = Setting::where('key', 'isrc_year')->first()->value ?? Carbon::now()->format('y');
         $registration_code = Setting::where('key', 'isrc_registration_code')->first()->value ?? '001';
+
+        Log::info('ISRC ayarları yüklendi', [
+            'country_code' => $country_code,
+            'year_code' => $year_code,
+            'registration_code' => $registration_code
+        ]);
 
         // Kod aralığını belirle
         if ($type == ProductTypeEnum::SOUND->value || $type == ProductTypeEnum::RINGTONE->value) {
@@ -33,14 +42,12 @@ class ISRCServices
             $min_code = 50000;
             $max_code = 99999;
         } else {
-            return false; // Geçersiz bir tip için false döndür
+            Log::error('Geçersiz ürün tipi', [
+                'type' => $type,
+                'tenant' => $tenant->domain ?? null
+            ]);
+            return false;
         }
-
-        // Hatalı ISRC kodlarını kontrol et ve sil
-        Song::where(function ($query) {
-            $query->where('isrc', '=', 0)
-                ->orWhereNull('isrc');
-        })->delete();
 
         // Mevcut ISRC kodlarını al
         $existing_isrcs = Song::where('isrc', 'like', "$country_code-$registration_code-$year_code-%")
@@ -63,7 +70,12 @@ class ISRCServices
 
                 // Eğer aralık dışına çıkarsa, döngüden çık
                 if ($definition_code > $max_code) {
-                    Log::error("ISRC code exceeded defined range: $definition_code");
+                    Log::error('ISRC kodu tanımlı aralığı aştı', [
+                        'definition_code' => $definition_code,
+                        'max_code' => $max_code,
+                        'type' => $type,
+                        'tenant' => $tenant->domain ?? null
+                    ]);
                     return false;
                 }
             }
@@ -71,13 +83,22 @@ class ISRCServices
 
         // Kod sınırlarının dışında kalması durumunda false döndür
         if ($definition_code < $min_code || $definition_code > $max_code) {
-            Log::error("Invalid ISRC definition code: $definition_code");
+            Log::error('Geçersiz ISRC tanımlama kodu', [
+                'definition_code' => $definition_code,
+                'min_code' => $min_code,
+                'max_code' => $max_code,
+                'type' => $type,
+                'tenant' => $tenant->domain ?? null
+            ]);
             return false;
         }
 
         // Kodun sıfır olmamasını sağla
         if ($definition_code === 0) {
-            Log::error("Definition code is zero. Invalid ISRC generation.");
+            Log::error('Tanımlama kodu sıfır. Geçersiz ISRC oluşturma.', [
+                'type' => $type,
+                'tenant' => $tenant->domain ?? null
+            ]);
             return false;
         }
 
@@ -85,7 +106,11 @@ class ISRCServices
         $definition_code = str_pad($definition_code, 5, '0', STR_PAD_LEFT);
         $new_isrc = "$country_code-$registration_code-$year_code-$definition_code";
 
-        Log::info("Generated ISRC Code: $new_isrc");
+        Log::info('ISRC kodu oluşturuldu', [
+            'isrc' => $new_isrc,
+            'type' => $type,
+            'tenant' => $tenant->domain ?? null
+        ]);
 
         return $new_isrc;
     }

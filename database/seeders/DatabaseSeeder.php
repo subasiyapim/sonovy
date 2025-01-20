@@ -33,7 +33,8 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\ArtistBranchSeeder::class,
             \Database\Seeders\ArtistSeeder::class,
             \Database\Seeders\SettingSeeder::class,
-            ProductSeeder::class,
+            \Database\Seeders\ProductSeeder::class,
+            \Database\Seeders\ArtistProductSeeder::class,
         ]);
     }
 }

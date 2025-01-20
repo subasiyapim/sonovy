@@ -3,11 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Models\System\Tenant;
 
 class CreateTenant extends Command
@@ -136,15 +134,7 @@ class CreateTenant extends Command
      */
     private function getUniqueDatabaseName(string $baseDbName): string
     {
-        $dbName = $baseDbName;
-        $counter = 1;
-
-        while ($this->databaseExists($dbName)) {
-            $dbName = $baseDbName.'_'.$counter;
-            $counter++;
-        }
-
-        return $dbName;
+        return $baseDbName;
     }
 
 
