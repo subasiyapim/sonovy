@@ -683,7 +683,8 @@ class EarningService
     protected static function createEarning($data, $file_id)
     {
         foreach ($data as $row) {
-            EarningReport::updateOrCreate(
+            // Önce EarningReport oluştur
+            $report = EarningReport::updateOrCreate(
                 [
                     'report_date' => $row['report_date'],
                     'sales_date' => $row['sales_date'],
@@ -719,6 +720,35 @@ class EarningService
                     'sales_month' => $row['sales_month'],
                 ]
             );
+
+            // Sonra Earning kaydı oluştur
+            Earning::create([
+                'earning_report_id' => $report->id,
+                'user_id' => $row['user_id'],
+                'report_date' => $row['report_date'],
+                'sales_date' => $row['sales_date'],
+                'platform' => $row['platform'],
+                'platform_id' => $row['platform_id'],
+                'country' => $row['country'],
+                'country_id' => $row['country_id'],
+                'label_name' => $row['label_name'],
+                'label_id' => $row['label_id'],
+                'artist_name' => $row['artist_name'],
+                'artist_id' => $row['artist_id'],
+                'release_name' => $row['release_name'],
+                'song_name' => $row['song_name'],
+                'song_id' => $row['song_id'],
+                'upc_code' => $row['upc_code'],
+                'isrc_code' => $row['isrc_code'],
+                'catalog_number' => $row['catalog_number'],
+                'streaming_type' => $row['streaming_type'],
+                'release_type' => $row['release_type'],
+                'sales_type' => $row['sales_type'],
+                'quantity' => $row['quantity'],
+                'currency' => $row['currency'],
+                'unit_price' => $row['unit_price'],
+                'earning' => $row['earning'],
+            ]);
         }
     }
 
