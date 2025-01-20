@@ -9,19 +9,12 @@ class RoleService
 {
     public static function getRolesFromInputFormat()
     {
-        $items = Role::whereNot('code', 'admin')
-            ->get();
-
-        $data = [];
-
-        foreach ($items as $item) {
-            $data[$item->id] = [
-                'value' => $item->id,
-                'label' => self::getTranslation($item, 'name')
+        return Role::all()->map(function ($role) {
+            return [
+                'label' => $role->name,
+                'value' => $role->id
             ];
-        }
-
-        return $data;
+        })->toArray();
     }
 
     public static function getTranslation($model, $attribute)

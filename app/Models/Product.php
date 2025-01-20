@@ -89,14 +89,16 @@ class Product extends Model implements HasMedia
     ];
 
     protected array $filterable = [
-        'name',
+        'album_name',
         'id',
         'type',
         'status'
     ];
     protected array $orderable = [
-        'status',
-
+        'album_name',
+        'id',
+        'type',
+        'status'
 
     ];
 

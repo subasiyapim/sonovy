@@ -1,7 +1,10 @@
 <template>
-  <AdminLayout :showDatePicker="false" title="Kulanıcılar" >
+  <AdminLayout :showDatePicker="false" 
+  :filters="appTableConfig.filters"
+  title="Kulanıcılar" >
     <AppTable  ref="usersTable" :showAddButton="true"
             :buttonLabel="'Yeni Kullanıcı Ekle'"
+            :config="appTableConfig"
              @addNewClicked="openAddDialog"
             :renderSubWhen="renderSubWhen"
               v-model="usePage().props.users" :slug="route('control.user-management.users.index')">
@@ -81,7 +84,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref,computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import NestedTable from '@/Components/Table/NestedTable.vue';
@@ -112,14 +115,29 @@ moment.locale('tr');
 const usersTable = ref();
 const defaultStore = useDefaultStore();
 const isUserModalOn = ref(false);
+
 const props = defineProps({
   statistics: Object,
+  filters: {
+    type: Array,
+  }
 })
+
+const appTableConfig = computed(() => {
+  return {
+    filters: props.filters,
+  }
+})
+
 const openAddDialog = () => {
     isUserModalOn.value = true;
 }
-const deleteProduct = (row) => {
+const deleteRow = (row) => {
   usersTable.value.removeRowDataFromRemote(row);
+}
+
+const editRow = (row) => {
+  window.location.href = route('control.user-management.users.edit', row.id);
 }
 
 const data = ref([
