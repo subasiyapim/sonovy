@@ -98,7 +98,7 @@ class Label extends Model implements HasMedia
 
     public function getImageAttribute()
     {
-        $file = $this->getMedia('labels')->last();
+        $file = $this->getMedia('label')->last();
         if ($file) {
             $file->url = $file->getUrl();
             $file->small = $file->getUrl('small');

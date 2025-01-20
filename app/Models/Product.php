@@ -122,6 +122,19 @@ class Product extends Model implements HasMedia
             });
     }
 
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(100)
+            ->height(100)
+            ->nonQueued();
+
+        $this->addMediaConversion('small')
+            ->width(300)
+            ->height(300)
+            ->nonQueued();
+    }
+
     public function getImageAttribute()
     {
         $file = $this->getMedia('products')->last();

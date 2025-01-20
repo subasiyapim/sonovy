@@ -6,6 +6,7 @@ use App\Models\System\City;
 use App\Models\System\District;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class DistrictSeeder extends Seeder
 {
@@ -14,35 +15,44 @@ class DistrictSeeder extends Seeder
      */
     public function run(): void
     {
-        ini_set('memory_limit', '10G');
+        ini_set('memory_limit', '2G');
 
         $file = File::get(public_path('assets/districts.json'));
-
         $items = json_decode($file, true);
 
-        foreach ($items as $row) {
+        // Türkiye şehirlerinin ID'lerini al
+        $turkishCities = City::with('country')
+            ->whereHas('country', function ($query) {
+                $query->where('iso2', 'TR');
+            })
+            ->get()
+            ->keyBy('city_code');
 
-            $city_id = City::with('country')
-                ->where('city_code', $row['state_code'])
-                ->whereHas('country', function ($query) use ($row) {
-                    $query->where('iso2', $row['country_code']);
-                })
-                ->first()?->id;
+        if ($turkishCities->isNotEmpty()) {
+            // Sadece Türkiye ilçelerini filtrele
+            $turkishDistricts = collect($items)->where('country_code', 'TR');
 
-            if ($city_id) {
-                District::firstOrCreate(
-                    [
-                        'name' => $row['name'],
-                        'city_id' => $city_id,
-                    ],
-                    [
-                        'longitude' => $row['longitude'],
-                        'latitude' => $row['latitude'],
-                    ],
-                );
+            // Bulk insert için veriyi hazırla
+            $districts = $turkishDistricts->map(function ($district) use ($turkishCities) {
+                $cityId = $turkishCities->get($district['state_code'])?->id;
+                
+                if ($cityId) {
+                    return [
+                        'name' => $district['name'],
+                        'city_id' => $cityId,
+                        'longitude' => $district['longitude'],
+                        'latitude' => $district['latitude'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+                return null;
+            })->filter()->values()->toArray();
+
+            // Bulk insert
+            foreach (array_chunk($districts, 100) as $chunk) {
+                District::insert($chunk);
             }
         }
-
-
     }
 }
