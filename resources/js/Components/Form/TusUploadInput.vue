@@ -208,12 +208,18 @@ const handleFileInput = (e) => {
     },
     // Callback for once the upload is completed
     onSuccess: async function (payload) {
+        console.log("BAŞARILI YÜKLNEME",payload);
+
       const {lastResponse} = payload
       let errorMessage = lastResponse.getHeader('error_message');
       if (errorMessage) {
+
+
         emits('error', {...metaData, message: errorMessage})
 
       } else {
+
+
         let response = await crudStore.post(route('control.find.songs'), {
 
           id: lastResponse.getHeader('upload_info')
