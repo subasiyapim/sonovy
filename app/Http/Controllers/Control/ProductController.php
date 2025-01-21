@@ -119,6 +119,7 @@ class ProductController extends Controller
             'artists' => $this->getArtistsAddedLastMonth(),
 
         ];
+       // dd($statistics);
 
         $country_count = Country::count();
         $statuses = ProductStatusEnum::getTitles();
@@ -746,7 +747,7 @@ class ProductController extends Controller
             $result = $labels->map(function ($label) {
                 return [
                     'name' => $label->name,
-                    'label' => Str::limit($label->name, 3),
+                    'label' => Str::limit($label->name, 10),
                     'value' => $label->products_count,
                 ];
             });

@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipArchive;
+use App\Jobs\CreateDemoEarningsJob;
 
 class ReportController extends Controller
 {
@@ -46,7 +47,7 @@ class ReportController extends Controller
         ]);
 
         if ($request->boolean('demo')) {
-            EarningService::createDemoEarnings();
+            CreateDemoEarningsJob::dispatch();
         }
 
         DB::statement("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''))");
@@ -176,5 +177,28 @@ class ReportController extends Controller
         $report->delete();
 
         return redirect()->back();
+    }
+
+    public function show(Report $report)
+    {
+        abort_if(Gate::denies('report_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        return inertia('Control/Finance/Reports/Show', [
+            'report' => new ReportResource($report)
+        ]);
+    }
+
+    public function createDemoEarnings()
+    {
+        try {
+            CreateDemoEarningsJob::dispatch();
+            return response()->json([
+                'message' => 'Demo kazançları oluşturma işlemi başlatıldı. Bu işlem arka planda devam edecek.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Demo kazançları oluşturulurken bir hata oluştu: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

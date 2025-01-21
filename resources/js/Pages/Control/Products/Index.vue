@@ -5,7 +5,7 @@
       <AppCard class="flex-1 w-full">
         <template #header>
           <p class="font-normal leading-3 text-sm">Toplam Yayın Sayısı</p>
-          <span class="font-semibold leading-8 text-2xl">{{ statistics.product_count ?? 0 }} Yayın</span>
+          <span class="font-semibold leading-8 text-2xl">{{ statistics.products.total ?? 0 }} Yayın</span>
         </template>
         <template #tool>
           <div class="w-28 max-w-xs mx-auto">

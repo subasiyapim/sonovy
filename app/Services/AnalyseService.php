@@ -354,26 +354,28 @@ class AnalyseService
     {
         $cacheKey = 'earning_from_youtube_premium_' . md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $platformEarnings = $this->data->filter(function ($item) {
+            $youtubeData = $this->data->filter(function ($item) {
                 return stripos($item->platform, 'Youtube') !== false && !empty($item->streaming_subscription_type);
-            })->groupBy(['platform', 'streaming_subscription_type'])->map(function ($platformData) {
-                return $platformData->sum('earning');
             });
 
-            $totalEarnings = $platformEarnings->sum();
+            if ($youtubeData->isEmpty()) {
+                return [];
+            }
 
-            return $platformEarnings->mapWithKeys(function ($earning, $keys) use ($totalEarnings) {
-                list($platform, $subscriptionType) = explode('.', $keys);
-                $percentage = $totalEarnings > 0 ? ($earning / $totalEarnings) * 100 : 0;
-                return [
-                    $platform => [
-                        $subscriptionType => [
-                            'earning' => Number::currency($earning, 'USD', app()->getLocale()),
-                            'percentage' => round($percentage, 2),
-                        ]
-                    ]
-                ];
-            })->toArray();
+            return $youtubeData
+                ->groupBy('platform')
+                ->map(function ($platformData, $platform) {
+                    $result = ['name' => $platform];
+                    
+                    $platformData->groupBy('streaming_subscription_type')
+                        ->each(function ($data, $type) use (&$result) {
+                            $result[$type] = $data->sum('earning');
+                        });
+                    
+                    return $result;
+                })
+                ->values()
+                ->toArray();
         });
     }
 
@@ -581,6 +583,33 @@ class AnalyseService
                 'total' => $total->toArray(),
                 'items' => $items->toArray(),
             ];
+        });
+    }
+
+    public function youtubeEarningsBySubscriptionType(): array
+    {
+        $cacheKey = 'youtube_earnings_by_subscription_type_' . md5($this->data->pluck('id')->implode(','));
+        return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
+            return $this->data
+                ->filter(function ($item) {
+                    return stripos($item->platform, 'Youtube') !== false;
+                })
+                ->groupBy('platform')
+                ->map(function ($platformData, $platform) {
+                    $subscriptionEarnings = $platformData
+                        ->groupBy('streaming_subscription_type')
+                        ->map(function ($data) {
+                            return $data->sum('earning');
+                        })
+                        ->toArray();
+
+                    return array_merge(
+                        ['name' => $platform],
+                        $subscriptionEarnings
+                    );
+                })
+                ->values()
+                ->toArray();
         });
     }
 }
