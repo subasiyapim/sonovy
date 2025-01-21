@@ -17,18 +17,7 @@
                 <span class="label-xs c-soft-400">Tüm Yayınlar</span>
                  <span class="label-xs c-soft-400">•</span>
                 <span class="label-xs c-soft-400">
-                    <template v-if="product.type == 1">
-                        Ses
-                    </template>
-                    <template v-if="product.type == 2">
-                        Müzik Video Oluştur
-                    </template>
-                    <template v-if="product.type == 3">
-                        Zil sesi
-                    </template>
-                    <template v-if="product.type == 4">
-                        Apple Video Oluştur
-                    </template>
+                        {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : (product.type == 4 ? 'Apple Video' : 'Zil Sesi') ) }}
                 </span>
                  <span class="label-xs c-soft-400">•</span>
                 <span class="label-xs c-soft-400">

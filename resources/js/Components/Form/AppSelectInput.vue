@@ -104,6 +104,8 @@ const selectContainer = ref(null);  // Reference to the select container element
 
 const getShowLabel = computed(() => {
   const listOfOptions = remoteDatas.value ?? props.config?.data;
+
+
   const findedElement = listOfOptions?.find((e) => e[props.config.value ?? 'value'] == element.value);
   return findedElement == null ? '' : findedElement[props.config.label ?? 'label'];
 });
@@ -124,10 +126,7 @@ const remoteDatas = ref(null)
 const getFilteredData = computed(() => {
 
   //console.log("BURAYAA GELDİK");
-
   if (searchTerm.value) {
-
-
     if (remoteDatas.value) {
       return remoteDatas.value;
     } else {
@@ -137,11 +136,13 @@ const getFilteredData = computed(() => {
     }
 
   } else {
-
-
     return props.config?.data
   }
 })
+const appendOptions = (list) => {
+    props.config.data.push(list);
+    instance.update();
+}
 const checkIfChecked = computed(() => {
   return (rowValue) => {
     return rowValue == element.value;
@@ -225,13 +226,13 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 })
 const insertData = (e) => {
-     props.config?.data.push(e);
-  chooseValue(e);
-  instance.update();
-
+    props.config?.data.push(e);
+    chooseValue(e);
+    instance.update();
 }
 defineExpose({
   insertData,
+  appendOptions
 })
 </script>
 

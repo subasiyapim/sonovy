@@ -54,6 +54,8 @@ class UserController extends Controller
 
         $validated = $validator->validated();
 
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        $languages = getDataFromInputFormat(CountryServices::get(), 'id', 'language', 'emoji');
 
         $user = Auth::user();
         $hasAdmin = $user->roles()->pluck('code')->contains('admin');
@@ -78,7 +80,9 @@ class UserController extends Controller
             'roles' => RoleService::getRolesFromInputFormat(),
             'statuses' => UserStatusEnum::getTitles(),
             'statistics' => $statistics,
-            'countryCodes' => $countryCodes
+            'countryCodes' => $countryCodes,
+            'countries' => $countries,
+            'languages' => $languages,
         ]);
     }
 
@@ -113,7 +117,7 @@ class UserController extends Controller
 
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -196,7 +200,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+".$country->phone_code.$user->phone;
+            $user->phone = "+" . $country->phone_code . $user->phone;
         }
 
         return inertia(
@@ -219,10 +223,16 @@ class UserController extends Controller
         }
 
         $user->update($data);
+        $user->refresh();
+        $user->load('roles', 'country', 'city', 'district', 'parent', 'children');
 
         return back()
             ->with([
-                'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+
+                'notification' => [
+                    'user' => new UserResource($user),
+                    "message" => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+                ]
             ]);
     }
 
@@ -291,7 +301,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 

@@ -43,6 +43,10 @@
       />
     </div>
 
+     <div v-if="images.length && imageProgress" class="imageProgressBar w-full" >
+        <div class="innerProgress" :style="{ width: imageProgress + '%' }"></div>
+    </div>
+
     <!-- Image Preview -->
 
   </div>
@@ -69,7 +73,7 @@ const handleDragOver = () => {
 const handleDragLeave = () => {
   isDragging.value = false;
 };
-
+const imageProgress = ref(0)
 const handleDrop = (event) => {
   isDragging.value = false;
   const files = Array.from(event.dataTransfer.files);
@@ -93,12 +97,24 @@ const handleFiles = (files) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         images.push({ file, url: e.target.result });
+         simulateUpload();
       };
       reader.readAsDataURL(file);
 
       emits('change',file)
     }
   });
+};
+
+const simulateUpload = () => {
+  const interval = setInterval(() => {
+    if (imageProgress.value < 100) {
+      imageProgress.value += 10;
+    } else {
+      clearInterval(interval);
+      imageProgress.value = null; // Hide progress bar when complete
+    }
+  }, 300); // Simulates upload every 300ms
 };
 
 const removeImage = (index) => {
@@ -160,4 +176,21 @@ onBeforeMount(() => {
 }
 
 
+</style>
+<style scoped>
+    .imageProgressBar {
+        bottom: 5px;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .innerProgress {
+        height: 100%;
+        background: var(--dark-green-500);
+        transition: width 0.3s ease;
+    }
 </style>

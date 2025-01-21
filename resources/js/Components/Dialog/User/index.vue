@@ -24,7 +24,7 @@
                 <span class="paragraph-sm c-strong-950">{{ scope.data.label }}</span>
             </template>
             <template #model="scope">
-                <div v-if="scope.data" class="flex items-center gap-2">
+                <div v-if="scope.data" class="flex items-center gap-2 paragraph-sm c-strong-950">
                     <span>{{ countryConfig.data.find((el) => el.value == scope.data)?.iconKey }}</span>
                     <span>{{ countryConfig.data.find((el) => el.value == scope.data)?.label }}</span>
                 </div>
@@ -49,7 +49,7 @@
                 <span class="paragraph-sm c-strong-950">{{ scope.data.label }}</span>
             </template>
             <template #model="scope">
-                <div v-if="scope.data" class="flex items-center gap-2">
+                <div v-if="scope.data" class="flex items-center gap-2 paragraph-sm c-strong-950">
                     <span>{{ languageConfig.data.find((el) => el.value == scope.data)?.iconKey }}</span>
                     <span>{{ languageConfig.data.find((el) => el.value == scope.data)?.label }}</span>
                 </div>
@@ -57,19 +57,27 @@
         </FormElement>
 
         <div class="flex items-center gap-2">
-            <FormElement type="custom" :error="form.errors.city_id || form.errors.district_id" label="İl İlçe" label-width="190px" class="w-full">
+            <FormElement v-if="form.country_id" type="custom" :error="form.errors.city_id || form.errors.district_id" label="İl İlçe" label-width="190px" class="w-full">
                 <div class="flex items-center gap-2">
-                    <AppSelectInput @change="onCityChoosen"  class="flex-1" v-model="form.city_id"
+                    <AppSelectInput ref="citySelect"  @change="onCityChoosen"  class="flex-1" v-model="form.city_id"
                             :error="form.errors.city_id" type="select"
 
                             :placeholder="__('control.user.fields.city_id')" :config="cityConfig">
-
+                         <template #model="scope">
+                            <div  class="flex items-center gap-2 paragraph-sm c-strong-950">
+                                {{cityConfig.data.find((e) => e.id == form.city_id)?.name}}
+                            </div>
+                        </template>
                     </AppSelectInput>
-                    <AppSelectInput  class="flex-1" v-model="form.district_id"
+                    <AppSelectInput ref="districtSelect" class="flex-1" v-model="form.district_id"
                             :error="form.errors.district_id" type="select"
 
                             :placeholder="__('control.user.fields.district_id_placeholder')" :config="districtConfig">
-
+                        <template #model="scope">
+                            <div  class="flex items-center gap-2 paragraph-sm c-strong-950">
+                                {{districtConfig.data.find((e) => e.id == form.city_id)?.name}}
+                            </div>
+                        </template>
                     </AppSelectInput>
                 </div>
             </FormElement>
@@ -174,7 +182,7 @@ import {SectionHeader} from '@/Components/Widgets';
 
 import {AddIcon, ISRCStarsIcon} from '@/Components/Icons'
 import {RegularButton, PrimaryButton} from '@/Components/Buttons'
-import {computed, ref, onMounted} from 'vue';
+import {computed, ref, onMounted,nextTick} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
 import {useCrudStore} from '@/Stores/useCrudStore';
@@ -183,7 +191,8 @@ import InputError from "@/Components/InputError.vue";
 
 
 
-
+const citySelect = ref();
+const districtSelect = ref();
 const createArtistDialog = ref(false);
 const crudStore = useCrudStore();
 const props = defineProps({
@@ -197,7 +206,8 @@ const props = defineProps({
 const isUpdating = computed(() => {
   return props.user ? true : false;
 });
-
+const cityLoading = ref(false);
+const districtLoading = ref(false);
 
 const adding = ref(false)
 
@@ -256,7 +266,7 @@ const cityConfig = computed(() => {
 })
 const districtConfig = computed(() => {
   return {
-      value : 'id',
+    value : 'id',
     label:'name',
     hasSearch: true,
     data: [],
@@ -272,6 +282,7 @@ const onSubmit = async (e) => {
 
                 },
                 onSuccess: async (e) => {
+                    console.log(e.props);
 
                     toast.success(e.props.notification.message);
                     isDialogOn.value = false;
@@ -312,25 +323,34 @@ const checkIfDisabled = computed(() => {
 })
 
 const onCountryChoosen = async (e) => {
-    console.log("ÜLKE SEÇİLDİİ SEÇİLDİ");
 
+    cityLoading.value = true;
     var response = await crudStore.post(route('control.findall.cities'),{
         country_id:e.value
     })
-    cityConfig.value.data = response;
+   nextTick(() => {
+     cityConfig.value.data = response;
+     citySelect.value.appendOptions(response);
+     cityLoading.value = false;
+   })
+
 }
 const onCityChoosen = async (e) => {
-
+    districtLoading.value = true;
     var response = await crudStore.post(route('control.findall.districts'),{
         city_id:e.id
     })
-    districtConfig.value.data = response;
+    nextTick(() => {
+        districtConfig.value.data = response;
+        districtSelect.value.appendOptions(response);
+        districtLoading.value = false;
+    })
 }
 onMounted(() => {
   if (props.user) {
         form['id'] = props.user.id;
         form['name'] = props.user.name;
-        form['country_id'] =props.user.country_id;
+        form['country_id'] = props.user.country_id;
         if(props.user.country_id){
             onCountryChoosen({value:props.user.country_id})
         }

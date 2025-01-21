@@ -6,7 +6,7 @@
     <template #icon>
       <PersonIcon color="var(--dark-green-950)"/>
     </template>
-
+     {{tableData}}
    <div class="p-5">
      <table class="w-full" v-if="!loading">
         <thead>
@@ -18,7 +18,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(artist,index) in tableData" :key="index">
+
+            <tr v-for="(artist,index) in sortedTableData" :key="index">
                 <td class="py-3">
                    <span class="label-sm c-strong-950">{{artist.artist_name}}</span>
 
@@ -54,6 +55,17 @@ import {useCrudStore} from '@/Stores/useCrudStore'
 import {computed, ref, onMounted} from 'vue';
 import {AppProgressIndicator} from '@/Components/Widgets';
 
+const tableData = ref([]);
+const sortedTableData = computed(() => {
+    if(Array.isArray(tableData.value)){
+    return tableData.value.sort((a, b) => b.percentage - a.percentage);
+
+    }else {
+        return tableData.value;
+    }
+})
+
+
 
 
 const crudStore = useCrudStore();
@@ -75,7 +87,7 @@ const isDialogOn = computed({
 })
 
 const loading = ref(false);
-const tableData = ref({});
+
 const getData =  async ()  =>  {
     loading.value = true;
     try {

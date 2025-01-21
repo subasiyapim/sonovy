@@ -1,4 +1,5 @@
 <template>
+
   <div class="w-full h-full">
     <!-- Drag-and-Drop Area -->
 
@@ -54,6 +55,7 @@ import {ref, reactive, onBeforeMount} from 'vue';
 import {SongFileIcon, AddIcon} from '@/Components/Icons'
 import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {useCrudStore} from '@/Stores/useCrudStore';
+import {toast} from 'vue3-toastify';
 
 const props = defineProps({
   modelValue: {
@@ -98,10 +100,28 @@ const handleDrop = (event) => {
 
 const onChangeInput = (e) => {
 
-  console.log("DEĞİŞTİİİ");
+    const allowedExtensions = ['mp3', 'wav', 'aac', 'mp4', 'avi', 'mkv'];
+    const files = e.target.files;
+    let isValid = true;
 
-  const files = Array.from(e.target.files);
-  handleFiles(files);
+    // Check each selected file
+    for (let file of files) {
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+            isValid = false;
+            break;
+        }
+    }
+    if (!isValid) {
+        toast.error('Yüklenilen dosya formatı geçersizdir.');
+        if (fileInput.value) {
+            fileInput.value.value = ''; // Reset the input
+        }
+    } else {
+        const f = Array.from(e.target.files);
+        handleFiles(f);
+    }
+
 
 }
 const triggerFileInput = () => {

@@ -303,7 +303,7 @@ const submit = async () => {
     submitting.value = false;
     isDialogOn.value = false;
     emits('done',response['products']);
-    toast(response['message'] ?? 'İşlem Başarılı');
+    toast.success(response['message'] ?? 'İşlem Başarılı');
 
 }
 </script>

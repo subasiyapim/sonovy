@@ -44,6 +44,14 @@
                        </div>
                         <slot name="toolbar" />
 
+                        <RegularButton v-if="isInViewMode" @click="switchUsers">
+                            <template #icon>
+                                <ExitIcon color="var(--sub-600)" />
+                            </template>
+                            Admin'e geri dön
+
+                        </RegularButton>
+
                 </div>
 
             </div>
@@ -70,15 +78,21 @@
 
 
 <script setup>
+
+
+
 import {computed, onMounted,ref,nextTick,useSlots} from 'vue'
 import Sidebar from '@/Layouts/Partials/Sidebar.vue';
-import {SecondaryButton,IconButton} from '@/Components/Buttons'
-import {ArrowLeftIcon,SearchIcon,NotificationIcon,CalendarIcon} from '@/Components/Icons';
+import {SecondaryButton,IconButton,RegularButton} from '@/Components/Buttons'
+import {ArrowLeftIcon,SearchIcon,NotificationIcon,CalendarIcon,ExitIcon} from '@/Components/Icons';
 import AppTextInput from '@/Components/Form/AppTextInput.vue';
 import {router, usePage} from '@inertiajs/vue3';
+import {useUiStore} from '@/Stores/useUiStore';
 import { Head } from '@inertiajs/vue3';
 const choosenDate = ref();
+const uiStore = useUiStore();
 const emits = defineEmits(['dateChoosen'])
+
 const props = defineProps({
     title:{type:String},
     parentTitle:{type:String},
@@ -91,6 +105,16 @@ const props = defineProps({
     subParent:{
         default:null
     }
+})
+const switchUsers = () => {
+    localStorage.removeItem('account-to-switch-back');
+    uiStore.isAdminViewOn = false;
+    router.visit(route('control.user-management.users.switch-back-to-admin'), { method: 'post',data:{
+        user_id : isInViewMode.value
+    } });
+}
+const isInViewMode = computed(() => {
+    return uiStore.isAdminViewOn;
 })
 const slots = useSlots()
 const hasSlot = (name) => {

@@ -8,17 +8,11 @@
       <span class="label-xs c-soft-400">{{ user.name }}</span>
     </template>
     <template #toolbar>
-        <RegularButton @click="switchUsers">
+        <RegularButton v-if="!isInAdminViewMode" @click="switchUsers">
           <template #icon>
             <EyeOnIcon color="var(--sub-600)"/>
           </template>
-          <template v-if="isInViewMode">
-            Admin'e geri dön
-          </template>
-           <template v-else>
              Kullanıcının Gözünden Gör
-          </template>
-
         </RegularButton>
     </template>
       <div class="bg-white-400 h-44 p-5 relative">
@@ -91,6 +85,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {ArtistDialog} from '@/Components/Dialog';
 import {FormElement} from '@/Components/Form';
 import {UserModal} from '@/Components/Dialog';
+import {useUiStore} from '@/Stores/useUiStore';
 import {
   DocumentIcon,
   EditIcon,
@@ -116,7 +111,7 @@ import {
   RingtoneIcon,
   CheckFilledIcon
 } from '@/Components/Icons'
-
+const uiStore = useUiStore();
 const showAllArtists = ref(false);
 import {PrimaryButton, RegularButton} from '@/Components/Buttons'
 import {AppSelectInput} from '@/Components/Form'
@@ -200,23 +195,23 @@ const tabs = ref([
     slug: "activities",
     component: ActivitiesTab,
   },
-{
+    {
 
-    title: "Bayraklar",
-    slug: "flags",
-    component: FlagsTab,
-  },
-  {
-    title: "Bağlı Olduğu Alanlar",
-    slug: "relations",
-    component: RelationsTab,
-  },
-  {
-    title: "Yetkiler",
-    slug: "authorisations",
-    component: AuthorisationsTab,
-  },
-])
+        title: "Bayraklar",
+        slug: "flags",
+        component: FlagsTab,
+    },
+    {
+        title: "Bağlı Olduğu Alanlar",
+        slug: "relations",
+        component: RelationsTab,
+    },
+    {
+        title: "Yetkiler",
+        slug: "authorisations",
+        component: AuthorisationsTab,
+    },
+    ])
 
 const openUserModal = () => {
     isUserModalOn.value = true;
@@ -264,25 +259,18 @@ const onUpdated = (e) => {
     console.log("EEE",e);
 
 }
-const isInViewMode = ref(localStorage.getItem("account-to-switch-back"));
+
+const isInAdminViewMode = computed(() => {
+    return uiStore.isAdminViewOn;
+})
+
 const switchUsers = () => {
-    if(isInViewMode.value == null){
-        localStorage.setItem("account-to-switch-back",props.user.id );
-        isInViewMode.value = props.user.id;
-        router.visit(route('control.user-management.users.switch-to-user'), { method: 'post',data:{
-            user_id : props.user.id
-        } });
-    }else {
-        console.log("GELDİ");
-
-        localStorage.removeItem('account-to-switch-back');
-        isInViewMode.value = null;
-        router.visit(route('control.user-management.users.switch-back-to-admin'), { method: 'post',data:{
-            user_id : isInViewMode.value
-        } });
-
-    }
-
+    uiStore.isAdminViewOn = true;
+    localStorage.setItem("account-to-switch-back",props.user.id );
+    router.visit(route('control.user-management.users.switch-to-user'), { method: 'post',data:{
+        user_id : props.user.id
+    }});
+    toast.success("Kullanıcı görünümüne geçildi");
 
 };
 </script>

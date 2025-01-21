@@ -76,7 +76,7 @@
         </AppTableColumn>
     </AppTable>
   </AdminLayout>
-  <UserModal v-model="isUserModalOn" v-if="isUserModalOn"></UserModal>
+  <UserModal :user="choosenUser" @update="onUpdate" v-model="isUserModalOn" v-if="isUserModalOn"></UserModal>
 
 </template>
 
@@ -115,13 +115,18 @@ const isUserModalOn = ref(false);
 const props = defineProps({
   statistics: Object,
 })
+
+const choosenUser = ref(null)
 const openAddDialog = () => {
     isUserModalOn.value = true;
 }
 const deleteProduct = (row) => {
   usersTable.value.removeRowDataFromRemote(row);
 }
-
+const editRow = (row) => {
+    choosenUser.value = row;
+    isUserModalOn.value = true;
+}
 const data = ref([
   {
     name: "asdasd"
@@ -315,6 +320,12 @@ const barSeries = ref([
   },
 ]);
 
+const deleteRow = (row) => {
+  usersTable.value.removeRowDataFromRemote(row);
+}
+const onUpdate = (e) => {
+    usersTable.value.editRow(e);
+}
 </script>
 
 <style lang="scss" scoped>

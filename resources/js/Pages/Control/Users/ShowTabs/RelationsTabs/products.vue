@@ -156,7 +156,14 @@ const props = defineProps({
 const emits = defineEmits(['update:modelValue']);
 const isAssignModalOn = ref(false);
 const tableData = computed({
-  get: () => props.modelValue,
+ get: () => {
+    // Sort the data by status, putting status 1 first
+    return [...props.modelValue].sort((a, b) => {
+      if (a.status === 1) return -1; // a comes first if status is 1
+      if (b.status === 1) return 1;  // b comes first if status is 1
+      return 0; // maintain original order for other statuses
+    });
+  },
   set: (val) => emits('update:modelValue', value)
 })
 
