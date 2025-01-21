@@ -5,6 +5,7 @@ namespace Database\Seeders\System;
 use App\Models\System\Country;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class CountrySeeder extends Seeder
 {
@@ -14,34 +15,36 @@ class CountrySeeder extends Seeder
     public function run(): void
     {
         $file = File::get(public_path('assets/countries.json'));
-
         $items = json_decode($file, true);
 
-        foreach ($items as $row) {
+        // Sadece Türkiye'yi ekle
+        $turkeyData = collect($items)->where('iso2', 'TR')->first();
+        
+        if ($turkeyData) {
             Country::firstOrCreate(
                 [
-                    'name' => $row['name'],
-                    'iso2' => $row['iso2'],
+                    'name' => $turkeyData['name'],
+                    'iso2' => $turkeyData['iso2'],
                 ],
                 [
-                    'iso3' => $row['iso3'],
-                    'numeric_code' => $row['numeric_code'],
-                    'phone_code' => $row['phone_code'],
-                    'capital' => $row['capital'],
-                    'currency' => $row['currency'],
-                    'currency_name' => $row['currency_name'],
-                    'currency_symbol' => $row['currency_symbol'],
-                    'tld' => $row['tld'],
-                    'native' => $row['native'],
-                    'region' => $row['region'],
-                    'subregion' => $row['subregion'],
-                    'nationality' => $row['nationality'],
-                    'timezones' => $row['timezones'] ?? [],
-                    'translations' => $row['translations'] ?? [],
-                    'latitude' => $row['latitude'],
-                    'longitude' => $row['longitude'],
-                    'emoji' => $row['emoji'],
-                    'emojiU' => $row['emojiU'],
+                    'iso3' => $turkeyData['iso3'],
+                    'numeric_code' => $turkeyData['numeric_code'],
+                    'phone_code' => $turkeyData['phone_code'],
+                    'capital' => $turkeyData['capital'],
+                    'currency' => $turkeyData['currency'],
+                    'currency_name' => $turkeyData['currency_name'],
+                    'currency_symbol' => $turkeyData['currency_symbol'],
+                    'tld' => $turkeyData['tld'],
+                    'native' => $turkeyData['native'],
+                    'region' => $turkeyData['region'],
+                    'subregion' => $turkeyData['subregion'],
+                    'nationality' => $turkeyData['nationality'],
+                    'timezones' => $turkeyData['timezones'] ?? [],
+                    'translations' => $turkeyData['translations'] ?? [],
+                    'latitude' => $turkeyData['latitude'],
+                    'longitude' => $turkeyData['longitude'],
+                    'emoji' => $turkeyData['emoji'],
+                    'emojiU' => $turkeyData['emojiU'],
                 ]);
         }
 

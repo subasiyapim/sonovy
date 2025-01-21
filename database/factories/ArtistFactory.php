@@ -25,7 +25,7 @@ class ArtistFactory extends Factory
             'phone' => $this->faker->phoneNumber,
             'website' => $this->faker->url,
             'about' => $this->faker->text,
-            'created_by' => User::inRandomOrder()->first()->id,
+            'created_by' => 1,
         ];
     }
 }

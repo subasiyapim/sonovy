@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\System\Country;
 use App\Traits\DataTables\HasAdvancedFilter;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

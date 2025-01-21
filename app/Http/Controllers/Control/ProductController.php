@@ -112,7 +112,7 @@ class ProductController extends Controller
                 $query->where('type', $request->input('type'));
             })
             ->advancedFilter();
-
+//dd($products[0]->image);
         $statistics = [
             'products' => $this->getProductsGroupedByPeriod($validated['period'] ?? 'month'),
             'labels' => $this->getTopLabelsByProductCount(),

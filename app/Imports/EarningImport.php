@@ -3,7 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Artist;
-use App\Models\Country;
+use App\Models\System\Country;
 use App\Models\EarningReport;
 use App\Models\EarningReportFile;
 use App\Models\Platform;

@@ -18,6 +18,34 @@ class IsrcJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
+
+    /**
+     * The maximum number of unhandled exceptions to allow before failing.
+     *
+     * @var int
+     */
+    public $maxExceptions = 3;
+
+    /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 3600;
+
+    /**
+     * The number of seconds to wait before retrying the job.
+     *
+     * @var int
+     */
+    public $backoff = [60, 180, 360];
+
     protected $tenants;
 
     /**
@@ -30,40 +58,101 @@ class IsrcJob implements ShouldQueue, ShouldBeUnique
         });
     }
 
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('ISRC Job başarısız oldu', [
+            'error' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTraceAsString()
+        ]);
+    }
 
     /**
      * Execute the job.
      */
     public function handle(): void
     {
-
-        foreach ($this->tenants as $tenant) {
-
-            tenancy()->initialize($tenant);
-
-            Log::info('Tenant initialized: '.$tenant->domain);
-
-
-            $songs = Song::whereNull('isrc')->OrWhere('isrc', 0)->get();
-
-            if ($songs->count() == 0) {
-                Log::info('No songs found for '.$tenant->domain);
-                tenancy()->end();
-                Log::info('Tenant ended: '.$tenant->domain);
-                continue;
+        try {
+            if ($this->tenants->isEmpty()) {
+                Log::warning('ISRC Job: Hiç tenant bulunamadı');
+                return;
             }
 
-            foreach ($songs as $song) {
-                $song->isrc = ISRCServices::make($song->type, $tenant);
-                $song->save();
-            }
+            foreach ($this->tenants as $tenant) {
+                try {
+                    if (!$tenant || !$tenant->exists) {
+                        Log::warning('Geçersiz tenant', ['tenant_id' => $tenant->id ?? 'unknown']);
+                        continue;
+                    }
 
-            Log::info('ISRC codes generated for '.$tenant->domain);
-            tenancy()->end();
-            Log::info('Tenant ended: '.$tenant->domain);
+                    tenancy()->initialize($tenant);
+                    Log::info('Tenant başlatıldı', ['tenant' => $tenant->domain]);
+
+                    $totalProcessed = 0;
+                    $totalErrors = 0;
+
+                    $songs = Song::whereNull('isrc')
+                        ->orWhere('isrc', 0)
+                        ->chunk(100, function ($songs) use ($tenant, &$totalProcessed, &$totalErrors) {
+                            foreach ($songs as $song) {
+                                try {
+                                    if (!$song->type) {
+                                        Log::warning('Şarkı tipi bulunamadı', [
+                                            'song_id' => $song->id,
+                                            'tenant' => $tenant->domain
+                                        ]);
+                                        continue;
+                                    }
+
+                                    $song->isrc = ISRCServices::make($song->type, $tenant);
+                                    $song->save();
+                                    $totalProcessed++;
+
+                                } catch (\Exception $e) {
+                                    $totalErrors++;
+                                    Log::error('ISRC oluşturma hatası', [
+                                        'song_id' => $song->id,
+                                        'tenant' => $tenant->domain,
+                                        'error' => $e->getMessage(),
+                                        'type' => $song->type ?? 'unknown'
+                                    ]);
+                                    continue;
+                                }
+                            }
+                        });
+
+                    Log::info('ISRC işlemi tamamlandı', [
+                        'tenant' => $tenant->domain,
+                        'processed' => $totalProcessed,
+                        'errors' => $totalErrors
+                    ]);
+
+                } catch (\Exception $e) {
+                    Log::error('Tenant işleme hatası', [
+                        'tenant' => $tenant->domain,
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    continue;
+                } finally {
+                    tenancy()->end();
+                    Log::info('Tenant sonlandırıldı', ['tenant' => $tenant->domain]);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('ISRC Job kritik hata', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        } finally {
+            Cache::forget('tenants');
         }
-
-        Cache::forget('tenants');
     }
-
 }

@@ -14,6 +14,10 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(\App\Models\Song::class, 'song_id')->constrained()->onDelete('cascade');
             $table->string('name');
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->text('address')->nullable();
+            $table->timestamps();
         });
     }
 

@@ -7,6 +7,7 @@ use App\Models\System\Country;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class CitySeeder extends Seeder
 {
@@ -16,24 +17,31 @@ class CitySeeder extends Seeder
     public function run(): void
     {
         $file = File::get(public_path('assets/cities.json'));
-
         $items = json_decode($file, true);
 
-        foreach ($items as $row) {
-            $country_id = Country::where('iso2', $row['country_code'])->first()?->id;
+        // Türkiye'nin ID'sini al
+        $turkeyId = Country::where('iso2', 'TR')->first()?->id;
 
-            if ($country_id) {
-                City::firstOrCreate(
-                    [
-                        'name' => $row['name'],
-                        'city_code' => $row['state_code'],
-                    ],
-                    [
-                        'country_id' => $country_id,
-                        'longitude' => $row['longitude'],
-                        'latitude' => $row['latitude'],
-                    ],
-                );
+        if ($turkeyId) {
+            // Sadece Türkiye şehirlerini filtrele
+            $turkishCities = collect($items)->where('country_code', 'TR');
+
+            // Bulk insert için veriyi hazırla
+            $cities = $turkishCities->map(function ($city) use ($turkeyId) {
+                return [
+                    'name' => $city['name'],
+                    'city_code' => $city['state_code'],
+                    'country_id' => $turkeyId,
+                    'longitude' => $city['longitude'],
+                    'latitude' => $city['latitude'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->toArray();
+
+            // Bulk insert
+            foreach (array_chunk($cities, 100) as $chunk) {
+                City::insert($chunk);
             }
         }
     }

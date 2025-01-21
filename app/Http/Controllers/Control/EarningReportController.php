@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Earning\EarningReportRequest;
 use App\Http\Requests\Earning\UploadCSVRequest;
 use App\Imports\EarningImport;
-use App\Models\Country;
+use App\Models\System\Country;
 use App\Models\Earning;
 use App\Models\EarningReport;
 use App\Models\EarningReportFile;

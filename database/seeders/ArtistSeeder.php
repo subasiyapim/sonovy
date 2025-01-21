@@ -15,39 +15,41 @@ class ArtistSeeder extends Seeder
      */
     public function run(): void
     {
-        Artist::create([
+        $artist = new Artist();
+        $artist->fill([
             'name' => 'Various Artists',
             'country_id' => Country::where('iso2', 'TR')->first()->id,
             'created_by' => 1,
-        ]);
+        ])->save();
         $diskName = 'tenant_'.tenant('domain').'_artists';
 
         Artist::factory(10)
             ->create()
             ->each(function (Artist $artist) use ($diskName) {
-                $randomArtistBranchIds = [];
-                $usedIds = [];
+                try {
+                    $randomArtistBranchIds = [];
+                    $usedIds = [];
 
-                for ($i = 0; $i < rand(1, 6); $i++) {
-                    $artistBranch = ArtistBranch::inRandomOrder()->whereNotIn('id', $usedIds)->first();
-                    if ($artistBranch) {
-                        $randomArtistBranchIds[] = $artistBranch->id;
-                        $usedIds[] = $artistBranch->id;
+                    for ($i = 0; $i < rand(1, 6); $i++) {
+                        $artistBranch = (new ArtistBranch())->newQuery()->inRandomOrder()->whereNotIn('id', $usedIds)->first();
+                        if ($artistBranch) {
+                            $randomArtistBranchIds[] = $artistBranch->id;
+                            $usedIds[] = $artistBranch->id;
+                        }
                     }
+
+                    $artist->artistBranches()->attach($randomArtistBranchIds);
+
+                    // Picsum.photos servisini kullan
+                    $imageUrl = 'https://dummyimage.com/500x500/3498db/ffffff&text=' . urlencode($artist->name);
+
+                    $artist->addMediaFromUrl($imageUrl)
+                        ->usingFileName(Str::slug($artist->name).'.jpg')
+                        ->usingName($artist->name)
+                        ->toMediaCollection('artists', $diskName);
+                } catch (\Exception $e) {
+                    echo $e->getMessage();
                 }
-
-                $artist->artistBranches()->attach($randomArtistBranchIds);
-
-                $imageUrl = 'https://picsum.photos/id/'.rand(1, 1000).'/500/500';
-
-                if (!@getimagesize($imageUrl)) {
-                    $imageUrl = 'https://picsum.photos/500/500';
-                }
-
-                $artist->addMediaFromUrl($imageUrl)
-                    ->usingFileName(Str::slug($artist->name).'.jpg')
-                    ->usingName($artist->name)
-                    ->toMediaCollection('artists', $diskName);
             });
     }
 }

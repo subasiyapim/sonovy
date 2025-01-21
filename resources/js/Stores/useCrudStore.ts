@@ -13,7 +13,9 @@ export const useCrudStore = defineStore('crud', () => {
               ...headers
             }
         });
-        return response.data;
+        console.log("RSPONSEEEE ",response);
+
+        return response.data.flat();
     }
     const put = async(route:string,payload:object) => {
         const response = await axios.put(route ,{

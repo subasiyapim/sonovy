@@ -1,7 +1,10 @@
 <template>
-  <AdminLayout :showDatePicker="false" title="Kulanıcılar" >
+  <AdminLayout :showDatePicker="false"
+  :filters="appTableConfig.filters"
+  title="Kulanıcılar" >
     <AppTable  ref="usersTable" :showAddButton="true"
             :buttonLabel="'Yeni Kullanıcı Ekle'"
+            :config="appTableConfig"
              @addNewClicked="openAddDialog"
             :renderSubWhen="renderSubWhen"
               v-model="usePage().props.users" :slug="route('control.user-management.users.index')">
@@ -70,7 +73,9 @@
                 <TrashIcon color="var(--sub-600)"/>
                 </IconButton>
                 <IconButton @click="editRow(scope.row)">
-                <EditIcon color="var(--sub-600)"/>
+
+                    <EditIcon color="var(--sub-600)"/>
+
                 </IconButton>
             </template>
         </AppTableColumn>
@@ -81,7 +86,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref,computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import NestedTable from '@/Components/Table/NestedTable.vue';
@@ -112,21 +117,34 @@ moment.locale('tr');
 const usersTable = ref();
 const defaultStore = useDefaultStore();
 const isUserModalOn = ref(false);
+
 const props = defineProps({
   statistics: Object,
+  filters: {
+    type: Array,
+  }
 })
 
 const choosenUser = ref(null)
+const appTableConfig = computed(() => {
+  return {
+    filters: props.filters,
+  }
+})
+
 const openAddDialog = () => {
     isUserModalOn.value = true;
 }
-const deleteProduct = (row) => {
+const deleteRow = (row) => {
   usersTable.value.removeRowDataFromRemote(row);
 }
 const editRow = (row) => {
     choosenUser.value = row;
     isUserModalOn.value = true;
 }
+
+
+
 const data = ref([
   {
     name: "asdasd"
@@ -320,9 +338,7 @@ const barSeries = ref([
   },
 ]);
 
-const deleteRow = (row) => {
-  usersTable.value.removeRowDataFromRemote(row);
-}
+
 const onUpdate = (e) => {
     usersTable.value.editRow(e);
 }

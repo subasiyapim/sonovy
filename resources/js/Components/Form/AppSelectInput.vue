@@ -140,7 +140,7 @@ const getFilteredData = computed(() => {
   }
 })
 const appendOptions = (list) => {
-    props.config.data.push(list);
+    props.config.data = list;
     instance.update();
 }
 const checkIfChecked = computed(() => {

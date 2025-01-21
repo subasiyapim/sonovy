@@ -75,7 +75,7 @@
                             :placeholder="__('control.user.fields.district_id_placeholder')" :config="districtConfig">
                         <template #model="scope">
                             <div  class="flex items-center gap-2 paragraph-sm c-strong-950">
-                                {{districtConfig.data.find((e) => e.id == form.city_id)?.name}}
+                                {{districtConfig.data.find((e) => e.id == form.district_id)?.name}}
                             </div>
                         </template>
                     </AppSelectInput>
@@ -325,26 +325,38 @@ const checkIfDisabled = computed(() => {
 const onCountryChoosen = async (e) => {
 
     cityLoading.value = true;
-    var response = await crudStore.post(route('control.findall.cities'),{
+    let response = await crudStore.post(route('control.findall.cities'),{
         country_id:e.value
     })
+
+
    nextTick(() => {
      cityConfig.value.data = response;
+     console.log("loGG COUNTTRY",response);
+
      citySelect.value.appendOptions(response);
      cityLoading.value = false;
    })
 
 }
 const onCityChoosen = async (e) => {
+
+
     districtLoading.value = true;
-    var response = await crudStore.post(route('control.findall.districts'),{
-        city_id:e.id
+    let districtResponse = await crudStore.post(route('control.findall.districts'),{
+        city_id:e.value
     })
-    nextTick(() => {
-        districtConfig.value.data = response;
-        districtSelect.value.appendOptions(response);
-        districtLoading.value = false;
-    })
+    console.log("D RESPONSEEE",districtResponse);
+    if(districtResponse.length > 0){
+         nextTick(() => {
+            districtConfig.value.data = districtResponse;
+
+
+            districtSelect.value.appendOptions(districtResponse);
+            districtLoading.value = false;
+        })
+    }
+
 }
 onMounted(() => {
   if (props.user) {
@@ -354,8 +366,10 @@ onMounted(() => {
         if(props.user.country_id){
             onCountryChoosen({value:props.user.country_id})
         }
-        form['city_id'] =props.user.city_id;
+        form['city_id'] = props.user.city_id;
         if(props.user.city_id){
+            console.log("PROPS:USsER CİTY",props.user.city_id);
+
             onCityChoosen({value:props.user.city_id})
         }
 
