@@ -20,8 +20,8 @@ const props = defineProps({
         required: true
     },
     choosenDates: {
-        type: Object,
-        default: () => ({})
+        type: Array,
+        default: () => []
     },
 });
 
@@ -41,80 +41,65 @@ const isFinanceTopListsArtists = ref(false)
 const isFinanceTopListsLabels = ref(false)
 const isFinanceTopListsProducts = ref(false);
 
-const goToArtists = () => {
-  const params = {
-    slug: 'top_artists',
-    request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
-  };
+const getDateRange = () => {
+    const defaultStartDate = moment().subtract(1, 'year').format("YYYY-MM-DD");
+    const defaultEndDate = moment().format("YYYY-MM-DD");
 
-  window.location.href = route('control.finance.analysis.show', params);
+    if (Array.isArray(props.choosenDates) && props.choosenDates.length >= 2) {
+        return {
+            startDate: moment(props.choosenDates[0]).format("YYYY-MM-DD"),
+            endDate: moment(props.choosenDates[1]).format("YYYY-MM-DD")
+        };
+    }
+
+    return {
+        startDate: defaultStartDate,
+        endDate: defaultEndDate
+    };
+};
+
+const goToArtists = () => {
+    const { startDate, endDate } = getDateRange();
+    const params = {
+        slug: 'top_artists',
+        request_type: 'download',
+        start_date: startDate,
+        end_date: endDate,
+    };
+    window.location.href = route('control.finance.analysis.show', params);
 };
 
 const gotoLabels = () => {
-  const params = {
-    slug: 'top_labels',
-    request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
-  };
-
-  window.location.href = route('control.finance.analysis.show', params);
+    const { startDate, endDate } = getDateRange();
+    const params = {
+        slug: 'top_labels',
+        request_type: 'download',
+        start_date: startDate,
+        end_date: endDate,
+    };
+    window.location.href = route('control.finance.analysis.show', params);
 };
 
 const gotoProducts = () => {
-    console.log('gotoProducts called', { choosenDates: props.choosenDates });
-    
-    let startDate = moment().subtract(1, 'year').format("YYYY-MM-DD");
-    let endDate = moment().format("YYYY-MM-DD");
-    
-    if (props.choosenDates && Array.isArray(props.choosenDates) && props.choosenDates.length >= 2) {
-        startDate = moment(props.choosenDates[0]).format("YYYY-MM-DD");
-        endDate = moment(props.choosenDates[1]).format("YYYY-MM-DD");
-    }
-
-    console.log('Dates:', { startDate, endDate });
-
+    const { startDate, endDate } = getDateRange();
     const params = {
         slug: 'top_albums',
         request_type: 'download',
         start_date: startDate,
         end_date: endDate,
     };
-
-    console.log('Route params:', params);
-
-    try {
-        const url = route('control.finance.analysis.show', params);
-        console.log('Generated URL:', url);
-        window.location.href = url;
-    } catch (error) {
-        console.error('URL oluşturma hatası:', error);
-    }
+    window.location.href = route('control.finance.analysis.show', params);
 };
 
 const gotoSongs = () => {
-  const params = {
-    slug: 'top_songs',
-    request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
-  };
-
-  window.location.href = route('control.finance.analysis.show', params);
+    const { startDate, endDate } = getDateRange();
+    const params = {
+        slug: 'top_songs',
+        request_type: 'download',
+        start_date: startDate,
+        end_date: endDate,
+    };
+    window.location.href = route('control.finance.analysis.show', params);
 };
 
 
