@@ -291,12 +291,15 @@ const onTabChange = async (tab) => {
         currentTab.value = tab.slug;
         
         // URL parametrelerini hazırla
-        const query = new URLSearchParams(window.location.search);
+        const query = new URLSearchParams();
         query.set('slug', tab.slug);
         
-        if (choosenDates.value) {
-            query.set('start_date', moment(choosenDates.value[0]).format('M-YYYY'));
-            query.set('end_date', moment(choosenDates.value[1]).format('M-YYYY'));
+        // Tarih parametrelerini ekle
+        if (choosenDates.value && choosenDates.value.length === 2) {
+            const startDate = moment(choosenDates.value[0]).format('M-YYYY');
+            const endDate = moment(choosenDates.value[1]).format('M-YYYY');
+            query.set('start_date', startDate);
+            query.set('end_date', endDate);
         }
         
         // URL'i güncelle ve veriyi yükle
@@ -310,17 +313,7 @@ const onTabChange = async (tab) => {
             onSuccess: (page) => {
                 console.log('Tab değişimi başarılı:', {
                     data: page.props.data,
-                    currentTab: currentTab.value,
-                    countries: page.props.data?.data?.countries,
-                    releases: page.props.data?.data?.releases
-                });
-                // Tab değişiminin başarılı olduğundan emin olalım
-                nextTick(() => {
-                    console.log('Tab değişimi tamamlandı:', {
-                        currentTab: currentTab.value,
-                        component: currentComponent.value,
-                        data: props.data
-                    });
+                    currentTab: currentTab.value
                 });
             },
             onError: (errors) => {
