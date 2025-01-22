@@ -167,12 +167,17 @@ const choosenDates = ref(null);
 const loading = ref(false);
 
 // Sayfa yüklendiğinde ve URL değiştiğinde çalışacak watch
-watch(() => router.currentRoute.value.query, (query) => {
+watch(() => usePage().url, (newUrl) => {
     try {
-        const slug = query.slug || 'general';
+        const params = new URLSearchParams(new URL(newUrl).search);
+        const slug = params.get('slug') || 'general';
+        
         if (tabs.value.some(tab => tab.slug === slug)) {
             currentTab.value = slug;
             console.log("Tab güncellendi:", slug);
+        } else {
+            currentTab.value = 'general';
+            console.log("Geçersiz slug, varsayılan tab'a dönüldü");
         }
     } catch (error) {
         console.error("URL parsing hatası:", error);
