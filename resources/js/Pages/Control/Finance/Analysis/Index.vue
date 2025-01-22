@@ -167,20 +167,21 @@ const choosenDates = ref(null);
 const loading = ref(false);
 
 // Sayfa yüklendiğinde ve URL değiştiğinde çalışacak watch
-watch(() => usePage().url.value, (newUrl) => {
+watch(() => router.currentRoute.value.query, (query) => {
     try {
-        const urlParams = new URLSearchParams(new URL(newUrl).search);
-        const newSlug = urlParams.get('slug') ?? 'general';
-        
-        // Eğer yeni slug mevcut tab'lardan biriyse güncelle
-        if (tabs.value.some(tab => tab.slug === newSlug)) {
-            currentTab.value = newSlug;
-            console.log('Tab güncellendi:', newSlug);
+        const slug = query.slug || 'general';
+        if (tabs.value.some(tab => tab.slug === slug)) {
+            currentTab.value = slug;
+            console.log("Tab güncellendi:", slug);
         }
     } catch (error) {
-        console.error('URL parsing hatası:', error);
+        console.error("URL parsing hatası:", error);
+        currentTab.value = 'general';
     }
-}, { immediate: true });
+}, {
+    immediate: true,
+    deep: true
+});
 
 // Tarih parametrelerini kontrol et ve ayarla
 if (params.get('start_date') && params.get('end_date')) {
