@@ -9,6 +9,7 @@ use App\Models\Earning;
 use App\Services\AnalyseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -54,7 +55,7 @@ class FinanceAnalysisController extends Controller
             $startDate = Carbon::createFromFormat('m-Y', $startDateInput)->startOfMonth()->format('Y-m-d');
             $endDate = Carbon::createFromFormat('m-Y', $endDateInput)->endOfMonth()->format('Y-m-d');
         } else {
-            $startDate = Carbon::now()->subMonths(11)->startOfMonth()->format('Y-m-d');
+            $startDate = Carbon::now()->subMonths(1)->startOfMonth()->format('Y-m-d');
             $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
@@ -71,6 +72,7 @@ class FinanceAnalysisController extends Controller
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($startDate, $endDate) {
             return Earning::with(['product', 'song', 'platform', 'country', 'label'])
                 ->whereBetween('sales_date', [$startDate, $endDate])
+                ->where('user_id', Auth::id())
                 ->get();
         });
     }

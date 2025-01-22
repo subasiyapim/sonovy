@@ -115,7 +115,7 @@ class AnalyseService
     {
         $cacheKey = 'platforms_analysis_' . md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $platforms = ['Spotify', 'Facebook', 'Youtube', 'Apple', 'Tiktok'];
+            $platforms = ['Spotify', 'Facebook', 'Youtube', 'Apple Music', 'Tiktok'];
 
             $platformEarnings = $this->data->groupBy('platform')->map(function ($platformData, $platform) use ($platforms) {
                 $totalEarnings = $platformData->sum('earning');
@@ -214,7 +214,10 @@ class AnalyseService
                     'streams' => $artistData->sum('quantity'),
                     'percentage' => round($percentage, 2),
                 ];
-            })->sortByDesc('percentage')->values()->toArray();
+            })->sortByDesc('percentage')
+            ->take(10)
+            ->values()
+            ->toArray();
         });
     }
 
@@ -236,10 +239,22 @@ class AnalyseService
                     'product_id' => $firstItem->product->id ?? '',
                     'artist_name' => $artistName,
                     'earning' => Number::currency($albumEarnings, 'USD', app()->getLocale()),
+                    'earning_raw' => $albumEarnings,
                     'streams' => $albumData->sum('quantity'),
                     'percentage' => round($percentage, 2),
                 ];
-            })->sortByDesc('percentage')->values()->toArray();
+            })
+            ->filter(function ($album) {
+                return $album['earning_raw'] > 0;
+            })
+            ->map(function ($album) {
+                unset($album['earning_raw']);
+                return $album;
+            })
+            ->sortByDesc('percentage')
+            ->take(10)
+            ->values()
+            ->toArray();
         });
     }
 
@@ -264,7 +279,10 @@ class AnalyseService
                     'streams' => $songData->sum('quantity'),
                     'percentage' => round($percentage, 2),
                 ];
-            })->sortByDesc('percentage')->values()->toArray();
+            })->sortByDesc('percentage')
+            ->take(10)
+            ->values()
+            ->toArray();
         });
     }
 
@@ -285,7 +303,10 @@ class AnalyseService
                     'earning' => Number::currency($labelEarnings, 'USD', app()->getLocale()),
                     'percentage' => round($percentage, 2),
                 ];
-            })->sortByDesc('percentage')->values()->toArray();
+            })->sortByDesc('percentage')
+            ->take(10)
+            ->values()
+            ->toArray();
         });
     }
 
@@ -477,7 +498,7 @@ class AnalyseService
     {
         $cacheKey = 'monthly_net_earnings_' . md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $platforms = ['Spotify', 'Amazon', 'Youtube'];
+            $platforms = ['Spotify', 'Apple Music', 'Youtube'];
 
             $calculateEarnings = function ($data) use ($platforms) {
                 $totalEarnings = $data->sum('earning');
