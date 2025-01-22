@@ -90,10 +90,8 @@ import {ref, computed, watch, nextTick, onMounted} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {AppCard} from '@/Components/Cards';
 import moment from 'moment';
-import  'moment/dist/locale/tr';
-
+import 'moment/dist/locale/tr';
 moment.locale('tr');
-
 
 import {AppTabs} from '@/Components/Widgets'
 import {PrimaryButton, IconButton, RegularButton} from '@/Components/Buttons'
@@ -166,35 +164,44 @@ const currentTab = ref(initialSlug);
 const choosenDates = ref(null);
 const loading = ref(false);
 
-// Sayfa yüklendiğinde ve URL değiştiğinde çalışacak watch
-watch(() => window.location.search, (search) => {
-    try {
-        const params = new URLSearchParams(search);
-        const slug = params.get('slug') || 'general';
-        
-        if (tabs.value.some(tab => tab.slug === slug)) {
-            currentTab.value = slug;
-            console.log("Tab güncellendi:", slug);
-        } else {
-            currentTab.value = 'general';
-            console.log("Geçersiz slug, varsayılan tab'a dönüldü");
-        }
-    } catch (error) {
-        console.error("URL parsing hatası:", error);
+// Sayfa yüklendiğinde çalışacak setup
+onMounted(() => {
+    // URL'den slug'ı al ve geçerli bir slug mu kontrol et
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlSlug = urlParams.get('slug');
+    
+    if (urlSlug && tabs.value.some(tab => tab.slug === urlSlug)) {
+        currentTab.value = urlSlug;
+    } else {
         currentTab.value = 'general';
     }
-}, {
-    immediate: true,
-    deep: true
+
+    // Tarih parametrelerini kontrol et
+    const startDate = urlParams.get('start_date');
+    const endDate = urlParams.get('end_date');
+    
+    if (startDate && endDate) {
+        choosenDates.value = [
+            moment(startDate, 'M-YYYY'),
+            moment(endDate, 'M-YYYY')
+        ];
+    }
+
+    console.log('Sayfa yüklendi:', {
+        currentTab: currentTab.value,
+        choosenDates: choosenDates.value
+    });
 });
 
-// Tarih parametrelerini kontrol et ve ayarla
-if (params.get('start_date') && params.get('end_date')) {
-    choosenDates.value = [
-        moment(params.get('start_date'), "M-YYYY"),
-        moment(params.get('end_date'), "M-YYYY")
-    ];
-}
+// URL değişikliklerini izle
+watch(() => window.location.search, (search) => {
+    const params = new URLSearchParams(search);
+    const slug = params.get('slug');
+    
+    if (slug && tabs.value.some(tab => tab.slug === slug)) {
+        currentTab.value = slug;
+    }
+}, { deep: true });
 
 const removeDateFilter = async () => {
   loading.value = true;
@@ -209,36 +216,43 @@ const removeDateFilter = async () => {
   }
 }
 const choosenDate = ref();
+
+// Tarih işlemleri için yardımcı fonksiyon
+const formatMonthYear = (date) => {
+    if (!date) return null;
+    return moment(date).format('M-YYYY');
+};
+
 const onDateChoosen = async (e) => {
-  if (!e || !e['0'] || !e['1']) {
-    console.error('Geçersiz tarih seçimi:', e);
-    return;
-  }
+    if (!e || !e['0'] || !e['1']) {
+        console.error('Geçersiz tarih seçimi:', e);
+        return;
+    }
 
-  loading.value = true;
-  try {
-    const startDate = moment().month(e['0'].month).year(e['0'].year).format('M-YYYY');
-    const endDate = moment().month(e['1'].month).year(e['1'].year).format('M-YYYY');
-    
-    choosenDates.value = [
-      moment().month(e['0'].month).year(e['0'].year),
-      moment().month(e['1'].month).year(e['1'].year)
-    ];
+    loading.value = true;
+    try {
+        // Tarihleri oluştur
+        const dates = [
+            moment().set({ month: e['0'].month, year: e['0'].year }),
+            moment().set({ month: e['1'].month, year: e['1'].year })
+        ];
+        
+        choosenDates.value = dates;
 
-    await router.visit(route(route().current()), {
-      data: {
-        start_date: startDate,
-        end_date: endDate,
-        slug: currentTab.value,
-      },
-      preserveScroll: true,
-      only: ['data']
-    });
-  } catch (error) {
-    console.error('Tarih güncelleme hatası:', error);
-  } finally {
-    loading.value = false;
-  }
+        await router.visit(route(route().current()), {
+            data: {
+                start_date: formatMonthYear(dates[0]),
+                end_date: formatMonthYear(dates[1]),
+                slug: currentTab.value,
+            },
+            preserveScroll: true,
+            only: ['data']
+        });
+    } catch (error) {
+        console.error('Tarih güncelleme hatası:', error);
+    } finally {
+        loading.value = false;
+    }
 };
 
 const tabs = ref([
