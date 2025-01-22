@@ -6,7 +6,6 @@
     <template #icon>
       <PersonIcon color="var(--dark-green-950)"/>
     </template>
-     {{tableData}}
    <div class="p-5">
      <table class="w-full" v-if="!loading">
         <thead>
