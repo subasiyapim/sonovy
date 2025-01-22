@@ -210,21 +210,36 @@ const removeDateFilter = async () => {
 }
 const choosenDate = ref();
 const onDateChoosen = async (e) => {
+  if (!e || !e['0'] || !e['1']) {
+    console.error('Geçersiz tarih seçimi:', e);
+    return;
+  }
+
   loading.value = true;
   try {
+    const startDate = moment().month(e['0'].month).year(e['0'].year).format('M-YYYY');
+    const endDate = moment().month(e['1'].month).year(e['1'].year).format('M-YYYY');
+    
+    choosenDates.value = [
+      moment().month(e['0'].month).year(e['0'].year),
+      moment().month(e['1'].month).year(e['1'].year)
+    ];
+
     await router.visit(route(route().current()), {
       data: {
-        end_date: `${e['1'].month+1}-${e['1'].year}`,
-        start_date: `${e['0'].month+1}-${e['0'].year}`,
+        start_date: startDate,
+        end_date: endDate,
         slug: currentTab.value,
       },
       preserveScroll: true,
       only: ['data']
     });
+  } catch (error) {
+    console.error('Tarih güncelleme hatası:', error);
   } finally {
     loading.value = false;
   }
-}
+};
 
 const tabs = ref([
   {
