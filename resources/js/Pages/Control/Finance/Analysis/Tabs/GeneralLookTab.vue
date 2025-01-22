@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue';
+import {ref, computed, onMounted} from 'vue';
 import {
   FileChartLineIcon,
   SpotifyIcon,
@@ -20,6 +20,9 @@ import {
 } from '@/Components/Dialog';
 import {AppSwitchComponent} from '@/Components/Form'
 import Vue3Apexcharts from 'vue3-apexcharts'
+import VueTippy from 'vue-tippy';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/themes/light.css';
 
 const showYoutubeFremium = ref(false);
 import {router} from '@inertiajs/vue3';
@@ -28,20 +31,72 @@ import  'moment/dist/locale/tr';
 moment.locale('tr');
 
 const props = defineProps({
-  data: {},
-  formattedDate: {},
-  choosenDates: {},
-})
+  data: {
+    type: Object,
+    required: true,
+    default: () => ({
+      monthly_net_earnings: {
+        items: {},
+        total: {}
+      },
+      earning_from_platforms: {},
+      earning_from_countries: {},
+      earning_from_sales_type: {},
+      spotify_discovery_mode_earnings: {
+        items: {},
+        total: {}
+      },
+      earning_from_youtube: {}
+    })
+  },
+  formattedDate: {
+    type: String,
+    required: true
+  },
+  choosenDates: {
+    type: Object,
+    default: () => ({})
+  },
+});
+
 const isFinanceIncomePlatforms = ref(false);
 const isFinanceIncomeCountries = ref(false);
 const isFinanceIncomeSales = ref(false);
 const isFinanceIncomeProducts = ref(false);
 
+const monthlyData = computed(() => {
+  if (!props.data || !props.data.monthly_net_earnings || !props.data.monthly_net_earnings.items) {
+    console.log('Monthly data is missing:', props.data);
+    return {};
+  }
+  return props.data.monthly_net_earnings.items;
+});
+
+const monthlyTotals = computed(() => {
+  if (!props.data || !props.data.monthly_net_earnings || !props.data.monthly_net_earnings.total) {
+    console.log('Monthly totals is missing:', props.data);
+    return {};
+  }
+  return props.data.monthly_net_earnings.total;
+});
+
+const spotifyDiscoveryData = computed(() => {
+  if (!props.data?.spotify_discovery_mode_earnings?.items) {
+    console.log('Spotify Discovery Mode data is missing:', props.data);
+    return {};
+  }
+  return props.data.spotify_discovery_mode_earnings.items;
+});
+
+const youtubeData = computed(() => {
+  if (!props.data?.earning_from_youtube) {
+    console.log('Youtube data is missing:', props.data);
+    return {};
+  }
+  return props.data.earning_from_youtube;
+});
 
 const goToPlatformCSV = () => {
-
-
-
   const params = {
     slug: 'earning_from_platforms',
     request_type: 'download',
@@ -52,6 +107,7 @@ const goToPlatformCSV = () => {
         props.choosenDates ? props.choosenDates[1] : moment()
     ).format("YYYY-MM-DD"),
   };
+
   // Parametreleri sorgu dizgesi (query string) olarak oluştur
   const queryString = new URLSearchParams(params).toString();
   const url = `${route('control.finance.analysis.show')}?${queryString}`;
@@ -154,114 +210,135 @@ const goToSalesCSV = () => {
       });
 };
 
-
-const options = ref({
+// Chart options ve series'leri computed property olarak tanımlayalım
+const chartOptions = computed(() => ({
   chart: {
     type: 'donut',
     height: 200,
   },
-  labels: Object.keys(props.data.earning_from_platforms),
-  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'], // Dilim renkleri
+  labels: props.data?.earning_from_platforms ? Object.keys(props.data.earning_from_platforms) : [],
+  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'],
   legend: {
-    show: true, // Göstergeyi etkinleştir
-    position: 'right', // Gösterge pozisyonu
+    show: true,
+    position: 'right',
   },
   dataLabels: {
-    enabled: true, // Dilim üzerindeki değerleri göster
+    enabled: true,
     style: {
       fontSize: '13px',
-      colors: ['#fff'], // Yazı rengi
+      colors: ['#fff'],
     },
   },
   stroke: {
     show: true,
     width: 1,
-    colors: ['#fff'], // Dilim kenarlık rengi
+    colors: ['#fff'],
   },
   tooltip: {
-    enabled: true, // Tooltip etkinleştir
+    enabled: true,
     y: {
       formatter: function (val) {
-        return `${val}`; // Tooltip içeriği
+        return `${val}`;
       },
     },
   },
+}));
 
-});
+const chartSeries = computed(() => 
+  props.data?.earning_from_platforms ? 
+    Object.values(props.data.earning_from_platforms).map((e) => e.earning) : 
+    []
+);
 
-const series = ref(Object.values(props.data.earning_from_platforms).map((e) => e.earning)); // Donut dilim verileri
-
-
-const optionsCountries = ref({
+const countriesChartOptions = computed(() => ({
   chart: {
     type: 'donut',
     height: 200,
   },
-  labels: Object.keys(props.data.earning_from_countries),
-  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'], // Dilim renkleri
+  labels: props.data?.earning_from_countries ? Object.keys(props.data.earning_from_countries) : [],
+  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'],
   legend: {
-    show: true, // Göstergeyi etkinleştir
-    position: 'right', // Gösterge pozisyonu
+    show: true,
+    position: 'right',
   },
   dataLabels: {
-    enabled: true, // Dilim üzerindeki değerleri göster
+    enabled: true,
     style: {
       fontSize: '13px',
-      colors: ['#fff'], // Yazı rengi
+      colors: ['#fff'],
     },
   },
   stroke: {
     show: true,
     width: 1,
-    colors: ['#fff'], // Dilim kenarlık rengi
+    colors: ['#fff'],
   },
   tooltip: {
-    enabled: true, // Tooltip etkinleştir
+    enabled: true,
     y: {
       formatter: function (val) {
-        return `${val}`; // Tooltip içeriği
+        return `${val}`;
       },
     },
   },
+}));
 
-});
+const countriesChartSeries = computed(() => 
+  props.data?.earning_from_countries ? 
+    Object.values(props.data.earning_from_countries).map((e) => e.earning) : 
+    []
+);
 
-const seriesCountries = ref(Object.values(props.data.earning_from_countries).map((e) => e.earning)); // Donut dilim verileri
-const optionsSales = ref({
+const salesChartOptions = computed(() => ({
   chart: {
     type: 'donut',
     height: 200,
   },
-  labels: Object.keys(props.data.earning_from_sales_type),
-  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'], // Dilim renkleri
+  labels: props.data?.earning_from_sales_type ? Object.keys(props.data.earning_from_sales_type) : [],
+  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'],
   legend: {
-    show: true, // Göstergeyi etkinleştir
-    position: 'right', // Gösterge pozisyonu
+    show: true,
+    position: 'right',
   },
   dataLabels: {
-    enabled: true, // Dilim üzerindeki değerleri göster
+    enabled: true,
     style: {
       fontSize: '13px',
-      colors: ['#fff'], // Yazı rengi
+      colors: ['#fff'],
     },
   },
   stroke: {
     show: true,
     width: 1,
-    colors: ['#fff'], // Dilim kenarlık rengi
+    colors: ['#fff'],
   },
   tooltip: {
-    enabled: true, // Tooltip etkinleştir
+    enabled: true,
     y: {
       formatter: function (val) {
-        return `${val}`; // Tooltip içeriği
+        return `${val}`;
       },
     },
   },
+}));
 
+const salesChartSeries = computed(() => 
+  props.data?.earning_from_sales_type ? 
+    Object.values(props.data.earning_from_sales_type).map((e) => e.earning) : 
+    []
+);
+
+// Debug için onMounted hook'u güncelleme
+onMounted(() => {
+  console.log('Component mounted with data:', {
+    data: props.data,
+    monthlyData: monthlyData.value,
+    monthlyTotals: monthlyTotals.value,
+    chartSeries: chartSeries.value,
+    countriesChartSeries: countriesChartSeries.value,
+    salesChartSeries: salesChartSeries.value
+  });
 });
-
-const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e) => e.earning)); // Donut dilim verileri
 
 </script>
 
@@ -285,39 +362,34 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
       </div>
       <hr>
       <div class="flex justify-between">
-
         <div class="flex gap-3">
           <div class="w-10 h-10 border border-soft-200 rounded-full flex items-center justify-center">
             <SpotifyIcon/>
           </div>
           <div class="flex flex-col items-start gap-0.5">
             <span class="subheading-2xs c-soft-400">SPOTIFY</span>
-            <span class="label-medium c-strong-950">{{ data.monthly_net_earnings?.total?.Spotify?.earning }}</span>
+            <span class="label-medium c-strong-950">{{ monthlyTotals?.Spotify?.earning ?? 0 }}</span>
           </div>
         </div>
         <span class="w-[1px] bg-[#E1E4EA] h-10"></span>
         <div class="flex gap-3">
           <div class="w-10 h-10 border border-soft-200 rounded-full flex items-center justify-center">
-
             <AppleMusicIcon/>
           </div>
           <div class="flex flex-col items-start gap-0.5">
             <span class="subheading-2xs c-soft-400">APPLE MUSIC</span>
-            <span class="label-medium c-strong-950">{{ data.monthly_net_earnings?.total?.Amazon?.earning }}</span>
+            <span class="label-medium c-strong-950">{{ monthlyTotals?.Amazon?.earning ?? 0 }}</span>
           </div>
-
         </div>
         <span class="w-[1px] bg-[#E1E4EA] h-10"></span>
         <div class="flex gap-3">
           <div class="w-10 h-10 border border-soft-200 rounded-full flex items-center justify-center">
-
             <YoutubeIcon/>
           </div>
           <div class="flex flex-col items-start gap-0.5">
             <span class="subheading-2xs c-soft-400">YOUTUBE</span>
-            <span class="label-medium c-strong-950">{{ data.monthly_net_earnings?.total?.Youtube?.earning }}</span>
+            <span class="label-medium c-strong-950">{{ monthlyTotals?.Youtube?.earning ?? 0 }}</span>
           </div>
-
         </div>
         <span class="w-[1px] bg-[#E1E4EA] h-10"></span>
         <div class="flex gap-3">
@@ -326,9 +398,8 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
           </div>
           <div class="flex flex-col items-start gap-0.5">
             <span class="subheading-2xs c-soft-400">DİĞER</span>
-            <span class="label-medium c-strong-950">{{ data.monthly_net_earnings?.total?.other?.earning }}</span>
+            <span class="label-medium c-strong-950">{{ monthlyTotals?.other?.earning ?? 0 }}</span>
           </div>
-
         </div>
       </div>
       <hr>
@@ -340,44 +411,52 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
           <span class="paragraph-xs c-sub-600">0</span>
         </div>
         <div class="flex gap-4 flex-1">
-          <div v-for="key in Object.keys(data.monthly_net_earnings.items)"
-               class="h-80 flex-1 flex flex-col items-center justify-between">
-
-            <tippy :allowHtml="true" :interactiveBorder="30" theme="light" followCursor :sticky="true"
-                   :interactive="false">
-              <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
-                <div class="bg-weak-50  flex items-end justify-center h-10 min-w-10">
-                    <span class="c-sub-600 label-sm !text-[10px] ">
-                        {{ data.monthly_net_earnings.items[key].total}}
+          <template v-if="Object.keys(monthlyData).length > 0">
+            <div v-for="key in Object.keys(monthlyData)"
+                 :key="key"
+                 class="h-80 flex-1 flex flex-col items-center justify-between">
+              <tippy :allowHtml="true" :interactiveBorder="30" theme="light" followCursor :sticky="true"
+                     :interactive="false">
+                <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
+                  <div class="bg-weak-50 flex items-end justify-center h-10 min-w-10">
+                    <span class="c-sub-600 label-sm !text-[10px]">
+                      {{ monthlyData[key]?.total ?? 0 }}
                     </span>
-                </div>
-                <div v-for="p in Object.keys(data.monthly_net_earnings.items[key])"
-                    class="w-full"
-                     :style="{height:data.monthly_net_earnings.items[key][p].percentage+'%'}"
-                     :class="'bg-'+p.toLowerCase()"></div>
-                <!-- <div class="bg-spotify h-[10%]"></div>
-                <div class="bg-apple-music h-[25%]"></div>
-                <div class="bg-other-platforms h-[5%]"></div> -->
-              </div>
-              <template #content>
-                <div class="flex flex-col gap-2 w-64 p-1">
-                  <p class="label-sm c-strong-950">{{key}}</p>
-                  <div v-for="platform in Object.keys(data.monthly_net_earnings.items[key])"
-                       class="flex items-center gap-2">
-                    <SpotifyIcon v-if="platform=='Spotify'"/>
-                    <YoutubeIcon v-else-if="platform == 'Youtube'"/>
-                    <AppleMusicIcon v-else-if="platform == 'Apple'"/>
-
-                    <span v-else-if="platform == 'other'" class="bg-[#717784] w-4 h-4 rounded-full"></span>
-
-                    <p class="paragraph-sm c-strong-950 flex-1">{{ platform }}</p>
-                    <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">
-                      {{ data.monthly_net_earnings.items[key][platform].earning }}</p></div>
                   </div>
+                  <template v-if="monthlyData[key]">
+                    <div v-for="p in Object.keys(monthlyData[key])"
+                         :key="p"
+                         class="w-full"
+                         :style="{height: (monthlyData[key][p]?.percentage ?? 0) + '%'}"
+                         :class="'bg-'+p.toLowerCase()">
+                    </div>
+                  </template>
                 </div>
-              </template>
-            </tippy>
-            <span class="paragraph-xs c-sub-600 !text-center">{{ key }}</span>
+                <template #content>
+                  <div class="flex flex-col gap-2 w-64 p-1">
+                    <p class="label-sm c-strong-950">{{key}}</p>
+                    <template v-if="monthlyData[key]">
+                      <div v-for="platform in Object.keys(monthlyData[key])"
+                           :key="platform"
+                           class="flex items-center gap-2">
+                        <SpotifyIcon v-if="platform=='Spotify'"/>
+                        <YoutubeIcon v-else-if="platform == 'Youtube'"/>
+                        <AppleMusicIcon v-else-if="platform == 'Apple'"/>
+                        <span v-else-if="platform == 'other'" class="bg-[#717784] w-4 h-4 rounded-full"></span>
+                        <p class="paragraph-sm c-strong-950 flex-1">{{ platform }}</p>
+                        <div class="border border-soft-200 rounded px-2 py-1">
+                          <p class="paragraph-xs c-sub-600">{{ monthlyData[key][platform]?.earning ?? 0 }}</p>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </tippy>
+              <span class="paragraph-xs c-sub-600 !text-center">{{ key }}</span>
+            </div>
+          </template>
+          <div v-else class="w-full flex justify-center items-center">
+            <p class="text-gray-500">Veri bulunamadı</p>
           </div>
         </div>
       </div>
@@ -414,47 +493,51 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
           <span class="paragraph-xs c-sub-600">0</span>
         </div>
         <div class="flex gap-4 flex-1">
-
-
-          <div v-for="key in Object.keys(data.spotify_discovery_mode_earnings.items)"
-               class="h-80 flex-1 flex flex-col items-center justify-between">
-
-            <tippy :allowHtml="true" :maxWidth="600" theme="light" followCursor :sticky="true" :interactive="false">
-              <div class="h-72 flex flex-col justify-end w-full gap-0.5">
-                <div class="bg-weak-50  h-10 min-w-10 flex items-end justify-center">
-                  <span class="c-sub-600 label-sm !text-[10px] ">{{data.spotify_discovery_mode_earnings.items[key].total}}</span>
-                </div>
-                <div class="bg-spotify " :style="{height:data.spotify_discovery_mode_earnings.items[key].earning_percentage+'%'}">
-
-                </div>
-                <div class="bg-[#BDECCD] h-full"></div>
-              </div>
-              <template #content>
-                <div class="flex flex-col gap-2 w-96 p-1">
-                  <div class="flex items-center">
-
-                    <p class="label-sm c-strong-950 flex-1">{{ key }}</p>
-                    <p class="label-sm c-strong-950 ">{{ data.spotify_discovery_mode_earnings.items[key].total }}</p>
-
+          <template v-if="Object.keys(spotifyDiscoveryData).length > 0">
+            <div v-for="key in Object.keys(spotifyDiscoveryData)"
+                 :key="key"
+                 class="h-80 flex-1 flex flex-col items-center justify-between">
+              <tippy :allowHtml="true" :interactiveBorder="30" theme="light" followCursor :sticky="true"
+                     :interactive="false">
+                <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
+                  <div class="bg-weak-50 flex items-end justify-center h-10 min-w-10">
+                    <span class="c-sub-600 label-sm !text-[10px]">
+                      {{ spotifyDiscoveryData[key]?.total ?? 0 }}
+                    </span>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-spotify"></div>
-                    <p class="paragraph-sm c-strong-950 flex-1">Tahmini kazanılan gelir MD Spotify Keşif Modunda katalog
-                      optimizasyonu ile</p>
-                    <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">
-                      {{ data.spotify_discovery_mode_earnings.items[key].promotion }}</p></div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-[#BDECCD]"></div>
-                    <p class="paragraph-sm c-strong-950 flex-1">Regular Spotify Revenue</p>
-                    <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">
-                      {{ data.spotify_discovery_mode_earnings.items[key].earning }}</p></div>
-                  </div>
+                  <template v-if="spotifyDiscoveryData[key]">
+                    <div v-for="type in Object.keys(spotifyDiscoveryData[key])"
+                         :key="type"
+                         v-if="type !== 'total'"
+                         class="w-full"
+                         :style="{height: (spotifyDiscoveryData[key][type]?.percentage ?? 0) + '%'}"
+                         :class="type === 'discovery' ? 'bg-spotify' : 'bg-[#BDECCD]'">
+                    </div>
+                  </template>
                 </div>
-              </template>
-            </tippy>
-
-            <span class="paragraph-xs c-sub-600 !text-center">{{ key }}</span>
+                <template #content>
+                  <div class="flex flex-col gap-2 w-64 p-1">
+                    <p class="label-sm c-strong-950">{{key}}</p>
+                    <template v-if="spotifyDiscoveryData[key]">
+                      <div v-for="type in Object.keys(spotifyDiscoveryData[key])"
+                           :key="type"
+                           v-if="type !== 'total'"
+                           class="flex items-center gap-2">
+                        <div :class="type === 'discovery' ? 'bg-spotify' : 'bg-[#BDECCD]'" class="w-3 h-3 rounded-full"></div>
+                        <p class="paragraph-sm c-strong-950 flex-1">{{ type === 'discovery' ? 'Discovery Mode' : 'Regular' }}</p>
+                        <div class="border border-soft-200 rounded px-2 py-1">
+                          <p class="paragraph-xs c-sub-600">{{ spotifyDiscoveryData[key][type]?.earning ?? 0 }}</p>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </tippy>
+              <span class="paragraph-xs c-sub-600 !text-center">{{ key }}</span>
+            </div>
+          </template>
+          <div v-else class="w-full flex justify-center items-center">
+            <p class="text-gray-500">Veri bulunamadı</p>
           </div>
         </div>
       </div>
@@ -479,7 +562,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
 
         </div>
         <hr>
-        <Vue3Apexcharts height="250" :options="options" :series="series"></Vue3Apexcharts>
+        <Vue3Apexcharts height="250" :options="chartOptions" :series="chartSeries"></Vue3Apexcharts>
 
       </div>
       <div class="flex-1 bg-white rounded-xl border border-soft-200 p-4 flex flex-col gap-4">
@@ -500,7 +583,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
 
         </div>
         <hr>
-        <Vue3Apexcharts height="250" :options="optionsCountries" :series="seriesCountries"></Vue3Apexcharts>
+        <Vue3Apexcharts height="250" :options="countriesChartOptions" :series="countriesChartSeries"></Vue3Apexcharts>
 
       </div>
     </div>
@@ -522,32 +605,37 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
       </div>
       <hr>
       <div class="flex flex-col gap-3" v-if="!showYoutubeFremium">
-        <div v-for="key in Object.keys(data.earning_from_youtube)">
-          <span class="label-xs">{{ key }}</span>
-
-          <tippy :allowHtml="true" :maxWidth="600" theme="light" followCursor :sticky="true" :interactive="false">
-            <AppProgressIndicator :height="12" :modelValue="data.earning_from_youtube[key].percentage" color="#D02533"/>
-            <template #content>
-              <div class="flex flex-col gap-2 w-96 p-1">
-                <div class="flex items-center">
-                  <div>
-                    <YoutubeIcon/>
-                  </div>
-                  <p class="label-sm c-strong-950 flex-1 ms-2">Ocak 2024</p>
-                  <p class="label-sm c-strong-950 ">{{ data.earning_from_youtube[key].earning }}</p>
-
+        <template v-if="Object.keys(youtubeData).length > 0">
+          <div v-for="key in Object.keys(youtubeData)" :key="key">
+            <span class="label-xs">{{ key }}</span>
+            <tippy :allowHtml="true" :maxWidth="600" theme="light" followCursor :sticky="true" :interactive="false">
+              <div class="flex items-center gap-3">
+                <div class="flex-1">
+                  <AppProgressIndicator :height="12" :modelValue="youtubeData[key]?.percentage ?? 0" color="#D02533"/>
                 </div>
-                <div class="flex items-start gap-2 bg-[#F2F5F8] py-2 px-4 mt-2 rounded-lg">
-                  <InfoFilledIcon width="24" class="mt-1" color="#717784"/>
-                  <span class="c-strong-950 c-sub-600">Reklam destekli videolar, Youtube müzikleri ve Youtube Premium ücretli abonelik gelirleri </span>
-                </div>
-
+                <span class="paragraph-xs c-strong-950">{{ youtubeData[key]?.earning ?? 0 }}</span>
               </div>
-            </template>
-          </tippy>
-
+              <template #content>
+                <div class="flex flex-col gap-2 w-96 p-1">
+                  <div class="flex items-center">
+                    <div>
+                      <YoutubeIcon/>
+                    </div>
+                    <p class="label-sm c-strong-950 flex-1 ms-2">{{ key }}</p>
+                    <p class="label-sm c-strong-950">{{ youtubeData[key]?.earning ?? 0 }}</p>
+                  </div>
+                  <div class="flex items-start gap-2 bg-[#F2F5F8] py-2 px-4 mt-2 rounded-lg">
+                    <InfoFilledIcon width="24" class="mt-1" color="#717784"/>
+                    <span class="c-strong-950 c-sub-600">Reklam destekli videolar, Youtube müzikleri ve Youtube Premium ücretli abonelik gelirleri</span>
+                  </div>
+                </div>
+              </template>
+            </tippy>
+          </div>
+        </template>
+        <div v-else class="text-center py-4">
+          <p class="text-gray-500">Youtube verisi bulunamadı</p>
         </div>
-
       </div>
 
       <div v-else>
@@ -640,7 +728,7 @@ const seriesSales = ref(Object.values(props.data.earning_from_sales_type).map((e
         </div>
         <hr>
 
-        <Vue3Apexcharts height="250" :options="optionsSales" :series="seriesSales"></Vue3Apexcharts>
+        <Vue3Apexcharts height="250" :options="salesChartOptions" :series="salesChartSeries"></Vue3Apexcharts>
 
 
       </div>

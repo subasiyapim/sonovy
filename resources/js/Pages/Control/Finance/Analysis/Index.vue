@@ -60,12 +60,23 @@
 
 
     <div>
-      <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"></AppTabs>
+      <AppTabs 
+        :slug="currentTab"
+        :tabs="tabs"
+        class="my-5"
+        @change="onTabChange"
+        :key="currentTab"
+      />
     </div>
 
-    <div>
-      <component :choosenDates="choosenDates" :data="data.data" :formattedDate="formattedDates"
-                 :is="tabs.find(e => e.slug == currentTab)?.component"></component>
+    <div v-if="loading" class="flex justify-center items-center py-8">
+        <div class="loading-spinner"></div>
+    </div>
+    <div v-else>
+        <component :is="currentComponent"
+                  :choosenDates="choosenDates"
+                  :data="data.data"
+                  :formattedDate="formattedDates" />
     </div>
 
     <NewReportModal @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
@@ -75,7 +86,7 @@
 <script setup>
 import {usePage} from '@inertiajs/vue3';
 
-import {ref, computed,nextTick} from 'vue';
+import {ref, computed, watch, nextTick, onMounted} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {AppCard} from '@/Components/Cards';
 import moment from 'moment';
@@ -115,11 +126,26 @@ const defaultStore = useDefaultStore();
 const pageTable = ref();
 
 const props = defineProps({
-  data: {},
+  data: {
+    type: Object,
+    required: true,
+    default: () => ({})
+  },
   filters: {
     type: Array,
     default: () => [],
-    required: true
+  },
+  errors: {
+    type: Object,
+    default: () => ({})
+  },
+  ziggy: {
+    type: Object,
+    default: () => ({})
+  },
+  auth: {
+    type: Object,
+    default: () => ({})
   }
 })
 
@@ -130,35 +156,70 @@ const openPaymentModal = () => {
 
   isModalOn.value = !isModalOn.value;
 }
-let params = new URLSearchParams(window.location.search)
 
+// URL'den başlangıç değerlerini al
+const params = new URLSearchParams(window.location.search);
+const initialSlug = params.get('slug') ?? 'general';
+
+// Reactive değişkenler
+const currentTab = ref(initialSlug);
 const choosenDates = ref(null);
+const loading = ref(false);
+
+// Sayfa yüklendiğinde ve URL değiştiğinde çalışacak watch
+watch(() => usePage().url.value, (newUrl) => {
+    try {
+        const urlParams = new URLSearchParams(new URL(newUrl).search);
+        const newSlug = urlParams.get('slug') ?? 'general';
+        
+        // Eğer yeni slug mevcut tab'lardan biriyse güncelle
+        if (tabs.value.some(tab => tab.slug === newSlug)) {
+            currentTab.value = newSlug;
+            console.log('Tab güncellendi:', newSlug);
+        }
+    } catch (error) {
+        console.error('URL parsing hatası:', error);
+    }
+}, { immediate: true });
+
+// Tarih parametrelerini kontrol et ve ayarla
 if (params.get('start_date') && params.get('end_date')) {
-     choosenDates.value = [moment(params.get('start_date'), "M-YYYY"),moment(params.get('end_date'), "M-YYYY")]
-
+    choosenDates.value = [
+        moment(params.get('start_date'), "M-YYYY"),
+        moment(params.get('end_date'), "M-YYYY")
+    ];
 }
-const removeDateFilter = () => {
-  choosenDates.value = null;
-  router.visit(route(route().current()), {
 
-    preserveScroll: true,
-  });
+const removeDateFilter = async () => {
+  loading.value = true;
+  try {
+    choosenDates.value = null;
+    await router.visit(route(route().current()), {
+      preserveScroll: true,
+      only: ['data']
+    });
+  } finally {
+    loading.value = false;
+  }
 }
 const choosenDate = ref();
-const onDateChoosen = (e) => {
-
-
-  router.visit(route(route().current()), {
-    data: {
-      end_date: `${e['1'].month+1}-${e['1'].year}`,
-      start_date: `${e['0'].month+1}-${e['0'].year}`,
-      slug: currentTab.value,
-    },
-    preserveScroll: true,
-  });
-
+const onDateChoosen = async (e) => {
+  loading.value = true;
+  try {
+    await router.visit(route(route().current()), {
+      data: {
+        end_date: `${e['1'].month+1}-${e['1'].year}`,
+        start_date: `${e['0'].month+1}-${e['0'].year}`,
+        slug: currentTab.value,
+      },
+      preserveScroll: true,
+      only: ['data']
+    });
+  } finally {
+    loading.value = false;
+  }
 }
-const currentTab = ref(params.get('slug') ?? 'general')
+
 const tabs = ref([
   {
     title: "Genel Bakış",
@@ -176,7 +237,7 @@ const tabs = ref([
     component: PlatformsTab,
   },
   {
-    title: "Country",
+    title: "Ülkeler",
     slug: "countries",
     component: CountriesTab,
   }
@@ -193,43 +254,107 @@ const onDone = (e) => {
 
 const formattedDates = computed(() => {
     if (!choosenDates.value) {
-            // return moment().locale('tr').format('MMMM YYYY');
-             const startDate = moment().format('MMMM YYYY');
-            const endDate = moment().subtract(1, 'year').format('MMMM YYYY');
-            return `${startDate} - ${endDate}`;
+        const startDate = moment().format('MMMM YYYY');
+        const endDate = moment().subtract(1, 'year').format('MMMM YYYY');
+        return `${startDate} - ${endDate}`;
     } else if (choosenDates.value.length === 2) {
-
-
-            const startDate = moment(choosenDates.value[0]).format('MMMM YYYY');
-            const endDate = moment(choosenDates.value[1]).format('MMMM YYYY');
-
-            console.log("SDASD",choosenDates.value[0]);
-            console.log("SDASD",choosenDates.value[1]);
-
-            return `${startDate} - ${endDate}`;
+        const startDate = moment(choosenDates.value[0]).format('MMMM YYYY');
+        const endDate = moment(choosenDates.value[1]).format('MMMM YYYY');
+        return `${startDate} - ${endDate}`;
     }
     return '';
 });
 
+// Debug için onMounted hook'u
+onMounted(() => {
+    console.log('Index component mounted:', {
+        data: props.data,
+        filters: props.filters,
+        currentTab: currentTab.value,
+        choosenDates: choosenDates.value,
+        formattedDates: formattedDates.value
+    });
+});
 
-const onTabChange = (tab) => {
-  let query = {
-    slug: tab.slug,
-  }
-  if (choosenDates.value) {
-    query['start_date'] = choosenDates.value[0];
-    query['end_date'] = choosenDates.value[1];
-  }
-  router.visit(route(route().current()), {
-    data: query
-  });
-}
+const onTabChange = async (tab) => {
+    console.log('Tab değişimi başladı:', tab);
+    loading.value = true;
+    
+    try {
+        // Önce tab'ı güncelle
+        currentTab.value = tab.slug;
+        
+        // URL parametrelerini hazırla
+        const query = new URLSearchParams(window.location.search);
+        query.set('slug', tab.slug);
+        
+        if (choosenDates.value) {
+            query.set('start_date', moment(choosenDates.value[0]).format('M-YYYY'));
+            query.set('end_date', moment(choosenDates.value[1]).format('M-YYYY'));
+        }
+        
+        // URL'i güncelle ve veriyi yükle
+        const url = `${route(route().current())}?${query.toString()}`;
+        console.log('Ziyaret edilecek URL:', url);
+        
+        await router.visit(url, {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['data'],
+            onSuccess: (page) => {
+                console.log('Tab değişimi başarılı:', {
+                    data: page.props.data,
+                    currentTab: currentTab.value,
+                    countries: page.props.data?.data?.countries,
+                    releases: page.props.data?.data?.releases
+                });
+                // Tab değişiminin başarılı olduğundan emin olalım
+                nextTick(() => {
+                    console.log('Tab değişimi tamamlandı:', {
+                        currentTab: currentTab.value,
+                        component: currentComponent.value,
+                        data: props.data
+                    });
+                });
+            },
+            onError: (errors) => {
+                console.error('Tab değişimi hatası:', errors);
+            }
+        });
+    } catch (error) {
+        console.error('Tab değişimi hatası:', error);
+    } finally {
+        loading.value = false;
+    }
+};
 
 const onUpdate = (e) => {
   pageTable.value.editRow(e);
 }
+
+// Debug için computed property
+const currentComponent = computed(() => {
+    const component = tabs.value.find(tab => tab.slug === currentTab.value)?.component;
+    console.log('Current component:', {
+        tab: currentTab.value,
+        component: component?.name
+    });
+    return component ?? GeneralLookTab;
+});
 </script>
 
 <style lang="scss" scoped>
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
 
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 </style>

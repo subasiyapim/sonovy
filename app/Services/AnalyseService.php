@@ -35,13 +35,19 @@ class AnalyseService
                 $earnings = $countryData->groupBy('release_name')->map(function ($releaseData) use ($totalEarnings) {
                     $releaseEarnings = $releaseData->sum('earning');
                     $percentage = $totalEarnings > 0 ? ($releaseEarnings / $totalEarnings) * 100 : 0;
+                    $firstItem = $releaseData->first();
+                    $product = $firstItem->product ?? null;
 
                     return [
-                        'release_name' => $releaseData->first()->release_name,
+                        'release_name' => $firstItem->release_name,
                         'total_quantity' => $releaseData->sum('quantity'),
                         'total_earning' => Number::currency($releaseEarnings, 'USD', app()->getLocale()),
                         'percentage' => round($percentage, 2),
                         'quantity' => $releaseData->sum('quantity'),
+                        'product' => $product ? [
+                            'id' => $product->id,
+                            'image' => $product->image
+                        ] : null
                     ];
                 });
 
@@ -69,6 +75,8 @@ class AnalyseService
                 $countryData = [];
                 $otherEarnings = 0;
                 $otherQuantity = 0;
+                $firstItem = $releaseData->first();
+                $product = $firstItem->product ?? null;
 
                 foreach ($releaseData->groupBy('country') as $country => $data) {
                     $countryEarnings = $data->sum('earning');
@@ -97,10 +105,15 @@ class AnalyseService
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'release_name' => $releaseData->first()->release_name,
+                    'release_name' => $firstItem->release_name,
+                    'upc_code' => $firstItem->upc_code,
                     'total_quantity' => $releaseData->sum('quantity'),
                     'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
                     'countries' => $countryData,
+                    'product' => $product ? [
+                        'id' => $product->id,
+                        'image' => $product->image
+                    ] : null
                 ];
             })->values()->toArray();
 
@@ -180,13 +193,20 @@ class AnalyseService
                     'quantity' => $otherQuantity,
                 ];
 
+                $firstItem = $releaseData->first();
+                $product = $firstItem->product ?? null;
+
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'release_name' => $releaseData->first()->release_name,
+                    'release_name' => $firstItem->release_name,
                     'total_quantity' => $releaseData->sum('quantity'),
                     'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
                     'platforms' => $platformData,
+                    'product' => $product ? [
+                        'id' => $product->id,
+                        'image' => $product->image
+                    ] : null
                 ];
             })->values()->toArray();
 
@@ -229,15 +249,13 @@ class AnalyseService
                 $albumEarnings = $albumData->sum('earning');
                 $percentage = $this->totalEarnings > 0 ? ($albumEarnings / $this->totalEarnings) * 100 : 0;
                 $firstItem = $albumData->first();
-                $artistName = $firstItem->artist_name;
 
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'album_name' => $firstItem->product->album_name ?? '',
+                    'album_name' => $firstItem->release_name,
                     'upc_code' => $firstItem->upc_code,
-                    'product_id' => $firstItem->product->id ?? '',
-                    'artist_name' => $artistName,
+                    'artist_name' => $firstItem->artist_name,
                     'earning' => Number::currency($albumEarnings, 'USD', app()->getLocale()),
                     'earning_raw' => $albumEarnings,
                     'streams' => $albumData->sum('quantity'),
@@ -271,7 +289,7 @@ class AnalyseService
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
                     'song_id' => $firstItem->song_id,
-                    'song_name' => $firstItem->song_name,
+                    'song_name' => $firstItem->song_name ?? $firstItem->release_name,
                     'isrc_code' => $firstItem->isrc_code,
                     'artist_id' => $firstItem->artist_id,
                     'artist_name' => $firstItem->artist_name,

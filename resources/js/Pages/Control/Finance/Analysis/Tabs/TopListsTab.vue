@@ -1,7 +1,5 @@
-
-
 <script setup>
-import {ref} from 'vue';
+import {ref, onMounted} from 'vue';
 import {PersonIcon,EyeOnIcon,DownloadIcon,BookReadLineIcon,Building2LineIcon,AudioIcon} from '@/Components/Icons';
 import {AppProgressIndicator} from '@/Components/Widgets';
 import moment from 'moment'
@@ -11,14 +9,30 @@ import {
     FinanceTopListsLabels,
     FinanceTopListsProducts
 } from '@/Components/Dialog'
+
 const props = defineProps({
-    data : {
-
+    data: {
+        type: Object,
+        required: true
     },
-    formattedDate:{
-
+    formattedDate: {
+        type: String,
+        required: true
     },
-    choosenDates:{},
+    choosenDates: {
+        type: Object,
+        default: () => ({})
+    },
+});
+
+onMounted(() => {
+    console.log('TopListsTab mounted', {
+        data: props.data,
+        hasTopArtists: props.data?.top_artists?.length > 0,
+        hasTopAlbums: props.data?.top_albums?.length > 0,
+        hasTopSongs: props.data?.top_songs?.length > 0,
+        hasTopLabels: props.data?.top_labels?.length > 0
+    });
 });
 
 const isFinanceTopListsSongs = ref(false)
