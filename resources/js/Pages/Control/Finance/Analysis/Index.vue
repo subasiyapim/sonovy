@@ -167,9 +167,9 @@ const choosenDates = ref(null);
 const loading = ref(false);
 
 // Sayfa yüklendiğinde ve URL değiştiğinde çalışacak watch
-watch(() => usePage().url, (newUrl) => {
+watch(() => window.location.search, (search) => {
     try {
-        const params = new URLSearchParams(new URL(newUrl).search);
+        const params = new URLSearchParams(search);
         const slug = params.get('slug') || 'general';
         
         if (tabs.value.some(tab => tab.slug === slug)) {
