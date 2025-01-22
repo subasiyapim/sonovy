@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Log;
 
 
 class AnalyseService
@@ -244,8 +245,30 @@ class AnalyseService
     public function topAlbums(): array
     {
         $cacheKey = 'top_albums_' . md5($this->data->pluck('id')->implode(','));
-        return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            return $this->data->groupBy('release_name')->values()->map(function ($albumData) {
+        return Cache::remember($cacheKey, 60 * 60, function () {
+            Log::info('TopAlbums başlangıç', [
+                'total_records' => $this->data->count(),
+                'total_earnings' => $this->totalEarnings,
+                'has_earnings' => $this->data->where('earning', '>', 0)->count(),
+                'unique_upcs' => $this->data->pluck('upc_code')->unique()->count(),
+                'sample_data' => $this->data->take(1)->toArray()
+            ]);
+
+            $filteredData = $this->data->filter(function ($item) {
+                return !empty($item->upc_code);
+            });
+
+            $groupedData = $filteredData->groupBy('upc_code')->values();
+
+            Log::info('TopAlbums gruplandırma sonrası', [
+                'total_groups' => $groupedData->count(),
+                'groups_with_earnings' => $groupedData->filter(function($group) {
+                    return $group->sum('earning') > 0;
+                })->count(),
+                'sample_group' => $groupedData->take(1)->toArray()
+            ]);
+
+            $mappedData = $groupedData->map(function ($albumData) {
                 $albumEarnings = $albumData->sum('earning');
                 $percentage = $this->totalEarnings > 0 ? ($albumEarnings / $this->totalEarnings) * 100 : 0;
                 $firstItem = $albumData->first();
@@ -258,16 +281,33 @@ class AnalyseService
                     'upc_code' => $firstItem->upc_code,
                     'streams' => $albumData->sum('quantity'),
                     'earning' => Number::currency($albumEarnings, 'USD', app()->getLocale()),
+                    'raw_earning' => $albumEarnings,
                     'percentage' => round($percentage, 2)
                 ];
-            })
-            ->filter(function ($album) {
-                return $album['earning'] > 0;
-            })
-            ->sortByDesc('percentage')
-            ->take(10)
-            ->values()
-            ->toArray();
+            });
+
+            Log::info('TopAlbums dönüşüm sonrası', [
+                'total_mapped' => $mappedData->count(),
+                'sample_mapped' => $mappedData->take(1)->toArray()
+            ]);
+
+            $result = $mappedData
+                ->sortByDesc('raw_earning')
+                ->take(10)
+                ->values()
+                ->map(function($item) {
+                    unset($item['raw_earning']);
+                    return $item;
+                })
+                ->toArray();
+
+            Log::info('TopAlbums final', [
+                'total_results' => count($result),
+                'has_results' => !empty($result),
+                'results' => $result
+            ]);
+
+            return $result;
         });
     }
 

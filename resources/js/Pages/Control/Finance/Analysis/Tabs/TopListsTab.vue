@@ -32,7 +32,8 @@ onMounted(() => {
         hasTopAlbums: props.data?.top_albums?.length > 0,
         hasTopSongs: props.data?.top_songs?.length > 0,
         hasTopLabels: props.data?.top_labels?.length > 0,
-        choosenDates: props.choosenDates
+        choosenDates: props.choosenDates,
+        topAlbumsData: props.data?.top_albums
     });
 });
 
@@ -177,7 +178,12 @@ const gotoSongs = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="album in data.top_albums">
+                    <tr v-if="!data.top_albums || data.top_albums.length === 0">
+                        <td colspan="6" class="py-4 text-center">
+                            <span class="paragraph-xs c-sub-600">Henüz veri bulunmamaktadır.</span>
+                        </td>
+                    </tr>
+                    <tr v-else v-for="album in data.top_albums">
                         <td class="py-2">
                             <span class="label-sm c-strong-950">{{album.album_name}}</span>
                         </td>

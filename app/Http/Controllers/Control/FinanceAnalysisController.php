@@ -184,6 +184,12 @@ class FinanceAnalysisController extends Controller
             Cache::put('end_date', $endDate, self::CACHE_DURATION);
         }
 
+        Log::info('getDataBySlug called', [
+            'slug' => $slug,
+            'start_date' => $startDate,
+            'end_date' => $endDate
+        ]);
+
         $earnings = Earning::with([
             'song:id,name,isrc',
             'platform:id,name',
@@ -218,9 +224,14 @@ class FinanceAnalysisController extends Controller
         }
 
         $earnings = $earnings->where('user_id', Auth::id())->get();
-        $service = new AnalyseService($earnings);
 
-        return match ($slug) {
+        Log::info('Earnings data fetched', [
+            'count' => $earnings->count(),
+            'sample' => $earnings->take(1)->toArray()
+        ]);
+
+        $service = new AnalyseService($earnings);
+        $result = match ($slug) {
             'earning_from_platforms' => $service->earningFromPlatforms(),
             'earning_from_countries' => $service->earningFromCountries(),
             'earning_from_sales_type' => $service->earningFromSalesType(),
@@ -233,6 +244,14 @@ class FinanceAnalysisController extends Controller
             'countries' => $service->countries(),
             default => [],
         };
+
+        Log::info('Result data', [
+            'slug' => $slug,
+            'has_data' => !empty($result),
+            'data_sample' => array_slice($result, 0, 1)
+        ]);
+
+        return $result;
     }
 
     private function view($earnings)
