@@ -141,49 +141,85 @@ class FinanceAnalysisController extends Controller
 
     public function show(Request $request)
     {
-        $request->validate([
-            'slug' => [
-                'required',
-                'string',
-                'in:earning_from_platforms,earning_from_countries,earning_from_sales_type,trending_albums,top_artists,top_albums,top_songs,top_labels,platforms,countries'
-            ],
-            'request_type' => ['required', 'string', 'in:view,download'],
-            'start_date' => ['date', 'required_with:end_date'],
-            'end_date' => ['date', 'required_with:start_date'],
-        ]);
+        Log::info('Show method called', $request->all());
 
-        $startDate = Carbon::parse($request->start_date)->format('Y-m-d');
-        $endDate = Carbon::parse($request->end_date)->format('Y-m-d');
+        try {
+            $data = $this->getDataBySlug($request->slug);
 
-        Cache::put('start_date', $startDate, self::CACHE_DURATION);
-        Cache::put('end_date', $endDate, self::CACHE_DURATION);
+            if ($request->request_type === 'download') {
+                $filename = match ($request->slug) {
+                    'earning_from_platforms' => 'platform-earnings.xlsx',
+                    'earning_from_countries' => 'country-earnings.xlsx',
+                    'earning_from_sales_type' => 'sales-earnings.xlsx',
+                    'top_artists' => 'top-artists.xlsx',
+                    'top_albums' => 'top-albums.xlsx',
+                    'top_songs' => 'top-songs.xlsx',
+                    'top_labels' => 'top-labels.xlsx',
+                    default => $request->slug . '.xlsx'
+                };
 
-        $cacheKey = 'earning_analysis_show_' . md5($request->fullUrl());
-        $earnings = Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($startDate, $endDate) {
-            return Earning::with([
-                'song:id,name,isrc',
-                'platform:id,name',
-                'country:id,name',
-                'label:id,name'
-            ])
-            ->whereBetween('sales_date', [$startDate, $endDate])
-            ->get();
-        });
+                return Excel::download(new AnalyseExport($data, str_replace('-', '_', $request->slug)), $filename);
+            }
 
-        $service = new AnalyseService($earnings);
-        $data = $this->getDataBySlug($service, $request->slug);
-
-        if ($request->request_type === 'view') {
-            return $this->view($data);
-        }
-
-        if ($request->request_type === 'download') {
-            return $this->download($data, $request->slug);
+            return response()->json($data);
+        } catch (\Exception $e) {
+            Log::error('Error in show method: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+            throw $e;
         }
     }
 
-    private function getDataBySlug(AnalyseService $service, string $slug): array
+    private function getDataBySlug(string $slug): array
     {
+        $startDate = request('start_date');
+        $endDate = request('end_date');
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::parse($startDate)->format('Y-m-d');
+            $endDate = Carbon::parse($endDate)->format('Y-m-d');
+            
+            Cache::put('start_date', $startDate, self::CACHE_DURATION);
+            Cache::put('end_date', $endDate, self::CACHE_DURATION);
+        }
+
+        $earnings = Earning::with([
+            'song:id,name,isrc',
+            'platform:id,name',
+            'country:id,name',
+            'label:id,name',
+            'product'
+        ])
+        ->select([
+            'id', 
+            'sales_date', 
+            'earning', 
+            'quantity',
+            'song_id',
+            'platform_id', 
+            'country_id', 
+            'label_id',
+            'user_id',
+            'artist_id',
+            'artist_name',
+            'release_name',
+            'streaming_subscription_type',
+            'sales_type',
+            'isrc_code',
+            'upc_code',
+            'platform',
+            'country',
+            'label_name'
+        ]);
+
+        if ($startDate && $endDate) {
+            $earnings = $earnings->whereBetween('sales_date', [$startDate, $endDate]);
+        }
+
+        $earnings = $earnings->where('user_id', Auth::id())->get();
+        $service = new AnalyseService($earnings);
+
         return match ($slug) {
             'earning_from_platforms' => $service->earningFromPlatforms(),
             'earning_from_countries' => $service->earningFromCountries(),
@@ -206,6 +242,20 @@ class FinanceAnalysisController extends Controller
 
     private function download($earnings, $slug)
     {
-        return Excel::download(new AnalyseExport($earnings, $slug), $slug . '.xlsx');
+        Log::info('Download method called', [
+            'earnings_count' => count($earnings),
+            'slug' => $slug,
+            'sample_data' => array_slice($earnings, 0, 1)
+        ]);
+
+        try {
+            Excel::download(new AnalyseExport($earnings, $slug), $slug . '.xlsx');
+        } catch (\Exception $e) {
+            Log::error('Error in download method', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 }

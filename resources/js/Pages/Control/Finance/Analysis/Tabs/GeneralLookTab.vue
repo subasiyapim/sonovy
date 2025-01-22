@@ -52,11 +52,7 @@ const props = defineProps({
   formattedDate: {
     type: String,
     required: true
-  },
-  choosenDates: {
-    type: Object,
-    default: () => ({})
-  },
+  }
 });
 
 const isFinanceIncomePlatforms = ref(false);
@@ -96,118 +92,90 @@ const youtubeData = computed(() => {
   return props.data.earning_from_youtube;
 });
 
-const goToPlatformCSV = () => {
-  const params = {
-    slug: 'earning_from_platforms',
-    request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
+const getDateRange = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const startDate = urlParams.get('start_date');
+  const endDate = urlParams.get('end_date');
+
+  if (startDate && endDate) {
+    return {
+      startDate: moment(startDate).format('YYYY-MM-DD'),
+      endDate: moment(endDate).format('YYYY-MM-DD')
+    };
+  }
+
+  return {
+    startDate: moment().subtract(1, 'month').format('YYYY-MM-DD'),
+    endDate: moment().format('YYYY-MM-DD')
   };
-
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
-
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
 };
 
-const goToCountriesCSV = () => {
-  const params = {
-    slug: 'earning_from_countries',
-    request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
-  };
+const goToPlatformCSV = async () => {
+  try {
+    const { startDate, endDate } = getDateRange();
 
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
+    const params = {
+      slug: 'earning_from_platforms',
+      request_type: 'download',
+      start_date: startDate,
+      end_date: endDate
+    };
 
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
+    window.location.href = route('control.finance.analysis.show', params);
+  } catch (error) {
+    console.error('Download error:', error);
+  }
 };
 
-const goToSalesCSV = () => {
-  const params = {
-    slug: 'earning_from_sales_type',
-    request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
-  };
+const goToCountriesCSV = async () => {
+  try {
+    const { startDate, endDate } = getDateRange();
 
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
+    const params = {
+      slug: 'earning_from_countries',
+      request_type: 'download',
+      start_date: startDate,
+      end_date: endDate
+    };
 
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
+    window.location.href = route('control.finance.analysis.show', params);
+  } catch (error) {
+    console.error('Download error:', error);
+  }
+};
+
+const goToSalesCSV = async () => {
+  try {
+    const { startDate, endDate } = getDateRange();
+
+    const params = {
+      slug: 'earning_from_sales_type',
+      request_type: 'download',
+      start_date: startDate,
+      end_date: endDate
+    };
+
+    window.location.href = route('control.finance.analysis.show', params);
+  } catch (error) {
+    console.error('Download error:', error);
+  }
+};
+
+const goToTrendingAlbumsCSV = async () => {
+  try {
+    const { startDate, endDate } = getDateRange();
+
+    const params = {
+      slug: 'trending_albums',
+      request_type: 'download',
+      start_date: startDate,
+      end_date: endDate
+    };
+
+    window.location.href = route('control.finance.analysis.show', params);
+  } catch (error) {
+    console.error('Download error:', error);
+  }
 };
 
 // Chart options ve series'leri computed property olarak tanımlayalım
@@ -506,12 +474,11 @@ onMounted(() => {
                     </span>
                   </div>
                   <template v-if="spotifyDiscoveryData[key]">
-                    <div v-for="type in Object.keys(spotifyDiscoveryData[key])"
-                         :key="type"
-                         v-if="type !== 'total'"
-                         class="w-full"
-                         :style="{height: (spotifyDiscoveryData[key][type]?.percentage ?? 0) + '%'}"
-                         :class="type === 'discovery' ? 'bg-spotify' : 'bg-[#BDECCD]'">
+                    <div class="w-full bg-spotify" 
+                         :style="{height: (spotifyDiscoveryData[key].promotion ? 40 : 0) + '%'}">
+                    </div>
+                    <div class="w-full bg-[#BDECCD]" 
+                         :style="{height: (spotifyDiscoveryData[key].earning ? 40 : 0) + '%'}">
                     </div>
                   </template>
                 </div>
@@ -519,14 +486,18 @@ onMounted(() => {
                   <div class="flex flex-col gap-2 w-64 p-1">
                     <p class="label-sm c-strong-950">{{key}}</p>
                     <template v-if="spotifyDiscoveryData[key]">
-                      <div v-for="type in Object.keys(spotifyDiscoveryData[key])"
-                           :key="type"
-                           v-if="type !== 'total'"
-                           class="flex items-center gap-2">
-                        <div :class="type === 'discovery' ? 'bg-spotify' : 'bg-[#BDECCD]'" class="w-3 h-3 rounded-full"></div>
-                        <p class="paragraph-sm c-strong-950 flex-1">{{ type === 'discovery' ? 'Discovery Mode' : 'Regular' }}</p>
+                      <div class="flex items-center gap-2">
+                        <div class="bg-spotify w-3 h-3 rounded-full"></div>
+                        <p class="paragraph-sm c-strong-950 flex-1">Discovery Mode</p>
                         <div class="border border-soft-200 rounded px-2 py-1">
-                          <p class="paragraph-xs c-sub-600">{{ spotifyDiscoveryData[key][type]?.earning ?? 0 }}</p>
+                          <p class="paragraph-xs c-sub-600">{{ spotifyDiscoveryData[key].promotion ?? 0 }}</p>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <div class="bg-[#BDECCD] w-3 h-3 rounded-full"></div>
+                        <p class="paragraph-sm c-strong-950 flex-1">Regular</p>
+                        <div class="border border-soft-200 rounded px-2 py-1">
+                          <p class="paragraph-xs c-sub-600">{{ spotifyDiscoveryData[key].earning ?? 0 }}</p>
                         </div>
                       </div>
                     </template>
@@ -743,7 +714,7 @@ onMounted(() => {
             <button @click="isFinanceIncomeProducts = true">
               <EyeOnIcon color="var(--sub-600)"/>
             </button>
-            <button>
+            <button @click="goToTrendingAlbumsCSV">
               <DownloadIcon color="var(--sub-600)"/>
             </button>
           </div>
@@ -762,13 +733,13 @@ onMounted(() => {
     </div>
   </div>
 
-  <FinanceIncomePlatforms :formattedDates="formattedDate" :choosenDates="choosenDates" v-model="isFinanceIncomePlatforms"
+  <FinanceIncomePlatforms :formattedDates="formattedDate" v-model="isFinanceIncomePlatforms"
                           v-if="isFinanceIncomePlatforms"></FinanceIncomePlatforms>
-  <FinanceIncomeCountries :formattedDates="formattedDate" :choosenDates="choosenDates" v-model="isFinanceIncomeCountries"
+  <FinanceIncomeCountries :formattedDates="formattedDate" v-model="isFinanceIncomeCountries"
                           v-if="isFinanceIncomeCountries"></FinanceIncomeCountries>
-  <FinanceIncomeSales :formattedDates="formattedDate" :choosenDates="choosenDates" v-model="isFinanceIncomeSales"
+  <FinanceIncomeSales :formattedDates="formattedDate" v-model="isFinanceIncomeSales"
                       v-if="isFinanceIncomeSales"></FinanceIncomeSales>
-  <FinanceIncomeProducts :formattedDates="formattedDate" :choosenDates="choosenDates" v-model="isFinanceIncomeProducts"
+  <FinanceIncomeProducts :formattedDates="formattedDate" v-model="isFinanceIncomeProducts"
                          v-if="isFinanceIncomeProducts"></FinanceIncomeProducts>
 </template>
 

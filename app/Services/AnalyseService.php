@@ -254,20 +254,15 @@ class AnalyseService
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
                     'album_name' => $firstItem->release_name,
-                    'upc_code' => $firstItem->upc_code,
                     'artist_name' => $firstItem->artist_name,
-                    'earning' => Number::currency($albumEarnings, 'USD', app()->getLocale()),
-                    'earning_raw' => $albumEarnings,
+                    'upc_code' => $firstItem->upc_code,
                     'streams' => $albumData->sum('quantity'),
-                    'percentage' => round($percentage, 2),
+                    'earning' => Number::currency($albumEarnings, 'USD', app()->getLocale()),
+                    'percentage' => round($percentage, 2)
                 ];
             })
             ->filter(function ($album) {
-                return $album['earning_raw'] > 0;
-            })
-            ->map(function ($album) {
-                unset($album['earning_raw']);
-                return $album;
+                return $album['earning'] > 0;
             })
             ->sortByDesc('percentage')
             ->take(10)
@@ -342,19 +337,12 @@ class AnalyseService
                         'end_date' => Cache::get('end_date'),
                         'platform' => $firstItem->platform,
                         'quantity' => $firstItem->quantity,
-                        'earning' => $items->sum('earning'),
-                        'earning_formatted' => Number::currency($items->sum('earning'), 'USD', app()->getLocale()),
-                        'product_name' => $product->album_name ?? $firstItem->release_name,
-                        'product_id' => $product->id ?? '',
+                        'release_name' => $firstItem->release_name,
+                        'earning' => Number::currency($items->sum('earning'), 'USD', app()->getLocale()),
                     ];
                 })
                 ->sortByDesc('earning')
                 ->take(10)
-                ->map(function($item) {
-                    $item['earning'] = $item['earning_formatted'];
-                    unset($item['earning_formatted']);
-                    return $item;
-                })
                 ->values()
                 ->toArray();
         });
@@ -462,18 +450,16 @@ class AnalyseService
                 'quantity' => $sortedEarnings->slice(5)->sum('quantity')
             ];
 
-            return $topCountries->mapWithKeys(function ($data, $country) {
+            return $topCountries->map(function ($data, $country) {
                 return [
-                    $country => [
-                        'start_date' => Cache::get('start_date'),
-                        'end_date' => Cache::get('end_date'),
-                        'country' => $country,
-                        'earning' => $data['earning'],
-                        'quantity' => $data['quantity'],
-                        'percentage' => Number::percentage($this->totalEarnings > 0 ? ($data['earning'] / $this->totalEarnings) * 100 : 0),
-                    ]
+                    'start_date' => Cache::get('start_date'),
+                    'end_date' => Cache::get('end_date'),
+                    'country' => $country,
+                    'quantity' => $data['quantity'],
+                    'earning' => Number::currency($data['earning'], 'USD', app()->getLocale()),
+                    'percentage' => Number::percentage($this->totalEarnings > 0 ? ($data['earning'] / $this->totalEarnings) * 100 : 0)
                 ];
-            })->toArray();
+            })->values()->toArray();
         });
     }
 
@@ -497,18 +483,16 @@ class AnalyseService
                 'quantity' => $sortedEarnings->slice(5)->sum('quantity')
             ];
 
-            return $topPlatforms->mapWithKeys(function ($data, $platform) {
+            return $topPlatforms->map(function ($data, $platform) {
                 return [
-                    $platform => [
-                        'start_date' => Cache::get('start_date'),
-                        'end_date' => Cache::get('end_date'),
-                        'platform' => $platform,
-                        'quantity' => $data['quantity'],
-                        'earning' => $data['earning'],
-                        'percentage' => Number::percentage($this->totalEarnings > 0 ? ($data['earning'] / $this->totalEarnings) * 100 : 0),
-                    ]
+                    'start_date' => Cache::get('start_date'),
+                    'end_date' => Cache::get('end_date'),
+                    'platform' => $platform,
+                    'quantity' => $data['quantity'],
+                    'earning' => Number::currency($data['earning'], 'USD', app()->getLocale()),
+                    'percentage' => Number::percentage($this->totalEarnings > 0 ? ($data['earning'] / $this->totalEarnings) * 100 : 0)
                 ];
-            })->toArray();
+            })->values()->toArray();
         });
     }
 

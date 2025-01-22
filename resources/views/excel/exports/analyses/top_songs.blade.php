@@ -1,30 +1,28 @@
+@php
+    $headers = ['Başlangıç tarihi', 'Bitiş tarihi', 'Şarkı Adı', 'Sanatçı', 'ISRC', 'Streams', 'Gelir', 'Para birimi', 'Yüzde'];
+@endphp
+
 <table>
     <thead>
-    <tr>
-        <th>Başlangıç tarihi</th>
-        <th>Bitiş tarihi</th>
-        <th>ISRC</th>
-        <th>Parça</th>
-        <th>Sanatçı</th>
-        <th>Gelir</th>
-        <th>Para birimi</th>
-        <th>Yüzde</th>
-        <th>Streams</th>
-    </tr>
+        <tr>
+            @foreach($headers as $header)
+                <th>{{ $header }}</th>
+            @endforeach
+        </tr>
     </thead>
     <tbody>
-    @foreach($earnings as $earning)
-        <tr>
-            <td>{{ $earning->start_date }}</td>
-            <td>{{ $earning->end_date }}</td>
-            <td>{{ $earning->isrc }}</td>
-            <td>{{ $earning->name }}</td>
-            <td>{{ $earning->artist }}</td>
-            <td>{{ $earning->earning }}</td>
-            <td>USD</td>
-            <td>{{ $earning->percentage }}</td>
-            <td>{{ $earning->quantity }}</td>
-        </tr>
-    @endforeach
+        @foreach($earnings as $earning)
+            <tr>
+                <td>{{ $earning->start_date }}</td>
+                <td>{{ $earning->end_date }}</td>
+                <td>{{ $earning->song_name }}</td>
+                <td>{{ $earning->artist_name }}</td>
+                <td>{{ $earning->isrc_code }}</td>
+                <td>{{ $earning->streams }}</td>
+                <td>{{ $earning->earning }}</td>
+                <td>USD</td>
+                <td>{{ $earning->percentage }}</td>
+            </tr>
+        @endforeach
     </tbody>
 </table>
