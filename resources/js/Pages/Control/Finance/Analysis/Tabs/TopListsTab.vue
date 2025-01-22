@@ -31,7 +31,8 @@ onMounted(() => {
         hasTopArtists: props.data?.top_artists?.length > 0,
         hasTopAlbums: props.data?.top_albums?.length > 0,
         hasTopSongs: props.data?.top_songs?.length > 0,
-        hasTopLabels: props.data?.top_labels?.length > 0
+        hasTopLabels: props.data?.top_labels?.length > 0,
+        choosenDates: props.choosenDates
     });
 });
 
@@ -71,29 +72,34 @@ const gotoLabels = () => {
 };
 
 const gotoProducts = () => {
-  let startDate, endDate;
-  
-  if (props.choosenDates && props.choosenDates[0] && props.choosenDates[1]) {
-    startDate = moment(props.choosenDates[0]).format("YYYY-MM-DD");
-    endDate = moment(props.choosenDates[1]).format("YYYY-MM-DD");
-  } else {
-    startDate = moment().subtract(1, 'year').format("YYYY-MM-DD");
-    endDate = moment().format("YYYY-MM-DD");
-  }
+    console.log('gotoProducts called', { choosenDates: props.choosenDates });
+    
+    let startDate = moment().subtract(1, 'year').format("YYYY-MM-DD");
+    let endDate = moment().format("YYYY-MM-DD");
+    
+    if (props.choosenDates && Array.isArray(props.choosenDates) && props.choosenDates.length >= 2) {
+        startDate = moment(props.choosenDates[0]).format("YYYY-MM-DD");
+        endDate = moment(props.choosenDates[1]).format("YYYY-MM-DD");
+    }
 
-  const params = {
-    slug: 'top_albums',
-    request_type: 'download',
-    start_date: startDate,
-    end_date: endDate,
-  };
+    console.log('Dates:', { startDate, endDate });
 
-  try {
-    const url = route('control.finance.analysis.show', params);
-    window.location.href = url;
-  } catch (error) {
-    console.error('URL oluşturma hatası:', error);
-  }
+    const params = {
+        slug: 'top_albums',
+        request_type: 'download',
+        start_date: startDate,
+        end_date: endDate,
+    };
+
+    console.log('Route params:', params);
+
+    try {
+        const url = route('control.finance.analysis.show', params);
+        console.log('Generated URL:', url);
+        window.location.href = url;
+    } catch (error) {
+        console.error('URL oluşturma hatası:', error);
+    }
 };
 
 const gotoSongs = () => {
