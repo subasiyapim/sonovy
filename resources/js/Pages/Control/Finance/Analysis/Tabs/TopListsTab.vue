@@ -71,18 +71,29 @@ const gotoLabels = () => {
 };
 
 const gotoProducts = () => {
+  let startDate, endDate;
+  
+  if (props.choosenDates && props.choosenDates[0] && props.choosenDates[1]) {
+    startDate = moment(props.choosenDates[0]).format("YYYY-MM-DD");
+    endDate = moment(props.choosenDates[1]).format("YYYY-MM-DD");
+  } else {
+    startDate = moment().subtract(1, 'year').format("YYYY-MM-DD");
+    endDate = moment().format("YYYY-MM-DD");
+  }
+
   const params = {
     slug: 'top_albums',
     request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
+    start_date: startDate,
+    end_date: endDate,
   };
 
-  window.location.href = route('control.finance.analysis.show', params);
+  try {
+    const url = route('control.finance.analysis.show', params);
+    window.location.href = url;
+  } catch (error) {
+    console.error('URL oluşturma hatası:', error);
+  }
 };
 
 const gotoSongs = () => {
