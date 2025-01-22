@@ -52,30 +52,7 @@ const goToArtists = () => {
     ).format("YYYY-MM-DD"),
   };
 
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
-
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
+  window.location.href = route('control.finance.analysis.show', params);
 };
 
 const gotoLabels = () => {
@@ -90,30 +67,7 @@ const gotoLabels = () => {
     ).format("YYYY-MM-DD"),
   };
 
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
-
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
+  window.location.href = route('control.finance.analysis.show', params);
 };
 
 const gotoProducts = () => {
@@ -128,31 +82,9 @@ const gotoProducts = () => {
     ).format("YYYY-MM-DD"),
   };
 
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
-
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
+  window.location.href = route('control.finance.analysis.show', params);
 };
+
 const gotoSongs = () => {
   const params = {
     slug: 'top_songs',
@@ -165,30 +97,7 @@ const gotoSongs = () => {
     ).format("YYYY-MM-DD"),
   };
 
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
-
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
+  window.location.href = route('control.finance.analysis.show', params);
 };
 
 
