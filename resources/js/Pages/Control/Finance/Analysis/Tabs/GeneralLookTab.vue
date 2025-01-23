@@ -295,7 +295,7 @@ const countriesChartOptions = computed(() => ({
     }
   },
   dataLabels: {
-    enabled: true,
+    enabled: false,
     formatter: function(val, opts) {
       return opts.w.config.labels[opts.seriesIndex];
     },
