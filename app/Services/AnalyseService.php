@@ -472,68 +472,95 @@ class AnalyseService
 
     public function earningFromCountries(): array
     {
-        $cacheKey = 'earning_from_countries_' . md5($this->data->pluck('id')->implode(','));
-        return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $countryEarnings = $this->data->groupBy('country')->map(function ($countryData) {
+        $startDate = Cache::get('start_date');
+        $endDate = Cache::get('end_date');
+
+        $countryData = $this->data
+            ->groupBy('country')
+            ->map(function ($items) use ($startDate, $endDate) {
+                $totalEarning = $items->sum('earning');
+                $totalQuantity = $items->sum('quantity');
+                $percentage = $this->calculatePercentage($totalEarning);
+
                 return [
-                    'earning' => $countryData->sum('earning'),
-                    'quantity' => $countryData->sum('quantity')
+                    'country' => $items->first()->country,
+                    'earning' => $totalEarning,
+                    'quantity' => $totalQuantity,
+                    'percentage' => $percentage,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
                 ];
-            });
+            })
+            ->sortByDesc('earning');
 
-            $sortedEarnings = $countryEarnings->sortByDesc('earning');
-            $topCountries = $sortedEarnings->take(5);
-            $otherEarnings = $sortedEarnings->slice(5)->sum('earning');
+        // İlk 5 ülkeyi al
+        $topCountries = $countryData->take(5);
 
-            $topCountries['others'] = [
-                'earning' => $otherEarnings,
-                'quantity' => $sortedEarnings->slice(5)->sum('quantity')
-            ];
+        // Geri kalanları "Others" olarak grupla
+        $otherCountries = $countryData->slice(5);
+        if ($otherCountries->isNotEmpty()) {
+            $topCountries->put('Others', [
+                'country' => 'Others',
+                'earning' => $otherCountries->sum('earning'),
+                'quantity' => $otherCountries->sum('quantity'),
+                'percentage' => $this->calculatePercentage($otherCountries->sum('earning')),
+                'start_date' => $startDate,
+                'end_date' => $endDate
+            ]);
+        }
 
-            return $topCountries->map(function ($data, $country) {
-                return [
-                    'start_date' => Cache::get('start_date'),
-                    'end_date' => Cache::get('end_date'),
-                    'country' => $country,
-                    'quantity' => $data['quantity'],
-                    'earning' => Number::currency($data['earning'], 'USD', app()->getLocale()),
-                    'percentage' => Number::percentage($this->totalEarnings > 0 ? ($data['earning'] / $this->totalEarnings) * 100 : 0)
-                ];
-            })->values()->toArray();
-        });
+        return $topCountries->values()->toArray();
     }
 
     public function earningFromPlatforms(): array
     {
-        $cacheKey = 'earning_from_platforms_' . md5($this->data->pluck('id')->implode(','));
-        return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $platformEarnings = $this->data->groupBy('platform')->map(function ($platformData) {
+        $startDate = Cache::get('start_date');
+        $endDate = Cache::get('end_date');
+
+        $platformData = $this->data
+            ->groupBy('platform')
+            ->map(function ($items) use ($startDate, $endDate) {
+                $totalEarning = $items->sum('earning');
+                $totalQuantity = $items->sum('quantity');
+                $percentage = $this->calculatePercentage($totalEarning);
+
                 return [
-                    'earning' => $platformData->sum('earning'),
-                    'quantity' => $platformData->sum('quantity')
+                    'platform' => $items->first()->platform,
+                    'earning' => $totalEarning,
+                    'quantity' => $totalQuantity,
+                    'percentage' => $percentage,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
                 ];
-            });
+            })
+            ->sortByDesc('earning');
 
-            $sortedEarnings = $platformEarnings->sortByDesc('earning');
-            $topPlatforms = $sortedEarnings->take(5);
-            $otherEarnings = $sortedEarnings->slice(5)->sum('earning');
+        // İlk 5 platformu al
+        $topPlatforms = $platformData->take(5);
 
-            $topPlatforms['others'] = [
-                'earning' => $otherEarnings,
-                'quantity' => $sortedEarnings->slice(5)->sum('quantity')
-            ];
+        // Geri kalanları "Others" olarak grupla
+        $otherPlatforms = $platformData->slice(5);
+        if ($otherPlatforms->isNotEmpty()) {
+            $topPlatforms->put('Others', [
+                'platform' => 'Others',
+                'earning' => $otherPlatforms->sum('earning'),
+                'quantity' => $otherPlatforms->sum('quantity'),
+                'percentage' => $this->calculatePercentage($otherPlatforms->sum('earning')),
+                'start_date' => $startDate,
+                'end_date' => $endDate
+            ]);
+        }
 
-            return $topPlatforms->map(function ($data, $platform) {
-                return [
-                    'start_date' => Cache::get('start_date'),
-                    'end_date' => Cache::get('end_date'),
-                    'platform' => $platform,
-                    'quantity' => $data['quantity'],
-                    'earning' => Number::currency($data['earning'], 'USD', app()->getLocale()),
-                    'percentage' => Number::percentage($this->totalEarnings > 0 ? ($data['earning'] / $this->totalEarnings) * 100 : 0)
-                ];
-            })->values()->toArray();
-        });
+        return $topPlatforms->values()->toArray();
+    }
+
+    protected function calculatePercentage($value): float
+    {
+        $total = $this->data->sum('earning');
+        if ($total > 0) {
+            return round(($value / $total) * 100, 2);
+        }
+        return 0;
     }
 
     public function monthlyNetEarning(): array

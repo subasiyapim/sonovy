@@ -245,6 +245,15 @@ class FinanceAnalysisController extends Controller
             default => [],
         };
 
+        // Ham sayısal değerleri döndür, formatlamayı frontend'de yap
+        if (is_array($result)) {
+            array_walk_recursive($result, function(&$value) {
+                if (is_string($value) && is_numeric(str_replace([',', '$'], '', $value))) {
+                    $value = (float) str_replace([',', '$'], '', $value);
+                }
+            });
+        }
+
         Log::info('Result data', [
             'slug' => $slug,
             'has_data' => !empty($result),

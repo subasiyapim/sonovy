@@ -178,24 +178,84 @@ const goToTrendingAlbumsCSV = async () => {
   }
 };
 
-// Chart options ve series'leri computed property olarak tanımlayalım
+const platformsData = computed(() => {
+  const data = props.data?.earning_from_platforms || [];
+  if (Array.isArray(data)) {
+    return data.reduce((acc, item) => {
+      if (item && typeof item === 'object') {
+        const platformName = item.platform || item.name || 'Diğer';
+        acc[platformName] = {
+          earning: Number(item.earning || 0),
+          percentage: Number(item.percentage || 0)
+        };
+      }
+      return acc;
+    }, {});
+  }
+  return {};
+});
+
+const countriesData = computed(() => {
+  const data = props.data?.earning_from_countries || [];
+  if (Array.isArray(data)) {
+    return data.reduce((acc, item) => {
+      if (item && typeof item === 'object') {
+        const countryName = item.country || item.name || 'Diğer';
+        acc[countryName] = {
+          earning: Number(item.earning || 0),
+          percentage: Number(item.percentage || 0)
+        };
+      }
+      return acc;
+    }, {});
+  }
+  return {};
+});
+
+const formatCurrency = (value) => {
+  if (typeof value === 'number') {
+    return new Intl.NumberFormat('tr-TR', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  }
+  return '$0.00';
+};
+
 const chartOptions = computed(() => ({
   chart: {
     type: 'donut',
     height: 200,
   },
-  labels: props.data?.earning_from_platforms ? Object.keys(props.data.earning_from_platforms) : [],
-  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'],
+  labels: Object.keys(platformsData.value),
+  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590', '#4C956C', '#2D6A4F'],
   legend: {
     show: true,
     position: 'right',
+    fontSize: '13px',
+    formatter: function(seriesName, opts) {
+      const value = opts.w.globals.series[opts.seriesIndex];
+      return `${seriesName}: ${formatCurrency(value)}`;
+    }
   },
   dataLabels: {
-    enabled: true,
+    enabled: false,
+    formatter: function(val, opts) {
+      return opts.w.config.labels[opts.seriesIndex];
+    },
     style: {
       fontSize: '13px',
       colors: ['#fff'],
     },
+  },
+  plotOptions: {
+    pie: {
+      donut: {
+        size: '70%'
+      }
+    }
   },
   stroke: {
     show: true,
@@ -206,35 +266,50 @@ const chartOptions = computed(() => ({
     enabled: true,
     y: {
       formatter: function (val) {
-        return `${val}`;
+        return formatCurrency(val);
       },
     },
   },
 }));
 
-const chartSeries = computed(() => 
-  props.data?.earning_from_platforms ? 
-    Object.values(props.data.earning_from_platforms).map((e) => e.earning) : 
-    []
-);
+const chartSeries = computed(() => {
+  const values = Object.values(platformsData.value).map(p => Number(p.earning || 0));
+  console.log('Platform values:', values);
+  return values;
+});
 
 const countriesChartOptions = computed(() => ({
   chart: {
     type: 'donut',
     height: 200,
   },
-  labels: props.data?.earning_from_countries ? Object.keys(props.data.earning_from_countries) : [],
-  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'],
+  labels: Object.keys(countriesData.value),
+  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590', '#4C956C', '#2D6A4F'],
   legend: {
     show: true,
     position: 'right',
+    fontSize: '13px',
+    formatter: function(seriesName, opts) {
+      const value = opts.w.globals.series[opts.seriesIndex];
+      return `${seriesName}: ${formatCurrency(value)}`;
+    }
   },
   dataLabels: {
     enabled: true,
+    formatter: function(val, opts) {
+      return opts.w.config.labels[opts.seriesIndex];
+    },
     style: {
       fontSize: '13px',
       colors: ['#fff'],
     },
+  },
+  plotOptions: {
+    pie: {
+      donut: {
+        size: '70%'
+      }
+    }
   },
   stroke: {
     show: true,
@@ -245,17 +320,17 @@ const countriesChartOptions = computed(() => ({
     enabled: true,
     y: {
       formatter: function (val) {
-        return `${val}`;
+        return formatCurrency(val);
       },
     },
   },
 }));
 
-const countriesChartSeries = computed(() => 
-  props.data?.earning_from_countries ? 
-    Object.values(props.data.earning_from_countries).map((e) => e.earning) : 
-    []
-);
+const countriesChartSeries = computed(() => {
+  const values = Object.values(countriesData.value).map(c => Number(c.earning || 0));
+  console.log('Country values:', values);
+  return values;
+});
 
 const salesChartOptions = computed(() => ({
   chart: {
@@ -284,7 +359,7 @@ const salesChartOptions = computed(() => ({
     enabled: true,
     y: {
       formatter: function (val) {
-        return `${val}`;
+        return formatCurrency(val);
       },
     },
   },
@@ -302,10 +377,42 @@ onMounted(() => {
     data: props.data,
     monthlyData: monthlyData.value,
     monthlyTotals: monthlyTotals.value,
+    platformsData: platformsData.value,
+    countriesData: countriesData.value,
     chartSeries: chartSeries.value,
     countriesChartSeries: countriesChartSeries.value,
     salesChartSeries: salesChartSeries.value
   });
+
+  console.log('Raw Platform Data:', props.data?.earning_from_platforms);
+  console.log('Raw Countries Data:', props.data?.earning_from_countries);
+  
+  if (props.data?.earning_from_platforms) {
+    const samplePlatform = props.data.earning_from_platforms[0];
+    console.log('Sample Platform Item:', {
+      platform: samplePlatform.platform,
+      name: samplePlatform.name,
+      earning: samplePlatform.earning,
+      rawEarning: typeof samplePlatform.earning,
+      parsedEarning: Number(samplePlatform.earning)
+    });
+  }
+
+  if (props.data?.earning_from_countries) {
+    const sampleCountry = props.data.earning_from_countries[0];
+    console.log('Sample Country Item:', {
+      country: sampleCountry.country,
+      name: sampleCountry.name,
+      earning: sampleCountry.earning,
+      rawEarning: typeof sampleCountry.earning,
+      parsedEarning: Number(sampleCountry.earning)
+    });
+  }
+
+  console.log('Processed Platform Data:', platformsData.value);
+  console.log('Processed Countries Data:', countriesData.value);
+  console.log('Platform Chart Series:', chartSeries.value);
+  console.log('Countries Chart Series:', countriesChartSeries.value);
 });
 
 </script>
@@ -724,8 +831,8 @@ onMounted(() => {
         <table>
           <tbody>
           <tr v-for="album in data.trending_albums" class="">
-            <td class="paragraph-xs c-sub-600 py-1.5">{{ album.product_name }}</td>
-            <td class="paragraph-xs text-[#377C4E]">{{ album.earning }}</td>
+            <td class="paragraph-xs c-sub-600 py-1.5">{{ album.release_name || album.product_name }}</td>
+            <td class="paragraph-xs text-[#377C4E]">{{ formatCurrency(album.earning) }}</td>
           </tr>
           </tbody>
         </table>
