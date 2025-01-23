@@ -4,8 +4,8 @@
     <template #icon>
       <PersonIcon color="var(--dark-green-950)"/>
     </template>
-
-    <div class="p-5 flex flex-col gap-6" style="min-height:250px;">
+    <hr>
+    <div class="p-5 flex flex-col gap-2" style="min-height:250px;">
         <div>
 
         <div class="relative w-full">
@@ -18,24 +18,28 @@
 
         </div>
 
-        <div v-for="label in labels" class="flex items-center  justify-between cursor-pointer" @click="onChoosenItem(label)">
+        <div v-for="label in labels" class="flex items-center  justify-between cursor-pointer p-2 rounded-xl" :class="choosenLabels?.find((e) => e.id == label.id) ? 'bg-white-600' : ''" @click="onChoosenItem(label)">
 
             <div class="flex items-center gap-2 flex-1">
                 <button class="appCheckBox" :class="choosenLabels?.find((e) => e.id == label.id) ? 'checked' : ''">
                         <CheckIcon color="#fff" />
                     </button>
-                <div class="w-12 h-12 rounded-full overflow-hidden">
-                    <img :alt="label.name"
-                        :src="label.image ? label.image.thumb : defaultStore.profileImage(label.name)"
-                    >
-                </div>
+                    <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                        <div class="w-6 h-6  rounded-full overflow-hidden">
+                            <img :alt="label.name"
+                                :src="label.image ? label.image.thumb : defaultStore.profileImage(label.name)"
+                            >
+                        </div>
+                    </div>
+
                 <div class="flex flex-col">
+
                     <p class="label-sm c-sub-600">
                         {{label.name}}
                     </p>
-                     <p class="paragraph-xs c-sub--600">
-                        {{label.email }}
-                    </p>
+                     <div class="flex items-center gap-1 paragraph-xs">
+                        <span class="c-soft-400 ">⇢ Bağlı Kullanıcı: </span> <span class=" c-sub--600">{{label.user?.name }}</span>
+                    </div>
 
                 </div>
             </div>

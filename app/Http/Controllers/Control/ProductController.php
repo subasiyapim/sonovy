@@ -112,8 +112,10 @@ class ProductController extends Controller
                 $query->where('type', $request->input('type'));
             })
             ->advancedFilter();
-//dd($products[0]->image);
+
+
         $statistics = [
+            'product_count' => $this->getProductsTotal($validated['period'] ?? 'month'),
             'products' => $this->getProductsGroupedByPeriod($validated['period'] ?? 'month'),
             'labels' => $this->getTopLabelsByProductCount(),
             'artists' => $this->getArtistsAddedLastMonth(),
@@ -669,7 +671,7 @@ class ProductController extends Controller
                     'pre_order_date' => isset($platform['pre_order_date']) ? Carbon::parse($platform['pre_order_date'])->format('Y-m-d') : null,
                     'publish_date' => isset($platform['publish_date']) ? Carbon::parse($platform['publish_date'])->format('Y-m-d') : null,
                     'date' => isset($platform['date']) ? Carbon::parse($platform['date'])->format('Y-m-d') : null,
-                    'time' => isset($platform['time']) ? $platform['time']['hours'].':'.$platform['time']['minutes'] : null,
+                    'time' => isset($platform['time']) ? $platform['time']['hours'] . ':' . $platform['time']['minutes'] : null,
                     'hashtags' => isset($platform['hashtags']) ? json_encode($platform['hashtags']) : null,
                     // Ensure it's a valid JSON
                     'description' => isset($platform['description']) ? $platform['description'] : null,
@@ -694,6 +696,32 @@ class ProductController extends Controller
         }
     }
 
+    public function getProductsTotal($period)
+    {
+
+        $cacheKey = "products_total_by_{$period}";
+        $cacheTime = match ($period) {
+            'day' => 24 * 60,
+            'week' => 7 * 24 * 60,
+            'year' => 365 * 24 * 60,
+            default => 12 * 60,
+        };
+
+        return Cache::remember($cacheKey, $cacheTime, function () use ($period) {
+            $startDate = match ($period) {
+                'day' => Carbon::now()->subDays(6),
+                'week' => Carbon::now()->subWeeks(6),
+                'year' => Carbon::now()->subYears(6),
+                default => Carbon::now()->subMonths(6),
+            };
+
+            $totalProductCount = Product::where('created_at', '>=', $startDate)
+                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as period, COUNT(*) as count")
+
+                ->count();
+            return $totalProductCount;
+        });
+    }
     public function getProductsGroupedByPeriod($period)
     {
         $cacheKey = "products_grouped_by_{$period}";

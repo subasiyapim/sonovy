@@ -413,7 +413,7 @@ const options = ref({
     },
   },
   xaxis: {
-    categories: usePage().props.statistics?.products.data.map((e) => e.label),
+    categories: usePage().props.statistics?.products.data?.map((e) => e.label),
     axisBorder: {
       show: false,
     },
@@ -426,7 +426,7 @@ const options = ref({
 const series = ref([
   {
     name: "Yayın Sayısı",
-    data: usePage().props.statistics?.products.data.map((e) => e.value)
+    data: usePage().props.statistics?.products?.data?.map((e) => e.value)
   },
 ]);
 

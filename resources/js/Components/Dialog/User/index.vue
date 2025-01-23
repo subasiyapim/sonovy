@@ -57,23 +57,26 @@
         </FormElement>
 
         <div class="flex items-center gap-2">
+
             <FormElement v-if="form.country_id" type="custom" :error="form.errors.city_id || form.errors.district_id" label="İl İlçe" label-width="190px" class="w-full">
                 <div class="flex items-center gap-2">
-                    <AppSelectInput ref="citySelect"  @change="onCityChoosen"  class="flex-1" v-model="form.city_id"
+                    <AppSelectInput  ref="citySelect"  @change="onCityChoosen"  class="flex-1" v-model="form.city_id"
                             :error="form.errors.city_id" type="select"
 
                             :placeholder="__('control.user.fields.city_id')" :config="cityConfig">
                          <template #model="scope">
+
                             <div  class="flex items-center gap-2 paragraph-sm c-strong-950">
                                 {{cityConfig.data.find((e) => e.id == form.city_id)?.name}}
                             </div>
                         </template>
                     </AppSelectInput>
-                    <AppSelectInput ref="districtSelect" class="flex-1" v-model="form.district_id"
+                    <AppSelectInput  ref="districtSelect" class="flex-1" v-model="form.district_id"
                             :error="form.errors.district_id" type="select"
 
                             :placeholder="__('control.user.fields.district_id_placeholder')" :config="districtConfig">
                         <template #model="scope">
+
                             <div  class="flex items-center gap-2 paragraph-sm c-strong-950">
                                 {{districtConfig.data.find((e) => e.id == form.district_id)?.name}}
                             </div>
@@ -151,9 +154,9 @@
             :placeholder="__('control.user.fields.password_placeholder')"/>
         <FormElement label-width="190px"
             :required="false"
-            :error="form.errors.re_password"
-            v-model="form.re_password"
-            :label="__('control.user.fields.re_password')"
+            :error="form.errors.password_confirmation"
+            v-model="form.password_confirmation"
+            :label="__('control.user.fields.password_confirmation')"
             type="password"
             :placeholder="__('control.user.fields.re_password_placeholder')"/>
 
@@ -227,7 +230,7 @@ const form = useForm({
     is_company:false,
     phone:'',
     password:'',
-    re_password:'',
+    password_confirmation:'',
 });
 
 
@@ -305,6 +308,7 @@ const onSubmit = async (e) => {
                     toast.success(e.props.notification.message);
                     isDialogOn.value = false;
 
+
                     emits('done', e.props.notification.user)
 
                 },
@@ -331,29 +335,27 @@ const onCountryChoosen = async (e) => {
 
 
    nextTick(() => {
+    citySelect.value.appendOptions(response);
      cityConfig.value.data = response;
-     console.log("loGG COUNTTRY",response);
 
-     citySelect.value.appendOptions(response);
+
      cityLoading.value = false;
    })
 
 }
 const onCityChoosen = async (e) => {
 
-
     districtLoading.value = true;
     let districtResponse = await crudStore.post(route('control.findall.districts'),{
-        city_id:e.value
+        city_id:e.id
     })
-    console.log("D RESPONSEEE",districtResponse);
     if(districtResponse.length > 0){
          nextTick(() => {
             districtConfig.value.data = districtResponse;
-
-
             districtSelect.value.appendOptions(districtResponse);
             districtLoading.value = false;
+            console.log("DSADASD",districtResponse);
+
         })
     }
 
@@ -370,7 +372,7 @@ onMounted(() => {
         if(props.user.city_id){
             console.log("PROPS:USsER CİTY",props.user.city_id);
 
-            onCityChoosen({value:props.user.city_id})
+            onCityChoosen({id:props.user.city_id})
         }
 
         form['district_id'] =props.user.district_id;

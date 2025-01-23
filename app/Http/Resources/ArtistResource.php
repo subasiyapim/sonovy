@@ -27,14 +27,14 @@ class ArtistResource extends JsonResource
             'phone' => $this->phone,
             'website' => $this->website,
             'status' => $this->products->count() > 0 ? 'Aktif sanatçı' : 'Pasif sanatçı',
-            'tracks_count' => $this->products->count().' parça',
-            'genres' => $this->getGenres(),
-            'genres_count' => $this->getGenres()->count(),
+            'tracks_count' => $this->products->count() . ' parça',
+            'genres' => $this->getGenres(4)['display_genres'],
+            'genres_count' => $this->getGenres(count: 4)['remaining_count'],
             'artist_branches' => $this->artistBranches,
         ];
     }
 
-    private function getGenres()
+    private function getGenres($count)
     {
         $genres = $this->products->flatMap(function ($product) {
             $names = [];
@@ -50,7 +50,22 @@ class ArtistResource extends JsonResource
             return $names;
         });
 
-        return $genres->unique()->values();
+        $uniqueGenres = $genres->unique()->values();
+
+        $totalGenres = $uniqueGenres->count();
+        $displayGenres = $uniqueGenres->take($count);
+
+        if ($totalGenres > $count) {
+            $remainingCount = $totalGenres - $count;
+            return [
+                'display_genres' => $displayGenres,
+                'remaining_count' => $remainingCount,
+            ];
+        }
+        return [
+            'display_genres' => $displayGenres,
+            'remaining_count' => 0,
+        ];
     }
 
     private function getPlatformData()

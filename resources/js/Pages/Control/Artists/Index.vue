@@ -51,14 +51,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn :label="__('control.artist.fields.status')" sortable="status">
-        <template #default="scope">
 
-          <StatusBadge>
-            <p class="label-xs">{{ scope.row.status }}</p>
-          </StatusBadge>
-        </template>
-      </AppTableColumn>
 
       <AppTableColumn :label="__('control.artist.fields.tracks_count')">
         <template #default="scope">

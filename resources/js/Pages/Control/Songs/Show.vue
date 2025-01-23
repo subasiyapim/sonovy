@@ -42,7 +42,7 @@
 
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
-        <PrimaryButton @click="remove">
+        <!-- <PrimaryButton @click="remove">
           <template #icon>
             <TrashIcon color="var(--dark-green-500)"/>
           </template>
@@ -51,7 +51,7 @@
           <template #icon>
             <EditIcon color="var(--dark-green-500)"/>
           </template>
-        </PrimaryButton>
+        </PrimaryButton> -->
       </div>
     </div>
 

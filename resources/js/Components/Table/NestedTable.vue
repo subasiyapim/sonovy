@@ -82,12 +82,13 @@ const onUpdate = (e) => {
                 </template>
             </template>
         </AppTableColumn>
-        <AppTableColumn label="Realizasyon/Hakediş" sortable="type">
+        <AppTableColumn label="Hakediş/Realizasyon" sortable="type">
             <template #default="scope">
 
                 <div class="flex items-center gap-1 label-sm">
-                    <span class="c-strong-950">%{{scope.row.real_commission_rate}} /</span>
-                    <span class="c-soft-400">%{{scope.row.commission_rate}}</span>
+                    <span class="c-soft-400">%{{scope.row.commission_rate}}/</span>
+                    <span class="c-strong-950">%{{scope.row.real_commission_rate}}</span>
+
                 </div>
             </template>
         </AppTableColumn>

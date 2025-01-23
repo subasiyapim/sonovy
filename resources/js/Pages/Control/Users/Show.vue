@@ -3,9 +3,11 @@
   <AdminLayout :showDatePicker="false" :title="__('control.user.show_header')" parentTitle="Katalog"
                subParent="Tüm Şarkılar" :hasPadding="false">
     <template #breadcrumb>
-      <span class="label-xs c-soft-400">Kullanıcı Yönetimi</span>
-      <span class="label-xs c-soft-400">•</span>
-      <span class="label-xs c-soft-400">{{ user.name }}</span>
+        <span class="label-xs c-soft-400">Kullanıcı Yönetimi</span>
+        <span class="label-xs c-soft-400">•</span>
+        <Link :href="route('control.user-management.users.show',user.parent.id)" v-if="user.parent" class="label-xs c-soft-400">{{ user.parent?.name }}</Link>
+        <span v-if="user.parent" class="label-xs c-soft-400">•</span>
+        <span class="label-xs c-soft-400">{{ user.name }}</span>
     </template>
     <template #toolbar>
         <RegularButton v-if="!isInAdminViewMode" @click="switchUsers">
@@ -29,9 +31,9 @@
                 <CheckFilledIcon color="var(--sub-600)" />
                 <p class="label-xs text-[#122368]">  Aktif</p>
             </div>
-             <div v-else class="border border-soft-200 px-2 py-1 rounded-full flex items-center gap-2">
-                <WarningIcon color="var(--sub-600)" />
-                <p class="label-xs text-[#122368]">  Pasif</p>
+             <div v-else class=" px-2 py-1 rounded-full flex items-center gap-2 bg-error-500">
+                <WarningIcon style="width:12px;" color="#fff" />
+                <p class="label-xs text-white">  Pasif</p>
             </div>
         </div>
         <span class="c-neutral-400 paragraph-xs" v-text="'#'+user.id"/>
@@ -86,6 +88,7 @@ import {ArtistDialog} from '@/Components/Dialog';
 import {FormElement} from '@/Components/Form';
 import {UserModal} from '@/Components/Dialog';
 import {useUiStore} from '@/Stores/useUiStore';
+import { Link } from '@inertiajs/vue3'
 import {
   DocumentIcon,
   EditIcon,

@@ -123,25 +123,43 @@ const open = async () => {
 
 
 const remoteDatas = ref(null)
+// const getFilteredData = computed(() => {
+//     console.log("FİLTER DATA ÇAIŞTI",props.config?.data);
+
+//   //console.log("BURAYAA GELDİK");
+//   if (searchTerm.value) {
+//     if (remoteDatas.value) {
+//       return remoteDatas.value;
+//     } else {
+//       if (props.config?.remote == null) {
+//         return props.config?.data?.filter((el) => el[props.config.label ?? 'label'].toLocaleLowerCase('tr-TR').includes(searchTerm.value.toLocaleLowerCase('tr-TR')))
+//       }
+//     }
+
+//   } else {
+//     return props.config?.data
+//   }
+// })
+const localData = ref(props.config?.data || []);
 const getFilteredData = computed(() => {
 
-  //console.log("BURAYAA GELDİK");
   if (searchTerm.value) {
-    if (remoteDatas.value) {
-      return remoteDatas.value;
-    } else {
-      if (props.config?.remote == null) {
-        return props.config?.data?.filter((el) => el[props.config.label ?? 'label'].toLocaleLowerCase('tr-TR').includes(searchTerm.value.toLocaleLowerCase('tr-TR')))
-      }
-    }
-
+    return localData.value.filter((el) =>
+      el[props.config.label ?? 'label']
+        ?.toLocaleLowerCase('tr-TR')
+        .includes(searchTerm.value.toLocaleLowerCase('tr-TR'))
+    );
   } else {
-    return props.config?.data
+    return localData.value;
   }
-})
+});
 const appendOptions = (list) => {
-    props.config.data = list;
+    console.log("BURASI ÇALIŞTI",list);
+
+    // props.config.data = list;
+    localData.value = [ ...list];
     instance.update();
+
 }
 const checkIfChecked = computed(() => {
   return (rowValue) => {

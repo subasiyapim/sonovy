@@ -2,6 +2,7 @@
   <AdminLayout :showDatePicker="false"
   :filters="appTableConfig.filters"
   title="Kulanıcılar" >
+
     <AppTable  ref="usersTable" :showAddButton="true"
             :buttonLabel="'Yeni Kullanıcı Ekle'"
             :config="appTableConfig"
@@ -45,12 +46,14 @@
                 </template>
             </template>
         </AppTableColumn>
-        <AppTableColumn label="Realizasyon/Hakediş" sortable="type">
+
+        <AppTableColumn label="Hakediş/Realizasyon" sortable="type">
             <template #default="scope">
 
                 <div class="flex items-center gap-1 label-sm">
-                    <span class="c-strong-950">%{{scope.row.real_commission_rate}} /</span>
-                    <span class="c-soft-400">%{{scope.row.commission_rate}}</span>
+                    <span class="c-soft-400">%{{scope.row.commission_rate}}/</span>
+                    <span class="c-strong-950">%{{scope.row.real_commission_rate}}</span>
+
                 </div>
             </template>
         </AppTableColumn>
@@ -59,11 +62,11 @@
             <span class="label-sm c-strong-950"> {{scope.row.created_at}}</span>
             </template>
         </AppTableColumn>
-        <AppTableColumn label="Durum" sortable="type">
+        <AppTableColumn label="Durum" sortable="type" width="80">
             <template #default="scope">
-                <div class="flex items-center gap-2 border border-soft-200 rounded-lg px-3 py-1">
-                    <span class="label-xs c-strong-950">•</span>
-                    <span class="label-xs c-sub-600">{{scope.row.status_text}}</span>
+                <div class="flex items-center gap-2  rounded-lg px-3 py-1" :class="scope.row.status == 0 ? 'bg-red-500 ' :' border border-soft-200'">
+                    <span class="label-xs " :class="scope.row.status == 0 ? 'text-white' :'c-strong-950'">•</span>
+                    <span class="label-xs " :class="scope.row.status == 0 ? 'text-white' :'c-sub-600'">{{scope.row.status_text}}</span>
                 </div>
             </template>
         </AppTableColumn>
@@ -81,7 +84,7 @@
         </AppTableColumn>
     </AppTable>
   </AdminLayout>
-  <UserModal :user="choosenUser" @update="onUpdate" v-model="isUserModalOn" v-if="isUserModalOn"></UserModal>
+  <UserModal :user="choosenUser" @done="onDone" @update="onUpdate" v-model="isUserModalOn" v-if="isUserModalOn"></UserModal>
 
 </template>
 
@@ -342,6 +345,10 @@ const barSeries = ref([
 const onUpdate = (e) => {
     usersTable.value.editRow(e);
 }
+const onDone = (e) => {
+    usersTable.value.addRow(e);
+}
+
 </script>
 
 <style lang="scss" scoped>

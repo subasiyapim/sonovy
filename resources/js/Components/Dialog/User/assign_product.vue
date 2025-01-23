@@ -125,7 +125,7 @@
                         </p>
 
                         <p class="paragraph-xs c-sub--600">
-                             {{label.email }}
+                             #{{label.id }}
                         </p>
 
                     </div>

@@ -145,7 +145,7 @@ const pauseMusic = (song) => {
         <div class="flex items-center gap-3">
 
           <div>
-            <p class="label-sm c-solid-950"> {{ scope.row.name }}</p>
+            <p class="label-sm c-solid-950"> {{ scope.row.name }} ({{scope.row.version}})</p>
             <p class="paragraph-xs c-sub-600"> {{ scope.row.isrc }} </p>
           </div>
         </div>

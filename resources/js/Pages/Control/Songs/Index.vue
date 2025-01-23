@@ -44,7 +44,7 @@
         <template #default="scope">
           <div class="flex flex-col items-start">
             <a :href="route('control.catalog.songs.show',scope.row.id)" class="table-name-text">
-              {{ scope.row.name }}
+              {{ scope.row.name }} ({{scope.row.version}})
             </a>
             <p class="paragraph-xs c-sub-600">ISRC: {{ scope.row.isrc }}</p>
           </div>
@@ -77,7 +77,7 @@
             <img :alt="scope.row.name"
                  class="w-10 h-10 rounded-full overflow-hidden"
                  :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
-            <span>{{ artist.name }}</span>
+            <span>{{ artist.name }} </span>
           </div>
         </template>
       </AppTableColumn>

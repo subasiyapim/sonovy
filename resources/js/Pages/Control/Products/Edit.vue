@@ -6,15 +6,15 @@
         <div class="flex items-center staticTopInfo h-20">
           <div class="flex items-center gap-3.5 flex-1 ">
 
-            <IconButton @click="router.visit(route('control.catalog.products.index'))" hasBorder size="medium">
+            <IconButton @click="goBack" hasBorder size="medium">
               <ArrowLeftIcon color="var(--sub-600)"/>
             </IconButton>
             <div class="flex flex-col flex-1">
-              <p class="label-lg c-strong-950">Tüm Yayınlar</p>
+              <p  class="label-lg c-strong-950">Tüm Yayınlar</p>
               <div class="flex items-center gap-2">
                 <span class="label-xs c-soft-400">Katalog</span>
                 <span class="label-xs c-soft-400">•</span>
-                <span class="label-xs c-soft-400">Tüm Yayınlar</span>
+                <span @click="router.visit(route('control.catalog.products.index'))" class="cursor-pointer label-xs c-soft-400">Tüm Yayınlar</span>
                  <span class="label-xs c-soft-400">•</span>
                 <span class="label-xs c-soft-400">
                         {{product.type == 1 ? 'Ses Yayın' :(product.type == 2 ? 'Müzik Video' : (product.type == 4 ? 'Apple Video' : 'Zil Sesi') ) }}
@@ -36,6 +36,8 @@
                 </span>
               </div>
             </div>
+            <RegularButton @click="goOut">Kaydet ve Çık</RegularButton>
+            <RegularButton @click="goOut">İptal</RegularButton>
 
 
           </div>
@@ -44,11 +46,11 @@
       <div class="w-full h-full bg-white-500 flex flex-col gap-10 p-8 overflow-hidden">
 
         <AppStepper :modelValue="currentTab" @change="onChangeTab" :count="product.type != 2 ? 4 : 3">
-          <AppStepperElement :showWarning="!completed_steps.step1" title="Yayın Bilgileri"></AppStepperElement>
-          <AppStepperElement :showWarning="!completed_steps.step2"
+          <AppStepperElement tippy="Yayın genel bilgileri" :showWarning="!completed_steps.step1" title="Yayın Bilgileri"></AppStepperElement>
+          <AppStepperElement tippy="Yüklenen içerikler ve onlara ait bilgiler" :showWarning="!completed_steps.step2"
                              :title="product.type == 1 ? 'Şarkı Detay' : (product.type == 2 ? 'Video Detay' : 'Zil Sesi Detay' )"></AppStepperElement>
-          <AppStepperElement :showWarning="!completed_steps.step3" title="Yayınlama Detayları"></AppStepperElement>
-          <AppStepperElement v-if="product.type != 2" :showWarning="!completed_steps.step4"
+          <AppStepperElement tippy="Yayına ait tarih, platform ve ülke bilgileri" :showWarning="!completed_steps.step3" title="Yayınlama Detayları"></AppStepperElement>
+          <AppStepperElement tippy="Tanıtıma ait bilgiler" v-if="product.type != 2" :showWarning="!completed_steps.step4"
                              title="Pazarlama ve Onay"></AppStepperElement>
 
         </AppStepper>
@@ -134,7 +136,7 @@ import ProductInfoTab from './Tabs/Left/ProductInfoTab.vue'
 import ProductSummaryTab from './Tabs/Right/ProductSummaryTab.vue'
 import {useForm} from '@inertiajs/vue3';
 import SongDetailTab from './Tabs/Left/SongDetailTab.vue'
-import {PrimaryButton} from '@/Components/Buttons'
+import {PrimaryButton,RegularButton} from '@/Components/Buttons'
 import {AppProgressIndicator} from '@/Components/Widgets'
 import PublishingDetailTab from './Tabs/Left/PublishingDetailTab.vue'
 import MusicVideoPublishingDetails from './Tabs/Left/MusicVideoPublishingDetails.vue'
@@ -142,6 +144,7 @@ import MarketingAndSend from './Tabs/Left/MarketingAndSend.vue'
 import {AppStepper, AppStepperElement} from '@/Components/Stepper';
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {toast} from 'vue3-toastify';
+import {Link} from '@inertiajs/vue3';
 
 
 const crudStore = useCrudStore();
@@ -208,7 +211,9 @@ const step4Element = useForm({
   promotions: props.product.promotions,
 });
 
-
+const goOut = () => {
+    goBack();
+}
 const currentTab = ref(props.step - 1);
 const onVideoTypeChange = async (e) => {
     props.product.type = e.value;
@@ -358,7 +363,9 @@ onBeforeMount(() => {
   step1Element.main_artists = props.product.main_artists.map((e) => e.id) ?? [];
   step1Element.featuring_artists = props.product.featured_artists.map((e) => e.id) ?? [];
 });
-
+const goBack = () => {
+    window.history.back();
+}
 
 </script>
 

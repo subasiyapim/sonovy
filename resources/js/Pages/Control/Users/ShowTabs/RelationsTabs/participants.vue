@@ -15,7 +15,7 @@
         </AppTableColumn>
 
 
-        <AppTableColumn label="Realizasyon/Hakediş">
+        <AppTableColumn label="Hakediş/Realizasyon">
             <template #default="scope">
 
             </template>

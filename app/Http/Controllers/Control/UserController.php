@@ -142,10 +142,16 @@ class UserController extends Controller
                     'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
+        $user->refresh();
+        $user->load('roles', 'country', 'city', 'district', 'parent', 'children');
 
         return back()
             ->with([
-                'notification' => __('control.notification_created', ['model' => __('control.user.title_singular')])
+                'notification' => [
+                    'user' => new UserResource($user),
+                    'message' => __('control.notification_created', ['model' => __('control.user.title_singular')])
+
+                ]
             ]);
     }
 
@@ -176,8 +182,9 @@ class UserController extends Controller
         ];
 
         $tab = request()->has('slug') ? request()->input('slug') : 'profile';
-
+        // dd($user->parent_id);
         $response = new UserShowResource($user, $tab);
+
         $countryCodes = CountryServices::getCountryPhoneCodes();
         //dd($response->resolve());
         return inertia(

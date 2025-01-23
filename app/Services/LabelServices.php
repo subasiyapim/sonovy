@@ -48,6 +48,6 @@ class LabelServices
      */
     public static function search($search): mixed
     {
-        return Label::where('name', 'like', '%'.$search.'%')->get();
+        return Label::with('user')->where('name', 'like', '%' . $search . '%')->get();
     }
 }

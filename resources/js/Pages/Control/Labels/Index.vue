@@ -50,13 +50,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn :label="__('control.label.fields.status')" sortable="name">
-        <template #default="scope">
-          <StatusBadge class="w-max">
-            <p class="label-xs">{{ scope.row.status ?? 'Aktif Şirket' }}</p>
-          </StatusBadge>
-        </template>
-      </AppTableColumn>
+
       <AppTableColumn :label="__('control.general.actions')" align="right">
         <template #default="scope">
           <div class="flex gap-3">

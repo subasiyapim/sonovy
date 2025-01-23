@@ -52,6 +52,8 @@ class UserShowResource extends JsonResource
             'country_id' => $this->country_id,
             'language_id' => $this->language_id,
             'city_id' => $this->city_id,
+            'parent' => $this->parent,
+            'parent_id' => $this->parent_id,
             'district_id' => $this->district_id,
             'commission_rate' => $this->commission_rate,
             'address' => $this->address,
