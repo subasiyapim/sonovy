@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Log;
 
 
 class AnalyseService
@@ -35,13 +36,19 @@ class AnalyseService
                 $earnings = $countryData->groupBy('release_name')->map(function ($releaseData) use ($totalEarnings) {
                     $releaseEarnings = $releaseData->sum('earning');
                     $percentage = $totalEarnings > 0 ? ($releaseEarnings / $totalEarnings) * 100 : 0;
+                    $firstItem = $releaseData->first();
+                    $product = $firstItem->product ?? null;
 
                     return [
-                        'release_name' => $releaseData->first()->release_name,
+                        'release_name' => $firstItem->release_name,
                         'total_quantity' => $releaseData->sum('quantity'),
                         'total_earning' => Number::currency($releaseEarnings, 'USD', app()->getLocale()),
                         'percentage' => round($percentage, 2),
                         'quantity' => $releaseData->sum('quantity'),
+                        'product' => $product ? [
+                            'id' => $product->id,
+                            'image' => $product->image
+                        ] : null
                     ];
                 });
 
@@ -69,6 +76,8 @@ class AnalyseService
                 $countryData = [];
                 $otherEarnings = 0;
                 $otherQuantity = 0;
+                $firstItem = $releaseData->first();
+                $product = $firstItem->product ?? null;
 
                 foreach ($releaseData->groupBy('country') as $country => $data) {
                     $countryEarnings = $data->sum('earning');
@@ -97,10 +106,15 @@ class AnalyseService
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'release_name' => $releaseData->first()->release_name,
+                    'release_name' => $firstItem->release_name,
+                    'upc_code' => $firstItem->upc_code,
                     'total_quantity' => $releaseData->sum('quantity'),
                     'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
                     'countries' => $countryData,
+                    'product' => $product ? [
+                        'id' => $product->id,
+                        'image' => $product->image
+                    ] : null
                 ];
             })->values()->toArray();
 
@@ -115,7 +129,7 @@ class AnalyseService
     {
         $cacheKey = 'platforms_analysis_' . md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $platforms = ['Spotify', 'Facebook', 'Youtube', 'Apple', 'Tiktok'];
+            $platforms = ['Spotify', 'Facebook', 'Youtube', 'Apple Music', 'Tiktok'];
 
             $platformEarnings = $this->data->groupBy('platform')->map(function ($platformData, $platform) use ($platforms) {
                 $totalEarnings = $platformData->sum('earning');
@@ -180,13 +194,20 @@ class AnalyseService
                     'quantity' => $otherQuantity,
                 ];
 
+                $firstItem = $releaseData->first();
+                $product = $firstItem->product ?? null;
+
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'release_name' => $releaseData->first()->release_name,
+                    'release_name' => $firstItem->release_name,
                     'total_quantity' => $releaseData->sum('quantity'),
                     'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
                     'platforms' => $platformData,
+                    'product' => $product ? [
+                        'id' => $product->id,
+                        'image' => $product->image
+                    ] : null
                 ];
             })->values()->toArray();
 
@@ -214,32 +235,79 @@ class AnalyseService
                     'streams' => $artistData->sum('quantity'),
                     'percentage' => round($percentage, 2),
                 ];
-            })->sortByDesc('percentage')->values()->toArray();
+            })->sortByDesc('percentage')
+            ->take(10)
+            ->values()
+            ->toArray();
         });
     }
 
     public function topAlbums(): array
     {
         $cacheKey = 'top_albums_' . md5($this->data->pluck('id')->implode(','));
-        return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            return $this->data->groupBy('release_name')->values()->map(function ($albumData) {
+        return Cache::remember($cacheKey, 60 * 60, function () {
+            Log::info('TopAlbums başlangıç', [
+                'total_records' => $this->data->count(),
+                'total_earnings' => $this->totalEarnings,
+                'has_earnings' => $this->data->where('earning', '>', 0)->count(),
+                'unique_upcs' => $this->data->pluck('upc_code')->unique()->count(),
+                'sample_data' => $this->data->take(1)->toArray()
+            ]);
+
+            $filteredData = $this->data->filter(function ($item) {
+                return !empty($item->upc_code);
+            });
+
+            $groupedData = $filteredData->groupBy('upc_code')->values();
+
+            Log::info('TopAlbums gruplandırma sonrası', [
+                'total_groups' => $groupedData->count(),
+                'groups_with_earnings' => $groupedData->filter(function($group) {
+                    return $group->sum('earning') > 0;
+                })->count(),
+                'sample_group' => $groupedData->take(1)->toArray()
+            ]);
+
+            $mappedData = $groupedData->map(function ($albumData) {
                 $albumEarnings = $albumData->sum('earning');
                 $percentage = $this->totalEarnings > 0 ? ($albumEarnings / $this->totalEarnings) * 100 : 0;
                 $firstItem = $albumData->first();
-                $artistName = $firstItem->artist_name;
 
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'album_name' => $firstItem->product->album_name ?? '',
+                    'album_name' => $firstItem->release_name,
+                    'artist_name' => $firstItem->artist_name,
                     'upc_code' => $firstItem->upc_code,
-                    'product_id' => $firstItem->product->id ?? '',
-                    'artist_name' => $artistName,
-                    'earning' => Number::currency($albumEarnings, 'USD', app()->getLocale()),
                     'streams' => $albumData->sum('quantity'),
-                    'percentage' => round($percentage, 2),
+                    'earning' => Number::currency($albumEarnings, 'USD', app()->getLocale()),
+                    'raw_earning' => $albumEarnings,
+                    'percentage' => round($percentage, 2)
                 ];
-            })->sortByDesc('percentage')->values()->toArray();
+            });
+
+            Log::info('TopAlbums dönüşüm sonrası', [
+                'total_mapped' => $mappedData->count(),
+                'sample_mapped' => $mappedData->take(1)->toArray()
+            ]);
+
+            $result = $mappedData
+                ->sortByDesc('raw_earning')
+                ->take(10)
+                ->values()
+                ->map(function($item) {
+                    unset($item['raw_earning']);
+                    return $item;
+                })
+                ->toArray();
+
+            Log::info('TopAlbums final', [
+                'total_results' => count($result),
+                'has_results' => !empty($result),
+                'results' => $result
+            ]);
+
+            return $result;
         });
     }
 
@@ -256,7 +324,7 @@ class AnalyseService
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
                     'song_id' => $firstItem->song_id,
-                    'song_name' => $firstItem->song_name,
+                    'song_name' => $firstItem->song_name ?? $firstItem->release_name,
                     'isrc_code' => $firstItem->isrc_code,
                     'artist_id' => $firstItem->artist_id,
                     'artist_name' => $firstItem->artist_name,
@@ -264,7 +332,10 @@ class AnalyseService
                     'streams' => $songData->sum('quantity'),
                     'percentage' => round($percentage, 2),
                 ];
-            })->sortByDesc('percentage')->values()->toArray();
+            })->sortByDesc('percentage')
+            ->take(10)
+            ->values()
+            ->toArray();
         });
     }
 
@@ -285,7 +356,10 @@ class AnalyseService
                     'earning' => Number::currency($labelEarnings, 'USD', app()->getLocale()),
                     'percentage' => round($percentage, 2),
                 ];
-            })->sortByDesc('percentage')->values()->toArray();
+            })->sortByDesc('percentage')
+            ->take(10)
+            ->values()
+            ->toArray();
         });
     }
 
@@ -303,19 +377,12 @@ class AnalyseService
                         'end_date' => Cache::get('end_date'),
                         'platform' => $firstItem->platform,
                         'quantity' => $firstItem->quantity,
-                        'earning' => $items->sum('earning'),
-                        'earning_formatted' => Number::currency($items->sum('earning'), 'USD', app()->getLocale()),
-                        'product_name' => $product->album_name ?? $firstItem->release_name,
-                        'product_id' => $product->id ?? '',
+                        'release_name' => $firstItem->release_name,
+                        'earning' => Number::currency($items->sum('earning'), 'USD', app()->getLocale()),
                     ];
                 })
                 ->sortByDesc('earning')
                 ->take(10)
-                ->map(function($item) {
-                    $item['earning'] = $item['earning_formatted'];
-                    unset($item['earning_formatted']);
-                    return $item;
-                })
                 ->values()
                 ->toArray();
         });
@@ -354,26 +421,28 @@ class AnalyseService
     {
         $cacheKey = 'earning_from_youtube_premium_' . md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $platformEarnings = $this->data->filter(function ($item) {
+            $youtubeData = $this->data->filter(function ($item) {
                 return stripos($item->platform, 'Youtube') !== false && !empty($item->streaming_subscription_type);
-            })->groupBy(['platform', 'streaming_subscription_type'])->map(function ($platformData) {
-                return $platformData->sum('earning');
             });
 
-            $totalEarnings = $platformEarnings->sum();
+            if ($youtubeData->isEmpty()) {
+                return [];
+            }
 
-            return $platformEarnings->mapWithKeys(function ($earning, $keys) use ($totalEarnings) {
-                list($platform, $subscriptionType) = explode('.', $keys);
-                $percentage = $totalEarnings > 0 ? ($earning / $totalEarnings) * 100 : 0;
-                return [
-                    $platform => [
-                        $subscriptionType => [
-                            'earning' => Number::currency($earning, 'USD', app()->getLocale()),
-                            'percentage' => round($percentage, 2),
-                        ]
-                    ]
-                ];
-            })->toArray();
+            return $youtubeData
+                ->groupBy('platform')
+                ->map(function ($platformData, $platform) {
+                    $result = ['name' => $platform];
+                    
+                    $platformData->groupBy('streaming_subscription_type')
+                        ->each(function ($data, $type) use (&$result) {
+                            $result[$type] = $data->sum('earning');
+                        });
+                    
+                    return $result;
+                })
+                ->values()
+                ->toArray();
         });
     }
 
@@ -403,79 +472,102 @@ class AnalyseService
 
     public function earningFromCountries(): array
     {
-        $cacheKey = 'earning_from_countries_' . md5($this->data->pluck('id')->implode(','));
-        return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $countryEarnings = $this->data->groupBy('country')->map(function ($countryData) {
+        $startDate = Cache::get('start_date');
+        $endDate = Cache::get('end_date');
+
+        $countryData = $this->data
+            ->groupBy('country')
+            ->map(function ($items) use ($startDate, $endDate) {
+                $totalEarning = $items->sum('earning');
+                $totalQuantity = $items->sum('quantity');
+                $percentage = $this->calculatePercentage($totalEarning);
+
                 return [
-                    'earning' => $countryData->sum('earning'),
-                    'quantity' => $countryData->sum('quantity')
+                    'country' => $items->first()->country,
+                    'earning' => $totalEarning,
+                    'quantity' => $totalQuantity,
+                    'percentage' => $percentage,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
                 ];
-            });
+            })
+            ->sortByDesc('earning');
 
-            $sortedEarnings = $countryEarnings->sortByDesc('earning');
-            $topCountries = $sortedEarnings->take(5);
-            $otherEarnings = $sortedEarnings->slice(5)->sum('earning');
+        // İlk 5 ülkeyi al
+        $topCountries = $countryData->take(5);
 
-            $topCountries['others'] = [
-                'earning' => $otherEarnings,
-                'quantity' => $sortedEarnings->slice(5)->sum('quantity')
-            ];
+        // Geri kalanları "Others" olarak grupla
+        $otherCountries = $countryData->slice(5);
+        if ($otherCountries->isNotEmpty()) {
+            $topCountries->put('Others', [
+                'country' => 'Others',
+                'earning' => $otherCountries->sum('earning'),
+                'quantity' => $otherCountries->sum('quantity'),
+                'percentage' => $this->calculatePercentage($otherCountries->sum('earning')),
+                'start_date' => $startDate,
+                'end_date' => $endDate
+            ]);
+        }
 
-            return $topCountries->mapWithKeys(function ($data, $country) {
-                return [
-                    $country => [
-                        'start_date' => Cache::get('start_date'),
-                        'end_date' => Cache::get('end_date'),
-                        'country' => $country,
-                        'earning' => $data['earning'],
-                        'quantity' => $data['quantity'],
-                        'percentage' => Number::percentage($this->totalEarnings > 0 ? ($data['earning'] / $this->totalEarnings) * 100 : 0),
-                    ]
-                ];
-            })->toArray();
-        });
+        return $topCountries->values()->toArray();
     }
 
     public function earningFromPlatforms(): array
     {
-        $cacheKey = 'earning_from_platforms_' . md5($this->data->pluck('id')->implode(','));
-        return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $platformEarnings = $this->data->groupBy('platform')->map(function ($platformData) {
+        $startDate = Cache::get('start_date');
+        $endDate = Cache::get('end_date');
+
+        $platformData = $this->data
+            ->groupBy('platform')
+            ->map(function ($items) use ($startDate, $endDate) {
+                $totalEarning = $items->sum('earning');
+                $totalQuantity = $items->sum('quantity');
+                $percentage = $this->calculatePercentage($totalEarning);
+
                 return [
-                    'earning' => $platformData->sum('earning'),
-                    'quantity' => $platformData->sum('quantity')
+                    'platform' => $items->first()->platform,
+                    'earning' => $totalEarning,
+                    'quantity' => $totalQuantity,
+                    'percentage' => $percentage,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
                 ];
-            });
+            })
+            ->sortByDesc('earning');
 
-            $sortedEarnings = $platformEarnings->sortByDesc('earning');
-            $topPlatforms = $sortedEarnings->take(5);
-            $otherEarnings = $sortedEarnings->slice(5)->sum('earning');
+        // İlk 5 platformu al
+        $topPlatforms = $platformData->take(5);
 
-            $topPlatforms['others'] = [
-                'earning' => $otherEarnings,
-                'quantity' => $sortedEarnings->slice(5)->sum('quantity')
-            ];
+        // Geri kalanları "Others" olarak grupla
+        $otherPlatforms = $platformData->slice(5);
+        if ($otherPlatforms->isNotEmpty()) {
+            $topPlatforms->put('Others', [
+                'platform' => 'Others',
+                'earning' => $otherPlatforms->sum('earning'),
+                'quantity' => $otherPlatforms->sum('quantity'),
+                'percentage' => $this->calculatePercentage($otherPlatforms->sum('earning')),
+                'start_date' => $startDate,
+                'end_date' => $endDate
+            ]);
+        }
 
-            return $topPlatforms->mapWithKeys(function ($data, $platform) {
-                return [
-                    $platform => [
-                        'start_date' => Cache::get('start_date'),
-                        'end_date' => Cache::get('end_date'),
-                        'platform' => $platform,
-                        'quantity' => $data['quantity'],
-                        'earning' => $data['earning'],
-                        'percentage' => Number::percentage($this->totalEarnings > 0 ? ($data['earning'] / $this->totalEarnings) * 100 : 0),
-                    ]
-                ];
-            })->toArray();
-        });
+        return $topPlatforms->values()->toArray();
+    }
+
+    protected function calculatePercentage($value): float
+    {
+        $total = $this->data->sum('earning');
+        if ($total > 0) {
+            return round(($value / $total) * 100, 2);
+        }
+        return 0;
     }
 
     public function monthlyNetEarning(): array
     {
         $cacheKey = 'monthly_net_earnings_' . md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $platforms = ['Spotify', 'Amazon', 'Youtube'];
+            $platforms = ['Spotify', 'Apple Music', 'Youtube'];
 
             $calculateEarnings = function ($data) use ($platforms) {
                 $totalEarnings = $data->sum('earning');
@@ -581,6 +673,33 @@ class AnalyseService
                 'total' => $total->toArray(),
                 'items' => $items->toArray(),
             ];
+        });
+    }
+
+    public function youtubeEarningsBySubscriptionType(): array
+    {
+        $cacheKey = 'youtube_earnings_by_subscription_type_' . md5($this->data->pluck('id')->implode(','));
+        return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
+            return $this->data
+                ->filter(function ($item) {
+                    return stripos($item->platform, 'Youtube') !== false;
+                })
+                ->groupBy('platform')
+                ->map(function ($platformData, $platform) {
+                    $subscriptionEarnings = $platformData
+                        ->groupBy('streaming_subscription_type')
+                        ->map(function ($data) {
+                            return $data->sum('earning');
+                        })
+                        ->toArray();
+
+                    return array_merge(
+                        ['name' => $platform],
+                        $subscriptionEarnings
+                    );
+                })
+                ->values()
+                ->toArray();
         });
     }
 }

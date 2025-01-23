@@ -9,7 +9,9 @@ use App\Models\Earning;
 use App\Services\AnalyseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -54,7 +56,7 @@ class FinanceAnalysisController extends Controller
             $startDate = Carbon::createFromFormat('m-Y', $startDateInput)->startOfMonth()->format('Y-m-d');
             $endDate = Carbon::createFromFormat('m-Y', $endDateInput)->endOfMonth()->format('Y-m-d');
         } else {
-            $startDate = Carbon::now()->subMonths(11)->startOfMonth()->format('Y-m-d');
+            $startDate = Carbon::now()->subMonths(1)->startOfMonth()->format('Y-m-d');
             $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
@@ -63,64 +65,173 @@ class FinanceAnalysisController extends Controller
 
     private function generateCacheKey(Request $request): string
     {
-        return 'earning_analysis_' . md5($request->fullUrl());
+        return sprintf(
+            'earning_analysis_%s_%s_%s_%s',
+            Auth::id(),
+            $request->input('slug', 'general'),
+            $request->input('start_date', ''),
+            $request->input('end_date', '')
+        );
     }
 
     private function getEarnings(string $cacheKey, string $startDate, string $endDate)
     {
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($startDate, $endDate) {
-            return Earning::with(['product', 'song', 'platform', 'country', 'label'])
-                ->whereBetween('sales_date', [$startDate, $endDate])
-                ->get();
+            $earnings = Earning::with([
+                'song:id,name,isrc',
+                'platform:id,name',
+                'country:id,name',
+                'label:id,name',
+                'product'
+            ])
+            ->select([
+                'id', 
+                'sales_date', 
+                'earning', 
+                'quantity',
+                'song_id',
+                'platform_id', 
+                'country_id', 
+                'label_id',
+                'user_id',
+                'artist_id',
+                'artist_name',
+                'release_name',
+                'streaming_subscription_type',
+                'sales_type',
+                'isrc_code',
+                'upc_code',
+                'platform',
+                'country',
+                'label_name'
+            ])
+            ->whereBetween('sales_date', [$startDate, $endDate])
+            ->where('user_id', Auth::id())
+            ->get();
+
+            Log::info('Earnings Query Result', [
+                'count' => $earnings->count(),
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'user_id' => Auth::id(),
+                'sample_data' => $earnings->take(1)->toArray()
+            ]);
+
+            return $earnings;
         });
     }
 
     private function formatResponse($earnings, string $tab)
     {
-        return (new AnalyseResource($earnings, $tab))->resolve();
+        Log::info('Format Response', [
+            'tab' => $tab,
+            'earnings_count' => $earnings->count()
+        ]);
+
+        $response = (new AnalyseResource($earnings, $tab))->resolve();
+
+        Log::info('Response Data', [
+            'has_data' => !empty($response['data']),
+            'metadata' => $response['metadata'] ?? null,
+            'data' => $response['data'] ?? null
+        ]);
+
+        return $response;
     }
 
     public function show(Request $request)
     {
-        $request->validate([
-            'slug' => [
-                'required',
-                'string',
-                'in:earning_from_platforms,earning_from_countries,earning_from_sales_type,trending_albums,top_artists,top_albums,top_songs,top_labels,platforms,countries'
-            ],
-            'request_type' => ['required', 'string', 'in:view,download'],
-            'start_date' => ['date', 'required_with:end_date'],
-            'end_date' => ['date', 'required_with:start_date'],
-        ]);
+        Log::info('Show method called', $request->all());
 
-        $startDate = Carbon::parse($request->start_date)->format('Y-m-d');
-        $endDate = Carbon::parse($request->end_date)->format('Y-m-d');
+        try {
+            $data = $this->getDataBySlug($request->slug);
 
-        Cache::put('start_date', $startDate, self::CACHE_DURATION);
-        Cache::put('end_date', $endDate, self::CACHE_DURATION);
+            if ($request->request_type === 'download') {
+                $filename = match ($request->slug) {
+                    'earning_from_platforms' => 'platform-earnings.xlsx',
+                    'earning_from_countries' => 'country-earnings.xlsx',
+                    'earning_from_sales_type' => 'sales-earnings.xlsx',
+                    'top_artists' => 'top-artists.xlsx',
+                    'top_albums' => 'top-albums.xlsx',
+                    'top_songs' => 'top-songs.xlsx',
+                    'top_labels' => 'top-labels.xlsx',
+                    default => $request->slug . '.xlsx'
+                };
 
-        $cacheKey = 'earning_analysis_show_' . md5($request->fullUrl());
-        $earnings = Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($startDate, $endDate) {
-            return Earning::with(['product', 'song', 'platform', 'country', 'label'])
-                ->whereBetween('sales_date', [$startDate, $endDate])
-                ->get();
-        });
+                return Excel::download(new AnalyseExport($data, str_replace('-', '_', $request->slug)), $filename);
+            }
 
-        $service = new AnalyseService($earnings);
-        $data = $this->getDataBySlug($service, $request->slug);
-
-        if ($request->request_type === 'view') {
-            return $this->view($data);
-        }
-
-        if ($request->request_type === 'download') {
-            return $this->download($data, $request->slug);
+            return response()->json($data);
+        } catch (\Exception $e) {
+            Log::error('Error in show method: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+            throw $e;
         }
     }
 
-    private function getDataBySlug(AnalyseService $service, string $slug): array
+    private function getDataBySlug(string $slug): array
     {
-        return match ($slug) {
+        $startDate = request('start_date');
+        $endDate = request('end_date');
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::parse($startDate)->format('Y-m-d');
+            $endDate = Carbon::parse($endDate)->format('Y-m-d');
+            
+            Cache::put('start_date', $startDate, self::CACHE_DURATION);
+            Cache::put('end_date', $endDate, self::CACHE_DURATION);
+        }
+
+        Log::info('getDataBySlug called', [
+            'slug' => $slug,
+            'start_date' => $startDate,
+            'end_date' => $endDate
+        ]);
+
+        $earnings = Earning::with([
+            'song:id,name,isrc',
+            'platform:id,name',
+            'country:id,name',
+            'label:id,name',
+            'product'
+        ])
+        ->select([
+            'id', 
+            'sales_date', 
+            'earning', 
+            'quantity',
+            'song_id',
+            'platform_id', 
+            'country_id', 
+            'label_id',
+            'user_id',
+            'artist_id',
+            'artist_name',
+            'release_name',
+            'streaming_subscription_type',
+            'sales_type',
+            'isrc_code',
+            'upc_code',
+            'platform',
+            'country',
+            'label_name'
+        ]);
+
+        if ($startDate && $endDate) {
+            $earnings = $earnings->whereBetween('sales_date', [$startDate, $endDate]);
+        }
+
+        $earnings = $earnings->where('user_id', Auth::id())->get();
+
+        Log::info('Earnings data fetched', [
+            'count' => $earnings->count(),
+            'sample' => $earnings->take(1)->toArray()
+        ]);
+
+        $service = new AnalyseService($earnings);
+        $result = match ($slug) {
             'earning_from_platforms' => $service->earningFromPlatforms(),
             'earning_from_countries' => $service->earningFromCountries(),
             'earning_from_sales_type' => $service->earningFromSalesType(),
@@ -133,6 +244,23 @@ class FinanceAnalysisController extends Controller
             'countries' => $service->countries(),
             default => [],
         };
+
+        // Ham sayısal değerleri döndür, formatlamayı frontend'de yap
+        if (is_array($result)) {
+            array_walk_recursive($result, function(&$value) {
+                if (is_string($value) && is_numeric(str_replace([',', '$'], '', $value))) {
+                    $value = (float) str_replace([',', '$'], '', $value);
+                }
+            });
+        }
+
+        Log::info('Result data', [
+            'slug' => $slug,
+            'has_data' => !empty($result),
+            'data_sample' => array_slice($result, 0, 1)
+        ]);
+
+        return $result;
     }
 
     private function view($earnings)
@@ -142,6 +270,20 @@ class FinanceAnalysisController extends Controller
 
     private function download($earnings, $slug)
     {
-        return Excel::download(new AnalyseExport($earnings, $slug), $slug . '.xlsx');
+        Log::info('Download method called', [
+            'earnings_count' => count($earnings),
+            'slug' => $slug,
+            'sample_data' => array_slice($earnings, 0, 1)
+        ]);
+
+        try {
+            Excel::download(new AnalyseExport($earnings, $slug), $slug . '.xlsx');
+        } catch (\Exception $e) {
+            Log::error('Error in download method', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 }

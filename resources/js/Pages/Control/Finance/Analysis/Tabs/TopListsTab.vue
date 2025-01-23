@@ -1,7 +1,5 @@
-
-
 <script setup>
-import {ref} from 'vue';
+import {ref, onMounted} from 'vue';
 import {PersonIcon,EyeOnIcon,DownloadIcon,BookReadLineIcon,Building2LineIcon,AudioIcon} from '@/Components/Icons';
 import {AppProgressIndicator} from '@/Components/Widgets';
 import moment from 'moment'
@@ -11,14 +9,32 @@ import {
     FinanceTopListsLabels,
     FinanceTopListsProducts
 } from '@/Components/Dialog'
+
 const props = defineProps({
-    data : {
-
+    data: {
+        type: Object,
+        required: true
     },
-    formattedDate:{
-
+    formattedDate: {
+        type: String,
+        required: true
     },
-    choosenDates:{},
+    choosenDates: {
+        type: Array,
+        default: () => []
+    },
+});
+
+onMounted(() => {
+    console.log('TopListsTab mounted', {
+        data: props.data,
+        hasTopArtists: props.data?.top_artists?.length > 0,
+        hasTopAlbums: props.data?.top_albums?.length > 0,
+        hasTopSongs: props.data?.top_songs?.length > 0,
+        hasTopLabels: props.data?.top_labels?.length > 0,
+        choosenDates: props.choosenDates,
+        topAlbumsData: props.data?.top_albums
+    });
 });
 
 const isFinanceTopListsSongs = ref(false)
@@ -26,155 +42,65 @@ const isFinanceTopListsArtists = ref(false)
 const isFinanceTopListsLabels = ref(false)
 const isFinanceTopListsProducts = ref(false);
 
+const getDateRange = () => {
+    const defaultStartDate = moment().subtract(1, 'year').format("YYYY-MM-DD");
+    const defaultEndDate = moment().format("YYYY-MM-DD");
+
+    if (Array.isArray(props.choosenDates) && props.choosenDates.length >= 2) {
+        return {
+            startDate: moment(props.choosenDates[0]).format("YYYY-MM-DD"),
+            endDate: moment(props.choosenDates[1]).format("YYYY-MM-DD")
+        };
+    }
+
+    return {
+        startDate: defaultStartDate,
+        endDate: defaultEndDate
+    };
+};
+
 const goToArtists = () => {
-  const params = {
-    slug: 'top_artists',
-    request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
-  };
-
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
-
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
+    const { startDate, endDate } = getDateRange();
+    const params = {
+        slug: 'top_artists',
+        request_type: 'download',
+        start_date: startDate,
+        end_date: endDate,
+    };
+    window.location.href = route('control.finance.analysis.show', params);
 };
 
 const gotoLabels = () => {
-  const params = {
-    slug: 'top_labels',
-    request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
-  };
-
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
-
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
+    const { startDate, endDate } = getDateRange();
+    const params = {
+        slug: 'top_labels',
+        request_type: 'download',
+        start_date: startDate,
+        end_date: endDate,
+    };
+    window.location.href = route('control.finance.analysis.show', params);
 };
 
 const gotoProducts = () => {
-  const params = {
-    slug: 'top_albums',
-    request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
-  };
-
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
-
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
+    const { startDate, endDate } = getDateRange();
+    const params = {
+        slug: 'top_albums',
+        request_type: 'download',
+        start_date: startDate,
+        end_date: endDate,
+    };
+    window.location.href = route('control.finance.analysis.show', params);
 };
+
 const gotoSongs = () => {
-  const params = {
-    slug: 'top_songs',
-    request_type: 'download',
-    start_date: moment(
-        props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year')
-    ).format("YYYY-MM-DD"),
-    end_date: moment(
-        props.choosenDates ? props.choosenDates[1] : moment()
-    ).format("YYYY-MM-DD"),
-  };
-
-  // Parametreleri sorgu dizgesi (query string) olarak oluştur
-  const queryString = new URLSearchParams(params).toString();
-  const url = `${route('control.finance.analysis.show')}?${queryString}`;
-
-  // Fetch API ile indirme işlemini başlat
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    },
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.setAttribute('download', `${params.slug}`); // İndirilecek dosyanın adı
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error('Excel dosyası indirilirken hata oluştu:', error);
-      });
+    const { startDate, endDate } = getDateRange();
+    const params = {
+        slug: 'top_songs',
+        request_type: 'download',
+        start_date: startDate,
+        end_date: endDate,
+    };
+    window.location.href = route('control.finance.analysis.show', params);
 };
 
 
@@ -252,7 +178,12 @@ const gotoSongs = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="album in data.top_albums">
+                    <tr v-if="!data.top_albums || data.top_albums.length === 0">
+                        <td colspan="6" class="py-4 text-center">
+                            <span class="paragraph-xs c-sub-600">Henüz veri bulunmamaktadır.</span>
+                        </td>
+                    </tr>
+                    <tr v-else v-for="album in data.top_albums">
                         <td class="py-2">
                             <span class="label-sm c-strong-950">{{album.album_name}}</span>
                         </td>

@@ -35,7 +35,7 @@ class EarningService
 
     protected static function hasAdmin()
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         if (!$user) {
             return false;
@@ -538,7 +538,7 @@ class EarningService
     private const SALES_TYPES = ['Stream', 'PLATFORM PROMOTION', 'Creation', 'Download'];
     private const RELEASE_TYPES = ['Music Release', 'Ringtone', 'Video', 'User Generated Content'];
 
-    public static function createDemoEarnings()
+    public static function createDemoEarnings($userId)
     {
         $faker = \Faker\Factory::create();
         $data = [];
@@ -547,7 +547,14 @@ class EarningService
 
         DB::beginTransaction();
         try {
-            // Mevcut ürünleri al
+            // CSV dosyasını oku
+            $csvPath = public_path('assets/sample-earnings-tr.csv');
+            $csvFile = fopen($csvPath, 'r');
+            
+            // Header'ı atla
+            fgetcsv($csvFile, 0, ';', '"', '\\');
+
+            // Mevcut ürünleri ve şarkıları al
             $products = Product::with(['songs', 'artists', 'label', 'downloadPlatforms'])
                 ->whereHas('songs')
                 ->whereHas('artists')
@@ -555,95 +562,77 @@ class EarningService
                 ->whereHas('downloadPlatforms')
                 ->get();
 
+            $songs = collect();
+            foreach ($products as $product) {
+                $songs = $songs->merge($product->songs);
+            }
+
             if ($products->isEmpty()) {
                 throw new \Exception('Demo kazanç oluşturmak için uygun ürün bulunamadı.');
             }
 
-            // Her ürün için kazanç kayıtları oluştur
-            foreach ($products as $product) {
-                foreach ($product->songs as $song) {
-                    // Her şarkı için 10-20 arası kazanç kaydı oluştur
-                    $recordCount = rand(10, 20);
+            // CSV'den verileri oku
+            while (($row = fgetcsv($csvFile, 0, ';')) !== false) {
+                try {
+                    $randomProduct = $products->random();
+                    $randomSong = $songs->random();
                     
-                    for ($i = 0; $i < $recordCount; $i++) {
-                        try {
-                            $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', now()));
-                            $unit_price = $faker->randomFloat(6, 0.001, 0.1);
-                            $quantity = $faker->numberBetween(1, 1000);
-                            $mechanical_fee = $faker->randomFloat(6, 0, 0.001);
-                            $gross_revenue = round($unit_price * $quantity, 12);
-                            $client_share_rate = $faker->randomElement([70, 75, 80]);
-                            $earning = $gross_revenue;  // Brüt geliri earning olarak kullan
-                            
-                            $sales_type = $faker->randomElement(self::SALES_TYPES);
-                            $platform_name = $faker->randomElement(self::PLATFORMS);
-                            $streaming_type = $faker->randomElement(self::STREAMING_TYPES);
-                            $release_type = match($product->type) {
-                                ProductTypeEnum::SOUND->value => 'Music Release',
-                                ProductTypeEnum::VIDEO->value => 'Video',
-                                ProductTypeEnum::RINGTONE->value => 'Ringtone',
-                                default => $faker->randomElement(self::RELEASE_TYPES),
-                            };
+                    $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', now()));
+                    
+                    $data[] = [
+                        'user_id' => $userId,
+                        'report_date' => Carbon::parse($faker->dateTimeBetween($sales_date, now()))->format('Y-m-d'),
+                        'reporting_month' => $sales_date->format('Y/m/01'),
+                        'sales_date' => $sales_date->format('Y-m-d'),
+                        'sales_month' => $sales_date->format('Y/m/01'),
+                        'platform' => $row[2] ?? '',
+                        'platform_id' => Platform::where('name', $row[2])->first()?->id,
+                        'country' => $row[3] ?? '',
+                        'region' => $faker->randomElement(['Europe', 'North America', 'South America', 'Asia', 'Africa', 'Oceania']),
+                        'country_id' => Country::where('name', $row[3])->first()?->id,
+                        'label_name' => $row[4] ?? '',
+                        'label_id' => $randomProduct->label->id,
+                        'artist_name' => $row[5] ?? '',
+                        'artist_id' => $randomProduct->artists->random()->id,
+                        'release_name' => $row[6] ?? '',
+                        'song_name' => $row[7] ?? '',
+                        'song_id' => $randomSong->id,
+                        'upc_code' => $randomProduct->upc_code,
+                        'isrc_code' => $randomSong->isrc,
+                        'catalog_number' => $row[10] ?? '',
+                        'streaming_type' => $row[11] ?? '',
+                        'streaming_subscription_type' => $row[11] ?? '',
+                        'release_type' => $row[12] ?? '',
+                        'sales_type' => $row[13] ?? '',
+                        'quantity' => intval($row[14] ?? 0),
+                        'currency' => $row[15] ?? 'EUR',
+                        'client_payment_currency' => $row[15] ?? 'EUR',
+                        'unit_price' => str_replace(',', '.', $row[16] ?? 0),
+                        'mechanical_fee' => str_replace(',', '.', $row[17] ?? 0),
+                        'gross_revenue' => str_replace(',', '.', $row[18] ?? 0),
+                        'client_share_rate' => str_replace(',', '.', $row[19] ?? 0),
+                        'earning' => str_replace(',', '.', $row[20] ?? 0),
+                    ];
 
-                            $artist = $product->artists->random();
-                            $country = app(Country::class)->inRandomOrder()->first();
-                            $platform = Platform::where('name', $platform_name)->first();
-                            $region = $faker->randomElement(['Europe', 'North America', 'Asia', 'South America', 'Africa', 'Oceania']);
-
-                            $data[] = [
-                                'user_id' => Auth::id(),
-                                'report_date' => Carbon::parse($faker->dateTimeBetween($sales_date, now()))->format('Y-m-d'),
-                                'reporting_month' => $sales_date->format('Y/m/01'),
-                                'sales_date' => $sales_date->format('Y-m-d'),
-                                'sales_month' => $sales_date->format('Y/m/01'),
-                                'platform' => $platform_name,
-                                'platform_id' => $platform ? $platform->id : null,
-                                'country' => $country->name,
-                                'region' => $region,
-                                'country_id' => $country->id,
-                                'label_name' => $product->label->name,
-                                'label_id' => $product->label->id,
-                                'artist_name' => $artist->name,
-                                'artist_id' => $artist->id,
-                                'release_name' => $product->album_name,
-                                'song_name' => $song->name,
-                                'song_id' => $song->id,
-                                'upc_code' => $product->upc_code,
-                                'isrc_code' => $song->isrc,
-                                'catalog_number' => $product->catalog_number,
-                                'streaming_type' => $streaming_type,
-                                'release_type' => $release_type,
-                                'sales_type' => $sales_type,
-                                'quantity' => $quantity,
-                                'currency' => 'EUR',
-                                'client_payment_currency' => 'EUR',
-                                'unit_price' => $unit_price,
-                                'mechanical_fee' => $mechanical_fee,
-                                'gross_revenue' => $gross_revenue,
-                                'client_share_rate' => $client_share_rate,
-                                'earning' => $sales_type == 'PLATFORM PROMOTION' ? -abs($earning) : $earning,
-                            ];
-
-                            $totalProcessed++;
-                        } catch (\Exception $e) {
-                            $errors++;
-                            Log::warning('Demo kazanç kaydı oluşturma hatası', [
-                                'error' => $e->getMessage(),
-                                'song_id' => $song->id,
-                                'product_id' => $product->id
-                            ]);
-                            continue;
-                        }
-                    }
+                    $totalProcessed++;
+                } catch (\Exception $e) {
+                    $errors++;
+                    Log::warning('Demo kazanç kaydı oluşturma hatası', [
+                        'error' => $e->getMessage(),
+                        'row' => $row
+                    ]);
+                    continue;
                 }
             }
+
+            fclose($csvFile);
 
             if (empty($data)) {
                 throw new \Exception('Demo kazanç verileri oluşturulamadı.');
             }
 
             $file = EarningReportFile::create([
-                'user_id' => Auth::id(),
+                'user_id' => $userId,
                 'name' => 'Demo Earning Report ' . Carbon::now()->format('Y-m-d'),
             ]);
 
@@ -700,13 +689,15 @@ class EarningService
                     'song_id' => $row['song_id'],
                     'earning_report_file_id' => $file_id,
                     'country' => $row['country'],
-                    'region' => $row['region'],
+                    'region' => $row['region'] ?? null,
                     'label_name' => $row['label_name'],
                     'artist_name' => $row['artist_name'],
                     'release_name' => $row['release_name'],
                     'song_name' => $row['song_name'],
                     'upc_code' => $row['upc_code'],
                     'catalog_number' => $row['catalog_number'],
+                    'streaming_type' => $row['streaming_type'],
+                    'streaming_subscription_type' => $row['streaming_subscription_type'],
                     'release_type' => $row['release_type'],
                     'sales_type' => $row['sales_type'],
                     'quantity' => $row['quantity'],
@@ -726,10 +717,13 @@ class EarningService
                 'earning_report_id' => $report->id,
                 'user_id' => $row['user_id'],
                 'report_date' => $row['report_date'],
+                'reporting_month' => $row['reporting_month'],
                 'sales_date' => $row['sales_date'],
+                'sales_month' => $row['sales_month'],
                 'platform' => $row['platform'],
                 'platform_id' => $row['platform_id'],
                 'country' => $row['country'],
+                'region' => $row['region'] ?? null,
                 'country_id' => $row['country_id'],
                 'label_name' => $row['label_name'],
                 'label_id' => $row['label_id'],
@@ -742,11 +736,16 @@ class EarningService
                 'isrc_code' => $row['isrc_code'],
                 'catalog_number' => $row['catalog_number'],
                 'streaming_type' => $row['streaming_type'],
+                'streaming_subscription_type' => $row['streaming_subscription_type'],
                 'release_type' => $row['release_type'],
                 'sales_type' => $row['sales_type'],
                 'quantity' => $row['quantity'],
                 'currency' => $row['currency'],
+                'client_payment_currency' => $row['client_payment_currency'],
                 'unit_price' => $row['unit_price'],
+                'mechanical_fee' => $row['mechanical_fee'],
+                'gross_revenue' => $row['gross_revenue'],
+                'client_share_rate' => $row['client_share_rate'],
                 'earning' => $row['earning'],
             ]);
         }

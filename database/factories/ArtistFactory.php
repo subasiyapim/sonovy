@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\System\Country;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,7 @@ class ArtistFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
-            'country_id' => \App\Models\System\Country::inRandomOrder()->first()->id,
+            'country_id' => (new Country())->newQuery()->inRandomOrder()->first()?->id,
             'ipi_code' => $this->faker->randomNumber(8),
             'isni_code' => $this->faker->randomNumber(8),
             'phone' => $this->faker->phoneNumber,

@@ -19,6 +19,7 @@ use App\Http\Controllers\Control\PaymentController;
 use App\Http\Controllers\Control\StatisticController;
 use App\Http\Controllers\Control\FinanceAnalysController;
 use App\Http\Controllers\Control\FinanceAnalysisController;
+use App\Http\Controllers\Control\EarningReportController;
 
 Route::group(
     [
@@ -94,6 +95,8 @@ Route::group(
             Route::apiResource('payments', PaymentController::class)
                 ->only(['index', 'store'])->names('payments');
 
+            Route::get('reports/create-demo-earnings', [ReportController::class, 'createDemoEarnings'])
+                ->name('reports.create-demo-earnings');
             Route::apiResource('reports', ReportController::class)->names('reports');
             Route::get('reports/download/{report}', [ReportController::class, 'download'])
                 ->name('reports.download');
