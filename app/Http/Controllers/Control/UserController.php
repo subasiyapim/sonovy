@@ -312,7 +312,7 @@ class UserController extends Controller
             $flags = $user->flags ?? [];
 
             $status = $user->status == UserStatusEnum::ACTIVE
-                ? UserStatusEnum::PENDING_APPROVAL
+                ? UserStatusEnum::PASSIVE
                 : UserStatusEnum::ACTIVE;
 
             $flag = [

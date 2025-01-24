@@ -43,7 +43,7 @@ class UserResource extends JsonResource
             'district_id' => $this->district_id,
             'status_text' => $this->status->title(),
             'created_at' => Carbon::parse($this->created_at)->locale(App::currentLocale())->translatedFormat('d F Y H:i'),
-            'children' => $this->whenLoaded('children', $this->children),
+            'children' => UserResource::collection($this->whenLoaded('children')),
         ];
     }
 }
