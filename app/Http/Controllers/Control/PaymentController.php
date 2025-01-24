@@ -7,8 +7,6 @@ use App\Enums\PaymentProcessTypeEnum;
 use App\Enums\PaymentStatusEnum;
 use App\Enums\PaymentTypeEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Payment\AdvanceYourselfRequest;
-use App\Http\Requests\Payment\PaymentYourselfRequest;
 use App\Http\Requests\Payment\RequestPaymentRequest;
 use App\Http\Resources\Payment\PaymentResource;
 use App\Models\Artist;
@@ -19,12 +17,9 @@ use App\Models\Platform;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Models\Song;
-use App\Models\User;
 use App\Services\EarningService;
 use App\Services\IyzicoServices;
-use App\Services\MediaServices;
 use App\Services\PaymentService;
-use App\Services\UserServices;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,13 +33,13 @@ class  PaymentController extends Controller
     {
         abort_if(Gate::denies('payment_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $payments = Auth::user()->payments()->orderByDesc('id')->advancedFilter();
+        $payments = PaymentResource::collection(Payment::where('user_id', Auth::id())->advancedFilter());
         $balance = Number::currency(EarningService::balance(), 'USD', app()->getLocale());
         $total_pending_payment = Number::currency(PaymentService::getTotalPendingPayment(), 'USD', app()->getLocale());
         $pending_payment = PaymentService::getPendingPayment();
         $account = BankAccount::where('user_id', Auth::id())->first();
-        $minPaymentRequest = Number::format(Setting::where('key', 'min_payment_request')->first()?->value ?? 100, 2, 2,
-            app()->getLocale());
+        $minPaymentRequest = Number::format(Setting::where('key', 'min_payment_request')
+            ->first()?->value ?? 100, 2, 2, app()->getLocale());
         $artists = Artist::all();
         $products = Product::all();
         $songs = Song::all();
@@ -54,7 +49,7 @@ class  PaymentController extends Controller
         return inertia(
             'Control/Finance/Payment/Index',
             [
-                'payments' => PaymentResource::collection($payments)->resource,
+                'payments' => $payments->isNotEmpty() ? $payments?->resource : [],
                 'balance' => $balance,
                 'total_pending_payment' => $total_pending_payment,
                 'pending_payment' => new PaymentResource($pending_payment),

@@ -20,9 +20,16 @@ class ReportResource extends JsonResource
             'id' => $this->id,
             'created_at' => Carbon::parse($this->created_at)
                 ->locale(app()->getLocale())
-                ->translatedFormat('d F Y H:i'),
+                ->translatedFormat('d-m-Y H:i'),
             'period' => $this->period,
-            'amount' => Number::currency($this->amount, 'USD', app()->getLocale()),
+            'name' => $this->name,
+            'amount' => Number::currency(
+                $this->batch_id
+                    ? $this->total_amount
+                    : $this->amount,
+                'USD',
+                app()->getLocale()
+            ),
             'monthly_amount' => collect($this->monthly_amount)
                 ->map(function ($value, $key) {
                     $monthName = Carbon::create(null, $key)->locale(app()->getLocale())->translatedFormat('F');
@@ -30,7 +37,7 @@ class ReportResource extends JsonResource
                 })
                 ->implode('<br>'),
             'status' => $this->status,
-            'status_text' => $this->status == 1 ? 'İşlendi' : 'İşleniyor',
+            'status_text' => $this->status == 1 ? 'Oluşturuldu' : 'Rapor Oluşturuluyor',
         ];
     }
 }

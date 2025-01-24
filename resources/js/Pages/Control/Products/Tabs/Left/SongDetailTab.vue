@@ -50,7 +50,7 @@
                 <img src="@/assets/images/mp3_active.png">
               </div>
               <div>
-                <p class="label-sm c-solid-950"> {{ scope.row.name }}</p>
+                <p class="label-sm c-solid-950"> {{ scope.row.name }} ({{scope.row.version}})</p>
                 <p class="paragraph-xs c-sub-600"> {{ (scope.row.size / (1024 * 1024)).toFixed(2) }} MB</p>
               </div>
             </div>

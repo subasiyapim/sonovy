@@ -104,6 +104,8 @@ const selectContainer = ref(null);  // Reference to the select container element
 
 const getShowLabel = computed(() => {
   const listOfOptions = remoteDatas.value ?? props.config?.data;
+
+
   const findedElement = listOfOptions?.find((e) => e[props.config.value ?? 'value'] == element.value);
   return findedElement == null ? '' : findedElement[props.config.label ?? 'label'];
 });
@@ -121,27 +123,44 @@ const open = async () => {
 
 
 const remoteDatas = ref(null)
+// const getFilteredData = computed(() => {
+//     console.log("FİLTER DATA ÇAIŞTI",props.config?.data);
+
+//   //console.log("BURAYAA GELDİK");
+//   if (searchTerm.value) {
+//     if (remoteDatas.value) {
+//       return remoteDatas.value;
+//     } else {
+//       if (props.config?.remote == null) {
+//         return props.config?.data?.filter((el) => el[props.config.label ?? 'label'].toLocaleLowerCase('tr-TR').includes(searchTerm.value.toLocaleLowerCase('tr-TR')))
+//       }
+//     }
+
+//   } else {
+//     return props.config?.data
+//   }
+// })
+const localData = ref(props.config?.data || []);
 const getFilteredData = computed(() => {
 
-  //console.log("BURAYAA GELDİK");
-
   if (searchTerm.value) {
-
-
-    if (remoteDatas.value) {
-      return remoteDatas.value;
-    } else {
-      if (props.config?.remote == null) {
-        return props.config?.data?.filter((el) => el[props.config.label ?? 'label'].toLocaleLowerCase('tr-TR').includes(searchTerm.value.toLocaleLowerCase('tr-TR')))
-      }
-    }
-
+    return localData.value.filter((el) =>
+      el[props.config.label ?? 'label']
+        ?.toLocaleLowerCase('tr-TR')
+        .includes(searchTerm.value.toLocaleLowerCase('tr-TR'))
+    );
   } else {
-
-
-    return props.config?.data
+    return localData.value;
   }
-})
+});
+const appendOptions = (list) => {
+    console.log("BURASI ÇALIŞTI",list);
+
+    // props.config.data = list;
+    localData.value = [ ...list];
+    instance.update();
+
+}
 const checkIfChecked = computed(() => {
   return (rowValue) => {
     return rowValue == element.value;
@@ -225,13 +244,13 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 })
 const insertData = (e) => {
-     props.config?.data.push(e);
-  chooseValue(e);
-  instance.update();
-
+    props.config?.data.push(e);
+    chooseValue(e);
+    instance.update();
 }
 defineExpose({
   insertData,
+  appendOptions
 })
 </script>
 

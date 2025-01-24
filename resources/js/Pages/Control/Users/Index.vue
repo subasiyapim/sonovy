@@ -1,7 +1,11 @@
 <template>
-  <AdminLayout :showDatePicker="false" title="Kulanıcılar" >
+  <AdminLayout :showDatePicker="false"
+  :filters="appTableConfig.filters"
+  title="Kulanıcılar" >
+
     <AppTable  ref="usersTable" :showAddButton="true"
             :buttonLabel="'Yeni Kullanıcı Ekle'"
+            :config="appTableConfig"
              @addNewClicked="openAddDialog"
             :renderSubWhen="renderSubWhen"
               v-model="usePage().props.users" :slug="route('control.user-management.users.index')">
@@ -42,12 +46,14 @@
                 </template>
             </template>
         </AppTableColumn>
-        <AppTableColumn label="Realizasyon/Hakediş" sortable="type">
+
+        <AppTableColumn label="Hakediş/Realizasyon" sortable="type">
             <template #default="scope">
 
                 <div class="flex items-center gap-1 label-sm">
-                    <span class="c-strong-950">%{{scope.row.real_commission_rate}} /</span>
-                    <span class="c-soft-400">%{{scope.row.commission_rate}}</span>
+                    <span class="c-soft-400">%{{scope.row.commission_rate}}/</span>
+                    <span class="c-strong-950">%{{scope.row.real_commission_rate}}</span>
+
                 </div>
             </template>
         </AppTableColumn>
@@ -56,11 +62,11 @@
             <span class="label-sm c-strong-950"> {{scope.row.created_at}}</span>
             </template>
         </AppTableColumn>
-        <AppTableColumn label="Durum" sortable="type">
+        <AppTableColumn label="Durum" sortable="type" width="80">
             <template #default="scope">
-                <div class="flex items-center gap-2 border border-soft-200 rounded-lg px-3 py-1">
-                    <span class="label-xs c-strong-950">•</span>
-                    <span class="label-xs c-sub-600">{{scope.row.status_text}}</span>
+                <div class="flex items-center gap-2  rounded-lg px-3 py-1" :class="scope.row.status == 0 ? 'bg-red-500 ' :' border border-soft-200'">
+                    <span class="label-xs " :class="scope.row.status == 0 ? 'text-white' :'c-strong-950'">•</span>
+                    <span class="label-xs " :class="scope.row.status == 0 ? 'text-white' :'c-sub-600'">{{scope.row.status_text}}</span>
                 </div>
             </template>
         </AppTableColumn>
@@ -70,18 +76,20 @@
                 <TrashIcon color="var(--sub-600)"/>
                 </IconButton>
                 <IconButton @click="editRow(scope.row)">
-                <EditIcon color="var(--sub-600)"/>
+
+                    <EditIcon color="var(--sub-600)"/>
+
                 </IconButton>
             </template>
         </AppTableColumn>
     </AppTable>
   </AdminLayout>
-  <UserModal v-model="isUserModalOn" v-if="isUserModalOn"></UserModal>
+  <UserModal :user="choosenUser" @done="onDone" @update="onUpdate" v-model="isUserModalOn" v-if="isUserModalOn"></UserModal>
 
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref,computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import NestedTable from '@/Components/Table/NestedTable.vue';
@@ -107,18 +115,38 @@ import {
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
 import moment from 'moment';
+import  'moment/dist/locale/tr';
+moment.locale('tr');
 const usersTable = ref();
 const defaultStore = useDefaultStore();
 const isUserModalOn = ref(false);
+
 const props = defineProps({
   statistics: Object,
+  filters: {
+    type: Array,
+  }
 })
+
+const choosenUser = ref(null)
+const appTableConfig = computed(() => {
+  return {
+    filters: props.filters,
+  }
+})
+
 const openAddDialog = () => {
     isUserModalOn.value = true;
 }
-const deleteProduct = (row) => {
+const deleteRow = (row) => {
   usersTable.value.removeRowDataFromRemote(row);
 }
+const editRow = (row) => {
+    choosenUser.value = row;
+    isUserModalOn.value = true;
+}
+
+
 
 const data = ref([
   {
@@ -312,6 +340,14 @@ const barSeries = ref([
     data: [],
   },
 ]);
+
+
+const onUpdate = (e) => {
+    usersTable.value.editRow(e);
+}
+const onDone = (e) => {
+    usersTable.value.addRow(e);
+}
 
 </script>
 

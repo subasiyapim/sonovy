@@ -1,6 +1,6 @@
 <template>
 
-  <BaseDialog v-model="isDialogOn" width="740px" height="min-content" align="center" title="Rapor Oluştur"
+  <BaseDialog v-model="isDialogOn" width="824px" height="min-content" align="center" title="Rapor Oluştur"
               description="Adım adım ihtiyacınıza göre rapor oluşturabilirsiniz.">
     <template #icon>
       <BankLineIcon color="var(--dark-green-950)"/>
@@ -28,7 +28,7 @@
       <RegularButton @click="isDialogOn = false" class="flex-1">
         {{ __('control.general.cancel') }}
       </RegularButton>
-      <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
+      <PrimaryButton :loading="adding" @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
         <template v-if="currentTab <3">Devam Et</template>
         <template v-else>Raporu Olluştur</template>
         <template #suffix>
@@ -63,6 +63,8 @@ const props = defineProps({
     default: false,
   },
 })
+
+
 const crudStore = useCrudStore();
 const currentTab = ref(0);
 const adding = ref(false)
@@ -93,6 +95,7 @@ const reporttypes = {
   9: "multiple_products",
   10: "multiple_platforms",
   11: "multiple_countries",
+  12: "labels",
 }
 
 const onSubmit = async (e) => {
@@ -100,21 +103,30 @@ const onSubmit = async (e) => {
     currentTab.value++;
   } else {
 
-
+if(adding.value){
+        return;
+    }
+    if(!form.value.date ){
+         toast.error("lütfen tarih giriniz");
+         return;
+    }
+    adding.value = true;
     try {
       await crudStore.post(route('control.finance.reports.store'), {
-        start_date: form.value.date[0],
-        end_date: form.value.date[1],
+        start_date: (form.value.date[0].month+1)+"-"+form.value.date[0].year,
+        end_date: (form.value.date[1].month+1)+"-"+form.value.date[1].year,
         report_type: form.value.type == 1 ? reporttypes[form.value.report_content_type] : reporttypes[form.value.report_content_type],
 
         ids: form.value.choosenValues,
       })
       toast.success("işlem başarılı");
       location.reload();
+          adding.value = false;
     } catch (error) {
       console.log("ERROR", error);
 
       toast.error(error.response);
+       adding.value = false;
     }
   }
   //TODO SUBMİT REPORT DATA

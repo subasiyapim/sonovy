@@ -11,11 +11,12 @@
       <FormElement label-width="190px"
                    :required="true"
                    :error="form.errors.image"
+
                    v-model="image"
                    @onImageDelete="onImageDelete"
                    :label="__('control.artist.fields.image')"
                    type="upload"
-                   :config="{label:__('control.artist.fields.image_desc'),note:'Min 400x400px, PNG or JPEG',image:artist?.image?.thumb}"/>
+                   :config="{label:__('control.artist.fields.image_desc'),note:'Min 400x400px, PNG or JPEG',image:artist?.image?.thumb,disableActions:true}"/>
 
       <FormElement label-width="190px"
                    :required="true"

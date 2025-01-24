@@ -10,7 +10,7 @@ use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserShowResource;
 use App\Models\BankAccount;
-use App\Models\Country;
+use App\Models\System\Country;
 use App\Models\Label;
 use App\Models\Product;
 use App\Models\Role;
@@ -47,17 +47,27 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             return redirect()
-                ->route('control.catalog.products.index')
+                ->route('control.user-management.users.index')
                 ->withErrors($validator)
                 ->withInput();
         }
 
         $validated = $validator->validated();
 
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        $languages = getDataFromInputFormat(CountryServices::get(), 'id', 'language', 'emoji');
 
         $user = Auth::user();
         $hasAdmin = $user->roles()->pluck('code')->contains('admin');
-        $query = User::with('roles', 'parent', 'children', 'country', 'district', 'city');
+        $query = User::with('roles', 'parent', 'children', 'country', 'district', 'city')
+            ->when($request->input('status'), function ($query) use ($request) {
+                $query->where('status', $request->input('status'));
+            })
+            ->when($request->input('role'), function ($query) use ($request) {
+                $query->whereHas('roles', function ($query) use ($request) {
+                    $query->where('id', $request->input('role'));
+                });
+            });
 
         $children = $request->get('children');
 
@@ -73,12 +83,28 @@ class UserController extends Controller
             'active_users' => UserServices::statistics('active_users', $validated['period'] ?? 'month'),
         ];
 
+        $filters = [
+            [
+                "title" => "Durum",
+                "param" => "status",
+                "options" => getDataFromInputFormat(UserStatusEnum::getTitles(), 'id', 'name', null, true)
+            ],
+            [
+                "title" => "Rol",
+                "param" => "role",
+                "options" => RoleService::getRolesFromInputFormat()
+            ]
+        ];
+
         return inertia('Control/Users/Index', [
             'users' => UserResource::collection($users)->resource,
             'roles' => RoleService::getRolesFromInputFormat(),
             'statuses' => UserStatusEnum::getTitles(),
             'statistics' => $statistics,
-            'countryCodes' => $countryCodes
+            'countryCodes' => $countryCodes,
+            'countries' => $countries,
+            'languages' => $languages,
+            'filters' => $filters
         ]);
     }
 
@@ -113,13 +139,19 @@ class UserController extends Controller
 
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
+        $user->refresh();
+        $user->load('roles', 'country', 'city', 'district', 'parent', 'children');
 
         return back()
             ->with([
-                'notification' => __('control.notification_created', ['model' => __('control.user.title_singular')])
+                'notification' => [
+                    'user' => new UserResource($user),
+                    'message' => __('control.notification_created', ['model' => __('control.user.title_singular')])
+
+                ]
             ]);
     }
 
@@ -150,8 +182,9 @@ class UserController extends Controller
         ];
 
         $tab = request()->has('slug') ? request()->input('slug') : 'profile';
-
+        // dd($user->parent_id);
         $response = new UserShowResource($user, $tab);
+
         $countryCodes = CountryServices::getCountryPhoneCodes();
         //dd($response->resolve());
         return inertia(
@@ -186,17 +219,17 @@ class UserController extends Controller
 
         $user->load([
             'roles',
+            'parent',
+            'children',
             'country',
-            'state',
+            'district',
             'city',
-            'bankAccounts.country',
-            'site',
-            'competency'
+
         ]);
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+".$country->phone_code.$user->phone;
+            $user->phone = "+" . $country->phone_code . $user->phone;
         }
 
         return inertia(
@@ -219,10 +252,16 @@ class UserController extends Controller
         }
 
         $user->update($data);
+        $user->refresh();
+        $user->load('roles', 'country', 'city', 'district', 'parent', 'children');
 
         return back()
             ->with([
-                'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+
+                'notification' => [
+                    'user' => new UserResource($user),
+                    "message" => __('control.notification_updated', ['model' => __('control.user.title_singular')])
+                ]
             ]);
     }
 
@@ -233,8 +272,15 @@ class UserController extends Controller
     {
         abort_if(Gate::denies('user_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $user->delete();
+        //Eğer admin ise silinemez
+        if ($user->roles()->pluck('code')->contains('admin')) {
+            return back()->withErrors(['notification' => 'Admin kullanıcısı silinemez.']);
+        }
 
+        //Eğer alt kullanıcıları varsa tüm alt kullanıcıların parent_id değeri null yapılır
+        $user->children()->update(['parent_id' => null]);
+
+        $user->delete();
 
         return back()
             ->with([
@@ -266,7 +312,7 @@ class UserController extends Controller
             $flags = $user->flags ?? [];
 
             $status = $user->status == UserStatusEnum::ACTIVE
-                ? UserStatusEnum::PENDING_APPROVAL
+                ? UserStatusEnum::PASSIVE
                 : UserStatusEnum::ACTIVE;
 
             $flag = [
@@ -291,7 +337,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 

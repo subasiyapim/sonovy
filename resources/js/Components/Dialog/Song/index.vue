@@ -140,19 +140,19 @@
 
 
       <FormElement :required="!form.is_instrumental" v-for="(_,i) in form.composers"
-                   :error="form.errors[`composers.${i}`]" :disabled="form.is_instrumental" label-width="190px"
+                   :error="form.errors[`composers.${i}`]"  label-width="190px"
                    v-model="form.composers[i]" :label="'Besteci'"
                    :placeholder="'Besteci giriniz'"
       >
         <template #description>
           <div class="flex justify-between items-center">
-            <button v-if="i == form.composers.length-1" :disabled="form.is_instrumental"
+            <button v-if="i == form.composers.length-1"
                     @click="form.composers.push('')"
                     class="flex items-center gap-2">
               <AddIcon color="var(--blue-500)"/>
               <span class="c-blue-500 label-xs">Yeni Ekle</span>
             </button>
-            <button :disabled="form.is_instrumental" @click="form.composers.splice(i,1)" class="ms-auto mt-1">
+            <button  @click="form.composers.splice(i,1)" class="ms-auto mt-1">
               <span class="c-error-500 label-xs">Temizle</span>
             </button>
           </div>
@@ -164,7 +164,6 @@
                    :label="__('control.song.fields.lyrics')" :placeholder="__('control.song.fields.lyrics_placeholder')"
                    type="textarea">
       </FormElement>
-
       <FormElement label-width="190px"
                    :label="__('control.song.fields.preview_start')" type="custom">
         <AppSliderInput @play="onPlaySong" :config="sliderConfig" v-model="form.preview_start">
@@ -401,7 +400,7 @@ const form = useForm({
   lyrics: props.song.lyrics,
   musicians: [{}],
   participants: [{}],
-  preview_start: props.song.preview_start ?? (JSON.parse(usePage().props.site_settings.song_preview_start_end_time ?? '[0,15]'))
+  preview_start: props.song.preview_start != null ? [props.song.preview_start?.start,props.song.preview_start?.start+15] :  (JSON.parse(usePage().props.site_settings.song_preview_start_end_time ?? '[0,15]'))
 });
 
 const mainArtistSelectConfig = computed(() => {

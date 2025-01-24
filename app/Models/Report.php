@@ -20,24 +20,23 @@ class Report extends Model implements HasMedia
     protected $fillable = [
         'is_auto_report',
         'period',
+        'name',
         'amount',
         'monthly_amount',
         'user_id',
         'status',
+        'parent_id',
+        'file_path'
     ];
 
     protected array $filterable = [
         'period',
-        'amount',
-        'user_id',
-        'status',
+        'name',
     ];
 
     protected array $orderable = [
         'period',
-        'amount',
-        'user_id',
-        'status',
+        'name'
     ];
 
     protected $casts = [
@@ -48,6 +47,11 @@ class Report extends Model implements HasMedia
     ];
 
     protected $appends = ['files'];
+
+    public function child()
+    {
+        return $this->hasMany(Report::class, 'parent_id', 'id');
+    }
 
     public function registerMediaCollections(): void
     {

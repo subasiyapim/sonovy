@@ -33,11 +33,11 @@ const props = defineProps({
             <p class="c-strong-950 label-medium w-6 text-center">-</p>
             <p class="c-strong-950 label-medium w-24">{{usePage().props.user.tab.pending_out_payments}}</p>
         </div>
-         <div class="flex items-center justify-between w-1/2 mb-2">
+         <!-- <div class="flex items-center justify-between w-1/2 mb-2">
             <p class="c-strong-950 label-medium w-36 !text-start">{{ __('control.user.pending_invoices') }}</p>
             <p class="c-strong-950 label-medium w-6 text-center">-</p>
             <p class="c-strong-950 label-medium w-24">{{usePage().props.user.tab.pending_invoices}}</p>
-        </div>
+        </div> -->
         <hr>
          <div class="flex items-center justify-between w-1/2 mt-2">
             <p class="c-strong-950 label-medium w-36 !text-start">{{ __('control.user.confirmed_total') }}</p>

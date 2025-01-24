@@ -1,10 +1,15 @@
 <script setup>
 import {computed} from 'vue';
 import moment from 'moment';
+import  'moment/dist/locale/tr';
+moment.locale('tr');
+
+import { usePage} from '@inertiajs/vue3';
 
 
 const props = defineProps({
-    modelValue:{}
+    modelValue:{},
+    formattedDates:{},
 })
 
 const emits = defineEmits(['update:modelValue']);
@@ -38,6 +43,7 @@ const reportContentMap = {
   9: 'Albüme Göre',
   10: 'Mağazaya Göre',
   11: 'Ülkeye Göre',
+  12: 'Label Seç',
 };
 </script>
 
@@ -52,10 +58,14 @@ const reportContentMap = {
                 <p class="paragraph-sm c-sub-600">Rapor Tipi</p>
                 <p class="label-sm c-strong-950">{{reportContentMap[element.report_content_type]}}</p>
             </div>
+
             <div v-if="element.type == 1 && element.report_content_type != 1" class="flex items-center justify-between gap-2 w-full">
                 <p class="paragraph-sm c-sub-600">
                     <template v-if="element.report_content_type == 2">
                         Sanatçılar
+                    </template>
+                    <template v-if="element.report_content_type == 12">
+                        Plak Şirketleri
                     </template>
                     <template v-if="element.report_content_type == 3">
                         Albümler
@@ -71,11 +81,29 @@ const reportContentMap = {
                     </template>
 
                 </p>
+                <!-- {{usePage().props.labels}} -->
                 <p class="label-sm c-strong-950">
                     <template v-for="(e,index) in element.choosenValues">
-                        {{e.label}} <template v-if="index != element.choosenValues.length - 1">, </template>
-                    </template>
+                        <template v-if="element.report_content_type == 12">
+                            {{usePage().props.labels.find((el) => el.id == e)?.name}} <template v-if="index != element.choosenValues.length - 1">, </template>
+                        </template>
+                        <template v-if="element.report_content_type == 2">
+                            {{usePage().props.artists.find((el) => el.id == e)?.name}} <template v-if="index != element.choosenValues.length - 1">, </template>
+                        </template>
+                        <template v-if="element.report_content_type == 3">
+                            {{usePage().props.products.find((el) => el.id == e)?.album_name}} <template v-if="index != element.choosenValues.length - 1">, </template>
+                        </template>
+                        <template v-if="element.report_content_type == 4">
+                            {{usePage().props.songs.find((el) => el.id == e)?.name}} <template v-if="index != element.choosenValues.length - 1">, </template>
+                        </template>
+                        <template v-if="element.report_content_type == 5">
+                            {{usePage().props.platforms.find((el) => el.id == e)?.name}} <template v-if="index != element.choosenValues.length - 1">, </template>
+                        </template>
 
+                    </template>
+                    <template v-if="element.report_content_type == 6">
+                            {{element.choosenValues.length}} adet ülke seçildi
+                    </template>
 
                 </p>
             </div>

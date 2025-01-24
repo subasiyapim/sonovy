@@ -88,6 +88,9 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
 
                     $this->song = Song::with('participants', 'products.label.user')
                         ->whereNotNull('isrc')
+                        ->whereHas('products', function($query) use ($earningReport) {
+                            $query->where('upc_code', $earningReport->upc_code);
+                        })
                         ->where('isrc', $earningReport->isrc_code)
                         ->first();
 

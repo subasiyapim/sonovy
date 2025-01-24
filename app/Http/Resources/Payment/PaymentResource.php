@@ -19,16 +19,18 @@ class PaymentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'date' => $this->created_at->format('d.m.Y'),
-            'process_type' => $this->process_type,
-            'description' => $this->getDescription(),
-            'amount' => Number::currency($this->amount, 'USD', app()->getLocale()),
-            'balance' => $this->user->balance,
-            'status_text' => PaymentStatusEnum::from($this->status->value)->title(),
+            'date' => $this->created_at ?? null,
+            'process_type' => $this->process_type ?? null,
+            'description' => $this->getDescription() ?? null,
+            'amount' => isset($this->amount) ? Number::currency($this->amount, 'USD', app()->getLocale()) : null,
+            'balance' => $this->user->balance ?? null,
+            'status_text' => isset($this->status) ? PaymentStatusEnum::from($this->status->value)->title() : null,
+            'status' => $this->status ?? null,
             'status' => $this->status,
-            'planned_payment_date' => Carbon::parse($this->created_at)->addDays(7)->format('d.m.Y')
+            'planned_payment_date' => isset($this->created_at) ? $this->created_at->addDays(7)->format('d.m.Y') : null,
         ];
     }
+
 
     /**
      * Generate a human-readable description based on the payment status.
@@ -37,6 +39,9 @@ class PaymentResource extends JsonResource
      */
     private function getDescription(): string
     {
+        if (!isset($this->status)) { // Null veya undefined durumda default değer döndür
+            return 'Durum bilgisi mevcut değil.';
+        }
         return match ($this->status) {
             PaymentStatusEnum::PENDING => 'Para çekme talebi',
             PaymentStatusEnum::PROCESSING => 'Para çekme işlemi devam ediyor',
@@ -44,5 +49,6 @@ class PaymentResource extends JsonResource
             PaymentStatusEnum::FAILED => 'Para çekme işlemi başarısız',
             PaymentStatusEnum::REJECTED => 'Para çekme işlemi reddedildi',
         };
+
     }
 }

@@ -3,7 +3,17 @@
   <AdminLayout :showDatePicker="false" :title="__('control.song.show_header')"
                :parentTitle="__('control.song.title_singular')"
                :hasPadding="false">
-
+    <template #breadcrumb>
+        <span class="label-xs c-soft-400">Katalog</span>
+        <span class="label-xs c-soft-400">•</span>
+        <span class="label-xs c-soft-400 cursor-pointer" @click="router.visit(route('control.catalog.songs.index'))">Şarkılar</span>
+        <span class="label-xs c-soft-400">•</span>
+        <span class="label-xs c-soft-400">
+            {{song.type == 1 ? 'Ses Yayın' :(song.type == 2 ? 'Müzik Video' : (song.type == 4 ? 'Apple Video' : 'Zil Sesi') ) }}
+        </span>
+        <span class="label-xs c-soft-400">•</span>
+        <span class="label-xs c-soft-400">{{ song.name }}</span>
+    </template>
     <div class="bg-dark-green-800  p-5 flex  relative">
       <div
           class=" rounded-lg w-60 h-60 bg-blue-300 left-8 top-8 flex items-center justify-center overflow-hidden">
@@ -32,7 +42,7 @@
 
       </div>
       <div class="flex items-center gap-2 absolute top-5 right-5">
-        <PrimaryButton @click="remove">
+        <!-- <PrimaryButton @click="remove">
           <template #icon>
             <TrashIcon color="var(--dark-green-500)"/>
           </template>
@@ -41,7 +51,7 @@
           <template #icon>
             <EditIcon color="var(--dark-green-500)"/>
           </template>
-        </PrimaryButton>
+        </PrimaryButton> -->
       </div>
     </div>
 

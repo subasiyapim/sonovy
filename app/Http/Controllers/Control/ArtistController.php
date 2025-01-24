@@ -184,7 +184,6 @@ class ArtistController extends Controller
 
         $artist->artistBranches()->syncWithoutDetaching($request->validated()['artist_branches'], []);
 
-
         if ($request->hasFile('image')) {
             MediaServices::upload($artist, $request->file('image'), 'artists', 'artists');
         } elseif ($artist->image == null && $artist->platforms && $artist->platforms->contains('code', 'spotify')) {

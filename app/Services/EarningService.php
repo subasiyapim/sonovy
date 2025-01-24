@@ -3,25 +3,21 @@
 namespace App\Services;
 
 use App\Enums\ProductTypeEnum;
-use App\Enums\PaymentProcessTypeEnum;
-use App\Enums\PaymentStatusEnum;
 use App\Exports\FakerEarningReport;
-use App\Imports\EarningImport;
 use App\Models\EarningReport;
 use App\Models\Product;
 use App\Models\System\Country;
+use App\Models\Platform;
 use App\Models\Earning;
 use App\Models\EarningReportFile;
-use App\Models\Payment;
-use App\Models\Platform;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use function Psy\debug;
 
 class EarningService
 {
@@ -39,7 +35,7 @@ class EarningService
 
     protected static function hasAdmin()
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         if (!$user) {
             return false;
@@ -537,81 +533,147 @@ class EarningService
         return $earnings;
     }
 
-    public static function createDemoEarnings()
+    private const STREAMING_TYPES = ['Freemium', 'Premium', 'Ad-Supported', ''];
+    private const PLATFORMS = ['Spotify', 'Apple Music', 'YouTube Music', 'Amazon Music', 'Facebook / Instagram', 'TikTok', 'Deezer'];
+    private const SALES_TYPES = ['Stream', 'PLATFORM PROMOTION', 'Creation', 'Download'];
+    private const RELEASE_TYPES = ['Music Release', 'Ringtone', 'Video', 'User Generated Content'];
+
+    public static function createDemoEarnings($userId)
     {
         $faker = \Faker\Factory::create();
         $data = [];
+        $totalProcessed = 0;
+        $errors = 0;
 
-        for ($i = 0; $i < 500; $i++) {
-            $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', 'now'))->format('Y-m-d');
-            $report_date = Carbon::parse($faker->dateTimeBetween($sales_date, 'now'))->format('Y-m-d');
+        DB::beginTransaction();
+        try {
+            // CSV dosyasını oku
+            $csvPath = public_path('assets/sample-earnings-tr.csv');
+            $csvFile = fopen($csvPath, 'r');
+            
+            // Header'ı atla
+            fgetcsv($csvFile, 0, ';', '"', '\\');
 
-            $product = Product::with('songs', 'artists', 'label', 'downloadPlatforms')
+            // Mevcut ürünleri ve şarkıları al
+            $products = Product::with(['songs', 'artists', 'label', 'downloadPlatforms'])
                 ->whereHas('songs')
                 ->whereHas('artists')
                 ->whereHas('label')
                 ->whereHas('downloadPlatforms')
-                ->inRandomOrder()
-                ->first();
+                ->get();
 
-            if ($product) {
-                $song = $product->songs->first();
-                $earning = number_format($faker->randomFloat(2, 0, 1000), 2, '.', '');
-                $sales_type = $faker->randomElement(['Stream', 'PLATFORM PROMOTION', 'Creation', 'Download']);
-                $label = $product->label;
-                $artist = $product->artists->first();
-                $platform = $product->downloadPlatforms->first();
-                $country = Country::inRandomOrder()->first();
-
-                $row = [
-                    'report_date' => $report_date,
-                    'sales_date' => $sales_date,
-                    'platform' => optional($platform)->name,
-                    'platform_id' => optional($platform)->id,
-                    'country' => optional($country)->name,
-                    'country_id' => optional($country)->id,
-                    'label_name' => optional($label)->name,
-                    'label_id' => optional($label)->id,
-                    'artist_name' => optional($artist)->name,
-                    'artist_id' => optional($artist)->id,
-                    'release_name' => $product->name,
-                    'song_name' => optional($song)->name,
-                    'song_id' => optional($song)->id,
-                    'upc_code' => $product->upc_code ?? '',
-                    'isrc_code' => optional($song)->isrc,
-                    'catalog_number' => $product->catalog_number,
-                    'release_type' => 'Yayın',
-                    'sales_type' => $sales_type,
-                    'quantity' => $faker->numberBetween(1, 1000),
-                    'currency' => 'EUR',
-                    'unit_price' => $faker->randomFloat(2, 0, 10),
-                    'earning' => $sales_type == 'PLATFORM PROMOTION' ? -abs($earning) : $earning,
-                ];
-
-                $data[] = $row;
+            $songs = collect();
+            foreach ($products as $product) {
+                $songs = $songs->merge($product->songs);
             }
+
+            if ($products->isEmpty()) {
+                throw new \Exception('Demo kazanç oluşturmak için uygun ürün bulunamadı.');
+            }
+
+            // CSV'den verileri oku
+            while (($row = fgetcsv($csvFile, 0, ';')) !== false) {
+                try {
+                    $randomProduct = $products->random();
+                    $randomSong = $songs->random();
+                    
+                    $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', now()));
+                    
+                    $data[] = [
+                        'user_id' => $userId,
+                        'report_date' => Carbon::parse($faker->dateTimeBetween($sales_date, now()))->format('Y-m-d'),
+                        'reporting_month' => $sales_date->format('Y/m/01'),
+                        'sales_date' => $sales_date->format('Y-m-d'),
+                        'sales_month' => $sales_date->format('Y/m/01'),
+                        'platform' => $row[2] ?? '',
+                        'platform_id' => Platform::where('name', $row[2])->first()?->id,
+                        'country' => $row[3] ?? '',
+                        'region' => $faker->randomElement(['Europe', 'North America', 'South America', 'Asia', 'Africa', 'Oceania']),
+                        'country_id' => Country::where('name', $row[3])->first()?->id,
+                        'label_name' => $row[4] ?? '',
+                        'label_id' => $randomProduct->label->id,
+                        'artist_name' => $row[5] ?? '',
+                        'artist_id' => $randomProduct->artists->random()->id,
+                        'release_name' => $row[6] ?? '',
+                        'song_name' => $row[7] ?? '',
+                        'song_id' => $randomSong->id,
+                        'upc_code' => $randomProduct->upc_code,
+                        'isrc_code' => $randomSong->isrc,
+                        'catalog_number' => $row[10] ?? '',
+                        'streaming_type' => $row[11] ?? '',
+                        'streaming_subscription_type' => $row[11] ?? '',
+                        'release_type' => $row[12] ?? '',
+                        'sales_type' => $row[13] ?? '',
+                        'quantity' => intval($row[14] ?? 0),
+                        'currency' => $row[15] ?? 'EUR',
+                        'client_payment_currency' => $row[15] ?? 'EUR',
+                        'unit_price' => str_replace(',', '.', $row[16] ?? 0),
+                        'mechanical_fee' => str_replace(',', '.', $row[17] ?? 0),
+                        'gross_revenue' => str_replace(',', '.', $row[18] ?? 0),
+                        'client_share_rate' => str_replace(',', '.', $row[19] ?? 0),
+                        'earning' => str_replace(',', '.', $row[20] ?? 0),
+                    ];
+
+                    $totalProcessed++;
+                } catch (\Exception $e) {
+                    $errors++;
+                    Log::warning('Demo kazanç kaydı oluşturma hatası', [
+                        'error' => $e->getMessage(),
+                        'row' => $row
+                    ]);
+                    continue;
+                }
+            }
+
+            fclose($csvFile);
+
+            if (empty($data)) {
+                throw new \Exception('Demo kazanç verileri oluşturulamadı.');
+            }
+
+            $file = EarningReportFile::create([
+                'user_id' => $userId,
+                'name' => 'Demo Earning Report ' . Carbon::now()->format('Y-m-d'),
+            ]);
+
+            // Chunk'lar halinde kaydet
+            foreach (array_chunk($data, 100) as $chunk) {
+                self::createEarning($chunk, $file->id);
+            }
+
+            DB::commit();
+
+            // Excel dosyası oluştur
+            $exportResult = Excel::store(
+                new FakerEarningReport($data),
+                'earnings-'.time().'.csv',
+                'tenant_'.tenant('domain').'_earning_reports'
+            );
+
+            Log::info('Demo kazanç verileri oluşturuldu', [
+                'total_records' => count($data),
+                'total_processed' => $totalProcessed,
+                'errors' => $errors,
+                'export_status' => $exportResult
+            ]);
+
+            return $exportResult;
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Demo kazanç oluşturma hatası', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
-
-        $file = EarningReportFile::create([
-            'user_id' => Auth::id(),
-            'name' => 'Demo Earning Report '.Carbon::now()->format('Y-m-d'),
-        ]);
-
-        if ($file) {
-            self::createEarning($data, $file->id);
-        }
-
-        return Excel::store(
-            new FakerEarningReport($data),
-            'earnings-'.time().'.csv',
-            'tenant_'.tenant('domain').'_earning_reports'
-        );
     }
 
     protected static function createEarning($data, $file_id)
     {
         foreach ($data as $row) {
-            EarningReport::updateOrCreate(
+            // Önce EarningReport oluştur
+            $report = EarningReport::updateOrCreate(
                 [
                     'report_date' => $row['report_date'],
                     'sales_date' => $row['sales_date'],
@@ -627,19 +689,65 @@ class EarningService
                     'song_id' => $row['song_id'],
                     'earning_report_file_id' => $file_id,
                     'country' => $row['country'],
+                    'region' => $row['region'] ?? null,
                     'label_name' => $row['label_name'],
                     'artist_name' => $row['artist_name'],
                     'release_name' => $row['release_name'],
                     'song_name' => $row['song_name'],
                     'upc_code' => $row['upc_code'],
                     'catalog_number' => $row['catalog_number'],
+                    'streaming_type' => $row['streaming_type'],
+                    'streaming_subscription_type' => $row['streaming_subscription_type'],
                     'release_type' => $row['release_type'],
                     'sales_type' => $row['sales_type'],
                     'quantity' => $row['quantity'],
                     'currency' => $row['currency'],
+                    'client_payment_currency' => $row['client_payment_currency'],
                     'unit_price' => isset($row['unit_price']) ? str_replace(',', '.', $row['unit_price']) : null,
+                    'mechanical_fee' => isset($row['mechanical_fee']) ? str_replace(',', '.', $row['mechanical_fee']) : null,
+                    'gross_revenue' => isset($row['gross_revenue']) ? str_replace(',', '.', $row['gross_revenue']) : null,
+                    'client_share_rate' => isset($row['client_share_rate']) ? str_replace(',', '.', $row['client_share_rate']) : null,
+                    'reporting_month' => $row['reporting_month'],
+                    'sales_month' => $row['sales_month'],
                 ]
             );
+
+            // Sonra Earning kaydı oluştur
+            Earning::create([
+                'earning_report_id' => $report->id,
+                'user_id' => $row['user_id'],
+                'report_date' => $row['report_date'],
+                'reporting_month' => $row['reporting_month'],
+                'sales_date' => $row['sales_date'],
+                'sales_month' => $row['sales_month'],
+                'platform' => $row['platform'],
+                'platform_id' => $row['platform_id'],
+                'country' => $row['country'],
+                'region' => $row['region'] ?? null,
+                'country_id' => $row['country_id'],
+                'label_name' => $row['label_name'],
+                'label_id' => $row['label_id'],
+                'artist_name' => $row['artist_name'],
+                'artist_id' => $row['artist_id'],
+                'release_name' => $row['release_name'],
+                'song_name' => $row['song_name'],
+                'song_id' => $row['song_id'],
+                'upc_code' => $row['upc_code'],
+                'isrc_code' => $row['isrc_code'],
+                'catalog_number' => $row['catalog_number'],
+                'streaming_type' => $row['streaming_type'],
+                'streaming_subscription_type' => $row['streaming_subscription_type'],
+                'release_type' => $row['release_type'],
+                'sales_type' => $row['sales_type'],
+                'quantity' => $row['quantity'],
+                'currency' => $row['currency'],
+                'client_payment_currency' => $row['client_payment_currency'],
+                'unit_price' => $row['unit_price'],
+                'mechanical_fee' => $row['mechanical_fee'],
+                'gross_revenue' => $row['gross_revenue'],
+                'client_share_rate' => $row['client_share_rate'],
+                'earning' => $row['earning'],
+            ]);
         }
     }
 

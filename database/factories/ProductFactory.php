@@ -27,19 +27,19 @@ class ProductFactory extends Factory
         return [
             'type' => $this->faker->randomElement([1, 2, 3]),
             'album_name' => $this->faker->words(3, true),
-            'version' => $this->faker->name,
+            'version' => $this->faker->optional()->sentence(2),
             'mixed_album' => $this->faker->boolean(),
-            'genre_id' => Genre::inRandomOrder()->first()->id,
-            'sub_genre_id' => Genre::inRandomOrder()->first()->id,
+            'genre_id' => (new Genre())->newQuery()->inRandomOrder()->first()?->id,
+            'sub_genre_id' => (new Genre())->newQuery()->inRandomOrder()->first()?->id,
             'format_id' => $this->faker->randomElement([1, 2, 3]),
-            'label_id' => Label::inRandomOrder()->first()->id,
-            'p_line' => $this->faker->word,
-            'c_line' => $this->faker->word,
-            'upc_code' => $this->faker->randomNumber(1),
-            'catalog_number' => $this->faker->randomNumber(8),
-            'language_id' => Country::inRandomOrder()->whereNotNull('language')->first()->id,
+            'label_id' => (new Label())->newQuery()->inRandomOrder()->first()?->id,
+            'p_line' => '℗ ' . $this->faker->year . ' ' . $this->faker->company,
+            'c_line' => '© ' . $this->faker->year . ' ' . $this->faker->company,
+            'upc_code' => $this->faker->numerify('#############'),
+            'catalog_number' => strtoupper($this->faker->bothify('??###??##')),
+            'language_id' => (new Country())->newQuery()->inRandomOrder()->whereNotNull('language')->first()?->id,
             'main_price' => $this->faker->randomFloat(2, 0, 100),
-            'created_by' => User::inRandomOrder()->first()->id,
+            'created_by' => 1,
             'production_year' => $this->faker->year,
             'previously_released' => $this->faker->boolean(),
             'previous_release_date' => $this->faker->date(),
@@ -49,10 +49,8 @@ class ProductFactory extends Factory
             'video_type' => $this->faker->numberBetween(1, 3),
             'description' => $this->faker->text,
             'is_for_kids' => $this->faker->boolean(),
-            'grid_code' => $this->faker->word,
+            'grid_code' => $this->faker->bothify('A1-??##-##-#####'),
             'physical_release_date' => $this->faker->date()
         ];
-
-
     }
 }

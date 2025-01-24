@@ -13,6 +13,7 @@ export const useCrudStore = defineStore('crud', () => {
               ...headers
             }
         });
+
         return response.data;
     }
     const put = async(route:string,payload:object) => {

@@ -20,12 +20,15 @@
                     </RegularButton>
                 </div>
                  <div v-else class="flex items-center gap-2">
-                    <RegularButton type="error"  @click="removeImage">
-                        Sil
-                    </RegularButton>
-                    <RegularButton @click="triggerFileInput">
-                        Değiştir
-                    </RegularButton>
+                    <template v-if="config?.disableActions != true">
+                         <RegularButton type="error"  @click="removeImage">
+                            Sil
+                        </RegularButton>
+                        <RegularButton @click="triggerFileInput">
+                            Değiştir
+                        </RegularButton>
+                    </template>
+
                 </div>
 
         </div>

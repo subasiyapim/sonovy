@@ -3,6 +3,8 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import NestedTable from '@/Components/Table/NestedTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {computed,ref} from 'vue';
+import {UserModal} from '@/Components/Dialog';
+
 import {useDefaultStore} from "@/Stores/default";
 const props = defineProps({
     modelValue:{},
@@ -15,12 +17,27 @@ const emits = defineEmits(['update:modelValue']);
 const nestedTable = ref();
 const tableData = computed({
     get:() => props.modelValue,
-  set: (value) => emits('update:modelValue', value)
+    set: (value) => emits('update:modelValue', value)
 });
-
+const isUserModalOn  =ref(false)
+const choosenUser = ref();
 const renderSubWhen = (row) => {
 
     return row.children?.length > 0;
+};
+
+
+const deleteRow = (row) => {
+  nestedTable.value.removeRowDataFromRemote(row);
+}
+const editRow = (row) => {
+    console.log("RWOOOO",row);
+
+    choosenUser.value = row;
+    isUserModalOn.value = true;
+};
+const onUpdate = (e) => {
+    nestedTable.value.editRow(e);
 };
 
 </script>
@@ -45,7 +62,7 @@ const renderSubWhen = (row) => {
                         class="font-poppins table-name-text c-sub-600 mb-0.5">{{ scope.row.name }}</a>
                     <span class="c-sub-600 paragraph-xs mb-2">{{scope.row.email}}</span>
 
-                    <button class="c-blue-500 label-xs" @click="usersTable.toggleShowSub(scope.index)" v-if="scope.row?.children?.length>0">
+                    <button class="c-blue-500 label-xs" @click="nestedTable.toggleShowSub(scope.index)" v-if="scope.row?.children?.length>0">
                         {{scope.row?.children?.length}} Alt Kullanıcıyı Gör
 
                     </button>
@@ -65,12 +82,13 @@ const renderSubWhen = (row) => {
                 </template>
             </template>
         </AppTableColumn>
-        <AppTableColumn label="Realizasyon/Hakediş" sortable="type">
+        <AppTableColumn label="Hakediş/Realizasyon" sortable="type">
             <template #default="scope">
 
                 <div class="flex items-center gap-1 label-sm">
-                    <span class="c-strong-950">%{{scope.row.payment_threshold}} /</span>
-                    <span class="c-soft-400">%{{scope.row.commission_rate}}</span>
+                    <span class="c-soft-400">%{{scope.row.commission_rate}}/</span>
+                    <span class="c-strong-950">%{{scope.row.real_commission_rate}}</span>
+
                 </div>
             </template>
         </AppTableColumn>
@@ -99,6 +117,8 @@ const renderSubWhen = (row) => {
         </AppTableColumn>
     </AppTable>
  </div>
+   <UserModal :user="choosenUser" @update="onUpdate" v-model="isUserModalOn" v-if="isUserModalOn"></UserModal>
+
 </template>
 
 <style scoped>

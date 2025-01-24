@@ -89,7 +89,7 @@ class LabelController extends Controller
         $label = Label::create($data);
 
         if ($request->hasFile('image')) {
-            MediaServices::upload($label, $request->image, 'labels', 'labels');
+            MediaServices::upload($label, $request->file('image'), 'labels', 'labels');
         }
 
         return redirect()->back()->with([
@@ -108,9 +108,12 @@ class LabelController extends Controller
     {
         abort_if(Gate::denies('label_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        $countryCodes = CountryServices::getCountryPhoneCodes();
+
         $label->loadMissing('country', 'products.songs', 'user');
 
-        return inertia('Control/Labels/Show', compact('label'));
+        return inertia('Control/Labels/Show', compact('label', 'countries', 'countryCodes'));
     }
 
     public function edit(Label $label)
@@ -130,9 +133,10 @@ class LabelController extends Controller
         $label->update($request->validated());
 
         if ($request->hasFile('image')) {
-            MediaServices::upload($label, $request->image, 'labels', 'labels');
+            MediaServices::upload($label, $request->file('image'), 'labels', 'labels');
         }
 
+        $label->loadMissing('country', 'products.songs', 'user');
         return redirect()->back()->with([
             'notification' => [
                 'title' => 'Success',

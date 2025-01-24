@@ -5,7 +5,7 @@
       <AppCard class="flex-1 w-full">
         <template #header>
           <p class="font-normal leading-3 text-sm">Toplam Yayın Sayısı</p>
-          <span class="font-semibold leading-8 text-2xl">{{ statistics.product_count ?? 0 }} Yayın</span>
+          <span class="font-semibold leading-8 text-2xl">{{ statistics.products.total ?? 0 }} Yayın</span>
         </template>
         <template #tool>
           <div class="w-28 max-w-xs mx-auto">
@@ -274,6 +274,8 @@ import {
 import {AppCard} from '@/Components/Cards'
 import {usePage} from '@inertiajs/vue3';
 import moment from 'moment';
+import  'moment/dist/locale/tr';
+moment.locale('tr');
 
 const productTable = ref();
 const defaultStore = useDefaultStore();
@@ -411,7 +413,7 @@ const options = ref({
     },
   },
   xaxis: {
-    categories: usePage().props.statistics?.products.data.map((e) => e.label),
+    categories: usePage().props.statistics?.products.data?.map((e) => e.label),
     axisBorder: {
       show: false,
     },
@@ -424,7 +426,7 @@ const options = ref({
 const series = ref([
   {
     name: "Yayın Sayısı",
-    data: usePage().props.statistics?.products.data.map((e) => e.value)
+    data: usePage().props.statistics?.products?.data?.map((e) => e.value)
   },
 ]);
 

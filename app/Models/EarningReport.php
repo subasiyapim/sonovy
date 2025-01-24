@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\System\Country;
 use App\Traits\DataTables\HasAdvancedFilter;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,10 +24,13 @@ class EarningReport extends Model
         'name',
         'status',
         'report_date',
+        'reporting_month',
         'sales_date',
+        'sales_month',
         'platform',
         'platform_id',
         'country',
+        'region',
         'country_id',
         'label_name',
         'label_id',
@@ -38,12 +42,17 @@ class EarningReport extends Model
         'upc_code',
         'isrc_code',
         'catalog_number',
+        'streaming_type',
         'streaming_subscription_type',
         'release_type',
         'sales_type',
         'quantity',
         'currency',
+        'client_payment_currency',
         'unit_price',
+        'mechanical_fee',
+        'gross_revenue',
+        'client_share_rate',
         'net_revenue',
     ];
 
@@ -52,10 +61,13 @@ class EarningReport extends Model
         'user_id',
         'name',
         'report_date',
+        'reporting_month',
         'sales_date',
+        'sales_month',
         'platform',
         'platform.name',
         'country',
+        'region',
         'country.name',
         'label_name',
         'label.name',
@@ -67,11 +79,17 @@ class EarningReport extends Model
         'upc_code',
         'isrc_code',
         'catalog_number',
+        'streaming_type',
+        'streaming_subscription_type',
         'release_type',
         'sales_type',
         'quantity',
         'currency',
+        'client_payment_currency',
         'unit_price',
+        'mechanical_fee',
+        'gross_revenue',
+        'client_share_rate',
         'net_revenue',
     ];
 
@@ -80,10 +98,13 @@ class EarningReport extends Model
         'user_id',
         'name',
         'report_date',
+        'reporting_month',
         'sales_date',
+        'sales_month',
         'platform',
         'platform.name',
         'country',
+        'region',
         'country.name',
         'label_name',
         'label.name',
@@ -95,11 +116,17 @@ class EarningReport extends Model
         'upc_code',
         'isrc_code',
         'catalog_number',
+        'streaming_type',
+        'streaming_subscription_type',
         'release_type',
         'sales_type',
         'quantity',
         'currency',
+        'client_payment_currency',
         'unit_price',
+        'mechanical_fee',
+        'gross_revenue',
+        'client_share_rate',
         'net_revenue',
     ];
 
@@ -107,8 +134,11 @@ class EarningReport extends Model
         'report_date' => 'date',
         'sales_date' => 'date',
         'quantity' => 'integer',
-        'unit_price' => 'decimal:15',
-        'net_revenue' => 'decimal:15',
+        'unit_price' => 'decimal:12',
+        'mechanical_fee' => 'decimal:12',
+        'gross_revenue' => 'decimal:12',
+        'client_share_rate' => 'decimal:2',
+        'net_revenue' => 'decimal:12',
     ];
 
     public function file(): BelongsTo

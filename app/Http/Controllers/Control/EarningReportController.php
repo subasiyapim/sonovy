@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Earning\EarningReportRequest;
 use App\Http\Requests\Earning\UploadCSVRequest;
 use App\Imports\EarningImport;
-use App\Models\Country;
+use App\Models\System\Country;
 use App\Models\Earning;
 use App\Models\EarningReport;
 use App\Models\EarningReportFile;
@@ -120,7 +120,7 @@ class EarningReportController extends Controller
             Excel::import(new EarningImport, $file_path, null, \Maatwebsite\Excel\Excel::CSV);
 
             // Attach the file to the media collection
-            $file->addMediaFromUrl(Storage::disk('public')->url($file_name))->toMediaCollection('earning_report_files');
+            $file->addMediaFromPath($file_path)->toMediaCollection('earning_report_files');
         }
 
         Storage::disk('public')->delete($file_name);
@@ -223,5 +223,4 @@ class EarningReportController extends Controller
                     ['model' => __('control.earning_report.title_singular')])
             ]);
     }
-
 }

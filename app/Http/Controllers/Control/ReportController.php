@@ -5,83 +5,153 @@ namespace App\Http\Controllers\Control;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Report\ReportStoreRequest;
 use App\Http\Resources\Report\ReportResource;
-use App\Jobs\IncomeReportJob;
+use App\Jobs\AutomaticIncomeReportJob;
+use App\Jobs\RequestedIncomeReportJob;
 use App\Models\Artist;
-use App\Models\Earning;
 use App\Models\Label;
 use App\Models\Platform;
 use App\Models\Song;
 use App\Models\Product;
 use App\Models\Report;
+use App\Models\System\Country;
+use App\Services\CountryServices;
 use App\Services\EarningService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Inertia\ResponseFactory;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use ZipArchive;
+use App\Jobs\CreateDemoEarningsJob;
 
 class ReportController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): \Inertia\Response|ResponseFactory
     {
         abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $request->validate([
             'slug' => ['nullable', 'string', 'in:auto-reports,demanded-reports'],
             'demo' => ['nullable', 'boolean'],
         ]);
 
         if ($request->boolean('demo')) {
-            EarningService::createDemoEarnings();
+            CreateDemoEarningsJob::dispatch();
         }
 
-        $query = Report::query();
+        DB::statement("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''))");
 
-        $isAutoReport = true; // Varsayılan olarak true
+        $isAutoReport = true;
 
         if (!empty($request->slug)) {
             $isAutoReport = $request->slug === 'auto-reports';
         }
 
-        $query->where('is_auto_report', $isAutoReport)->where('user_id', Auth::id());
-
-        $reports = ReportResource::collection($query->advancedFilter())->resource;
-
+        $query = Report::with('child')
+            ->whereNull('parent_id')
+            ->where('is_auto_report', $isAutoReport)
+            ->where('user_id', Auth::id())
+            ->advancedFilter();
+        //dd($query);
+        $reports = ReportResource::collection($query)->resource;
         $artists = Artist::with('platforms')->get();
-        $albums = getDataFromInputFormat(Product::all(), 'id', 'name', 'image');
-        $labels = getDataFromInputFormat(Label::all(), 'value', 'label', 'image');
-        $songs = getDataFromInputFormat(Song::all(), 'id', 'name');
-        $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
+        $labels = Label::all();
+        $songs = Song::all();
+        $countries = getDataFromInputFormat(Country::all(), 'id', 'name', 'emoji');
         $products = Product::all();
-        $platforms = Platform::all();
 
+        $platforms = Platform::all();
+        $countriesGroupedByRegion = CountryServices::getCountriesGroupedByRegion();
 
         return inertia(
             'Control/Finance/Reports/Index',
-            compact('reports', 'artists', 'albums', 'labels', 'songs', 'countries', 'platforms', 'products')
+            compact(
+                'reports',
+                'artists',
+                'labels',
+                'songs',
+                'countries',
+                'platforms',
+                'products',
+                'countriesGroupedByRegion'
+            )
         );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ReportStoreRequest $request)
+    public function store(ReportStoreRequest $request): JsonResponse|RedirectResponse
     {
-        $start_date = Carbon::parse($request->validated()['start_date'])->format('Y-m-d');
-        $end_date = Carbon::parse($request->validated()['end_date'])->format('Y-m-d');
+        $start_date = Carbon::createFromFormat('m-Y',
+            $request->validated()['start_date'])->startOfMonth()->format('Y-m-d');
+        $end_date = Carbon::createFromFormat('m-Y', $request->validated()['end_date'])->endOfMonth()->format('Y-m-d');
         $report_type = $request->validated()['report_type'];
         $ids = $request->validated()['ids'];
 
-        IncomeReportJob::dispatch($start_date, $end_date, Auth::id(), $report_type, $ids);
+        switch ($report_type) {
+            case 'all':
+            case 'artists':
+            case 'songs':
+            case 'platforms':
+            case 'products':
+            case 'countries':
+            case 'labels':
+                AutomaticIncomeReportJob::dispatch($start_date, $end_date, Auth::id(), $report_type, $ids);
+                break;
+            case 'multiple_artists':
+            case 'multiple_songs':
+            case 'multiple_platforms':
+            case 'multiple_products':
+            case 'multiple_countries':
+            case 'multiple_labels':
+                RequestedIncomeReportJob::dispatch($start_date, $end_date, Auth::id(), $report_type, $ids);
+                break;
+            default:
+                return response()->json(['error' => 'Invalid report type'], 400);
+        }
 
         return to_route('control.finance.reports.index');
     }
 
-    public function download(Report $report)
+    public function download(Report $report): BinaryFileResponse|StreamedResponse|JsonResponse
     {
+        if ($report->child()->count() > 1) {
+
+            $zipFilePath = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'-'.Str::slug($report->name).'.zip');
+
+            $zip = new ZipArchive;
+
+            if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
+
+                $files = Storage::disk('public')->allFiles('tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'/'.$report->id);
+
+                foreach ($files as $file) {
+                    $fullPath = Storage::disk('public')->path($file);
+
+                    $zip->addFile($fullPath, basename($file));
+                }
+
+                $zip->close();
+
+                return response()->download($zipFilePath)->deleteFileAfterSend(true);
+            } else {
+                return response()->json(['error' => 'Could not create zip file'], 500);
+            }
+        }
+
+
         $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
 
         if ($media) {
@@ -98,5 +168,37 @@ class ReportController extends Controller
         }
 
         return response()->json(['error' => 'No media found'], 404);
+    }
+
+    public function destroy(Report $report): RedirectResponse
+    {
+        abort_if(Gate::denies('report_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $report->delete();
+
+        return redirect()->back();
+    }
+
+    public function show(Report $report)
+    {
+        abort_if(Gate::denies('report_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        return inertia('Control/Finance/Reports/Show', [
+            'report' => new ReportResource($report)
+        ]);
+    }
+
+    public function createDemoEarnings()
+    {
+        try {
+            CreateDemoEarningsJob::dispatch();
+            return response()->json([
+                'message' => 'Demo kazançları oluşturma işlemi başlatıldı. Bu işlem arka planda devam edecek.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Demo kazançları oluşturulurken bir hata oluştu: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

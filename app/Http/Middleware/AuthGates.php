@@ -2,36 +2,56 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Role;
 use App\Models\User;
 use Closure;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class AuthGates
 {
-    public function handle($request, Closure $next)
+    /**
+     * Handle an incoming request.
+     *
+     * @param  Closure(Request): (Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
 
         if ($user) {
-            $roles = Role::with('permissions')->get();
-            $permissionsArray = [];
+            $permissions = $this->getUserPermissions($user);
 
-            foreach ($roles as $role) {
-                foreach ($role->permissions as $permissions) {
-                    $permissionsArray[$permissions->code][] = $role->id;
-                }
-            }
-
-            foreach ($permissionsArray as $code => $roles) {
-                Gate::define($code, function (User $user) use ($roles) {
-                    return count(array_intersect($user->roles->pluck('id')->toArray(), $roles)) > 0;
-                });
-            }
+            $this->initializeGates($permissions);
         }
 
         return $next($request);
-
     }
+
+    /**
+     * Kullanıcının tüm izinlerini al.
+     */
+    protected function getUserPermissions($user): array
+    {
+        return Cache::remember("user_permissions_{$user->id}", now()->addMinutes(10), function () use ($user) {
+            return $user->roles()
+                ->with('permissions:id,code')
+                ->get()
+                ->pluck('permissions.*.code')
+                ->flatten()
+                ->unique()
+                ->toArray();
+        });
+    }
+
+
+    protected function initializeGates(array $permissions): void
+    {
+        foreach ($permissions as $permission) {
+            Gate::define($permission, fn(User $user) => true);
+        }
+    }
+
 }

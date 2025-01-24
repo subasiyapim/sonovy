@@ -19,6 +19,7 @@ use App\Http\Controllers\Control\PaymentController;
 use App\Http\Controllers\Control\StatisticController;
 use App\Http\Controllers\Control\FinanceAnalysController;
 use App\Http\Controllers\Control\FinanceAnalysisController;
+use App\Http\Controllers\Control\EarningReportController;
 
 Route::group(
     [
@@ -90,13 +91,24 @@ Route::group(
 
         //Finance routes
         Route::group(['prefix' => 'finance', 'as' => 'finance.'], function () {
-            Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
-            Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
-            Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
-            Route::post('reports', [ReportController::class, 'store'])->name('reports.store');
-            Route::get('reports/download/{report}', [ReportController::class, 'download'])->name('reports.download');
-            Route::get('analysis', [FinanceAnalysisController::class, 'index'])->name('analysis.index');
+
+            Route::apiResource('payments', PaymentController::class)
+                ->only(['index', 'store'])->names('payments');
+
+            Route::get('reports/create-demo-earnings', [ReportController::class, 'createDemoEarnings'])
+                ->name('reports.create-demo-earnings');
+            Route::apiResource('reports', ReportController::class)->names('reports');
+            Route::get('reports/download/{report}', [ReportController::class, 'download'])
+                ->name('reports.download');
+
+            Route::get('analysis', [FinanceAnalysisController::class, 'index'])
+                ->name('analysis.index');
+
+            Route::get('analysis/show', [FinanceAnalysisController::class, 'show'])->name('analysis.show');
+
+
         });
+
         Route::group(['prefix' => 'bank', 'as' => 'bank.'], function () {
             Route::post('account', [BankController::class, 'store'])->name('account.store');
             Route::put('account/{bankAccount}', [BankController::class, 'update'])->name('account.update');
@@ -159,8 +171,8 @@ Route::group(
         Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
 
-        require __DIR__ . '/control/modules/search.php';
-        require __DIR__ . '/control/modules/last.php';
-        require __DIR__ . '/control/modules/find.php';
+        require __DIR__.'/control/modules/search.php';
+        require __DIR__.'/control/modules/last.php';
+        require __DIR__.'/control/modules/find.php';
     }
 );

@@ -89,14 +89,16 @@ class Product extends Model implements HasMedia
     ];
 
     protected array $filterable = [
-        'name',
+        'album_name',
         'id',
         'type',
         'status'
     ];
     protected array $orderable = [
-        'status',
-
+        'album_name',
+        'id',
+        'type',
+        'status'
 
     ];
 
@@ -122,6 +124,19 @@ class Product extends Model implements HasMedia
             });
     }
 
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(100)
+            ->height(100)
+            ->nonQueued();
+
+        $this->addMediaConversion('small')
+            ->width(300)
+            ->height(300)
+            ->nonQueued();
+    }
+
     public function getImageAttribute()
     {
         $file = $this->getMedia('products')->last();
@@ -143,7 +158,7 @@ class Product extends Model implements HasMedia
 
     protected static function updateCreatedBy($model): void
     {
-        $model->setAttribute('created_by', auth()->id());
+        $model->setAttribute('created_by', auth()->id() ?? 1);
     }
 
     public function artists(): BelongsToMany

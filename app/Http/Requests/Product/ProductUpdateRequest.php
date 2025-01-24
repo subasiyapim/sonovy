@@ -85,7 +85,7 @@ class ProductUpdateRequest extends FormRequest
                     }
                     if ($product->publishing_country_type !== ProductPublishedCountryTypeEnum::ALL) {
                         if (empty($value) || count($value) < 1) {
-                            $fail("The {$attribute} must have at least 1 item(s) when publishing_country_type is specific.");
+                            $fail("En az bir ülke seçmek zorundasınız.");
                         }
                     }
                 }
@@ -106,7 +106,7 @@ class ProductUpdateRequest extends FormRequest
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
 
                     if ($isChecked == true && $product->type == 2 && empty($value)) {
-                        $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
+                        $fail("{$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
             ],
@@ -116,7 +116,7 @@ class ProductUpdateRequest extends FormRequest
                     $index = explode('.', $attribute)[1];
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
                     if ($isChecked == true && $product->type == 2 && empty($value)) {
-                        $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
+                        $fail("{$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
             ],
@@ -127,7 +127,7 @@ class ProductUpdateRequest extends FormRequest
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
 
                     if ($isChecked == true && $product->type == 2 && empty($value)) {
-                        $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
+                        $fail("{$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
             ],
@@ -138,7 +138,7 @@ class ProductUpdateRequest extends FormRequest
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
 
                     if ($isChecked == true && $product->type == 2 && empty($value)) {
-                        $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
+                        $fail("{$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
             ],
@@ -149,7 +149,7 @@ class ProductUpdateRequest extends FormRequest
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
 
                     if ($isChecked == true && $product->type == 2 && empty($value)) {
-                        $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
+                        $fail("{$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
             ],
@@ -160,7 +160,7 @@ class ProductUpdateRequest extends FormRequest
                     $isChecked = isset($platforms[$index]['isChecked']) ? $platforms[$index]['isChecked'] : false;
 
                     if ($isChecked == true && $product->type == 2 && empty($value)) {
-                        $fail("The {$attribute} alanı muzik video seçili olduğunda zorunludur.");
+                        $fail("{$attribute} alanı muzik video seçili olduğunda zorunludur.");
                     }
                 },
             ],
