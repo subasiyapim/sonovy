@@ -92,14 +92,15 @@ class Product extends Model implements HasMedia
         'album_name',
         'id',
         'type',
-        'status'
+        'status',
+        'upc_code',
     ];
     protected array $orderable = [
         'album_name',
         'id',
         'type',
-        'status'
-
+        'status',
+        'upc_code'
     ];
 
 
