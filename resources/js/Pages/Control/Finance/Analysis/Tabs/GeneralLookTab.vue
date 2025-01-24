@@ -27,7 +27,8 @@ import 'tippy.js/themes/light.css';
 const showYoutubeFremium = ref(false);
 import {router} from '@inertiajs/vue3';
 import moment from 'moment';
-import  'moment/dist/locale/tr';
+import 'moment/dist/locale/tr';
+
 moment.locale('tr');
 
 const props = defineProps({
@@ -112,7 +113,7 @@ const getDateRange = () => {
 
 const goToPlatformCSV = async () => {
   try {
-    const { startDate, endDate } = getDateRange();
+    const {startDate, endDate} = getDateRange();
 
     const params = {
       slug: 'earning_from_platforms',
@@ -129,7 +130,7 @@ const goToPlatformCSV = async () => {
 
 const goToCountriesCSV = async () => {
   try {
-    const { startDate, endDate } = getDateRange();
+    const {startDate, endDate} = getDateRange();
 
     const params = {
       slug: 'earning_from_countries',
@@ -146,7 +147,7 @@ const goToCountriesCSV = async () => {
 
 const goToSalesCSV = async () => {
   try {
-    const { startDate, endDate } = getDateRange();
+    const {startDate, endDate} = getDateRange();
 
     const params = {
       slug: 'earning_from_sales_type',
@@ -163,7 +164,7 @@ const goToSalesCSV = async () => {
 
 const goToTrendingAlbumsCSV = async () => {
   try {
-    const { startDate, endDate } = getDateRange();
+    const {startDate, endDate} = getDateRange();
 
     const params = {
       slug: 'trending_albums',
@@ -235,14 +236,14 @@ const chartOptions = computed(() => ({
     show: true,
     position: 'right',
     fontSize: '13px',
-    formatter: function(seriesName, opts) {
+    formatter: function (seriesName, opts) {
       const value = opts.w.globals.series[opts.seriesIndex];
       return `${seriesName}: ${formatCurrency(value)}`;
     }
   },
   dataLabels: {
     enabled: false,
-    formatter: function(val, opts) {
+    formatter: function (val, opts) {
       return opts.w.config.labels[opts.seriesIndex];
     },
     style: {
@@ -289,14 +290,14 @@ const countriesChartOptions = computed(() => ({
     show: true,
     position: 'right',
     fontSize: '13px',
-    formatter: function(seriesName, opts) {
+    formatter: function (seriesName, opts) {
       const value = opts.w.globals.series[opts.seriesIndex];
       return `${seriesName}: ${formatCurrency(value)}`;
     }
   },
   dataLabels: {
     enabled: false,
-    formatter: function(val, opts) {
+    formatter: function (val, opts) {
       return opts.w.config.labels[opts.seriesIndex];
     },
     style: {
@@ -366,9 +367,9 @@ const salesChartOptions = computed(() => ({
 }));
 
 const salesChartSeries = computed(() =>
-  props.data?.earning_from_sales_type ?
-    Object.values(props.data.earning_from_sales_type).map((e) => e.earning) :
-    []
+    props.data?.earning_from_sales_type ?
+        Object.values(props.data.earning_from_sales_type).map((e) => e.earning) :
+        []
 );
 
 // Debug için onMounted hook'u güncelleme
@@ -425,14 +426,14 @@ onMounted(() => {
       <div class="flex items-center">
         <div class="flex items-center gap-2 flex-1">
           <FileChartLineIcon color="var(--sub-600)"></FileChartLineIcon>
-                    <p class="label-medium c-strong-950">{{ __('control.finance.analysis.total_earnings') }}</p>
+          <p class="label-medium c-strong-950">{{ __('control.finance.analysis.total_earnings') }}</p>
           <p class="c-soft-400 label-sm">{{ formattedDate }}</p>
         </div>
         <div class="flex items-center gap-2">
-                    <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.spotify') }}</span>
-                    <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.apple_music') }}</span>
-                    <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.youtube') }}</span>
-                    <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.other') }}</span>
+          <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.spotify') }}</span>
+          <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.apple_music') }}</span>
+          <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.youtube') }}</span>
+          <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.other') }}</span>
         </div>
       </div>
       <hr>
@@ -480,10 +481,10 @@ onMounted(() => {
       <hr>
       <div class="flex gap-3">
         <div class="flex flex-col gap-5">
-                    <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.20k') }}</span>
-                    <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.15k') }}</span>
-                    <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.10k') }}</span>
-                    <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.0') }}</span>
+          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.20k') }}</span>
+          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.15k') }}</span>
+          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.10k') }}</span>
+          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.0') }}</span>
         </div>
         <div class="flex gap-4 flex-1">
           <template v-if="Object.keys(monthlyData).length > 0">
@@ -509,7 +510,7 @@ onMounted(() => {
                 </div>
                 <template #content>
                   <div class="flex flex-col gap-2 w-64 p-1">
-                    <p class="label-sm c-strong-950">{{key}}</p>
+                    <p class="label-sm c-strong-950">{{ key }}</p>
                     <template v-if="monthlyData[key]">
                       <div v-for="platform in Object.keys(monthlyData[key])"
                            :key="platform"
@@ -542,7 +543,7 @@ onMounted(() => {
       <div class="flex items-center">
         <div class="flex items-center gap-2 flex-1">
           <SpotifyIcon color="var(--sub-600)"></SpotifyIcon>
-                    <p class="label-medium c-strong-950">{{ __('control.finance.analysis.spotify_discovery_mode') }}</p>
+          <p class="label-medium c-strong-950">{{ __('control.finance.analysis.spotify_discovery_mode') }}</p>
           <p class="c-soft-400 label-sm">{{ formattedDate }}</p>
         </div>
 
@@ -552,20 +553,22 @@ onMounted(() => {
 
         <div class="flex items-center gap-2">
           <div class="w-3 h-3 rounded-full bg-spotify"></div>
-                    <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.estimated_earnings_md_spotify_discovery_mode_with_catalog_optimization') }}</span>
+          <span class="paragraph-xs c-strong-950">{{
+              __('control.finance.analysis.estimated_earnings_md_spotify_discovery_mode_with_catalog_optimization')
+            }}</span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-3 h-3 rounded-full bg-[#BDECCD]"></div>
-                    <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.regular_spotify_revenue') }}</span>
+          <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.regular_spotify_revenue') }}</span>
         </div>
       </div>
       <hr>
       <div class="flex gap-3">
         <div class="flex flex-col gap-5">
-                    <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.20k') }}</span>
-                    <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.15k') }}</span>
-                    <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.10k') }}</span>
-                    <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.0') }}</span>
+          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.20k') }}</span>
+          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.15k') }}</span>
+          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.10k') }}</span>
+          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.0') }}</span>
         </div>
         <div class="flex gap-4 flex-1">
           <template v-if="Object.keys(spotifyDiscoveryData).length > 0">
@@ -591,14 +594,14 @@ onMounted(() => {
                 </div>
                 <template #content>
                   <div class="flex flex-col gap-2 w-64 p-1">
-                    <p class="label-sm c-strong-950">{{key}}</p>
+                    <p class="label-sm c-strong-950">{{ key }}</p>
                     <template v-if="spotifyDiscoveryData[key]">
                       <div class="flex items-center gap-2">
                         <div class="bg-spotify w-3 h-3 rounded-full"></div>
                         <p class="paragraph-sm c-strong-950 flex-1">Discovery Mode</p>
                         <div class="border border-soft-200 rounded px-2 py-1">
                           <p class="paragraph-xs c-sub-600">{{ spotifyDiscoveryData[key].promotion ?? 0 }}</p>
-
+                        </div>
                       </div>
                       <div class="flex items-center gap-2">
                         <div class="bg-[#BDECCD] w-3 h-3 rounded-full"></div>
@@ -626,7 +629,7 @@ onMounted(() => {
         <div class="flex items-center">
           <div class="flex items-center gap-2 flex-1">
             <BookReadLineIcon color="var(--sub-600)"/>
-                        <p class="label-medium c-strong-950">{{ __('control.finance.analysis.stores_earnings') }}</p>
+            <p class="label-medium c-strong-950">{{ __('control.finance.analysis.stores_earnings') }}</p>
             <p class="c-soft-400 label-sm">{{ formattedDate }}</p>
           </div>
           <div class="flex gap-3">
@@ -647,7 +650,7 @@ onMounted(() => {
         <div class="flex items-center">
           <div class="flex items-center gap-2 flex-1">
             <WorldIcon color="var(--sub-600)"/>
-                        <p class="label-medium c-strong-950">{{ __('control.finance.analysis.country_wise_earnings') }}</p>
+            <p class="label-medium c-strong-950">{{ __('control.finance.analysis.country_wise_earnings') }}</p>
             <p class="c-soft-400 label-sm">{{ formattedDate }}</p>
           </div>
           <div class="flex gap-3">
@@ -670,7 +673,9 @@ onMounted(() => {
       <div class="flex items-center">
         <div class="flex items-center gap-2 flex-1">
           <YoutubeIcon/>
-                    <p class="label-medium c-strong-950 ms-2">{{ __('control.finance.analysis.youtube_total_earnings_top_points') }}</p>
+          <p class="label-medium c-strong-950 ms-2">{{
+              __('control.finance.analysis.youtube_total_earnings_top_points')
+            }}</p>
           <p class="c-soft-400 label-sm">{{ formattedDate }}</p>
         </div>
         <span class="label-sm c-strong-950">$23.758,00</span>
@@ -678,7 +683,9 @@ onMounted(() => {
       </div>
       <hr>
       <div class="flex gap-4 items-center">
-                <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.show_premium_fremium_earnings') }}</span>
+        <span class="paragraph-xs c-strong-950">{{
+            __('control.finance.analysis.show_premium_fremium_earnings')
+          }}</span>
         <AppSwitchComponent v-model="showYoutubeFremium"/>
       </div>
       <hr>
@@ -696,14 +703,18 @@ onMounted(() => {
               <template #content>
                 <div class="flex flex-col gap-2 w-96 p-1">
                   <div class="flex items-center">
-                                   <div> <YoutubeIcon /></div>
-                                    <p class="label-sm c-strong-950 flex-1 ms-2">{{ __('control.finance.analysis.january_2024') }}</p>
-                                    <p class="label-sm c-strong-950 ">{{data.earning_from_youtube[key].earning}}</p>
+                    <div>
+                      <YoutubeIcon/>
+                    </div>
+                    <p class="label-sm c-strong-950 flex-1 ms-2">{{ __('control.finance.analysis.january_2024') }}</p>
+                    <p class="label-sm c-strong-950 ">{{ data.earning_from_youtube[key].earning }}</p>
 
                   </div>
                   <div class="flex items-start gap-2 bg-[#F2F5F8] py-2 px-4 mt-2 rounded-lg">
                     <InfoFilledIcon width="24" class="mt-1" color="#717784"/>
-                                    <span class="c-strong-950 c-sub-600">{{ __('control.finance.analysis.ad_supported_videos_youtube_music_and_youtube_premium_paid_subscription_earnings') }}</span>
+                    <span class="c-strong-950 c-sub-600">{{
+                        __('control.finance.analysis.ad_supported_videos_youtube_music_and_youtube_premium_paid_subscription_earnings')
+                      }}</span>
                   </div>
                 </div>
               </template>
@@ -735,7 +746,7 @@ onMounted(() => {
         <tippy v-for="i in 3" :allowHtml="true" :maxWidth="600" theme="light" followCursor :sticky="true"
                :interactive="false">
           <div class="mt-3">
-                        <p class="label-sm c-strong-950 mb-1">{{ __('control.finance.analysis.youtube_official_content') }}</p>
+            <p class="label-sm c-strong-950 mb-1">{{ __('control.finance.analysis.youtube_official_content') }}</p>
             <div class="flex items-center gap-1 h-4 w-full">
               <div class="h-full rounded bg-youtube-premium w-[12%]"></div>
               <div class="h-full rounded bg-youtube w-[68%]"></div>
@@ -747,28 +758,34 @@ onMounted(() => {
             <div class="flex flex-col gap-2 w-96 p-1">
               <div class="flex items-center">
                 <YoutubeIcon/>
-                                <p class="label-sm c-strong-950 flex-1 ms-2">{{ __('control.finance.analysis.youtube_official_content') }}</p>
+                <p class="label-sm c-strong-950 flex-1 ms-2">{{
+                    __('control.finance.analysis.youtube_official_content')
+                  }}</p>
                 <p class="label-sm c-strong-950 ">$500</p>
 
               </div>
               <div class="flex flex-col items-start gap-3">
                 <div class="flex gap-2 items-center w-full">
                   <div class="w-2 h-2 rounded-full bg-youtube-premium"></div>
-                  <div class="flex-1"><p class=" paragraph-xs c-strong-950">{{ __('control.finance.analysis.premium') }}</p></div>
+                  <div class="flex-1"><p class=" paragraph-xs c-strong-950">{{
+                      __('control.finance.analysis.premium')
+                    }}</p></div>
                   <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">$500,57</p>
                   </div>
 
                 </div>
                 <div class="flex gap-2 items-center w-full">
                   <div class="w-2 h-2 rounded-full bg-youtube"></div>
-                  <div class="flex-1"><p class="flex-1 paragraph-xs c-strong-950">{{ __('control.finance.analysis.freemium') }}</p></div>
+                  <div class="flex-1"><p class="flex-1 paragraph-xs c-strong-950">
+                    {{ __('control.finance.analysis.freemium') }}</p></div>
                   <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">$500,57</p>
                   </div>
 
                 </div>
                 <div class="flex gap-2 items-center w-full">
                   <div class="w-2 h-2 rounded-full bg-other"></div>
-                  <div class="flex-1"><p class="flex-1 paragraph-xs c-strong-950">{{ __('control.finance.analysis.other') }}</p></div>
+                  <div class="flex-1"><p class="flex-1 paragraph-xs c-strong-950">
+                    {{ __('control.finance.analysis.other') }}</p></div>
                   <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">$500,57</p>
                   </div>
 
@@ -790,7 +807,7 @@ onMounted(() => {
         <div class="flex items-center">
           <div class="flex items-center gap-2 flex-1">
             <BookReadLineIcon color="var(--sub-600)"/>
-                        <p class="label-medium c-strong-950">{{ __('control.finance.analysis.sales_type_earnings') }}</p>
+            <p class="label-medium c-strong-950">{{ __('control.finance.analysis.sales_type_earnings') }}</p>
             <p class="c-soft-400 label-sm">{{ formattedDate }}</p>
           </div>
           <div class="flex gap-3">
@@ -813,7 +830,7 @@ onMounted(() => {
         <div class="flex items-center">
           <div class="flex items-center gap-2 flex-1">
             <WorldIcon color="var(--sub-600)"/>
-                        <p class="label-medium c-strong-950">{{ __('control.finance.analysis.trends_albums') }}</p>
+            <p class="label-medium c-strong-950">{{ __('control.finance.analysis.trends_albums') }}</p>
             <p class="c-soft-400 label-sm">{{ formattedDate }}</p>
           </div>
           <div class="flex gap-3">

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import {ref} from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -8,6 +8,9 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import {Link} from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+import {inject} from 'vue'
+
+const __ = inject('locale')
 </script>
 
 <template>
