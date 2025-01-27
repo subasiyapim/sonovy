@@ -22,6 +22,12 @@ jobs:
             # Git değişikliklerini al
             git pull origin dev
 
+            # Önce izinleri ayarla
+            rm -rf vendor
+            mkdir vendor
+            chown -R $USER:$USER .
+            chmod -R 775 .
+
             # Composer bağımlılıklarını yükle
             php -d memory_limit=512M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist
 
