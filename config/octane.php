@@ -1,9 +1,4 @@
 <?php
-
-use Laravel\Octane\Contracts\OperationTerminated;
-use Laravel\Octane\Events\RequestTerminated;
-use Laravel\Octane\Events\WorkerStarting;
-
 return [
     'server' => env('OCTANE_SERVER', 'frankenphp'),
 
@@ -17,29 +12,7 @@ return [
         \Illuminate\Database\DatabaseManager::class,
     ],
 
-    'listeners' => [
-        WorkerStarting::class => [
-            function () {
-                if (app()->bound('redis')) {
-                    app('redis')->connection()->client()->disconnect();
-                    app('redis')->connect();
-                }
-            },
-        ],
-
-        RequestTerminated::class => [
-            function () {
-                if (app()->bound('redis')) {
-                    app('redis')->connection()->client()->disconnect();
-                }
-
-                // Request sonrası temizlik
-                if (app()->bound('db')) {
-                    app('db')->disconnect();
-                }
-            },
-        ],
-    ],
+    'listeners' => [],
 
     'flush' => [
         \Illuminate\Database\DatabaseManager::class,
