@@ -25,10 +25,10 @@ jobs:
             # Önce izinleri ayarla
             find . -type f -exec chmod 664 {} \;
             find . -type d -exec chmod 775 {} \;
-            chmod -R ug+rwx vendor storage bootstrap/cache
+            chmod -R ug+rwx vendor storage bootstrap/cache node_modules
 
             # Cache ve vendor temizliği
-            rm -rf vendor
+            rm -rf vendor node_modules
             rm -rf storage/framework/cache/*
             mkdir -p storage/framework/cache/laravel-excel
             mkdir vendor
@@ -41,6 +41,9 @@ jobs:
             php -d memory_limit=512M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist
 
             # Frontend assets'leri derle
+            mkdir -p node_modules
+            chown -R $USER:$USER node_modules
+            chmod -R 775 node_modules
             npm install
             npm run build
 
