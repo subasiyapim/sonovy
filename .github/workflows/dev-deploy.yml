@@ -20,27 +20,27 @@ jobs:
             cd /var/www/Sonovy
 
             # Git değişikliklerini al
-            sudo git pull origin dev
+            git pull origin dev
 
             # Composer bağımlılıklarını yükle
-            sudo php -d memory_limit=512M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist
+            php -d memory_limit=512M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist
 
             # Frontend assets'leri derle
-            sudo npm install
-            sudo npm run build
+            npm install
+            npm run build
 
             # Laravel komutlarını çalıştır
-            sudo php artisan migrate --force
-            sudo php artisan tenants:migrate --force
-            sudo php artisan storage:link || true
-            sudo php artisan config:cache
-            sudo php artisan route:cache
-            sudo php artisan view:cache
-            sudo php artisan up
+            php artisan migrate --force
+            php artisan tenants:migrate --force
+            php artisan storage:link || true
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan up
 
             # Supervisor'ı yeniden başlat
-            sudo systemctl restart supervisor
+            systemctl restart supervisor || true
 
             # En son olarak dosya sahipliğini ve izinleri ayarla
-            sudo chown -R www-data:www-data /var/www/Sonovy
-            sudo chmod -R 775 /var/www/Sonovy/storage /var/www/Sonovy/bootstrap/cache /var/www/Sonovy/public /var/www/Sonovy/app
+            chown -R www-data:www-data .
+            chmod -R 775 storage bootstrap/cache public app
