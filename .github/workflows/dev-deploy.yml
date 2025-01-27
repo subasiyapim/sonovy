@@ -22,6 +22,13 @@ jobs:
             # Git değişikliklerini al
             git pull origin dev
 
+            # Laravel Excel cache temizliği
+            find storage/framework/cache/laravel-excel -type f -exec rm -f {} \;
+            rm -rf storage/framework/cache/laravel-excel
+            mkdir -p storage/framework/cache/laravel-excel
+            chown -R $USER:$USER storage/framework/cache/laravel-excel
+            chmod -R 775 storage/framework/cache/laravel-excel
+
             # Önce izinleri ayarla
             find . -type f -exec chmod 664 {} \;
             find . -type d -exec chmod 775 {} \;
