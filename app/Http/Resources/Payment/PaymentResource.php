@@ -26,7 +26,6 @@ class PaymentResource extends JsonResource
             'balance' => $this->user->balance ?? null,
             'status_text' => isset($this->status) ? PaymentStatusEnum::from($this->status->value)->title() : null,
             'status' => $this->status ?? null,
-            'status' => $this->status,
             'planned_payment_date' => isset($this->created_at) ? $this->created_at->addDays(7)->format('d.m.Y') : null,
         ];
     }
