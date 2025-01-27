@@ -22,9 +22,13 @@ jobs:
             # Git değişikliklerini al
             git pull origin dev
 
-            # Önce izinleri ayarla
+            # Cache ve vendor temizliği
             rm -rf vendor
+            rm -rf storage/framework/cache/*
+            mkdir -p storage/framework/cache/laravel-excel
             mkdir vendor
+
+            # İzinleri ayarla
             chown -R $USER:$USER .
             chmod -R 775 .
 
@@ -47,6 +51,10 @@ jobs:
             # Supervisor'ı yeniden başlat
             systemctl restart supervisor || true
 
-            # En son olarak dosya sahipliğini ve izinleri ayarla
+            # Dizin yapısını oluştur ve izinleri ayarla
+            mkdir -p storage/framework/{sessions,views,cache,testing}
+            mkdir -p storage/framework/cache/laravel-excel
             chown -R www-data:www-data .
-            chmod -R 775 storage bootstrap/cache public app
+            find . -type f -exec chmod 664 {} \;
+            find . -type d -exec chmod 775 {} \;
+            chmod -R ug+rwx storage bootstrap/cache
