@@ -7,7 +7,7 @@ const props = defineProps({
     state:{}
 })
 const slots = useSlots()
-const hasSlot = (name: string) => {
+const hasSlot = (name: keyof typeof slots) => {
   return !!slots[name];
 }
 
