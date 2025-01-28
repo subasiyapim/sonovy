@@ -6,164 +6,120 @@ use App\Services\AnalyseService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Number;
 
 class AnalyseResource extends JsonResource
 {
     protected mixed $tab;
-    protected string $start_date;
-    protected string $end_date;
-    protected $data;
-    protected $totalEarnings;
-    protected $groupedData;
+    protected Collection $data;
+    protected AnalyseService $analyseService;
 
-    public AnalyseService $analyseService;
-
+    private ?Collection $groupedData = null;
+    private ?float $totalEarnings = null;
 
     public function __construct($resource, $tab)
     {
         parent::__construct($resource);
         $this->tab = $tab;
         $this->data = $resource;
-        $this->groupedData = $this->data->groupBy(function ($item) {
-            return Carbon::parse($item->sales_date)->locale(app()->getLocale())->translatedFormat('F Y');
-        });
-        $this->totalEarnings = $this->data->sum('earning');
-
         $this->analyseService = new AnalyseService($this->data);
-
     }
-    
+
     /**
      * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
      */
     public function toArray(Request $request): array
     {
         return [
             'metadata' => $this->metadata(),
-            'data' => $this->tab(),
+            'data' => $this->resolveTabData(),
         ];
     }
 
+    /**
+     * Lazily load grouped data.
+     */
+    private function groupedData(): Collection
+    {
+        if (!$this->groupedData) {
+            $this->groupedData = $this->data->groupBy(fn($item) => Carbon::parse($item->sales_date)
+                ->locale(app()->getLocale())
+                ->translatedFormat('F Y')
+            );
+        }
+        return $this->groupedData;
+    }
+
+    /**
+     * Lazily calculate total earnings.
+     */
+    private function totalEarnings(): float
+    {
+        if (!$this->totalEarnings) {
+            $this->totalEarnings = $this->data->sum('earning');
+        }
+        return $this->totalEarnings;
+    }
+
+    /**
+     * Metadata extraction, optimized for repeated calculations.
+     */
     private function metadata(): array
     {
+        $currentMonth = Carbon::now()->locale(app()->getLocale())->translatedFormat('F Y');
+        $currentMonthEarnings = $this->data->whereBetween('sales_date', [
+            Carbon::now()->startOfMonth(),
+            Carbon::now()->endOfMonth(),
+        ])->sum('earning');
+
         return [
-            'all_time_earning' => Number::currency($this->data->sum('earning'), 'USD', app()->getLocale()),
-            'current_month' => Carbon::now()->locale(app()->getLocale())->translatedFormat('F Y'),
-            'current_month_earning' => Number::currency(
-                $this->data->whereBetween(
-                    'sales_date',
-                    [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]
-                )->sum('earning'),
-                'USD',
-                app()->getLocale()
-            ),
+            'all_time_earning' => Number::currency($this->totalEarnings(), 'USD', app()->getLocale()),
+            'current_month' => $currentMonth,
+            'current_month_earning' => Number::currency($currentMonthEarnings, 'USD', app()->getLocale()),
         ];
     }
 
-    private function tab(): array
+    /**
+     * Resolve tab-specific data.
+     */
+    private function resolveTabData(): array
     {
         return match ($this->tab) {
             'top-lists' => $this->topLists(),
-            'platforms' => $this->platforms(),
-            'countries' => $this->countries(),
+            'platforms' => $this->analyseService->platforms(),
+            'countries' => $this->analyseService->countries(),
             default => $this->general(),
         };
     }
 
+    /**
+     * General Tab Data.
+     */
     private function general(): array
     {
         return [
-            'monthly_net_earnings' => $this->monthlyNetEarning(),
-            'spotify_discovery_mode_earnings' => $this->spotifyDiscoveryModeEarnings(),
-            'earning_from_platforms' => $this->earningFromPlatforms(),
-            'earning_from_countries' => $this->earningFromCountries(),
-            'earning_from_youtube' => $this->earningFromYoutube(),
-            'earning_from_youtube_with_premium' => $this->earningFromYoutubeWithPremium(),
-            'earning_from_sales_type' => $this->earningFromSalesType(),
-            'trending_albums' => $this->trendingAlbums(),
+            'monthly_net_earnings' => $this->analyseService->monthlyNetEarning(),
+            'spotify_discovery_mode_earnings' => $this->analyseService->spotifyDiscoveryModeEarnings(),
+            'earning_from_platforms' => $this->analyseService->earningFromPlatforms(),
+            'earning_from_countries' => $this->analyseService->earningFromCountries(),
+            'earning_from_youtube' => $this->analyseService->earningFromYoutube(),
+            'earning_from_youtube_with_premium' => $this->analyseService->earningFromYoutubeWithPremium(),
+            'earning_from_sales_type' => $this->analyseService->earningFromSalesType(),
+            'trending_albums' => $this->analyseService->trendingAlbums(),
         ];
     }
 
+    /**
+     * Top Lists Tab Data.
+     */
     private function topLists(): array
     {
         return [
-            'top_artists' => $this->topArtists(),
-            'top_albums' => $this->topAlbums(),
-            'top_songs' => $this->topSongs(),
-            'top_labels' => $this->topLabels(),
+            'top_artists' => $this->analyseService->topArtists(),
+            'top_albums' => $this->analyseService->topAlbums(),
+            'top_songs' => $this->analyseService->topSongs(),
+            'top_labels' => $this->analyseService->topLabels(),
         ];
-    }
-
-    private function platforms(): array
-    {
-        return $this->analyseService->platforms();
-    }
-
-    private function countries(): array
-    {
-        return $this->analyseService->countries();
-    }
-
-    private function monthlyNetEarning(): array
-    {
-        return $this->analyseService->monthlyNetEarning();
-    }
-
-    private function spotifyDiscoveryModeEarnings(): array
-    {
-        return $this->analyseService->spotifyDiscoveryModeEarnings();
-    }
-
-    private function earningFromPlatforms(): array
-    {
-        return $this->analyseService->earningFromPlatforms();
-    }
-
-    private function earningFromCountries(): array
-    {
-        return $this->analyseService->earningFromCountries();
-    }
-
-    private function earningFromYoutube(): array
-    {
-        return $this->analyseService->earningFromYoutube();
-    }
-
-    private function earningFromYoutubeWithPremium(): array
-    {
-        return $this->analyseService->earningFromYoutubeWithPremium();
-    }
-
-    private function earningFromSalesType(): array
-    {
-        return $this->analyseService->earningFromSalesType();
-    }
-
-    private function trendingAlbums(): array
-    {
-        return $this->analyseService->trendingAlbums();
-    }
-
-    private function topArtists(): array
-    {
-        return $this->analyseService->topArtists();
-    }
-
-    private function topAlbums(): array
-    {
-        return $this->analyseService->topAlbums();
-    }
-
-    private function topSongs(): array
-    {
-        return $this->analyseService->topSongs();
-    }
-
-    private function topLabels(): array
-    {
-        return $this->analyseService->topLabels();
     }
 }

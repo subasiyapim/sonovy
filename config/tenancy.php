@@ -137,6 +137,10 @@ $data = [
         ],
     ],
 
+    'asset_url_generator' => function($tenant) {
+        return 'https://' . $tenant->domains()->first()->domain;
+    },
+
     /**
      * Features are classes that provide additional functionality
      * not needed for tenancy to be bootstrapped. They are run
