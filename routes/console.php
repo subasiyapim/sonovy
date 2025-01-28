@@ -14,8 +14,8 @@ if ($tenants->count() > 0) {
     foreach ($tenants as $tenant) {
         tenancy()->initialize($tenant);
 
-        Schedule::job(new QuartersIncomeJob())->daily();
-        Schedule::job(new EarningJob())->everyMinute();
+        Schedule::job(new QuartersIncomeJob())->everySixHours();
+        Schedule::job(new EarningJob())->everyFourHours();
         Schedule::job(new IsrcJob())->everyMinute();
         Schedule::job(new MonthlyIncomeJob())->daily();
 
