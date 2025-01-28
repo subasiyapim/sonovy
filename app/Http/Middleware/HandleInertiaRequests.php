@@ -37,7 +37,7 @@ class HandleInertiaRequests extends Middleware
         $tenant = null;
         $tenantKey = null;
 
-        if (Tenancy::identifyTenant()) {
+        if (Tenancy::initialized()) {
             $tenant = tenant();
             $tenantKey = $tenant ? $tenant->getTenantKey() : null;
         }
