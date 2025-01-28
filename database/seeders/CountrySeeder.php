@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Country;
+use App\Models\System\Country;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 
@@ -35,9 +35,7 @@ class CountrySeeder extends Seeder
                     'tld' => $country['tld'],
                     'native' => $country['native'],
                     'region' => $country['region'],
-                    'region_id' => $country['region_id'],
                     'subregion' => $country['subregion'],
-                    'subregion_id' => $country['subregion_id'],
                     'nationality' => $country['nationality'],
                     'timezones' => $country['timezones'] ?? [],
                     'translations' => $country['translations'] ?? [],
@@ -45,7 +43,6 @@ class CountrySeeder extends Seeder
                     'longitude' => $country['longitude'],
                     'emoji' => $country['emoji'],
                     'emojiU' => $country['emojiU'],
-                    'is_active' => 1,
                 ]);
         }
     }
