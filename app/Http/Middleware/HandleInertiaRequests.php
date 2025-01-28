@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
-use Stancl\Tenancy\Facades\Tenancy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -34,14 +33,6 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $tenant = null;
-        $tenantKey = null;
-
-        if (Tenancy::initialized()) {
-            $tenant = tenant();
-            $tenantKey = $tenant ? $tenant->getTenantKey() : null;
-        }
-
         $user = $request->user();
 
         // Locale setting
