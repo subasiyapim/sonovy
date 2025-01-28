@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
-use Stancl\Tenancy\Events\TenancyInitialized;
 use Tighten\Ziggy\Ziggy;
 use Stancl\Tenancy\Facades\Tenancy;
 
@@ -38,7 +37,7 @@ class HandleInertiaRequests extends Middleware
         $tenant = null;
         $tenantKey = null;
 
-        if (tenancy()->initialized) {
+        if (Tenancy::identifyTenant()) {
             $tenant = tenant();
             $tenantKey = $tenant ? $tenant->getTenantKey() : null;
         }
