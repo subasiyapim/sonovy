@@ -4,20 +4,18 @@ import {Link} from '@inertiajs/vue3';
 import {useSlots} from 'vue';
 import {AppLoadingIcon, CheckIcon} from '@/Components/Icons';
 
-interface Props {
-  state?: 'loading' | 'completed' | null;
-}
+const props = defineProps({
+  state: {},
+});
 
-type SlotNames = 'icon' | 'default' | 'loading' | 'completed';
+// `useSlots` ile dönen değer açıkça tanımlanıyor.
+const slots = useSlots() as Record<string, unknown>;
 
-const props = defineProps<Props>();
-const slots = useSlots();
-
-const hasSlot = (name: SlotNames): boolean => {
+const hasSlot = (name: string): boolean => {
   return !!slots[name];
 };
 
-function randomIntFromInterval(min: number, max: number): number {
+function randomIntFromInterval(min: number, max: number) { // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 </script>
@@ -26,7 +24,7 @@ function randomIntFromInterval(min: number, max: number): number {
   <div class="flex min-h-screen flex-col items-center  pt-10 sm:justify-center sm:pt-0 bg-dark-green-800">
 
 
-    <div v-if="!props.state"
+    <div v-if="!state"
          class="z-10  w-full overflow-hidden bg-white px-10 py-8 sm:max-w-md rounded-2xl bg-white shadow-md">
 
 
@@ -40,14 +38,14 @@ function randomIntFromInterval(min: number, max: number): number {
       <slot/>
     </div>
 
-    <div v-if="props.state == 'loading'"
+    <div v-if="state == 'loading'"
          class="z-10  w-full overflow-hidden bg-white px-10 py-20 flex flex-col gap-2 items-center justify-center sm:max-w-md rounded-2xl shadow-md">
       <div class="mx-auto bg-white-600 w-16 h-16 rounded-full flex items-center justify-center my-6">
         <AppLoadingIcon width="32" color="var(--dark-green-600)"/>
       </div>
       <slot name="loading"/>
     </div>
-    <div v-if="props.state == 'completed'"
+    <div v-if="state == 'completed'"
          class="z-10  w-full overflow-hidden bg-white px-10 py-20 flex flex-col gap-2 items-center justify-center sm:max-w-md rounded-2xl shadow-md">
       <div class="mx-auto bg-dark-green-800 w-16 h-16 rounded-full flex items-center justify-center my-6">
         <CheckIcon class="w-6 h-6" color="var(--dark-green-500)"/>
