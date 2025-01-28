@@ -534,7 +534,9 @@ class EarningService
     }
 
     private const STREAMING_TYPES = ['Freemium', 'Premium', 'Ad-Supported', ''];
-    private const PLATFORMS = ['Spotify', 'Apple Music', 'YouTube Music', 'Amazon Music', 'Facebook / Instagram', 'TikTok', 'Deezer'];
+    private const PLATFORMS = [
+        'Spotify', 'Apple Music', 'YouTube Music', 'Amazon Music', 'Facebook / Instagram', 'TikTok', 'Deezer'
+    ];
     private const SALES_TYPES = ['Stream', 'PLATFORM PROMOTION', 'Creation', 'Download'];
     private const RELEASE_TYPES = ['Music Release', 'Ringtone', 'Video', 'User Generated Content'];
 
@@ -550,7 +552,7 @@ class EarningService
             // CSV dosyasını oku
             $csvPath = public_path('assets/sample-earnings-tr.csv');
             $csvFile = fopen($csvPath, 'r');
-            
+
             // Header'ı atla
             fgetcsv($csvFile, 0, ';', '"', '\\');
 
@@ -576,9 +578,9 @@ class EarningService
                 try {
                     $randomProduct = $products->random();
                     $randomSong = $songs->random();
-                    
+
                     $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', now()));
-                    
+
                     $data[] = [
                         'user_id' => $userId,
                         'report_date' => Carbon::parse($faker->dateTimeBetween($sales_date, now()))->format('Y-m-d'),
@@ -588,7 +590,9 @@ class EarningService
                         'platform' => $row[2] ?? '',
                         'platform_id' => Platform::where('name', $row[2])->first()?->id,
                         'country' => $row[3] ?? '',
-                        'region' => $faker->randomElement(['Europe', 'North America', 'South America', 'Asia', 'Africa', 'Oceania']),
+                        'region' => $faker->randomElement([
+                            'Europe', 'North America', 'South America', 'Asia', 'Africa', 'Oceania'
+                        ]),
                         'country_id' => Country::where('name', $row[3])->first()?->id,
                         'label_name' => $row[4] ?? '',
                         'label_id' => $randomProduct->label->id,
@@ -633,7 +637,7 @@ class EarningService
 
             $file = EarningReportFile::create([
                 'user_id' => $userId,
-                'name' => 'Demo Earning Report ' . Carbon::now()->format('Y-m-d'),
+                'name' => 'Demo Earning Report '.Carbon::now()->format('Y-m-d'),
             ]);
 
             // Chunk'lar halinde kaydet
@@ -704,9 +708,12 @@ class EarningService
                     'currency' => $row['currency'],
                     'client_payment_currency' => $row['client_payment_currency'],
                     'unit_price' => isset($row['unit_price']) ? str_replace(',', '.', $row['unit_price']) : null,
-                    'mechanical_fee' => isset($row['mechanical_fee']) ? str_replace(',', '.', $row['mechanical_fee']) : null,
-                    'gross_revenue' => isset($row['gross_revenue']) ? str_replace(',', '.', $row['gross_revenue']) : null,
-                    'client_share_rate' => isset($row['client_share_rate']) ? str_replace(',', '.', $row['client_share_rate']) : null,
+                    'mechanical_fee' => isset($row['mechanical_fee']) ? str_replace(',', '.',
+                        $row['mechanical_fee']) : null,
+                    'gross_revenue' => isset($row['gross_revenue']) ? str_replace(',', '.',
+                        $row['gross_revenue']) : null,
+                    'client_share_rate' => isset($row['client_share_rate']) ? str_replace(',', '.',
+                        $row['client_share_rate']) : null,
                     'reporting_month' => $row['reporting_month'],
                     'sales_month' => $row['sales_month'],
                 ]

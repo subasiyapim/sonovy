@@ -19,7 +19,7 @@ class CountrySeeder extends Seeder
 
         // Sadece Türkiye'yi ekle
         $turkeyData = collect($items)->where('iso2', 'TR')->first();
-        
+
         if ($turkeyData) {
             Country::firstOrCreate(
                 [
@@ -49,6 +49,7 @@ class CountrySeeder extends Seeder
         }
 
         $this->call([
+            CountrySeeder::class,
             CountryLanguageSeeder::class,
             CitySeeder::class,
             DistrictSeeder::class,
