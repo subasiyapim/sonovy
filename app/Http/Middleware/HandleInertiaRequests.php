@@ -33,6 +33,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $tenant = null;
+        $tenantKey = null;
+
+        if (tenancy()->initialized) {
+            $tenant = tenant();
+            $tenantKey = $tenant ? $tenant->getTenantKey() : null;
+        }
+
         $user = $request->user();
 
         // Locale setting
