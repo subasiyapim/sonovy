@@ -134,7 +134,7 @@ const gotoSongs = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="artist in data.top_artists">
+                    <tr v-for="artist in data.top_artists.splice(0,6)">
                         <td class="py-2">
                             <span class="label-sm c-strong-950">{{artist.artist_name}}</span>
                         </td>

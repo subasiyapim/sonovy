@@ -15,12 +15,10 @@ if ($tenants->count() > 0) {
         tenancy()->initialize($tenant);
 
         Schedule::job(new QuartersIncomeJob())->everySixHours();
-        Schedule::job(new EarningJob())->everyFourHours();
+        Schedule::job(new EarningJob())->everyMinute();
         Schedule::job(new IsrcJob())->everyMinute();
-        Schedule::job(new MonthlyIncomeJob())->daily();
+        Schedule::job(new MonthlyIncomeJob())->everySixHours();
 
         tenancy()->end();
     }
 }
-
-

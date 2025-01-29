@@ -12,15 +12,6 @@
         </VueDatePicker>
     </div>
 
-<!--
-      <div v-if="choosenDates"
-           class="flex items-center jusitfy-center gap-2 border border-soft-200 rounded px-3 py-1 hover:bg-grey-300">
-        <p class="paragraph-xs c-sub-600">
-          {{ moment(choosenDates[0]).format('DD/MM/YYYY') + ' - ' + moment(choosenDates[1]).format('DD/MM/YYYY') }}</p>
-        <button @click="removeDateFilter">
-          <CloseIcon color="var(--sub-600)"/>
-        </button>
-      </div> -->
     </template>
     <div class="flex grid grid-cols-2 gap-3 mb-5">
       <AppCard class="flex-1 w-full">

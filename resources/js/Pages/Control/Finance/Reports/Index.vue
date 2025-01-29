@@ -15,7 +15,7 @@
       </PrimaryButton>
     </div>
 
-    <div class="ps-6">
+    <div >
       <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"/>
     </div>
 

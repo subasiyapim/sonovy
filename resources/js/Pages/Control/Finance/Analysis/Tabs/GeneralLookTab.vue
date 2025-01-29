@@ -485,13 +485,12 @@ onMounted(() => {
       </div>
       <hr>
       <div class="flex gap-3">
-        <div class="flex flex-col gap-5">
-          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.20k') }}</span>
-          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.15k') }}</span>
-          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.10k') }}</span>
-          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.0') }}</span>
-        </div>
-        <div class="flex gap-4 flex-1">
+
+        <div class="flex  flex-1">
+            <div class="flex h-72 flex-col justify-between gap-5">
+                <span v-for="val in props.data.monthly_net_earnings.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
+            </div>
+    <!-- {{props.data.monthly_net_earnings.items["Ocak 2025"].month_percentage}} -->
           <template v-if="Object.keys(monthlyData).length > 0">
             <div v-for="key in Object.keys(monthlyData)"
                  :key="key"
@@ -499,19 +498,29 @@ onMounted(() => {
               <tippy :allowHtml="true" :interactiveBorder="30" theme="light" followCursor :sticky="true"
                      :interactive="false">
                 <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
-                  <div class="bg-weak-50 flex items-end justify-center h-10 min-w-10">
+                  <div class="bg-weak-50 flex items-end justify-center flex-1 min-w-10">
                     <span class="c-sub-600 label-sm !text-[10px]">
                       {{ monthlyData[key]?.total ?? 0 }}
                     </span>
                   </div>
-                  <template v-if="monthlyData[key]">
-                    <div v-for="p in Object.keys(monthlyData[key])"
-                         :key="p"
-                         class="w-full"
-                         :style="{height: (monthlyData[key][p]?.percentage ?? 0) + '%'}"
-                         :class="'bg-'+p.toLowerCase()">
-                    </div>
-                  </template>
+                   <div class="flex flex-col" :style="{height:`${monthlyData[key].month_percentage}%`}">
+
+                      <template v-if="monthlyData[key] && monthlyData[key] != 'total' && monthlyData[key] != 'total_num'">
+
+                            <template v-for="p in Object.keys(monthlyData[key])">
+
+                                 <div
+                                    v-if="p != 'total' && p != 'total_num' && p != 'month_percentage' "
+                                    :key="p"
+                                    class="w-full"
+                                    :style="{height: (monthlyData[key][p]?.percentage ?? 0) + '%'}"
+                                    :class="'bg-'+p.toLowerCase()">
+                                </div>
+                            </template>
+
+                        </template>
+                   </div>
+
                 </div>
                 <template #content>
                   <div class="flex flex-col gap-2 w-64 p-1">
@@ -520,14 +529,17 @@ onMounted(() => {
                       <div v-for="platform in Object.keys(monthlyData[key])"
                            :key="platform"
                            class="flex items-center gap-2">
-                        <SpotifyIcon v-if="platform=='Spotify'"/>
-                        <YoutubeIcon v-else-if="platform == 'Youtube'"/>
-                        <AppleMusicIcon v-else-if="platform == 'Apple'"/>
-                        <span v-else-if="platform == 'other'" class="bg-[#717784] w-4 h-4 rounded-full"></span>
-                        <p class="paragraph-sm c-strong-950 flex-1">{{ platform }}</p>
-                        <div class="border border-soft-200 rounded px-2 py-1">
-                          <p class="paragraph-xs c-sub-600">{{ monthlyData[key][platform]?.earning ?? 0 }}</p>
-                        </div>
+                        <template v-if="platform != 'month_percentage' && platform != 'total_num'">
+
+                            <SpotifyIcon v-if="platform=='Spotify'"/>
+                            <YoutubeIcon v-else-if="platform == 'Youtube'"/>
+                            <AppleMusicIcon v-else-if="platform == 'Apple Music'"/>
+                            <span v-else-if="platform == 'other'" class="bg-[#717784] w-4 h-4 rounded-full"></span>
+                            <p class="paragraph-sm c-strong-950 flex-1">{{ platform }}</p>
+                            <div class="border border-soft-200 rounded px-2 py-1">
+                            <p class="paragraph-xs c-sub-600">{{ monthlyData[key][platform]?.earning ?? 0 }}</p>
+                            </div>
+                        </template>
                       </div>
                     </template>
                   </div>
