@@ -33,8 +33,7 @@ class AnalyseResource extends JsonResource
         $this->analyseService = new AnalyseService($this->data);
 
     }
-
-
+    
     /**
      * Transform the resource into an array.
      *

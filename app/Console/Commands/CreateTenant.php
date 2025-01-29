@@ -42,18 +42,18 @@ class CreateTenant extends Command
 
         if ($tenant) {
             $this->warn("Tenant with domain {$domain} already exists!");
-            
+
             if (!$this->confirm('Do you want to delete existing tenant and create a new one?')) {
                 $this->info('Operation cancelled.');
                 return;
             }
 
             $this->info("Proceeding with tenant deletion...");
-            
+
             try {
                 // First delete the domain records manually
                 DB::table('domains')->where('domain', $domain)->delete();
-                
+
                 // Delete tenant storage disks
                 $diskName = "tenant_{$tenant->domain}";
                 if (Storage::exists($diskName)) {
@@ -75,7 +75,7 @@ class CreateTenant extends Command
                 DB::table('tenants')->where('domain', $domain)->delete();
                 $this->info("Existing tenant deleted successfully.");
             } catch (\Exception $e) {
-                $this->error("An error occurred: " . $e->getMessage());
+                $this->error("An error occurred: ".$e->getMessage());
                 return;
             }
         }
@@ -97,12 +97,10 @@ class CreateTenant extends Command
         // Create new tenant instance with data
         $tenant = new Tenant([
             'domain' => $domain,
-            'data' => json_encode([
-                'tenancy_db_name' => $dbName
-            ])
+            'tenancy_db_name' => $dbName
         ]);
         $tenant->save();
-        
+
         // Create domain record
         $tenant->domains()->create(['domain' => $domain]);
 

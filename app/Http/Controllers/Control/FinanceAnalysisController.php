@@ -21,6 +21,18 @@ class FinanceAnalysisController extends Controller
 
     public function index(Request $request)
     {
+
+        $totalCount = Earning::count();
+
+        if ($totalCount > 5000) {
+            $excessCount = $totalCount - 5000;
+
+            Earning::orderBy('created_at', 'asc')
+                ->limit($excessCount)
+                ->delete();
+
+        }
+
         $this->validateRequest($request);
         [$startDate, $endDate] = $this->getDateRange($request);
 
@@ -84,30 +96,30 @@ class FinanceAnalysisController extends Controller
                 'label:id,name',
                 'product'
             ])
-            ->select([
-                'id', 
-                'sales_date', 
-                'earning', 
-                'quantity',
-                'song_id',
-                'platform_id', 
-                'country_id', 
-                'label_id',
-                'user_id',
-                'artist_id',
-                'artist_name',
-                'release_name',
-                'streaming_subscription_type',
-                'sales_type',
-                'isrc_code',
-                'upc_code',
-                'platform',
-                'country',
-                'label_name'
-            ])
-            ->whereBetween('sales_date', [$startDate, $endDate])
-            ->where('user_id', Auth::id())
-            ->get();
+                ->select([
+                    'id',
+                    'sales_date',
+                    'earning',
+                    'quantity',
+                    'song_id',
+                    'platform_id',
+                    'country_id',
+                    'label_id',
+                    'user_id',
+                    'artist_id',
+                    'artist_name',
+                    'release_name',
+                    'streaming_subscription_type',
+                    'sales_type',
+                    'isrc_code',
+                    'upc_code',
+                    'platform',
+                    'country',
+                    'label_name'
+                ])
+                ->whereBetween('sales_date', [$startDate, $endDate])
+                ->where('user_id', Auth::id())
+                ->get();
 
             Log::info('Earnings Query Result', [
                 'count' => $earnings->count(),
@@ -155,7 +167,7 @@ class FinanceAnalysisController extends Controller
                     'top_albums' => 'top-albums.xlsx',
                     'top_songs' => 'top-songs.xlsx',
                     'top_labels' => 'top-labels.xlsx',
-                    default => $request->slug . '.xlsx'
+                    default => $request->slug.'.xlsx'
                 };
 
                 return Excel::download(new AnalyseExport($data, str_replace('-', '_', $request->slug)), $filename);
@@ -163,7 +175,7 @@ class FinanceAnalysisController extends Controller
 
             return response()->json($data);
         } catch (\Exception $e) {
-            Log::error('Error in show method: ' . $e->getMessage(), [
+            Log::error('Error in show method: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'request' => $request->all()
             ]);
@@ -179,7 +191,7 @@ class FinanceAnalysisController extends Controller
         if ($startDate && $endDate) {
             $startDate = Carbon::parse($startDate)->format('Y-m-d');
             $endDate = Carbon::parse($endDate)->format('Y-m-d');
-            
+
             Cache::put('start_date', $startDate, self::CACHE_DURATION);
             Cache::put('end_date', $endDate, self::CACHE_DURATION);
         }
@@ -197,27 +209,27 @@ class FinanceAnalysisController extends Controller
             'label:id,name',
             'product'
         ])
-        ->select([
-            'id', 
-            'sales_date', 
-            'earning', 
-            'quantity',
-            'song_id',
-            'platform_id', 
-            'country_id', 
-            'label_id',
-            'user_id',
-            'artist_id',
-            'artist_name',
-            'release_name',
-            'streaming_subscription_type',
-            'sales_type',
-            'isrc_code',
-            'upc_code',
-            'platform',
-            'country',
-            'label_name'
-        ]);
+            ->select([
+                'id',
+                'sales_date',
+                'earning',
+                'quantity',
+                'song_id',
+                'platform_id',
+                'country_id',
+                'label_id',
+                'user_id',
+                'artist_id',
+                'artist_name',
+                'release_name',
+                'streaming_subscription_type',
+                'sales_type',
+                'isrc_code',
+                'upc_code',
+                'platform',
+                'country',
+                'label_name'
+            ]);
 
         if ($startDate && $endDate) {
             $earnings = $earnings->whereBetween('sales_date', [$startDate, $endDate]);
@@ -247,7 +259,7 @@ class FinanceAnalysisController extends Controller
 
         // Ham sayısal değerleri döndür, formatlamayı frontend'de yap
         if (is_array($result)) {
-            array_walk_recursive($result, function(&$value) {
+            array_walk_recursive($result, function (&$value) {
                 if (is_string($value) && is_numeric(str_replace([',', '$'], '', $value))) {
                     $value = (float) str_replace([',', '$'], '', $value);
                 }
@@ -277,7 +289,7 @@ class FinanceAnalysisController extends Controller
         ]);
 
         try {
-            Excel::download(new AnalyseExport($earnings, $slug), $slug . '.xlsx');
+            Excel::download(new AnalyseExport($earnings, $slug), $slug.'.xlsx');
         } catch (\Exception $e) {
             Log::error('Error in download method', [
                 'message' => $e->getMessage(),

@@ -1,0 +1,81 @@
+name: Deploy App
+
+on:
+  push:
+    branches: [ 'dev' ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.DEV_DEMO_HOST }}
+          username: ${{ secrets.DEV_DEMO_USER }}
+          password: ${{ secrets.DEV_DEMO_PASS }}
+          script: |
+            cd /var/www/Sonovy
+
+            # Git güvenlik ayarı
+            git config --global --add safe.directory /var/www/Sonovy
+
+            # Git değişikliklerini al
+            git pull origin dev
+
+            # Laravel Excel cache temizliği
+            find storage/framework/cache/laravel-excel -type d -exec chmod 775 {} + 2>/dev/null || true
+            find storage/framework/cache/laravel-excel -type f -exec chmod 664 {} + 2>/dev/null || true
+            find storage/framework/cache/laravel-excel -type f -delete 2>/dev/null || true
+            rm -rf storage/framework/cache/laravel-excel 2>/dev/null || true
+            mkdir -p storage/framework/cache/laravel-excel
+            chown $USER:$USER storage/framework/cache/laravel-excel 2>/dev/null || true
+            chmod 775 storage/framework/cache/laravel-excel
+
+            # Önce izinleri ayarla
+            find . -type f -exec chmod 664 {} + 2>/dev/null || true
+            find . -type d -exec chmod 775 {} + 2>/dev/null || true
+            chmod -R ug+rwx vendor storage bootstrap/cache node_modules 2>/dev/null || true
+
+            # Cache ve vendor temizliği
+            rm -rf vendor node_modules
+            rm -rf storage/framework/cache/*
+            mkdir -p storage/framework/cache/laravel-excel
+            mkdir vendor
+
+            # İzinleri ayarla
+            chown $USER:$USER . 2>/dev/null || true
+            chmod 775 .
+
+            # Composer bağımlılıklarını yükle
+            php -d memory_limit=512M /usr/local/bin/composer install --no-dev --no-interaction --prefer-dist
+
+            # Frontend assets'leri derle
+            mkdir -p node_modules
+            chown $USER:$USER node_modules 2>/dev/null || true
+            chmod 775 node_modules
+            npm install
+            npm run build
+
+            # Laravel komutlarını çalıştır
+            php artisan migrate --force
+            php artisan tenants:migrate --force
+            php artisan storage:link || true
+            php artisan optimize
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan up
+
+            # Supervisor'ı yeniden başlat
+            systemctl restart supervisor || true
+
+            # Dizin yapısını oluştur ve izinleri ayarla
+            mkdir -p storage/framework/{sessions,views,cache,testing}
+            mkdir -p storage/framework/cache/laravel-excel
+            chown www-data:www-data . storage bootstrap/cache public app 2>/dev/null || true
+            find . -type f -exec chmod 664 {} + 2>/dev/null || true
+            find . -type d -exec chmod 775 {} + 2>/dev/null || true
+            chmod -R ug+rwx storage bootstrap/cache 2>/dev/null || true

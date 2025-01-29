@@ -11,6 +11,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
+ini_set('memory_limit', '2048M');
+
 class CreateDemoEarningsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -41,7 +43,7 @@ class CreateDemoEarningsJob implements ShouldQueue
             EarningService::createDemoEarnings($adminUser->id);
             Log::info('Demo kazançları başarıyla oluşturuldu.');
         } catch (\Exception $e) {
-            Log::error('Demo kazançları oluşturulurken hata oluştu: ' . $e->getMessage());
+            Log::error('Demo kazançları oluşturulurken hata oluştu: '.$e->getMessage());
             throw $e;
         }
     }
@@ -51,6 +53,6 @@ class CreateDemoEarningsJob implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        Log::error('Demo kazançları oluşturma işi başarısız oldu: ' . $exception->getMessage());
+        Log::error('Demo kazançları oluşturma işi başarısız oldu: '.$exception->getMessage());
     }
 }
