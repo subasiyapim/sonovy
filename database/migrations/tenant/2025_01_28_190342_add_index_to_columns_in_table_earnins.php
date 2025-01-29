@@ -14,9 +14,9 @@ return new class extends Migration {
             $table->string('platform', 50)->index()->change();
             $table->string('country', 50)->index()->change();
             $table->string('label_name')->index()->change();
-            $table->string('artist_name', 100)->index()->change();
-            $table->string('release_name', 50)->index()->change();
-            $table->string('song_name', 50)->index()->change();
+            $table->string('artist_name', 150)->index()->change();
+            $table->string('release_name', 150)->index()->change();
+            $table->string('song_name', 150)->index()->change();
             $table->string('isrc_code', 15)->index()->change();
             $table->decimal('earning', 20, 9)->index()->change();
         });
