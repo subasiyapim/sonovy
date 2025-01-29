@@ -26,7 +26,7 @@ class AnalyseService
 
     public function countries(): array
     {
-        $cacheKey = 'countries_analysis_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'countries_analysis_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             $countries = ['Turkey', 'United states', 'United kingdom', 'Portugal', 'Spain'];
 
@@ -127,11 +127,13 @@ class AnalyseService
 
     public function platforms(): array
     {
-        $cacheKey = 'platforms_analysis_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'platforms_analysis_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             $platforms = ['Spotify', 'Facebook', 'Youtube', 'Apple Music', 'Tiktok'];
 
-            $platformEarnings = $this->data->groupBy('platform')->map(function ($platformData, $platform) use ($platforms) {
+            $platformEarnings = $this->data->groupBy('platform')->map(function ($platformData, $platform) use (
+                $platforms
+            ) {
                 $totalEarnings = $platformData->sum('earning');
                 $totalQuantity = $platformData->sum('quantity');
                 $earnings = $platformData->groupBy('release_name')->map(function ($releaseData) use ($totalEarnings) {
@@ -220,7 +222,7 @@ class AnalyseService
 
     public function topArtists()
     {
-        $cacheKey = 'top_artists_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'top_artists_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             return $this->data->groupBy('artist_id')->values()->map(function ($artistData) {
                 $artistEarnings = $artistData->sum('earning');
@@ -236,15 +238,15 @@ class AnalyseService
                     'percentage' => round($percentage, 2),
                 ];
             })->sortByDesc('percentage')
-            ->take(10)
-            ->values()
-            ->toArray();
+                ->take(10)
+                ->values()
+                ->toArray();
         });
     }
 
     public function topAlbums(): array
     {
-        $cacheKey = 'top_albums_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'top_albums_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, 60 * 60, function () {
             Log::info('TopAlbums başlangıç', [
                 'total_records' => $this->data->count(),
@@ -262,7 +264,7 @@ class AnalyseService
 
             Log::info('TopAlbums gruplandırma sonrası', [
                 'total_groups' => $groupedData->count(),
-                'groups_with_earnings' => $groupedData->filter(function($group) {
+                'groups_with_earnings' => $groupedData->filter(function ($group) {
                     return $group->sum('earning') > 0;
                 })->count(),
                 'sample_group' => $groupedData->take(1)->toArray()
@@ -295,7 +297,7 @@ class AnalyseService
                 ->sortByDesc('raw_earning')
                 ->take(10)
                 ->values()
-                ->map(function($item) {
+                ->map(function ($item) {
                     unset($item['raw_earning']);
                     return $item;
                 })
@@ -313,7 +315,7 @@ class AnalyseService
 
     public function topSongs(): array
     {
-        $cacheKey = 'top_songs_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'top_songs_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             return $this->data->groupBy('isrc_code')->values()->map(function ($songData) {
                 $songEarnings = $songData->sum('earning');
@@ -333,15 +335,15 @@ class AnalyseService
                     'percentage' => round($percentage, 2),
                 ];
             })->sortByDesc('percentage')
-            ->take(10)
-            ->values()
-            ->toArray();
+                ->take(10)
+                ->values()
+                ->toArray();
         });
     }
 
     public function topLabels(): array
     {
-        $cacheKey = 'top_labels_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'top_labels_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             return $this->data->groupBy('label_id')->values()->map(function ($labelData) {
                 $labelEarnings = $labelData->sum('earning');
@@ -357,15 +359,15 @@ class AnalyseService
                     'percentage' => round($percentage, 2),
                 ];
             })->sortByDesc('percentage')
-            ->take(10)
-            ->values()
-            ->toArray();
+                ->take(10)
+                ->values()
+                ->toArray();
         });
     }
 
     public function trendingAlbums(): array
     {
-        $cacheKey = 'trending_albums_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'trending_albums_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             return $this->data->groupBy('upc_code')
                 ->map(function ($items) {
@@ -390,7 +392,7 @@ class AnalyseService
 
     public function earningFromSalesType(): array
     {
-        $cacheKey = 'earning_from_sales_type_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'earning_from_sales_type_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             $salesTypeEarnings = $this->data->groupBy('sales_type')->map(function ($salesTypeData) {
                 return [
@@ -419,7 +421,7 @@ class AnalyseService
 
     public function earningFromYoutubeWithPremium(): array
     {
-        $cacheKey = 'earning_from_youtube_premium_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'earning_from_youtube_premium_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             $youtubeData = $this->data->filter(function ($item) {
                 return stripos($item->platform, 'Youtube') !== false && !empty($item->streaming_subscription_type);
@@ -433,12 +435,12 @@ class AnalyseService
                 ->groupBy('platform')
                 ->map(function ($platformData, $platform) {
                     $result = ['name' => $platform];
-                    
+
                     $platformData->groupBy('streaming_subscription_type')
                         ->each(function ($data, $type) use (&$result) {
                             $result[$type] = $data->sum('earning');
                         });
-                    
+
                     return $result;
                 })
                 ->values()
@@ -448,7 +450,7 @@ class AnalyseService
 
     public function earningFromYoutube(): array
     {
-        $cacheKey = 'earning_from_youtube_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'earning_from_youtube_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             $platformEarnings = $this->data->filter(function ($item) {
                 return stripos($item->platform, 'Youtube') !== false;
@@ -565,21 +567,26 @@ class AnalyseService
 
     public function monthlyNetEarning(): array
     {
-        $cacheKey = 'monthly_net_earnings_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'monthly_net_earnings_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             $platforms = ['Spotify', 'Apple Music', 'Youtube'];
+            $totalAllEarnings = $this->data->sum('earning');
 
-            $calculateEarnings = function ($data) use ($platforms) {
+            $calculateEarnings = function ($data) use ($platforms, $totalAllEarnings) {
                 $totalEarnings = $data->sum('earning');
-                $earnings = $data->groupBy('platform')->mapWithKeys(function ($platformData, $platform) use ($platforms, $totalEarnings) {
+                $earnings = $data->groupBy('platform')->mapWithKeys(function ($platformData, $platform) use (
+                    $platforms,
+                    $totalEarnings
+                ) {
                     $sum = $platformData->sum('earning');
                     $percentage = $totalEarnings > 0 ? ($sum / $totalEarnings) * 100 : 0;
+
                     if (in_array($platform, $platforms)) {
                         return [
                             $platform => [
                                 'earning_num' => $sum,
                                 'earning' => Number::currency($sum, 'USD', app()->getLocale()),
-                                'percentage' => round($percentage, 2),
+                                'percentage' => round($percentage, 2)
                             ]
                         ];
                     }
@@ -587,7 +594,7 @@ class AnalyseService
                         'other' => [
                             'earning_num' => $sum,
                             'earning' => Number::currency($sum, 'USD', app()->getLocale()),
-                            'percentage' => round($percentage, 2),
+                            'percentage' => round($percentage, 2)
                         ]
                     ];
                 });
@@ -597,7 +604,7 @@ class AnalyseService
                         $earnings[$platform] = [
                             'earning_num' => 0,
                             'earning' => Number::currency(0, 'USD', app()->getLocale()),
-                            'percentage' => 0,
+                            'percentage' => 0
                         ];
                     }
                 }
@@ -606,28 +613,79 @@ class AnalyseService
                     $earnings['other'] = [
                         'earning_num' => 0,
                         'earning' => Number::currency(0, 'USD', app()->getLocale()),
-                        'percentage' => 0,
+                        'percentage' => 0
                     ];
                 }
 
+                $monthPercentage = $totalAllEarnings > 0 ? round(($totalEarnings / $totalAllEarnings) * 100, 2) : 0;
+
                 return array_merge($earnings->toArray(), [
                     'total' => Number::currency($totalEarnings, 'USD', app()->getLocale()),
+                    'total_num' => $totalEarnings,
+                    'month_percentage' => $monthPercentage
                 ]);
             };
 
-            $items = $this->groupedData->map(fn($monthData) => $calculateEarnings($monthData));
+            // Tarihleri Carbon nesnelerine dönüştürüp sıralama yapacağız
+            $sortedData = $this->groupedData->map(function ($monthData, $monthKey) {
+                return [
+                    'date' => Carbon::createFromLocaleFormat('F Y', app()->getLocale(), $monthKey),
+                    'data' => $monthData
+                ];
+            })->sortByDesc(function ($item) {
+                return $item['date']->timestamp;
+            });
+
+            $items = $sortedData->mapWithKeys(function ($item) use ($calculateEarnings) {
+                return [$item['date']->locale(app()->getLocale())->translatedFormat('F Y') => $calculateEarnings($item['data'])];
+            });
+
             $total = $calculateEarnings($this->data);
+
+            // En yüksek aylık toplam değeri bul
+            $maxMonthlyTotal = $items->max(function ($monthData) {
+                return $monthData['total_num'];
+            });
+
+            // Y ekseni için uygun aralıkları hesapla
+            $yAxisMax = ceil($maxMonthlyTotal / 2000) * 2000; // En yakın 2000'e yuvarla
+            $interval = $yAxisMax / 4; // 4 aralık olacak şekilde böl
+
+            $yAxis = [
+                'max' => $yAxisMax,
+                'interval' => $interval,
+                'values' => [
+                    $yAxisMax,
+                    round($yAxisMax * 0.75),
+                    round($yAxisMax * 0.5),
+                    round($yAxisMax * 0.25),
+                    0
+                ]
+            ];
+
+            // Series verilerini hazırla
+            $series = collect(['Spotify', 'Apple Music', 'Youtube', 'other'])->map(function ($platform) use ($items) {
+                return [
+                    'name' => $platform,
+                    'data' => $items->map(function ($monthData) use ($platform) {
+                        return $monthData[$platform]['earning_num'] ?? 0;
+                    })->values()->toArray()
+                ];
+            })->values()->toArray();
 
             return [
                 'total' => $total,
                 'items' => $items->toArray(),
+                'series' => $series,
+                'categories' => $items->keys()->toArray(),
+                'yAxis' => $yAxis
             ];
         });
     }
 
     public function spotifyDiscoveryModeEarnings(): array
     {
-        $cacheKey = 'spotify_discovery_mode_earnings_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'spotify_discovery_mode_earnings_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             $items = $this->groupedData->mapWithKeys(function ($monthData, $month) {
                 $monthData = collect($monthData);
@@ -678,7 +736,7 @@ class AnalyseService
 
     public function youtubeEarningsBySubscriptionType(): array
     {
-        $cacheKey = 'youtube_earnings_by_subscription_type_' . md5($this->data->pluck('id')->implode(','));
+        $cacheKey = 'youtube_earnings_by_subscription_type_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             return $this->data
                 ->filter(function ($item) {
