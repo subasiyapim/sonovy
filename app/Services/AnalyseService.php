@@ -648,7 +648,10 @@ class AnalyseService
             });
 
             // Y ekseni için uygun aralıkları hesapla
-            $yAxisMax = ceil($maxMonthlyTotal / 2000) * 2000; // En yakın 2000'e yuvarla
+            $length = strlen(floor($maxMonthlyTotal));
+            $divider = pow(10, $length - 1);
+            $yAxisMax = ceil($maxMonthlyTotal / $divider) * $divider;
+
             $interval = $yAxisMax / 4; // 4 aralık olacak şekilde böl
 
             $yAxis = [
@@ -687,8 +690,19 @@ class AnalyseService
     {
         $cacheKey = 'spotify_discovery_mode_earnings_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $items = $this->groupedData->mapWithKeys(function ($monthData, $month) {
-                $monthData = collect($monthData);
+            // Önce tarihleri Carbon nesnelerine dönüştürüp sıralama yapacağız
+            $sortedData = $this->groupedData->map(function ($monthData, $monthKey) {
+                return [
+                    'date' => Carbon::createFromLocaleFormat('F Y', app()->getLocale(), $monthKey),
+                    'data' => $monthData
+                ];
+            })->sortByDesc(function ($item) {
+                return $item['date']->timestamp;
+            });
+
+            $items = $sortedData->mapWithKeys(function ($item) {
+                $monthData = collect($item['data']);
+                $month = $item['date']->locale(app()->getLocale())->translatedFormat('F Y');
 
                 $promotion = $monthData->filter(function ($item) {
                     return $item['platform_id'] == 2 && $item['sales_type'] === 'PLATFORM PROMOTION';
