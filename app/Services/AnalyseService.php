@@ -423,8 +423,9 @@ class AnalyseService
     {
         $cacheKey = 'earning_from_youtube_premium_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
+            // Youtube içeren platformları filtrele
             $youtubeData = $this->data->filter(function ($item) {
-                return stripos($item->platform, 'Youtube') !== false && !empty($item->streaming_subscription_type);
+                return stripos($item->platform, 'Youtube') !== false;
             });
 
             if ($youtubeData->isEmpty()) {
@@ -436,12 +437,39 @@ class AnalyseService
                 ->map(function ($platformData, $platform) {
                     $result = ['name' => $platform];
 
-                    $platformData->groupBy('streaming_subscription_type')
-                        ->each(function ($data, $type) use (&$result) {
-                            $result[$type] = $data->sum('earning');
-                        });
+                    // Premium ve Freemium verilerini hesapla
+                    $premiumData = $platformData->where('streaming_subscription_type', 'Premium');
+                    $freemiumData = $platformData->where('streaming_subscription_type', 'Freemium');
+
+                    // Others - Premium ve Freemium dışındaki tüm veriler
+                    $othersData = $platformData->filter(function ($item) {
+                        return !in_array($item->streaming_subscription_type, ['Premium', 'Freemium']);
+                    });
+
+                    // Her grubu ekle (0 bile olsa)
+                    $premiumSum = $premiumData->sum('earning');
+                    $freemiumSum = $freemiumData->sum('earning');
+                    $othersSum = $othersData->sum('earning');
+
+                    // Platform toplamını hesapla
+                    $platformTotal = $premiumSum + $freemiumSum + $othersSum;
+
+                    // Her grubun oranını hesapla
+                    $result['Premium'] = $premiumSum;
+                    $result['Freemium'] = $freemiumSum;
+                    $result['Others'] = $othersSum;
+                    $result['total'] = $platformTotal;
+
+                    // Oranları hesapla ve ekle (yüzde olarak)
+                    $result['Premium_percentage'] = $platformTotal > 0 ? round(($premiumSum / $platformTotal) * 100, 2) : 0;
+                    $result['Freemium_percentage'] = $platformTotal > 0 ? round(($freemiumSum / $platformTotal) * 100, 2) : 0;
+                    $result['Others_percentage'] = $platformTotal > 0 ? round(($othersSum / $platformTotal) * 100, 2) : 0;
 
                     return $result;
+                })
+                ->filter(function ($item) {
+                    // En az bir değeri 0'dan büyük olan platformları göster
+                    return $item['Premium'] > 0 || $item['Freemium'] > 0 || $item['Others'] > 0;
                 })
                 ->values()
                 ->toArray();
