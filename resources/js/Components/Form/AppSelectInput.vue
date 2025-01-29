@@ -50,7 +50,7 @@
           <div class="max-h-[250px] overflow-scroll">
             <div v-for="el in getFilteredData" :data-id="el[config.value ?? 'value']" @click="chooseValue(el)"
                  :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-500' :  'bg-white'"
-                 class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
+                 class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2 my-0.5">
 
 
               <slot v-if="hasSlot('option')" name="option" :scope="el"/>

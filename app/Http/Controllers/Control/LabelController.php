@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers\Control;
 
+use App\Enums\AlbumTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Label\LabelStoreRequest;
 use App\Http\Requests\Label\LabelUpdateRequest;
+use App\Models\DspLabel;
 use App\Models\Label;
+use App\Models\Platform;
+use App\Models\Product;
 use App\Services\CountryServices;
 use App\Services\LabelServices;
 use App\Services\MediaServices;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class LabelController extends Controller
@@ -104,16 +109,57 @@ class LabelController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Label $label)
+    public function show(Request $request, Label $label)
     {
         abort_if(Gate::denies('label_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $user = Auth::user();
+
 
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
         $countryCodes = CountryServices::getCountryPhoneCodes();
+        $tab = [];
+        if ($request->slug == "products") {
+            $products = Product::with('artists', 'mainArtists', 'label', 'songs', 'downloadPlatforms')
+                ->where('label_id', '=', $label->id)
+                ->when($request->input('status'), function ($query) use ($request) {
+                    $query->where('status', $request->input('status'));
+                })
+                ->when($request->input('type'), function ($query) use ($request) {
+                    $query->where('type', $request->input('type'));
+                })->get();
+
+
+
+            $products->each(function ($product) {
+
+                $product->format = AlbumTypeEnum::from($product->format_id)->title();
+            });
+            $tab['products'] = $products;
+        }
+
+        if ($request->slug == "dsp") {
+
+            $dsp = $label->dspLabels()
+                ->with('platform')  // Assuming DpsLabel has a 'platform' relationship
+                ->when($request->input('status'), function ($query) use ($request) {
+                    $query->where('status', $request->input('status'));
+                })
+                ->get()
+                ->map(function ($dspLabel) {
+                    // Access the 'status_label' attribute to get the status text
+                    $dspLabel->status_text = $dspLabel->status_label;
+                    return $dspLabel;
+                });
+            $tab['dsp'] = $dsp;
+            if ($user->roles[0]->code == "user") {
+                $platforms = Platform::get();
+                $tab['platforms'] = $platforms;
+            }
+        }
 
         $label->loadMissing('country', 'products.songs', 'user');
 
-        return inertia('Control/Labels/Show', compact('label', 'countries', 'countryCodes'));
+        return inertia('Control/Labels/Show', compact('label', 'countries', 'countryCodes', 'tab'));
     }
 
     public function edit(Label $label)
@@ -140,7 +186,7 @@ class LabelController extends Controller
         return redirect()->back()->with([
             'notification' => [
                 'title' => 'Success',
-                'message' => 'Label updated successfully',
+                'message' => 'Plak şirketi başarıyla güncellendi',
                 'data' => $label
             ]
         ]);
@@ -186,5 +232,68 @@ class LabelController extends Controller
                 ]
             );
         }
+    }
+
+
+    public function changeStatus(Request $request, Label $label)
+    {
+
+        $validated = $request->validate([
+            'status' => 'required|in:1,2,3',
+            'dsp_ids' => 'required|array',
+            'dsp_ids.*' => 'integer|exists:dsp_label,id',
+        ]);
+
+        $dsp_ids = $validated['dsp_ids'];
+        $status = $validated['status'];
+
+        $dspLabels = $label->dspLabels()->whereIn('id', $dsp_ids)->get();
+
+        if ($dspLabels->isEmpty()) {
+            return response()->json(['message' => 'Herhangi bir dsp bulunamadı.'], 404);
+        }
+
+        foreach ($dspLabels as $dspLabel) {
+            $dspLabel->status = $status;
+            $dspLabel->save();
+        }
+
+        // Return a success response
+        return response()->json([
+            'message' => 'DspLabel status updated successfully.',
+            'dspLabels' => $dspLabels,
+        ]);
+    }
+
+    public function createDSP(Request $request, Label $label)
+    {
+        $validated = $request->validate([
+            'platforms' => 'required|array',
+            'platforms.*' => 'integer|exists:platforms,id',
+        ]);
+
+        $data = collect($validated['platforms'])->map(fn($platformId) => [
+            "label_id" => $label->id,
+            "platform_id" => $platformId,
+            "created_at" => now(),
+            "updated_at" => now(),
+        ])->toArray();
+
+        DspLabel::insert($data);
+        $dsp = $label->dspLabels()
+            ->with('platform')  // Assuming DpsLabel has a 'platform' relationship
+            ->when($request->input('status'), function ($query) use ($request) {
+                $query->where('status', $request->input('status'));
+            })
+            ->get()
+            ->map(function ($dspLabel) {
+                // Access the 'status_label' attribute to get the status text
+                $dspLabel->status_text = $dspLabel->status_label;
+                return $dspLabel;
+            });
+        return response()->json([
+            'dsp' => $dsp,
+            'message' => 'DSPs successfully added to the label.',
+        ], 201);
     }
 }

@@ -10,7 +10,7 @@ import {Link} from '@inertiajs/vue3';
 const showingNavigationDropdown = ref(false);
 import {inject} from 'vue'
 
-const __ = inject('locale')
+const __ = inject('locale');
 </script>
 
 <template>

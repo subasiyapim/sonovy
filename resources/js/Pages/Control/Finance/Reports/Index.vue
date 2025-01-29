@@ -1,5 +1,5 @@
 <template>
-  <AdminLayout :showDatePicker="false" :title="__('control.finance.reports.header')" parentTitle="Katalog">
+  <AdminLayout :showGoBack="false" :showBreadCrumb="false" :showDatePicker="false" :title="__('control.finance.reports.header')" parentTitle="Katalog">
 
     <div class="flex items-start my-6">
       <div class="flex-1">
@@ -15,11 +15,11 @@
       </PrimaryButton>
     </div>
 
-    <div>
+    <div class="ps-6">
       <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"/>
     </div>
 
-    <div class="px-8 pb-10">
+    <div class=" pb-10">
       <component :is="tabs.find(e => e.slug == currentTab)?.component"/>
     </div>
 

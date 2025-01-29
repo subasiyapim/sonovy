@@ -13,7 +13,8 @@
                     </div>
                     <div>
                         <p class="label-sm c-strong-950">{{title}}</p>
-                        <p class="paragraph-xs c-sub-600">{{description}}</p>
+                        <p v-if="!hasSlot('description')" class="paragraph-xs c-sub-600">{{description}}</p>
+                        <slot v-else name="description" />
                     </div>
                     <div v-if="showClose" class="ms-auto">
                         <button class="p-2" @click="isDialogOn = false"><CloseIcon color="var(--sub-600)" /></button>
@@ -29,8 +30,10 @@
 </template>
 
 <script setup>
-import {computed} from 'vue';
+import {computed,useSlots} from 'vue';
 import {CloseIcon} from '@/Components/Icons'
+
+const slots = useSlots()
 const props = defineProps({
     modelValue: {
         default:false,
@@ -66,6 +69,10 @@ const isDialogOn = computed({
 })
 const showDialog = () => {
 
+}
+
+const hasSlot = (name) => {
+    return !!slots[name];
 }
 const closeDialog = () => {
     if(!props.static){

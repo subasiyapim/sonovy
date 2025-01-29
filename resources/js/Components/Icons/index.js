@@ -14,6 +14,7 @@ import WorldIcon from './WorldIcon.vue';
 import PhoneIcon from './PhoneIcon.vue';
 import MessageIcon from './MessageIcon.vue';
 import PdfIcon from './PdfIcon.vue';
+import FileList2Line from './FileList2Line.vue';
 import MessageIcon2 from './MessageIcon2.vue';
 import CheckIcon from './CheckIcon.vue';
 import HistoryIcon from './HistoryIcon.vue';
@@ -97,12 +98,14 @@ import SpeedUpIcon from './SpeedUpIcon.vue';
 import WalletLineIcon from './WalletLineIcon.vue';
 import MultipleDocumentIcon from './MultipleDocumentIcon.vue';
 import BookReadLineIcon from './BookReadLineIcon.vue';
+
 import FileChartLineIcon from './FileChartLineIcon.vue';
 
 export {
     Icon,
     TidalIcon,
     YoutubeIcon,
+    FileList2Line,
     AddIcon,
     ItunesIcon,
     DashboardIcon,

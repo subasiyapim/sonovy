@@ -69,10 +69,10 @@
     <div class="mt-32 "></div>
 
     <!---APP TABS --->
-    <div>
+    <div class="px-6">
       <AppTabs :slug="currentTab" :tabs="tabs" class="my-5" @change="onTabChange"></AppTabs>
     </div>
-    <div class="px-8 pb-10">
+    <div class="px-6 pb-10">
 
       <component :user="user" :is="tabs.find(e => e.slug == currentTab)?.component"></component>
     </div>

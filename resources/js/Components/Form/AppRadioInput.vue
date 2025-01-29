@@ -35,7 +35,7 @@
         emits('change',option);
 
 
-    }
+    };
 
 </script>
 

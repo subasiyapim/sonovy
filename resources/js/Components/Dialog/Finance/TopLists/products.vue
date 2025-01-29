@@ -6,7 +6,7 @@
     <template #icon>
       <BookReadLineIcon color="var(--dark-green-950)"/>
     </template>
-
+    <hr>
 
    <div class="p-5">
  <table class="w-full" v-if="!loading">

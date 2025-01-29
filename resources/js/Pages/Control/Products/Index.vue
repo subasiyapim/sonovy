@@ -109,16 +109,16 @@
 
                 <template #content>
                     <p v-if="scope.row.type == 1">
-                        Ses Yayını
+                        {{ __('control.song.audio') }}
                     </p>
                     <p v-if="scope.row.type == 2">
-                        Müzik Video
+                        {{ __('control.song.music_video') }}
                     </p>
                     <p v-if="scope.row.type == 3">
-                        Zil Sesi
+                        {{ __('control.song.ringtone') }}
                     </p>
                     <p v-if="scope.row.type == 4">
-                        Apple Video
+                        {{ __('control.song.apple_video') }}
                     </p>
 
                 </template>
@@ -131,7 +131,7 @@
       <AppTableColumn label="Durum" sortable="status">
         <template #default="scope">
 
-          <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2">
+          <div class="whitespace-nowrap border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2">
             <component :is="statusData.find((e) => e.value == scope.row.status)?.icon"
                        :color="statusData.find((e) => e.value == scope.row.status)?.color"></component>
             <p class="subheading-xs c-sub-600">

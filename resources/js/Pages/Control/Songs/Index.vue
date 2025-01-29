@@ -50,7 +50,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn :label="'Süre'" sortable="name" width="150">
+    <AppTableColumn :label="'Süre'" sortable="name" width="150">
         <template #default="scope">
           <div v-if="currentSong !== scope.row" @click="playSound(scope.row)"
                class="flex items-center gap-2 cursor-pointer">
@@ -70,7 +70,7 @@
             </p>
           </div>
         </template>
-      </AppTableColumn>
+    </AppTableColumn>
       <AppTableColumn :label="'Sanatçı'" sortable="name">
         <template #default="scope">
           <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">

@@ -49,35 +49,35 @@ const reportContentMap = {
 
 <template>
       <div class="flex flex-col items-start gap-3">
-            <p class="label-medium c-strong-950 mb-3">Rapor Özeti</p>
+            <p class="label-medium c-strong-950 mb-3">Rapor Özeti:</p>
             <div class="flex items-center justify-between gap-2 w-full">
-                <p class="paragraph-sm c-sub-600">Seçilen Dönem</p>
+                <p class="paragraph-sm c-sub-600">Seçilen Dönem:</p>
                 <p class="label-sm c-strong-950">{{getFormatedDate}}</p>
             </div>
             <div class="flex items-center justify-between gap-2 w-full">
-                <p class="paragraph-sm c-sub-600">Rapor Tipi</p>
+                <p class="paragraph-sm c-sub-600">Rapor Tipi:</p>
                 <p class="label-sm c-strong-950">{{reportContentMap[element.report_content_type]}}</p>
             </div>
 
             <div v-if="element.type == 1 && element.report_content_type != 1" class="flex items-center justify-between gap-2 w-full">
                 <p class="paragraph-sm c-sub-600">
                     <template v-if="element.report_content_type == 2">
-                        Sanatçılar
+                        Sanatçılar:
                     </template>
                     <template v-if="element.report_content_type == 12">
-                        Plak Şirketleri
+                        Plak Şirketleri:
                     </template>
                     <template v-if="element.report_content_type == 3">
-                        Albümler
+                        Albümler:
                     </template>
                     <template v-if="element.report_content_type == 4">
-                        Parçalar
+                        Parçalar:
                     </template>
                     <template v-if="element.report_content_type == 5">
-                        Platformlar
+                        Platformlar:
                     </template>
                     <template v-if="element.report_content_type == 6">
-                        Ülkeler
+                        Ülkeler:
                     </template>
 
                 </p>

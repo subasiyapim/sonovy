@@ -36,6 +36,8 @@ Route::group(
         //Catalog routes
         Route::group(['prefix' => 'catalog', 'as' => 'catalog.'], function () {
             Route::resource('artists', ArtistController::class)->names('artists');
+            Route::post('labels/{label}/dsp/create', [LabelController::class, 'createDSP'])->name('label.dsp.create');
+            Route::post('labels/{label}/dsp/status', [LabelController::class, 'changeStatus'])->name('label.dsp.status');
             Route::resource('labels', LabelController::class)->names('labels');
             Route::apiResource('artist-branches', ArtistBranchController::class)->names('artist-branches');
 
@@ -105,8 +107,6 @@ Route::group(
                 ->name('analysis.index');
 
             Route::get('analysis/show', [FinanceAnalysisController::class, 'show'])->name('analysis.show');
-
-
         });
 
         Route::group(['prefix' => 'bank', 'as' => 'bank.'], function () {
@@ -171,8 +171,8 @@ Route::group(
         Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
 
-        require __DIR__.'/control/modules/search.php';
-        require __DIR__.'/control/modules/last.php';
-        require __DIR__.'/control/modules/find.php';
+        require __DIR__ . '/control/modules/search.php';
+        require __DIR__ . '/control/modules/last.php';
+        require __DIR__ . '/control/modules/find.php';
     }
 );

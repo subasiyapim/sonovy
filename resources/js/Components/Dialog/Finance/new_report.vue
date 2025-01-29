@@ -1,9 +1,9 @@
 <template>
 
-  <BaseDialog v-model="isDialogOn" width="824px" height="min-content" align="center" title="Rapor Oluştur"
+  <BaseDialog :showClose="true" v-model="isDialogOn" width="824px" height="min-content" align="center" title="Rapor Oluştur"
               description="Adım adım ihtiyacınıza göre rapor oluşturabilirsiniz.">
     <template #icon>
-      <BankLineIcon color="var(--dark-green-950)"/>
+      <FileList2Line color="var(--dark-green-950)"/>
     </template>
     <hr>
     <div class="py-6 px-5 flex flex-col gap-4">
@@ -23,10 +23,9 @@
 
 
     </div>
-
     <div class="flex p-5 border-t border-soft-200 gap-4 sticky bottom-0 bg-white">
-      <RegularButton @click="isDialogOn = false" class="flex-1">
-        {{ __('control.general.cancel') }}
+      <RegularButton @click="currentTab--" :disabled="currentTab == 0" class="flex-1">
+        {{ __('control.general.back') }}
       </RegularButton>
       <PrimaryButton :loading="adding" @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
         <template v-if="currentTab <3">Devam Et</template>
@@ -43,9 +42,11 @@
 </template>
 
 <script setup>
+import {router} from '@inertiajs/vue3';
+
 import BaseDialog from '../BaseDialog.vue';
 import {SectionHeader} from '@/Components/Widgets';
-import {BankLineIcon, InfoFilledIcon, ChevronRightIcon, CheckIcon} from '@/Components/Icons'
+import {FileList2Line, InfoFilledIcon, ChevronRightIcon, CheckIcon} from '@/Components/Icons'
 import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {computed, ref, onMounted} from 'vue';
 import {FormElement} from '@/Components/Form'
@@ -120,8 +121,11 @@ if(adding.value){
         ids: form.value.choosenValues,
       })
       toast.success("işlem başarılı");
-      location.reload();
-          adding.value = false;
+        router.visit(route(route().current()), {
+            data: {
+                slug: 'demanded-reports',
+            }
+        });
     } catch (error) {
       console.log("ERROR", error);
 
@@ -137,9 +141,32 @@ const onChangeTab = (tab) => {
   currentTab.value = tab;
 }
 const checkIfDisabled = computed(() => {
+    if(currentTab.value == 0){
+        if(!form.value.date){
+            return true;
+        }else {
+            return false;
+        }
+    }else if(currentTab.value == 1){
+        return false;
+    }else if(currentTab.value == 2){
+        if(form.value.type == 1){
+            if([12,2,3,4,5,6].includes(form.value.report_content_type)){
+                if(form.value.choosenValues.length == 0) {
+                    return true;
+                }else {
+                    return false;
+                }
+            }else {
+                return false
+            }
+        }else if(form.value.type == 2){
+            return false;
+        }
 
-  return false
-
+    }else if(currentTab.value == 3){
+        return false;
+    }
 })
 
 </script>

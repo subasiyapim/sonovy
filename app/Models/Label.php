@@ -76,7 +76,10 @@ class Label extends Model implements HasMedia
     {
         return $this->products()->where('status', ProductStatusEnum::APPROVED->value)->exists();
     }
-
+    public function dspLabels()
+    {
+        return $this->hasMany(DspLabel::class);
+    }
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('labels')

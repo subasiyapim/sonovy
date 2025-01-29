@@ -29,7 +29,6 @@ const chooseProductTypeConfig = ref({
             value:2,
             icon:MultipleDocumentIcon,
         },
-
     ]
 });
 </script>

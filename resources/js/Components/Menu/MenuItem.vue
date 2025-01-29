@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="my-0.5">
 
     <a :href="path" class="flex items-center gap-2 menuItem" :class="checkIsActive ? 'active' : ''"
        @click="onClick">

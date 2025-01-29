@@ -28,7 +28,7 @@ const onTabClicked = (tab) => {
 </script>
 
 <template>
-    <div class="px-8 flex items-center gap-5 cursor-pointer border-b border-soft-200">
+    <div class="pe-8 flex items-center gap-5 cursor-pointer border-b border-soft-200">
         <div v-for="item in tabs"
              :key="item.slug"
              @click="onTabClicked(item)"

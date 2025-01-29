@@ -1,5 +1,6 @@
 <template>
-  <AdminLayout :title="__('control.finance.payments.header')" parentTitle="Katalog">
+  <AdminLayout :showDatePicker="false" :showGoBack="false" :showBreadCrumb="false"
+ :title="__('control.finance.payments.header')" parentTitle="Katalog">
     <template #toolbar>
       <RegularButton>
         <template #icon>
@@ -32,7 +33,7 @@
             <Vue3Apexcharts height="40" width="60" :options="options" :series="series"></Vue3Apexcharts>
         </template>
         <template #body>
-          <div class="flex flex-col mt-5">
+          <div class="flex flex-col mt-8">
             <p class="paragraph-sm c-sub-600 mb-0.5">{{ __('control.finance.payments.current_balance') }}</p>
            <div class="flex items-center gap-2">
              <p class="card-currency-header c-strong-950">{{ usePage().props.balance }}</p>
@@ -52,7 +53,7 @@
 
         </template>
         <template #body>
-          <div class="flex flex-col mt-5">
+          <div class="flex flex-col mt-8">
             <p class="paragraph-sm c-sub-600 mb-0.5">{{ __('control.finance.payments.expected_payment') }}</p>
             <div class="flex items-center gap-2">
                 <p class="card-currency-header c-strong-950">{{ usePage().props.total_pending_payment }}</p>
@@ -90,7 +91,8 @@
               <span class="paragraph-xs c-sub-600">{{ __('control.finance.payments.change_email_description') }}</span>
             </div>
           </div>
-          <div v-else class="flex flex-col gap-2 items-center justify-center">
+
+          <div v-else class="flex flex-col gap-2 items-center justify-center mt-8">
             <WalletIcon color="var(--sub-600)"/>
             <p class="label-sm c-strong-950">{{ __('control.finance.payments.add_account_description') }}</p>
           </div>

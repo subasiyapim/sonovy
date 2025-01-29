@@ -257,17 +257,17 @@ const removeChoosingCountries = () => {
                         <template #option="scope">
                             <div class="w-full flex justify-between gap-2">
                                 <div class="flex flex-1 gap-2">
-                                    <div class="w-6 h-6 rounded-lg overflow-hidden">
-                                        <img :src="scope.data.image?.thumb"/>
+                                    <div class="w-9 h-9 flex-shrink-0 rounded-lg overflow-hidden">
+                                        <img class="h-full w-full" :src="scope.data.image?.thumb"/>
                                     </div>
-                                    <div class="flex flex-col">
-                                        <p class="paragraph-sm c-strong-950">{{ scope.data.album_name }}</p>
+                                    <div class="flex flex-col flex-1">
+                                        <p class="paragraph-sm c-strong-950 break-words">{{ scope.data.album_name }}</p>
                                         <div class="flex items-center gap-1">
-                                            <!-- <p class="paragraph-xs c-sub-600 w-max">{{ scope.data.type == 1 ? 'Ses Dosyası' : (scope.data.type == 2 ? 'Müzik Video' : (scope.data.type == 2 ? 'Zil Sesi'  : 'Apple Video')) }}</p> -->
-                                            <span class="paragraph-xs c-sub-600">UPC: {{scope.data.upc_code}}</span>
+                                            <span class="paragraph-xs c-sub-600">UPC: {{ scope.data.upc_code }}</span>
                                         </div>
                                     </div>
                                 </div>
+
 
 
                             </div>
@@ -300,15 +300,18 @@ const removeChoosingCountries = () => {
                     </FormElement>
                 </div>
                 <div  class="flex flex-wrap items-center gap-2">
-                    <div v-for="(choosenValue,i) in element.choosenValues" class="border border-soft-200 rounded px-2 py-1 flex items-center gap-1">
-                       <img class="rounded-full" width="24" height="24" :src="productsSelectConfig.data.find((e) => e.id == choosenValue)?.image?.small">
+                    <div v-for="(choosenValue,i) in element.choosenValues" class="border border-soft-200 rounded px-2 py-1 flex items-start gap-1">
+                       <div class="w-9 h-9 flex-shrink-0 rounded overflow-hidden">
+                        <img  class="w-full h-full"  :src="productsSelectConfig.data.find((e) => e.id == choosenValue)?.image?.small">
+
+                       </div>
 
                       <div class="whitespace-nowrap w-auto">
                         <p class="label-xs c-sub-600 !text-start"> {{productsSelectConfig.data.find((e) => e.id == choosenValue)?.album_name}}</p>
-                        <span class="paragraph-xs c-sub-600">{{productsSelectConfig.data.find((e) => e.id == choosenValue)?.upc_code}}</span>
+                        <span class="paragraph-xs c-sub-600">UPC:{{productsSelectConfig.data.find((e) => e.id == choosenValue)?.upc_code}}</span>
 
                       </div>
-                        <button @click="element.choosenValues.splice(i,1)"><CloseIcon color="var(--sub-600)" /></button>
+                        <button class="mt-1 ms-2" @click="element.choosenValues.splice(i,1)"><CloseIcon color="var(--sub-600)" /></button>
                     </div>
                 </div>
             </div>

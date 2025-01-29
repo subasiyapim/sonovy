@@ -7,22 +7,25 @@
         <div class="flex-1 relative overflow-scroll">
             <div class="flex items-center staticTopInfo">
                 <div class="flex items-center gap-3.5 flex-1">
-                       <IconButton @click="goBack" hasBorder size="medium">
+                       <IconButton v-if="showGoBack" @click="goBack" hasBorder size="medium">
                             <ArrowLeftIcon color="var(--sub-600)" />
                        </IconButton>
-                       <div class="flex flex-col flex-1">
+                       <div  class="flex flex-col flex-1">
                             <p class="label-lg c-strong-950">{{title}}</p>
-                            <div v-if="!hasSlot('breadcrumb')" class="flex items-center gap-2">
-                                <span v-if="parentTitle" class="label-xs c-soft-400">{{parentTitle}}</span>
-                                <span v-if="parentTitle" class="label-xs c-soft-400">•</span>
+                            <template v-if="showBreadCrumb">
+                                <div v-if="!hasSlot('breadcrumb')" class="flex items-center gap-2">
+                                    <span v-if="parentTitle" class="label-xs c-soft-400">{{parentTitle}}</span>
+                                    <span v-if="parentTitle" class="label-xs c-soft-400">•</span>
 
-                                <span v-if="subParent" class="label-xs c-soft-400">{{subParent}}</span>
-                                <span v-if="subParent" class="label-xs c-soft-400">•</span>
-                                <span class="label-xs c-soft-400">{{title}}</span>
-                            </div>
-                            <div v-else class="flex items-center gap-2">
-                                <slot name="breadcrumb" />
-                            </div>
+                                    <span v-if="subParent" class="label-xs c-soft-400">{{subParent}}</span>
+                                    <span v-if="subParent" class="label-xs c-soft-400">•</span>
+                                    <span class="label-xs c-soft-400">{{title}}</span>
+                                </div>
+                                <div v-else class="flex items-center gap-2">
+                                    <slot name="breadcrumb" />
+                                </div>
+                            </template>
+
                        </div>
 
                          <IconButton>
@@ -104,6 +107,12 @@ const props = defineProps({
     },
     subParent:{
         default:null
+    },
+    showGoBack:{
+        default:true,
+    },
+    showBreadCrumb:{
+        default:true,
     }
 })
 const switchUsers = () => {

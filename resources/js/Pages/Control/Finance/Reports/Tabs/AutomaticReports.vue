@@ -16,7 +16,7 @@ const data = usePage().props.reports;
     <template #tableHeader>
       <p class="subheading-regular c-strong-950">{{ __('control.finance.payments.transaction_history') }}</p>
     </template>
-    <AppTableColumn :label="__('control.finance.payments.table.column_1')" width="140" align="left" sortable="name">
+    <AppTableColumn :label="__('control.finance.payments.table.column_1')" width="240" align="left" sortable="name">
       <template #default="scope">
         <div class="flex items-center gap-2">
           <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">

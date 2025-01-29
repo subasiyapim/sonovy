@@ -81,7 +81,7 @@ moment.locale('tr');
         </div>
       </template>
     </AppTableColumn>
-    <AppTableColumn :label="__('control.finance.payments.demanded_table.column_6')" sortable="name" align="right">
+    <AppTableColumn :label="__('control.general.actions')" sortable="name" align="right">
       <template #default="scope">
         <a :href="route('control.finance.reports.download', scope.row.id)">
           <DownloadIcon color="var(--sub-600)"/>

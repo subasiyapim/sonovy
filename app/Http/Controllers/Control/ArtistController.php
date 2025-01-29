@@ -10,6 +10,8 @@ use App\Jobs\SpotifyImageUploadJob;
 use App\Models\Artist;
 use App\Models\ArtistBranch;
 use App\Models\Platform;
+use App\Models\Product;
+use App\Models\Song;
 use App\Services\ArtistServices;
 use App\Services\CountryServices;
 use App\Services\iTunesServices;
@@ -139,15 +141,58 @@ class ArtistController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Artist $artist)
+    public function show(Request $request, Artist $artist)
     {
         abort_if(Gate::denies('artist_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $countries = getDataFromInputFormat(CountryServices::get(), 'id', 'name', 'emoji');
         $countryCodes = CountryServices::getCountryPhoneCodes();
+        $tab = [];
+        if ($request->slug == "products") {
+            $products = Product::with(['artists', 'mainArtists', 'label', 'songs', 'downloadPlatforms'])
+                ->whereHas('artists', function ($query) use ($artist) {
+                    $query->where('artists.id', $artist->id); // Fully qualify the column name
+                })
+                ->when($request->input('status'), function ($query) use ($request) {
+                    $query->where('status', $request->input('status'));
+                })
+                ->when($request->input('type'), function ($query) use ($request) {
+                    $query->where('type', $request->input('type'));
+                })
+                ->get();
+            $products->each(function ($product) use ($artist) {
+                $artistPivot = $product->artists->firstWhere('id', $artist->id)?->pivot;
+                $product->artist_role = $artistPivot ? ($artistPivot->is_main ? 'Ana Sanatçı' : 'Düet Sanatçı') : null;
+            });
+
+            $tab['products'] = $products;
+        }
+        if ($request->slug == "songs") {
+            $songs = Song::with([
+                'artists' => function ($query) {
+                    $query->withPivot('is_main'); // Include the pivot column for role
+                },
+                'mainArtists',
+                'featuringArtists',
+            ])
+                ->when($request->input('status'), function ($query) use ($request) {
+                    $query->where('status', $request->input('status'));
+                })
+                ->get();
+
+            // Attach artist roles for each song
+            $songs->each(function ($song) {
+                $song->artist_role = $song->artists->map(function ($artist) {
+                    return  $artist->pivot->is_main ? 'Ana Sanatçı' : 'Düet Sanatçı';
+                });
+            });
+
+
+            $tab['songs'] = $songs;
+        }
 
         $artist->loadMissing('artistBranches', 'platforms', 'country', 'products.songs');
 
-        return inertia('Control/Artists/Show', compact('artist', 'countries', 'countryCodes'));
+        return inertia('Control/Artists/Show', compact('artist', 'countries', 'countryCodes', 'tab'));
     }
 
     /**

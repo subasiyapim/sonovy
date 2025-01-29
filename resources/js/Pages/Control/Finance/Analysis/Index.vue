@@ -1,5 +1,5 @@
 <template>
-  <AdminLayout :showDatePicker="false"  :title="__('control.finance.analysis.header')" parentTitle="Katalog">
+  <AdminLayout :showGoBack="false" :showBreadCrumb="false" :showDatePicker="false"  :title="__('control.finance.analysis.header')" parentTitle="Katalog">
 
     <template #toolbar>
     <div class="w-48">
@@ -12,6 +12,7 @@
         </VueDatePicker>
     </div>
 
+<!--
       <div v-if="choosenDates"
            class="flex items-center jusitfy-center gap-2 border border-soft-200 rounded px-3 py-1 hover:bg-grey-300">
         <p class="paragraph-xs c-sub-600">
@@ -19,7 +20,7 @@
         <button @click="removeDateFilter">
           <CloseIcon color="var(--sub-600)"/>
         </button>
-      </div>
+      </div> -->
     </template>
     <div class="flex grid grid-cols-2 gap-3 mb-5">
       <AppCard class="flex-1 w-full">
@@ -60,7 +61,7 @@
 
 
     <div>
-      <AppTabs 
+      <AppTabs
         :slug="currentTab"
         :tabs="tabs"
         class="my-5"
@@ -123,6 +124,7 @@ import CountriesTab from './Tabs/CountriesTab.vue';
 const defaultStore = useDefaultStore();
 const pageTable = ref();
 
+const choosenDate =ref();
 const props = defineProps({
   data: {
     type: Object,
@@ -169,7 +171,7 @@ onMounted(() => {
     // URL'den slug'ı al ve geçerli bir slug mu kontrol et
     const urlParams = new URLSearchParams(window.location.search);
     const urlSlug = urlParams.get('slug');
-    
+
     if (urlSlug && tabs.value.some(tab => tab.slug === urlSlug)) {
         currentTab.value = urlSlug;
     } else {
@@ -179,7 +181,7 @@ onMounted(() => {
     // Tarih parametrelerini kontrol et
     const startDate = urlParams.get('start_date');
     const endDate = urlParams.get('end_date');
-    
+
     if (startDate && endDate) {
         choosenDates.value = [
             moment(startDate, 'M-YYYY'),
@@ -197,7 +199,7 @@ onMounted(() => {
 watch(() => window.location.search, (search) => {
     const params = new URLSearchParams(search);
     const slug = params.get('slug');
-    
+
     if (slug && tabs.value.some(tab => tab.slug === slug)) {
         currentTab.value = slug;
     }
@@ -215,7 +217,7 @@ const removeDateFilter = async () => {
     loading.value = false;
   }
 }
-const choosenDate = ref();
+// const choosenDate = ref();
 
 // Tarih işlemleri için yardımcı fonksiyon
 const formatMonthYear = (date) => {
@@ -224,8 +226,15 @@ const formatMonthYear = (date) => {
 };
 
 const onDateChoosen = async (e) => {
+
     if (!e || !e['0'] || !e['1']) {
-        console.error('Geçersiz tarih seçimi:', e);
+        await router.visit(route(route().current()), {
+            data: {
+                slug: currentTab.value,
+            },
+            preserveScroll: true,
+            only: ['data']
+        });
         return;
     }
 
@@ -236,7 +245,7 @@ const onDateChoosen = async (e) => {
             moment().set({ month: e['0'].month, year: e['0'].year }),
             moment().set({ month: e['1'].month, year: e['1'].year })
         ];
-        
+
         choosenDates.value = dates;
 
         await router.visit(route(route().current()), {
@@ -300,29 +309,19 @@ const formattedDates = computed(() => {
     return '';
 });
 
-// Debug için onMounted hook'u
-onMounted(() => {
-    console.log('Index component mounted:', {
-        data: props.data,
-        filters: props.filters,
-        currentTab: currentTab.value,
-        choosenDates: choosenDates.value,
-        formattedDates: formattedDates.value
-    });
-});
 
 const onTabChange = async (tab) => {
     console.log('Tab değişimi başladı:', tab);
     loading.value = true;
-    
+
     try {
         // Önce tab'ı güncelle
         currentTab.value = tab.slug;
-        
+
         // URL parametrelerini hazırla
         const query = new URLSearchParams();
         query.set('slug', tab.slug);
-        
+
         // Tarih parametrelerini ekle
         if (choosenDates.value && choosenDates.value.length === 2) {
             const startDate = moment(choosenDates.value[0]).format('M-YYYY');
@@ -330,11 +329,11 @@ const onTabChange = async (tab) => {
             query.set('start_date', startDate);
             query.set('end_date', endDate);
         }
-        
+
         // URL'i güncelle ve veriyi yükle
         const url = `${route(route().current())}?${query.toString()}`;
         console.log('Ziyaret edilecek URL:', url);
-        
+
         await router.visit(url, {
             preserveState: true,
             preserveScroll: true,
@@ -369,6 +368,20 @@ const currentComponent = computed(() => {
     });
     return component ?? GeneralLookTab;
 });
+
+onMounted(() => {
+    if(choosenDates.value?.length > 0){
+         choosenDate.value = choosenDates.value.map((date) => {
+            const momentDate = moment(date);
+            return {
+                month: momentDate.month(),
+                year: momentDate.year(),
+            };
+        });
+    }
+
+});
+
 </script>
 
 <style lang="scss" scoped>

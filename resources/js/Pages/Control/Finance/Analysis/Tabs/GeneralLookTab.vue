@@ -374,46 +374,44 @@ const salesChartSeries = computed(() =>
 
 // Debug için onMounted hook'u güncelleme
 onMounted(() => {
-  console.log('Component mounted with data:', {
-    data: props.data,
-    monthlyData: monthlyData.value,
-    monthlyTotals: monthlyTotals.value,
-    platformsData: platformsData.value,
-    countriesData: countriesData.value,
-    chartSeries: chartSeries.value,
-    countriesChartSeries: countriesChartSeries.value,
-    salesChartSeries: salesChartSeries.value
-  });
+//   console.log('Component mounted with data:', {
+//     data: props.data,
+//     monthlyData: monthlyData.value,
+//     monthlyTotals: monthlyTotals.value,
+//     platformsData: platformsData.value,
+//     countriesData: countriesData.value,
+//     chartSeries: chartSeries.value,
+//     countriesChartSeries: countriesChartSeries.value,
+//     salesChartSeries: salesChartSeries.value
+//   });
 
-  console.log('Raw Platform Data:', props.data?.earning_from_platforms);
-  console.log('Raw Countries Data:', props.data?.earning_from_countries);
 
-  if (props.data?.earning_from_platforms) {
-    const samplePlatform = props.data.earning_from_platforms[0];
-    console.log('Sample Platform Item:', {
-      platform: samplePlatform.platform,
-      name: samplePlatform.name,
-      earning: samplePlatform.earning,
-      rawEarning: typeof samplePlatform.earning,
-      parsedEarning: Number(samplePlatform.earning)
-    });
-  }
+//   if (props.data?.earning_from_platforms) {
+//     const samplePlatform = props.data.earning_from_platforms[0];
+//     console.log('Sample Platform Item:', {
+//       platform: samplePlatform.platform,
+//       name: samplePlatform.name,
+//       earning: samplePlatform.earning,
+//       rawEarning: typeof samplePlatform.earning,
+//       parsedEarning: Number(samplePlatform.earning)
+//     });
+//   }
 
-  if (props.data?.earning_from_countries) {
-    const sampleCountry = props.data.earning_from_countries[0];
-    console.log('Sample Country Item:', {
-      country: sampleCountry.country,
-      name: sampleCountry.name,
-      earning: sampleCountry.earning,
-      rawEarning: typeof sampleCountry.earning,
-      parsedEarning: Number(sampleCountry.earning)
-    });
-  }
+//   if (props.data?.earning_from_countries) {
+//     const sampleCountry = props.data.earning_from_countries[0];
+//     console.log('Sample Country Item:', {
+//       country: sampleCountry.country,
+//       name: sampleCountry.name,
+//       earning: sampleCountry.earning,
+//       rawEarning: typeof sampleCountry.earning,
+//       parsedEarning: Number(sampleCountry.earning)
+//     });
+//   }
 
-  console.log('Processed Platform Data:', platformsData.value);
-  console.log('Processed Countries Data:', countriesData.value);
-  console.log('Platform Chart Series:', chartSeries.value);
-  console.log('Countries Chart Series:', countriesChartSeries.value);
+//   console.log('Processed Platform Data:', platformsData.value);
+//   console.log('Processed Countries Data:', countriesData.value);
+//   console.log('Platform Chart Series:', chartSeries.value);
+//   console.log('Countries Chart Series:', countriesChartSeries.value);
 });
 
 </script>
@@ -430,9 +428,16 @@ onMounted(() => {
           <p class="c-soft-400 label-sm">{{ formattedDate }}</p>
         </div>
         <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-spotify rounded-full"></span>
           <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.spotify') }}</span>
+
+          <span class="w-2 h-2 bg-apple rounded-full"></span>
           <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.apple_music') }}</span>
+
+          <span class="w-2 h-2 bg-youtube rounded-full"></span>
           <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.youtube') }}</span>
+
+          <span class="w-2 h-2 bg-others rounded-full"></span>
           <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.other') }}</span>
         </div>
       </div>

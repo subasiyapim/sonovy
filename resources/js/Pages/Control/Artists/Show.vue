@@ -42,8 +42,12 @@
 
       </div>
     </div>
-
-    <div class="mt-32 flex items-start gap-8 h-full">
+    <div class="flex items-center gap-2 mt-32 mb-5 ms-6">
+        <button @click="changeActiveTab('artist_info')" class="py-1.5 px-3 rounded-full label-xs" :class="activeTab == 'artist_info' ? 'bg-dark-green-800 text-white' : 'bg-weak-50 c-sub-600' ">Sanatçı Bilgileri</button>
+        <button @click="changeActiveTab('products')" class="py-1.5 px-3 rounded-full label-xs" :class="activeTab == 'products' ? 'bg-dark-green-800 text-white' : 'bg-weak-50 c-sub-600' ">Yayınlar</button>
+        <button @click="changeActiveTab('songs')" class="py-1.5 px-3 rounded-full label-xs" :class="activeTab == 'songs' ? 'bg-dark-green-800 text-white' : 'bg-weak-50 c-sub-600' "> Parçalar</button>
+    </div>
+    <div v-if="activeTab == 'artist_info'" class="flex items-start gap-8 h-full">
       <div class="px-8 flex-1 flex flex-col gap-12">
         <div>
           <h1 class="mb-6 subheading-regular text-start" v-text="__('control.artist.artist_info')"/>
@@ -177,42 +181,241 @@
       </div>
 
     </div>
+    <div v-else-if="activeTab == 'products'" class="px-6">
+        <AppTable v-model="tab.products"  :isClient="true" :hasSearch="false" :showAddButton="false">
+            <AppTableColumn label="Tür" sortable="type" width="80">
+                <template #default="scope">
+                <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
+
+                    <tippy :interactive="true" theme="dark" :appendTo="getBody">
+                            <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
+                        <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
+                            <MusicVideoIcon v-if="scope.row.type == 4" color="var(--sub-600)"/>
+                            <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
+
+                        <template #content>
+                            <p v-if="scope.row.type == 1">
+                                Ses Yayını
+                            </p>
+                            <p v-if="scope.row.type == 2">
+                                Müzik Video
+                            </p>
+                            <p v-if="scope.row.type == 3">
+                                Zil Sesi
+                            </p>
+                            <p v-if="scope.row.type == 4">
+                                Apple Video
+                            </p>
+
+                        </template>
+                    </tippy>
+
+                </div>
+                </template>
+            </AppTableColumn>
+            <AppTableColumn label="Yayın Bilgisi" >
+                <template #default="scope">
+                <div class="flex gap-x-2 items-start">
+                    <div class="w-8 h-8 rounded overflow-hidden">
+                    <img class="w-10 h-10" alt=""
+                        :src="scope.row.image ? scope.row.image.thumb : 'https://loremflickr.com/400/400'">
+
+                    <img :alt="scope.row.album_name"
+                        :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.album_name)"
+                    >
+
+                    </div>
+                    <div class="flex flex-col flex-1 items-start justisy-start">
+                    <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
+                        {{ scope.row.album_name }}
+                    </a>
+
+                    <div class=" paragraph-xs c-strong-950 ">
+                        <p>
+                        <template v-for="(artist,artistIndex) in scope.row.main_artists">
+                            {{ artist.name }}
+                            <template v-if="artistIndex != scope.row.main_artists.length-1">,&nbsp;</template>
+                        </template>
+                        </p>
+
+                    </div>
+                    </div>
+                </div>
+                </template>
+            </AppTableColumn>
+            <AppTableColumn label="Yayın Tarih">
+                <template #default="scope">
+                <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
+                    <p class="paragraph-xs c-sub-600 whitespace-nowrap">
+                    {{ scope.row.physical_release_date }}
+                    </p>
+                </div>
+                </template>
+            </AppTableColumn>
+            <AppTableColumn label="UPC/Katalog" width="240">
+                <template #default="scope">
+                    <div class="flex flex-col justify-start ">
+                        <span class="paragraph-xs c-sub-600">UPC:{{ scope.row.upc_code ?? 'Boş' }}</span>
+                        <span class="paragraph-xs c-sub-600">Katalog Numarası: {{ scope.row.catalog_number ?? 'Boş' }}</span>
+                    </div>
+                </template>
+            </AppTableColumn>
+            <AppTableColumn label="Rol">
+                <template #default="scope">
+                  <p class="paragraph-xs c-sub-600">  {{scope.row.artist_role}}</p>
+                </template>
+            </AppTableColumn>
+        </AppTable>
+    </div>
+    <div v-else-if="activeTab == 'songs'" class="px-6">
+        <AppTable v-model="tab.songs"  :isClient="true" :hasSearch="false" :showAddButton="false">
+       <AppTableColumn label="Tür" sortable="type" width="80">
+                <template #default="scope">
+                <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
+
+                    <tippy :interactive="true" theme="dark" :appendTo="getBody">
+                            <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
+                        <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
+                            <MusicVideoIcon v-if="scope.row.type == 4" color="var(--sub-600)"/>
+                            <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
+
+                        <template #content>
+                            <p v-if="scope.row.type == 1">
+                                Ses Yayını
+                            </p>
+                            <p v-if="scope.row.type == 2">
+                                Müzik Video
+                            </p>
+                            <p v-if="scope.row.type == 3">
+                                Zil Sesi
+                            </p>
+                            <p v-if="scope.row.type == 4">
+                                Apple Video
+                            </p>
+
+                        </template>
+                    </tippy>
+
+                </div>
+                </template>
+            </AppTableColumn>
+            <AppTableColumn label="Şarkı Bilgisi">
+                <template #default="scope">
+                   <a :href="route('control.catalog.songs.show',scope.row.id)" class="paragraph-xs c-blue-500"> {{scope.row.name}}</a>
+                </template>
+            </AppTableColumn>
+            <AppTableColumn :label="'Sanatçı'" sortable="name">
+                <template #default="scope">
+                <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
+                    <img :alt="scope.row.name"
+                        class="w-10 h-10 rounded-full overflow-hidden"
+                        :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
+                    <span>{{ artist.name }} </span>
+                </div>
+                </template>
+            </AppTableColumn>
+            <AppTableColumn :label="'Süre'" sortable="name" width="150">
+                <template #default="scope">
+                <div v-if="currentSong !== scope.row" @click="playSound(scope.row)"
+                    class="flex items-center gap-2 cursor-pointer">
+                    <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+                    <PlayCircleFillIcon color="var(--dark-green-500)"/>
+                    </div>
+                    <p class="label-sm c-strong-950">
+                    {{ scope.row.duration ?? '2.35' }}
+                    </p>
+                </div>
+                <div v-else @click="pauseMusic(scope.row)" class="flex items-center gap-2 cursor-pointer">
+                    <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+                    <PlayCircleFillIcon color="var(--dark-green-500)"/>
+                    </div>
+                    <p class="label-sm c-strong-950">
+                        {{ __('control.song.pause') }}
+                    </p>
+                </div>
+                </template>
+            </AppTableColumn>
+            <AppTableColumn label="Yayın Tarih" >
+                <template #default="scope">
+                    <div class="flex items-center gap-1">
+
+                        <CalendarIcon  color="var(--sub-600)" />
+                        <p class="paragraph-xs c-sub-600">{{ moment(scope.row.created_at).format('DD/MM/YYYY') }}</p>
+                    </div>
+                </template>
+            </AppTableColumn>
+            <AppTableColumn label="ISRC Kodu" >
+                <template #default="scope">
+                    <p class="paragraph-xs c-sub-600">{{ scope.row.isrc }}</p>
+                </template>
+            </AppTableColumn>
+            <AppTableColumn label="Rol" >
+                <template #default="scope">
+                </template>
+            </AppTableColumn>
+
+        </AppTable>
+    </div>
     <ArtistDialog @done="onArtistProcessDone" :artist="artist" v-if="isModalOn" v-model="isModalOn"/>
 
   </AdminLayout>
 </template>
 
 <script setup>
+import AppTable from '@/Components/Table/AppTable.vue';
+import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
+
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {ArtistDialog} from '@/Components/Dialog';
 import {
-  DocumentIcon,
-  EditIcon,
-  Icon,
-  LinkIcon,
-  PersonCardIcon,
-  PersonIcon,
-  PhoneIcon,
-  PlayFilledIcon,
-  SpotifyIcon,
-  TrashIcon,
-  WorldIcon
+    DocumentIcon,
+    EditIcon,
+    Icon,
+    LinkIcon,
+    PersonCardIcon,
+    PersonIcon,
+    PhoneIcon,
+    PlayCircleFillIcon,
+    PlayFilledIcon,
+    SpotifyIcon,
+    TrashIcon,
+    WorldIcon,
+    CalendarIcon,
+    AudioIcon,
+    MusicVideoIcon,
+    RingtoneIcon
 } from '@/Components/Icons'
+import {Howl} from "howler";
 import {PrimaryButton} from '@/Components/Buttons'
 import {useDefaultStore} from "@/Stores/default";
 import {TidalIcon, YoutubeIcon} from "@/Components/Icons/index.js";
 import {computed, ref} from "vue";
 import {router} from '@inertiajs/vue3';
-
+import moment from 'moment';
 const isModalOn = ref(false);
 
 const props = defineProps({
   artist: {
     type: Object,
     required: true
+  },
+  tab:{
+
   }
 });
+const products = ref([])
+const songs = ref([])
+let params = new URLSearchParams(window.location.search)
 
+const activeTab = ref(params.get('slug') ?? 'artist_info')
+const changeActiveTab = (e) => {
+      router.visit(route(route().current(),props.artist.id), {
+        data: {
+            slug:e,
+        },
+        preserveScroll: true,
+    });
+}
 
 const defaultStore = useDefaultStore();
 
@@ -227,6 +430,39 @@ const onArtistProcessDone = () => {
 const remove = () => {
   router.delete(route('control.catalog.artists.destroy', props.artist.id), {});
 }
+
+
+const currentSound = ref(null);
+const currentSong = ref(null);
+const playSound = (song) => {
+  if (currentSound.value) {
+    currentSound.value.pause();
+    currentSound.value = null;
+  }
+  currentSong.value = song;
+
+  currentSound.value = new Howl({
+    src: [song.path],
+    html5: true,
+    onload: (e) => {
+      currentSound.value.play();
+    }
+  });
+};
+
+const pauseMusic = (song) => {
+  if (currentSound.value && currentSound.value.playing()) {
+    currentSound.value.pause();
+
+  }
+  currentSound.value = null;
+  currentSong.value = null;
+};
+
+    const getBody = computed(() => {
+        return document.querySelector('body');
+    });
+
 </script>
 
 <style lang="scss" scoped>

@@ -79,7 +79,7 @@ const props = defineProps({
   },
   label: {
     default: null
-  }
+  },
 })
 const crudStore = useCrudStore();
 const isUpdating = computed(() => {

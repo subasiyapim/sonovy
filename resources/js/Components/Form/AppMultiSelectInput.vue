@@ -59,7 +59,7 @@
 
                 <div @click="chooseValue(el)" v-for="el in getFilteredData" :data-id="el[config.value ?? 'value']"
                     :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-white-600' :  'bg-white'"
-                    class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2">
+                    class="p-2 cursor-pointer selectMenuItem radius-8 flex items-center gap-2 my-0.5">
                 <div
                     :class="checkIfChecked(el[config.value ?? 'value']) ? 'bg-dark-green-600 border-dark-green-600' : 'bg-white  border-soft-200'"
                     class="w-3 h-3 border flex items-center justify-center  rounded-sm shadow">
