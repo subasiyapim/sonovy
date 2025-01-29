@@ -569,53 +569,47 @@ class AnalyseService
     {
         $cacheKey = 'monthly_net_earnings_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
-            $platforms = ['Spotify', 'Apple Music', 'Youtube'];
+            $platforms = ['Spotify', 'Apple', 'Youtube'];
             $totalAllEarnings = $this->data->sum('earning');
 
             $calculateEarnings = function ($data) use ($platforms, $totalAllEarnings) {
                 $totalEarnings = $data->sum('earning');
-                $earnings = $data->groupBy('platform')->mapWithKeys(function ($platformData, $platform) use (
-                    $platforms,
-                    $totalEarnings
-                ) {
+                $earnings = collect();
+
+                // Platform gruplarını oluştur
+                foreach ($platforms as $platformName) {
+                    $platformData = $data->filter(function ($item) use ($platformName) {
+                        return stripos($item->platform, $platformName) !== false;
+                    });
+
                     $sum = $platformData->sum('earning');
                     $percentage = $totalEarnings > 0 ? ($sum / $totalEarnings) * 100 : 0;
 
-                    if (in_array($platform, $platforms)) {
-                        return [
-                            $platform => [
-                                'earning_num' => $sum,
-                                'earning' => Number::currency($sum, 'USD', app()->getLocale()),
-                                'percentage' => round($percentage, 2)
-                            ]
-                        ];
-                    }
-                    return [
-                        'other' => [
-                            'earning_num' => $sum,
-                            'earning' => Number::currency($sum, 'USD', app()->getLocale()),
-                            'percentage' => round($percentage, 2)
-                        ]
+                    $earnings[$platformName] = [
+                        'earning_num' => $sum,
+                        'earning' => Number::currency($sum, 'USD', app()->getLocale()),
+                        'percentage' => round($percentage, 2)
                     ];
+                }
+
+                // Diğer platformları hesapla
+                $otherData = $data->filter(function ($item) use ($platforms) {
+                    foreach ($platforms as $platformName) {
+                        if (stripos($item->platform, $platformName) !== false) {
+                            return false;
+                        }
+                    }
+                    return true;
                 });
 
-                foreach ($platforms as $platform) {
-                    if (!isset($earnings[$platform])) {
-                        $earnings[$platform] = [
-                            'earning_num' => 0,
-                            'earning' => Number::currency(0, 'USD', app()->getLocale()),
-                            'percentage' => 0
-                        ];
-                    }
-                }
+                $otherSum = $otherData->sum('earning');
+                $otherPercentage = $totalEarnings > 0 ? ($otherSum / $totalEarnings) * 100 : 0;
 
-                if (!isset($earnings['other'])) {
-                    $earnings['other'] = [
-                        'earning_num' => 0,
-                        'earning' => Number::currency(0, 'USD', app()->getLocale()),
-                        'percentage' => 0
-                    ];
-                }
+                $earnings['other'] = [
+                    'earning_num' => $otherSum,
+                    'earning' => Number::currency($otherSum, 'USD', app()->getLocale()),
+                    'percentage' => round($otherPercentage, 2)
+                ];
 
                 $monthPercentage = $totalAllEarnings > 0 ? round(($totalEarnings / $totalAllEarnings) * 100, 2) : 0;
 
@@ -667,7 +661,7 @@ class AnalyseService
             ];
 
             // Series verilerini hazırla
-            $series = collect(['Spotify', 'Apple Music', 'Youtube', 'other'])->map(function ($platform) use ($items) {
+            $series = collect($platforms)->concat(['other'])->map(function ($platform) use ($items) {
                 return [
                     'name' => $platform,
                     'data' => $items->map(function ($monthData) use ($platform) {
