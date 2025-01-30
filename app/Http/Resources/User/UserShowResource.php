@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User;
 
 use App\Enums\PaymentStatusEnum;
+use App\Enums\ProductStatusEnum;
 use App\Models\Label;
 use App\Models\Order;
 use App\Models\Payment;
@@ -195,23 +196,24 @@ class UserShowResource extends JsonResource
 
     private function getProducts()
     {
-        return $this->products->map(function ($product) {
-            $product->load('label', 'songs', 'artists');
-            return [
-                'id' => $product->id,
-                'type' => $product->type->value,
-                'status' => $product->status->value,
-                'status_name' => $product->status->title(),
-                'image' => $product->image ? $product->image->getUrl('thumb') : null,
-                'album_name' => $product->album_name,
-                'artists' => $product->artists->map(function ($artist) {
-                    return $artist->name;
-                })->implode(', '),
-                'label' => $product?->label?->name,
-                'physical_release_date' => Carbon::parse($product->physical_release_date)->format('d.m.Y'),
-                'song_count' => $product->songs->count(),
-                'upc' => $product->upc_code,
-            ];
-        })->toArray();
+        return $this->products->where('status', '!=', ProductStatusEnum::DRAFT->value)
+            ->map(function ($product) {
+                $product->load('label', 'songs', 'artists');
+                return [
+                    'id' => $product->id,
+                    'type' => $product->type->value,
+                    'status' => $product->status->value,
+                    'status_name' => $product->status->title(),
+                    'image' => $product->image ? $product->image->getUrl('thumb') : null,
+                    'album_name' => $product->album_name,
+                    'artists' => $product->artists->map(function ($artist) {
+                        return $artist->name;
+                    })->implode(', '),
+                    'label' => $product?->label?->name,
+                    'physical_release_date' => Carbon::parse($product->physical_release_date)->format('d.m.Y'),
+                    'song_count' => $product->songs->count(),
+                    'upc' => $product->upc_code,
+                ];
+            })->toArray();
     }
 }
