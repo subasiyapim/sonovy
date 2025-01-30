@@ -226,7 +226,7 @@ const changePage = (page) => {
     background-color: #F1BF00;
 }
 .bg-others {
-    background-color: #64748B;
+    background-color: #335CFF;
 }
 
 /* Progress bar container */
