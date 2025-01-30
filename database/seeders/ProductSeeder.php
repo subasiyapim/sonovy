@@ -37,15 +37,15 @@ class ProductSeeder extends Seeder
             ->each(function ($product) use ($diskName) {
                 try {
                     // Picsum.photos servisini kullan
-                    $imageUrl = 'https://picsum.photos/500/500?random=' . $product->id;
-                    
+                    $imageUrl = 'https://picsum.photos/500/500?random='.$product->id;
+
                     $product->addMediaFromUrl($imageUrl)
                         ->usingFileName(Str::slug($product->album_name).'.jpg')
                         ->usingName($product->album_name)
                         ->toMediaCollection('products', $diskName);
 
                     // Ürün tipine göre şarkı tipi belirleme
-                    $songType = match($product->type) {
+                    $songType = match ($product->type) {
                         ProductTypeEnum::SOUND => SongTypeEnum::SOUND,
                         ProductTypeEnum::VIDEO => SongTypeEnum::VIDEO,
                         ProductTypeEnum::RINGTONE => SongTypeEnum::RINGTONE,
@@ -90,7 +90,7 @@ class ProductSeeder extends Seeder
                             'price' => array_rand(Platform::$PLATFORM_DOWNLOAD_PRICE),
                             'pre_order_date' => now()->addDays(rand(1, 30)),
                             'publish_date' => now()->addDays(rand(31, 60)),
-                            'status' => rand(0, 1),
+                            'status' => rand(1, 6),
                             'time' => now()->format('H:i:s'),
                             'date' => now()->format('Y-m-d'),
                             'hashtags' => json_encode($this->faker->words(rand(3, 6))),
@@ -99,7 +99,7 @@ class ProductSeeder extends Seeder
 
                         // History tablosuna da ekle
                         $product->histories()->attach($platform->id, [
-                            'status' => rand(0, 1),
+                            'status' => rand(1, 6),
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
