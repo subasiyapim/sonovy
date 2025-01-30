@@ -267,7 +267,7 @@ const changePage = (page) => {
     background-color: #EE3333;
 }
 .bg-facebook {
-    background-color: #1877F2;
+    background-color:rgb(72, 152, 255);
 }
 .bg-instagram {
     background-color: #E4405F;
@@ -276,10 +276,10 @@ const changePage = (page) => {
     background-color: #FF6B00;
 }
 .bg-other {
-    background-color: #64748B;
+    background-color: #335CFF;
 }
 .bg-others {
-    background-color: #64748B;
+    background-color: #335CFF;
 }
 
 /* Progress bar container */

@@ -488,7 +488,7 @@ onMounted(() => {
 
         <div class="flex  flex-1">
             <div class="flex h-72 flex-col justify-between gap-5">
-                <span v-for="val in props.data.monthly_net_earnings.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
+                <span v-for="val in props.data.monthly_net_earnings?.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
             </div>
     <!-- {{props.data.monthly_net_earnings.items["Ocak 2025"].month_percentage}} -->
           <template v-if="Object.keys(monthlyData).length > 0">
@@ -503,7 +503,9 @@ onMounted(() => {
                       {{ monthlyData[key]?.total ?? 0 }}
                     </span>
                   </div>
-                   <div class="flex flex-col" :style="{height:`${monthlyData[key].month_percentage}%`}">
+
+
+                   <div class="flex flex-col justify-end bg-weak-50" :style="{height:`${(monthlyData[key].total_num * 100) / props.data.monthly_net_earnings?.yAxis?.max }%`}">
 
                       <template v-if="monthlyData[key] && monthlyData[key] != 'total' && monthlyData[key] != 'total_num'">
 
@@ -515,6 +517,8 @@ onMounted(() => {
                                     class="w-full"
                                     :style="{height: (monthlyData[key][p]?.percentage ?? 0) + '%'}"
                                     :class="'bg-'+p.toLowerCase()">
+                                    <!-- {{monthlyData[key][p].earning_num}} -->
+                                    <!-- {{monthlyData[key].total_num}} -->
                                 </div>
                             </template>
 
@@ -533,7 +537,7 @@ onMounted(() => {
 
                             <SpotifyIcon v-if="platform=='Spotify'"/>
                             <YoutubeIcon v-else-if="platform == 'Youtube'"/>
-                            <AppleMusicIcon v-else-if="platform == 'Apple Music'"/>
+                            <AppleMusicIcon v-else-if="platform == 'Apple'"/>
                             <span v-else-if="platform == 'other'" class="bg-[#717784] w-4 h-4 rounded-full"></span>
                             <p class="paragraph-sm c-strong-950 flex-1">{{ platform }}</p>
                             <div class="border border-soft-200 rounded px-2 py-1">
@@ -582,10 +586,9 @@ onMounted(() => {
       <hr>
       <div class="flex gap-3">
         <div class="flex flex-col gap-5">
-          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.20k') }}</span>
-          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.15k') }}</span>
-          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.10k') }}</span>
-          <span class="paragraph-xs c-sub-600">{{ __('control.finance.analysis.0') }}</span>
+                <span v-for="val in props.data.spotify_discovery_mode_earnings?.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
+
+
         </div>
         <div class="flex gap-4 flex-1">
           <template v-if="Object.keys(spotifyDiscoveryData).length > 0">
@@ -745,7 +748,7 @@ onMounted(() => {
 
       <div v-else>
         <div class="flex items-center gap-3">
-          <div class="flex gap-2 items-center c-strong-950 paragraph-xs">
+          <div  class="flex gap-2 items-center c-strong-950 paragraph-xs">
             <div class="w-2 h-2 rounded-full bg-youtube-premium"></div>
             {{ __('control.finance.analysis.premium') }}
           </div>
@@ -760,14 +763,14 @@ onMounted(() => {
         </div>
 
 
-        <tippy v-for="i in 3" :allowHtml="true" :maxWidth="600" theme="light" followCursor :sticky="true"
+        <tippy v-for="i in props.data.earning_from_youtube_with_premium" :allowHtml="true" :maxWidth="600" theme="light" followCursor :sticky="true"
                :interactive="false">
           <div class="mt-3">
-            <p class="label-sm c-strong-950 mb-1">{{ __('control.finance.analysis.youtube_official_content') }}</p>
+            <p class="label-sm c-strong-950 mb-1">{{ i.name }}</p>
             <div class="flex items-center gap-1 h-4 w-full">
-              <div class="h-full rounded bg-youtube-premium w-[12%]"></div>
-              <div class="h-full rounded bg-youtube w-[68%]"></div>
-              <div class="h-full rounded bg-other w-[20%]"></div>
+              <div class="h-full rounded bg-youtube-premium " :style="{width:`${i.Premium_percentage}%`}"></div>
+              <div class="h-full rounded bg-youtube " :style="{width:`${i.Freemium_percentage}%`}"></div>
+              <div class="h-full rounded bg-other " :style="{width:`${i.Others_percentage}%`}"></div>
             </div>
 
           </div>
@@ -778,7 +781,7 @@ onMounted(() => {
                 <p class="label-sm c-strong-950 flex-1 ms-2">{{
                     __('control.finance.analysis.youtube_official_content')
                   }}</p>
-                <p class="label-sm c-strong-950 ">$500</p>
+                <p class="label-sm c-strong-950 ">{{i.total.toFixed(2)}} $</p>
 
               </div>
               <div class="flex flex-col items-start gap-3">
@@ -787,7 +790,7 @@ onMounted(() => {
                   <div class="flex-1"><p class=" paragraph-xs c-strong-950">{{
                       __('control.finance.analysis.premium')
                     }}</p></div>
-                  <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">$500,57</p>
+                  <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">{{i.Premium.toFixed(2)}}$</p>
                   </div>
 
                 </div>
@@ -795,7 +798,7 @@ onMounted(() => {
                   <div class="w-2 h-2 rounded-full bg-youtube"></div>
                   <div class="flex-1"><p class="flex-1 paragraph-xs c-strong-950">
                     {{ __('control.finance.analysis.freemium') }}</p></div>
-                  <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">$500,57</p>
+                  <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">{{i.Freemium.toFixed(2)}}$</p>
                   </div>
 
                 </div>
@@ -803,7 +806,7 @@ onMounted(() => {
                   <div class="w-2 h-2 rounded-full bg-other"></div>
                   <div class="flex-1"><p class="flex-1 paragraph-xs c-strong-950">
                     {{ __('control.finance.analysis.other') }}</p></div>
-                  <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">$500,57</p>
+                  <div class="border border-soft-200 rounded px-2 py-1"><p class="paragraph-xs c-sub-600">{{i.Others.toFixed(2)}}</p>
                   </div>
 
                 </div>
