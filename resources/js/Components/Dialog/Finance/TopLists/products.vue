@@ -10,15 +10,15 @@
       <table class="w-full" v-if="!loading">
         <thead>
           <tr>
-            <td class="label-sm c-strong-950 !font-semibold">Plak Şirketi Adı</td>
+            <td class="label-sm c-strong-950 !font-semibold">Albüm Adı</td>
             <td class="label-sm c-strong-950 !text-end !font-semibold ">Oran</td>
             <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="artist in paginatedData" :key="artist.label_name">
+          <tr v-for="artist in paginatedData" :key="artist.name">
             <td class="py-3">
-              <span class="label-sm c-strong-950">{{ artist.label_name }}</span>
+              <span class="label-sm c-strong-950">{{ artist.album_name }}</span>
             </td>
             <td style="width:55%;">
               <div class="flex items-center gap-2">
@@ -96,7 +96,7 @@ const getData = async () => {
   loading.value = true;
   try {
     const response = await crudStore.get(route('control.finance.analysis.show'), {
-      slug: 'top_labels',
+      slug: 'top_albums',
       request_type: 'view',
       start_date: props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year'),
       end_date: props.choosenDates ? props.choosenDates[1] : moment(),

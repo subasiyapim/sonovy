@@ -24,7 +24,14 @@ const props = defineProps({
     }
 });
 
-const showPlatforms = ref({});
+const showPlatforms = ref({
+    'turkey': true,
+    'united-states': true,
+    'united-kingdom': true,
+    'portugal': true,
+    'spain': true,
+    'others': true
+});
 const currentPage = ref(1);
 const itemsPerPage = 10;
 
@@ -54,25 +61,39 @@ const sortedReleases = computed(() => {
 
         // Görünür ülkeler için hesaplamalar
         Object.keys(album.countries).forEach(country => {
-            // Tüm ülkeleri ekle, görünürlük kontrolü yapmadan
-            visibleCountries[country] = album.countries[country];
+            const countryKey = country.toLowerCase().replace(/\s+/g, '-');
+            if (showPlatforms.value[countryKey]) {
+                visibleCountries[country] = album.countries[country];
 
-            const countryData = album.countries[country];
-            if (countryData) {
-                // Earning hesapla
-                const earningStr = countryData.earning?.replace(/[^0-9.]/g, '') ?? "0";
-                const earning = parseFloat(earningStr);
-                totalEarning += isNaN(earning) ? 0 : earning;
+                const countryData = album.countries[country];
+                if (countryData) {
+                    // Earning hesapla
+                    const earningStr = countryData.earning?.replace(/[^0-9.]/g, '') ?? "0";
+                    const earning = parseFloat(earningStr);
+                    totalEarning += isNaN(earning) ? 0 : earning;
 
-                // Stream sayısını topla
-                const quantity = parseInt(countryData.quantity ?? "0");
-                totalQuantity += isNaN(quantity) ? 0 : quantity;
+                    // Stream sayısını topla
+                    const quantity = parseInt(countryData.quantity ?? "0");
+                    totalQuantity += isNaN(quantity) ? 0 : quantity;
+                }
             }
         });
 
+        // Ülkeleri yüzdeye göre sırala
+        const sortedCountries = {};
+        Object.entries(visibleCountries)
+            .sort((a, b) => {
+                const percentageA = parseFloat(a[1].percentage ?? 0);
+                const percentageB = parseFloat(b[1].percentage ?? 0);
+                return percentageB - percentageA;
+            })
+            .forEach(([country, data]) => {
+                sortedCountries[country] = data;
+            });
+
         return {
             ...album,
-            countries: visibleCountries,
+            countries: sortedCountries,
             total_earning: `$${totalEarning.toFixed(2)}`,
             total_quantity: totalQuantity.toLocaleString(),
             total_all_quantity: totalAllQuantity,
@@ -94,15 +115,23 @@ const totalPages = computed(() => {
 });
 
 onMounted(() => {
-    // Tüm ülkeleri başlangıçta true olarak ayarla
+    // Mevcut ülkeleri kontrol et ve eksik olanları ekle
     if (props.data?.countries) {
         props.data.countries.forEach(country => {
             if (country) {
                 const key = country.toLowerCase().replace(/\s+/g, '-');
-                showPlatforms.value[key] = true;
+                if (!(key in showPlatforms.value)) {
+                    showPlatforms.value[key] = true;
+                }
             }
         });
     }
+
+    console.log('CountriesTab mounted:', {
+        countries: countries.value,
+        showPlatforms: showPlatforms.value,
+        releases: releases.value
+    });
 });
 
 const updateVisibility = (country) => {
