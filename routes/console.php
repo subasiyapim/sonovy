@@ -8,17 +8,7 @@ use App\Jobs\QuartersIncomeJob;
 use App\Models\System\Tenant;
 use Illuminate\Support\Facades\Schedule;
 
-$tenants = Tenant::all();
-
-if ($tenants->count() > 0) {
-    foreach ($tenants as $tenant) {
-        tenancy()->initialize($tenant);
-
-        Schedule::job(new QuartersIncomeJob())->everySixHours();
-        Schedule::job(new EarningJob())->everyMinute();
-        Schedule::job(new IsrcJob())->everyMinute();
-        Schedule::job(new MonthlyIncomeJob())->everySixHours();
-
-        tenancy()->end();
-    }
-}
+Schedule::job(new QuartersIncomeJob())->everyMinute();
+Schedule::job(new EarningJob())->everyMinute();
+Schedule::job(new IsrcJob())->everyMinute();
+Schedule::job(new MonthlyIncomeJob())->everySixHours();
