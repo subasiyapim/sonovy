@@ -50,8 +50,6 @@ class ReportController extends Controller
             CreateDemoEarningsJob::dispatch();
         }
 
-        DB::statement("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''))");
-
         $isAutoReport = true;
 
         if (!empty($request->slug)) {
@@ -191,9 +189,29 @@ class ReportController extends Controller
     {
         abort_if(Gate::denies('report_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $report->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->back();
+            // Önce medya dosyalarını sil
+            $report->clearMediaCollection('tenant_'.tenant('domain').'_income_reports');
+
+            // Child raporları bul ve medya dosyalarını sil
+            $childReports = $report->child()->get();
+            foreach ($childReports as $childReport) {
+                $childReport->clearMediaCollection('tenant_'.tenant('domain').'_income_reports');
+                $childReport->delete();
+            }
+
+            // Ana raporu sil
+            $report->delete();
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Rapor ve ilişkili tüm veriler başarıyla silindi.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Rapor silinirken bir hata oluştu: '.$e->getMessage());
+        }
     }
 
     public function show(Report $report)

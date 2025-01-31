@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Exports\ReportExport;
-use App\Models\Product;
 use App\Models\Earning;
 use App\Models\Report;
 use App\Models\User;
@@ -15,117 +14,163 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
-
-ini_set('memory_limit', '512M');
 
 class QuartersIncomeJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $disk;
+    const MEMORY_LIMIT = '512M';
     const QUARTERS = [
-        ['Q1', 1, 3],
-        ['Q2', 4, 6],
-        ['Q3', 7, 9],
-        ['Q4', 10, 12],
+        ['name' => 'Q1', 'startMonth' => 1, 'endMonth' => 3],
+        ['name' => 'Q2', 'startMonth' => 4, 'endMonth' => 6],
+        ['name' => 'Q3', 'startMonth' => 7, 'endMonth' => 9],
+        ['name' => 'Q4', 'startMonth' => 10, 'endMonth' => 12],
     ];
 
-    public $users;
-    protected $tenants;
+    private $disk;
+    private $tenants;
 
     public function __construct()
     {
-        $this->tenants = Cache::rememberForever('tenants', function () {
+        ini_set('memory_limit', self::MEMORY_LIMIT);
+        $this->tenants = $this->getTenants();
+    }
+
+    protected function getTenants()
+    {
+        return Cache::rememberForever('tenants', function () {
             return \App\Models\System\Tenant::all();
         });
-
     }
 
     public function handle(): void
     {
         foreach ($this->tenants as $tenant) {
-
             tenancy()->initialize($tenant);
             $this->disk = 'tenant_'.$tenant->domain.'_income_reports';
-            $this->users = User::with('earnings')
-                ->whereHas('earnings')
-                ->get();
 
-            foreach ($this->users as $user) {
-                $this->generateQuarterlyReports($user);
-            }
-
+            // Kullanıcı rapor oluşturma işlemi soyutlanmış fonksiyona yollandı
+            $this->generateReportsForUsers();
         }
+    }
 
-        Cache::forget('tenants');
+    protected function generateReportsForUsers(): void
+    {
+        $users = User::with('earnings')
+            ->whereHas('earnings')
+            ->get();
+
+        foreach ($users as $user) {
+            $this->generateQuarterlyReports($user);
+        }
     }
 
     protected function generateQuarterlyReports($user): void
     {
-        $firstProduct = $user->products()->orderBy('created_at')->first();
-        if (!$firstProduct) {
-            Log::warning("User {$user->id} has no products.");
+        // İlk kazanç bilgisi alınır
+        $firstEarning = Earning::where('user_id', $user->id)
+            ->orderBy('sales_date')
+            ->first();
+
+        if (!$firstEarning) {
+            Log::warning("User {$user->id} has no earnings.");
             return;
         }
 
-        $firstProductYear = $firstProduct->created_at->year;
-        $currentYear = Carbon::now()->year;
-        $currentDate = Carbon::now();
+        // İlk kazancın bulunduğu çeyrek
+        $firstQuarter = $this->getQuarterFromDate(Carbon::parse($firstEarning->sales_date));
+        $firstYear = Carbon::parse($firstEarning->sales_date)->year;
+        $currentYear = now()->year;
+        $currentDate = now();
 
-        foreach (range($firstProductYear, $currentYear) as $year) {
-            foreach (self::QUARTERS as [$quarterName, $startMonth, $endMonth]) {
-                $start = Carbon::create($year, $startMonth, 1);
-                $end = Carbon::create($year, $endMonth, 1)->endOfMonth();
+        foreach (range($firstYear, $currentYear) as $year) {
+            $quarters = ($year === $firstYear)
+                ? $this->getQuartersFromFirstQuarter($firstQuarter) // İlk yıl için özel çeyrekler
+                : self::QUARTERS; // Diğer yıllar için tüm çeyrekler
 
-                if ($year == $currentYear && ($start->greaterThan($currentDate) || $end->greaterThan($currentDate))) {
+            foreach ($quarters as $quarter) {
+                [$start, $end] = $this->getStartAndEndDates($year, $quarter);
+
+                // Çeyrek henüz tamamlanmamışsa atla
+                if ($end->greaterThan($currentDate)) {
+                    Log::info("Skipping future or incomplete quarter: {$quarter['name']}-{$year}");
                     continue;
                 }
 
-                $userId = $user->id;
-                $this->generateReport($start, $end, $quarterName, $year, $userId);
+                // Daha önce rapor oluşturulmuşsa tekrar oluşturma
+                $existingReport = Report::where('period', "{$quarter['name']}-{$year}")
+                    ->where('user_id', $user->id)
+                    ->exists();
+
+                if ($existingReport) {
+                    Log::info("Report already exists for User {$user->id}, Period: {$quarter['name']}-{$year}");
+                    continue;
+                }
+
+                // Yeni rapor oluştur
+                $this->generateReport($start, $end, $quarter['name'], $year, $user->id);
+                //Log::info("Report generated for User {$user->id}, Period: {$quarter['name']}-{$year}");
             }
         }
-
     }
 
-    protected function generateReport($start_date, $end_date, $quarterName, $year, $userId): void
+    protected function getQuarterFromDate(Carbon $date): array
     {
-        $earnings = Earning::with('report.song.products', 'user')
-            ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-                $query->whereHas('report', function ($query) use ($start_date, $end_date) {
-                    $query->whereBetween('sales_date', [$start_date, $end_date]);
-                });
-            })
+        $month = $date->month;
+
+        if ($month >= 1 && $month <= 3) {
+            return self::QUARTERS[0];
+        } elseif ($month >= 4 && $month <= 6) {
+            return self::QUARTERS[1];
+        } elseif ($month >= 7 && $month <= 9) {
+            return self::QUARTERS[2];
+        } else {
+            return self::QUARTERS[3];
+        }
+    }
+
+    protected function getQuartersFromFirstQuarter(array $firstQuarter): array
+    {
+        $startQuarterIndex = array_search($firstQuarter['name'], array_column(self::QUARTERS, 'name'));
+
+        return array_slice(self::QUARTERS, $startQuarterIndex);
+    }
+
+    protected function getStartAndEndDates($year, $quarter): array
+    {
+        $start = Carbon::create($year, $quarter['startMonth'], 1)->startOfDay();
+        $end = Carbon::create($year, $quarter['endMonth'], 1)->endOfMonth()->endOfDay();
+
+        return [$start, $end];
+    }
+
+    protected function generateReport($startDate, $endDate, $quarterName, $year, $userId): void
+    {
+        $earnings = Earning::whereBetween('sales_date', [$startDate, $endDate])
             ->where('user_id', $userId)
             ->get();
 
+        if ($earnings->isEmpty()) {
+            return;
+        }
+
         $logFileName = "{$quarterName}-{$year}";
+        $monthlyAmounts = $earnings->groupBy(fn($earning) => Carbon::parse($earning->sales_date)->format('m'))
+            ->map(fn($month) => $month->sum('earning'));
 
-        if ($earnings->isNotEmpty()) {
-            $monthlyAmounts = $earnings->groupBy(function ($earning) {
-                return Carbon::parse($earning->report->sales_date)->format('m');
-            })->map(function ($month) {
-                return $month->sum('earning');
-            });
+        $report = Report::firstOrCreate(
+            ['period' => $logFileName, 'user_id' => $userId],
+            [
+                'amount' => $earnings->sum('earning'),
+                'monthly_amount' => $monthlyAmounts,
+                'status' => 0,
+                'is_auto_report' => true,
+            ]
+        );
 
-            $report = Report::firstOrCreate(
-                [
-                    'period' => $logFileName,
-                    'user_id' => $userId,
-                ],
-                [
-                    'amount' => $earnings->sum('earning'),
-                    'monthly_amount' => $monthlyAmounts,
-                    'status' => 0,
-                    'is_auto_report' => true,
-                ]
-            );
-
-            if ($report->wasRecentlyCreated) {
-                $reportExport = new ReportExport($earnings, $logFileName, $report);
-                $reportExport->saveAndUpload($this->disk);
-            }
+        if ($report->wasRecentlyCreated) {
+            $reportExport = new ReportExport($earnings, $logFileName, $report);
+            $reportExport->saveAndUpload($this->disk);
         }
     }
 }

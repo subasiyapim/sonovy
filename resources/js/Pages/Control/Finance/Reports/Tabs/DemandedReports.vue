@@ -1,15 +1,39 @@
 <script setup>
-import {ref} from 'vue';
+import {ref, computed} from 'vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {usePage} from '@inertiajs/vue3';
+import {usePage, router} from '@inertiajs/vue3';
 import {DocumentIcon, DownloadIcon,TrashIcon} from "@/Components/Icons/index.js";
 import moment from 'moment';
 import 'moment/dist/locale/tr';
-
+import {ConfirmDeleteDialog} from '@/Components/Dialog';
+import {IconButton} from '@/Components/Buttons';
+import {toast} from 'vue3-toastify';
 
 moment.locale('tr');
 
+const tippyRefs = ref({});
+
+const deleteReport = (id) => {
+    router.delete(route('control.finance.reports.destroy', id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            toast.success('Rapor başarıyla silindi');
+            window.location.reload();
+        },
+        onError: (error) => {
+            toast.error('Rapor silinirken bir hata oluştu');
+        }
+    });
+};
+
+const onCancel = (id) => {
+    tippyRefs.value[id]?.hide();
+};
+
+const getBody = computed(() => {
+    return document.querySelector('body');
+});
 </script>
 
 <template>
@@ -83,14 +107,25 @@ moment.locale('tr');
     </AppTableColumn>
     <AppTableColumn :label="__('control.general.actions')" sortable="name" align="right">
       <template #default="scope">
-        <a :href="route('control.finance.reports.download', scope.row.id)">
-          <DownloadIcon color="var(--sub-600)"/>
-
-        </a>
-        <a class="ms-2" :href="route('control.finance.reports.destroy', scope.row.id)">
-          <TrashIcon color="var(--sub-600)"/>
-        </a>
-
+        <div class="flex items-center gap-2">
+            <a :href="route('control.finance.reports.download', scope.row.id)">
+                <DownloadIcon color="var(--sub-600)"/>
+            </a>
+            <tippy :maxWidth="440" :ref="el => tippyRefs[scope.row.id] = el" theme="light" :allowHtml="true" :sticky="true" trigger="click"
+                :interactive="true" :appendTo="getBody">
+                <IconButton>
+                    <TrashIcon color="var(--sub-600)"/>
+                </IconButton>
+                <template #content>
+                    <ConfirmDeleteDialog
+                        @confirm="deleteReport(scope.row.id)"
+                        @cancel="() => onCancel(scope.row.id)"
+                        title="Raporu silmek istediğinize emin misiniz?"
+                        description="Bu işlem geri alınamaz ve rapor kalıcı olarak silinecektir."
+                    />
+                </template>
+            </tippy>
+        </div>
       </template>
     </AppTableColumn>
     <template #empty>

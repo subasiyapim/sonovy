@@ -16,7 +16,7 @@ class TenantInitializeBootstrapper implements TenancyBootstrapper
             'artists',
             'labels',
             'earning_reports',
-            'income_reports'
+            'income_reports',
         ];
 
         foreach ($publicDisks as $publicDisk) {

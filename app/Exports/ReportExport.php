@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
 
 class ReportExport implements FromCollection, WithHeadings
 {
@@ -29,44 +30,55 @@ class ReportExport implements FromCollection, WithHeadings
      */
     public function collection()
     {
+        try {
+            $data = [];
+            $count = 0;
+            foreach ($this->earnings as $earning) {
+                try {
+                    $data[] = [
+                        '#' => $count++,
+                        'period' => $this->period,
+                        'report_date' => $earning->report_date,
+                        'sales_date' => $earning->sales_date,
+                        'platform' => $earning->platform,
+                        'country' => $earning->country,
+                        'label_name' => $earning->label_name,
+                        'artist_name' => $earning->artist_name,
+                        'release_name' => $earning->release_name,
+                        'song_name' => $earning->song_name,
+                        'upc_code' => $earning->upc_code,
+                        'isrc_code' => $earning->isrc_code,
+                        'catalog_number' => $earning->catalog_number,
+                        'release_type' => $earning->release_type,
+                        'sales_type' => $earning->sales_type,
+                        'quantity' => $earning->quantity,
+                        'currency' => $earning->currency,
+                        'net_revenue' => $earning->earning,
+                    ];
+                } catch (\Exception $e) {
+                    Log::error("Error processing earning record: " . $e->getMessage(), [
+                        'earning_id' => $earning->id,
+                        'period' => $this->period
+                    ]);
+                }
+            }
 
-        $data = [];
-        $count = 0;
-        foreach ($this->earnings as $earning) {
-            $data[] = [
-                '#' => $count++,
-                'name' => $earning->report?->name ?? $this->period,
-                'report_date' => $earning->report_date,
-                'sales_date' => $earning->sales_date,
-                'platform' => $earning->platform,
-                'country' => $earning->country,
-                'label_name' => $earning->report->label_name,
-                'artist_name' => $earning->report->artist_name,
-                'release_name' => $earning->report->release_name,
-                'song_name' => $earning->report->song_name,
-                'upc_code' => $earning->report->upc_code,
-                'isrc_code' => $earning->report->isrc_code,
-                'catalog_number' => $earning->report->catalog_number,
-                'release_type' => $earning->report->release_type,
-                'sales_type' => $earning->report->sales_type,
-                'quantity' => $earning->quantity,
-                'currency' => $earning->currency,
-                'net_revenue' => $earning->earning,
-            ];
+            $this->report->update([
+                'status' => 1
+            ]);
+
+            return collect($data);
+        } catch (\Exception $e) {
+            Log::error("Error in ReportExport collection: " . $e->getMessage());
+            throw $e;
         }
-        $this->report->update([
-            'status' => 1
-        ]);
-
-        return collect($data);
-
     }
 
     public function headings(): array
     {
         return [
             '#',
-            'Name',
+            'Period',
             'Report Date',
             'Sales Date',
             'Platform',

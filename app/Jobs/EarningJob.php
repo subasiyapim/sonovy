@@ -39,11 +39,9 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
      */
     public function __construct()
     {
-
         $this->tenants = Cache::rememberForever('tenants', function () {
             return \App\Models\System\Tenant::all();
         });
-
     }
 
     /**
@@ -52,94 +50,129 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
     public function handle(): void
     {
         foreach ($this->tenants as $tenant) {
+            try {
+                tenancy()->initialize($tenant);
 
-            tenancy()->initialize($tenant);
+                $this->earningReports = EarningReport::where('status', EarningReportStatusEnum::PENDING->value)
+                    ->orWhereNull('status')->get();
 
-            $this->earningReports = EarningReport::where('status', EarningReportStatusEnum::PENDING->value)
-                ->orWhereNull('status')->get();
+                Log::info('earningReports count: '.$this->earningReports->count());
 
-            Log::info('earningReports count: '.$this->earningReports->count());
+                $setting = Setting::where('key', 'general_system_commission_rate')->first();
+                $this->general_system_commission_rate = $setting ? $setting->value : 0;
 
-            $setting = Setting::where('key', 'general_system_commission_rate')->first();
+                bcscale(15);
 
-            $this->general_system_commission_rate = $setting ? $setting->value : 0;
+                Log::info('EarningJob started.');
 
-
-            bcscale(15); // Ondalık sayıların doğruluğunu 15 basamak olarak ayarla
-
-            Log::info('EarningJob started.');
-
-            foreach ($this->earningReports as $earningReport) {
-                $this->earningReport = $earningReport;
-
-                DB::beginTransaction();
-                try {
-                    $this->earningReport->status = EarningReportStatusEnum::PROCESSING->value;
-                    $this->earningReport->save();
-
-                    Log::info('Processing earning report ID: '.$this->earningReport->id.' Status: '.$this->earningReport->status);
-
-                    $this->balance = str_replace(',', '.', $this->earningReport->net_revenue);
-
-                    // Genel sistem komisyonunu düş
-                    $systemCommission = bcmul($this->balance, bcdiv($this->general_system_commission_rate, '100'));
-                    Log::info('General system commission: '.$systemCommission);
-                    $this->balance = bcsub($this->balance, $systemCommission);
-
-                    $this->song = Song::with('participants', 'products.label.user')
-                        ->whereNotNull('isrc')
-                        ->whereHas('products', function($query) use ($earningReport) {
-                            $query->where('upc_code', $earningReport->upc_code);
-                        })
-                        ->where('isrc', $earningReport->isrc_code)
-                        ->first();
-
-                    if ($this->song) {
-                        Log::info('Found song with ISRC: '.$this->song->isrc);
-
-                        $labelShare = $this->calculateLabelShare();
-                        Log::info('Label share calculated: '.$labelShare);
-                        $participantEarnings = $this->calculateParticipantEarnings($labelShare);
-                        Log::info('Participant earnings calculated: '.json_encode($participantEarnings));
-
-                        $totalParticipantEarnings = array_sum(array_column($participantEarnings, 'earning'));
-                        $labelFinalEarning = bcsub($labelShare, $totalParticipantEarnings);
-
-                        $sales_type = $this->earningReport->sales_type == 'PLATFORM PROMOTION' ? 'Promosyon' : 'Kazanç';
-                        // Label'a ve katılımcılara ödeme yap
-                        $this->createEarnings($this->earningReport, $labelFinalEarning, $this->earningReport->label_id,
-                            $sales_type);
-                        foreach ($participantEarnings as $participantEarning) {
-                            $this->createEarnings($this->earningReport, $participantEarning['earning'],
-                                $participantEarning['user_id'], __('control.earning.participant_earning'));
-                        }
-
-                        // İşlem başarılı olduysa durumu COMPLETED olarak güncelle
-                        $this->earningReport->status = EarningReportStatusEnum::COMPLETED->value;
-                        Log::info('Earning report ID: '.$this->earningReport->id.' marked as COMPLETED with label earning: '.$labelFinalEarning.' and total participant earnings: '.$totalParticipantEarnings);
-                        $this->earningReport->save();
+                foreach ($this->earningReports as $earningReport) {
+                    DB::beginTransaction();
+                    try {
+                        $this->processEarningReport($earningReport);
                         DB::commit();
-                    } else {
-                        // Şarkı bulunamazsa durumu FAILED olarak güncelle
-                        Log::warning('Song not found for ISRC code: '.$this->earningReport->isrc_code);
-                        $this->earningReport->status = EarningReportStatusEnum::FAILED->value;
-                        $this->earningReport->save();
-                        DB::commit();
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+                        Log::error('Error processing earning report: '.$e->getMessage(), [
+                            'report_id' => $earningReport->id,
+                            'tenant' => $tenant->domain
+                        ]);
+                        $earningReport->status = EarningReportStatusEnum::FAILED->value;
+                        $earningReport->save();
                     }
-                } catch (\Exception $e) {
-                    // Herhangi bir hata olursa durumu FAILED olarak güncelle
-                    Log::error('EarningJob failed for earning report ID: '.$this->earningReport->id.' with error: '.$e->getMessage());
-                    $this->earningReport->status = EarningReportStatusEnum::FAILED->value;
-                    $this->earningReport->save();
-                    DB::rollBack();
                 }
+
+                Log::info('EarningJob completed.');
+            } catch (\Exception $e) {
+                Log::error('Error processing tenant: '.$e->getMessage(), [
+                    'tenant' => $tenant->domain
+                ]);
             }
-
-            Log::info('EarningJob completed.');
-
         }
 
         Cache::forget('tenants');
+    }
+
+    protected function processEarningReport(EarningReport $earningReport): void
+    {
+        $this->earningReport = $earningReport;
+        $this->earningReport->status = EarningReportStatusEnum::PROCESSING->value;
+        $this->earningReport->save();
+
+        Log::info('Processing earning report', [
+            'id' => $this->earningReport->id,
+            'status' => $this->earningReport->status
+        ]);
+
+        $this->balance = str_replace(',', '.', $this->earningReport->net_revenue);
+
+        $systemCommission = bcmul($this->balance, bcdiv($this->general_system_commission_rate, '100'));
+        Log::info('General system commission calculated', ['commission' => $systemCommission]);
+        $this->balance = bcsub($this->balance, $systemCommission);
+
+        $this->song = $this->findSong();
+
+        if (!$this->song) {
+            Log::warning('Song not found', [
+                'isrc' => $this->earningReport->isrc_code,
+                'upc' => $this->earningReport->upc_code
+            ]);
+            $this->earningReport->status = EarningReportStatusEnum::FAILED->value;
+            $this->earningReport->save();
+            return;
+        }
+
+        Log::info('Found song', ['isrc' => $this->song->isrc]);
+
+        $labelShare = $this->calculateLabelShare();
+        $participantEarnings = $this->calculateParticipantEarnings($labelShare);
+
+        $totalParticipantEarnings = array_sum(array_column($participantEarnings, 'earning'));
+        $labelFinalEarning = bcsub($labelShare, $totalParticipantEarnings);
+
+        $this->distributeEarnings($labelFinalEarning, $participantEarnings);
+
+        $this->earningReport->status = EarningReportStatusEnum::COMPLETED->value;
+        $this->earningReport->save();
+
+        Log::info('Earning report processed successfully', [
+            'id' => $this->earningReport->id,
+            'label_earning' => $labelFinalEarning,
+            'total_participant_earnings' => $totalParticipantEarnings
+        ]);
+    }
+
+    protected function findSong(): ?Song
+    {
+        return Song::with(['participants', 'products.label.user'])
+            ->whereNotNull('isrc')
+            ->whereHas('products', function($query) {
+                $query->where('upc_code', $this->earningReport->upc_code);
+            })
+            ->where('isrc', $this->earningReport->isrc_code)
+            ->first();
+    }
+
+    protected function distributeEarnings($labelFinalEarning, $participantEarnings): void
+    {
+        $sales_type = $this->earningReport->sales_type == 'PLATFORM PROMOTION' ? 'Promosyon' : 'Kazanç';
+
+        // Label earnings
+        $this->createEarnings(
+            $this->earningReport,
+            $labelFinalEarning,
+            $this->earningReport->label_id,
+            $sales_type
+        );
+
+        // Participant earnings
+        foreach ($participantEarnings as $participantEarning) {
+            $this->createEarnings(
+                $this->earningReport,
+                $participantEarning['earning'],
+                $participantEarning['user_id'],
+                __('control.earning.participant_earning')
+            );
+        }
     }
 
     protected function calculateLabelShare()
