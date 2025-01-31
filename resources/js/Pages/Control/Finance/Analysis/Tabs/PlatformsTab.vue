@@ -27,7 +27,7 @@ const props = defineProps({
 // Tüm platformlar için başlangıçta true olarak ayarla
 const showPlatforms = ref({
     'spotify': true,
-    'apple music': true,
+    'apple-music': true,
     'youtube': true,
     'amazon': true,
     'deezer': true,
@@ -70,25 +70,39 @@ const sortedReleases = computed(() => {
 
         // Görünür platformlar için hesaplamalar
         Object.keys(album.platforms).forEach(platform => {
-            // Tüm platformları ekle, görünürlük kontrolü yapmadan
-            visiblePlatforms[platform] = album.platforms[platform];
+            const platformKey = platform.toLowerCase().replace(/\s+/g, '-');
+            if (showPlatforms.value[platformKey]) {
+                visiblePlatforms[platform] = album.platforms[platform];
 
-            const platformData = album.platforms[platform];
-            if (platformData) {
-                // Earning hesapla
-                const earningStr = platformData.earning?.replace(/[^0-9.]/g, '') ?? "0";
-                const earning = parseFloat(earningStr);
-                totalEarning += isNaN(earning) ? 0 : earning;
+                const platformData = album.platforms[platform];
+                if (platformData) {
+                    // Earning hesapla
+                    const earningStr = platformData.earning?.replace(/[^0-9.]/g, '') ?? "0";
+                    const earning = parseFloat(earningStr);
+                    totalEarning += isNaN(earning) ? 0 : earning;
 
-                // Stream sayısını topla
-                const quantity = parseInt(platformData.quantity ?? "0");
-                totalQuantity += isNaN(quantity) ? 0 : quantity;
+                    // Stream sayısını topla
+                    const quantity = parseInt(platformData.quantity ?? "0");
+                    totalQuantity += isNaN(quantity) ? 0 : quantity;
+                }
             }
         });
 
+        // Platformları yüzdeye göre sırala
+        const sortedPlatforms = {};
+        Object.entries(visiblePlatforms)
+            .sort((a, b) => {
+                const percentageA = parseFloat(a[1].percentage ?? 0);
+                const percentageB = parseFloat(b[1].percentage ?? 0);
+                return percentageB - percentageA;
+            })
+            .forEach(([platform, data]) => {
+                sortedPlatforms[platform] = data;
+            });
+
         return {
             ...album,
-            platforms: visiblePlatforms,
+            platforms: sortedPlatforms,
             total_earning: `$${totalEarning.toFixed(2)}`,
             total_quantity: totalQuantity.toLocaleString(),
             total_all_quantity: totalAllQuantity,
@@ -114,7 +128,7 @@ onMounted(() => {
     if (props.data?.platforms) {
         props.data.platforms.forEach(platform => {
             if (platform) {
-                const key = platform.toLowerCase();
+                const key = platform.toLowerCase().replace(/\s+/g, '-');
                 if (!(key in showPlatforms.value)) {
                     showPlatforms.value[key] = true;
                 }
@@ -128,7 +142,7 @@ onMounted(() => {
 });
 
 const updateVisibility = (platform) => {
-    const key = platform.toLowerCase();
+    const key = platform.toLowerCase().replace(/\s+/g, '-');
     showPlatforms.value[key] = !showPlatforms.value[key];
 };
 
@@ -170,7 +184,7 @@ const changePage = (page) => {
                     }"></div>
                     <span class="paragraph-xs c-strong-950">{{platform}}</span>
                     <AppSwitchComponent
-                        v-model="showPlatforms[platform.toLowerCase()]"
+                        v-model="showPlatforms[platform.toLowerCase().replace(/\s+/g, '-')]"
                         @change="() => updateVisibility(platform)" />
                 </div>
             </div>
@@ -211,7 +225,7 @@ const changePage = (page) => {
                                     <template v-if="album.platforms">
                                         <div v-for="platformKey in Object.keys(album.platforms)"
                                              :key="platformKey"
-                                             v-show="showPlatforms[platformKey.toLowerCase()]"
+                                             v-show="showPlatforms[platformKey.toLowerCase().replace(/\s+/g, '-')]"
                                              :class="['rounded-sm', 'h-full', 'bg-'+platformKey.toLowerCase().replace(/\s+/g, '-')]"
                                              :style="{width: (album.platforms[platformKey]?.percentage ?? 0)+'%'}">
                                         </div>
