@@ -128,46 +128,63 @@ class ReportController extends Controller
     public function download(Report $report): BinaryFileResponse|StreamedResponse|JsonResponse
     {
         if ($report->child()->count() > 1) {
-
-            $zipFilePath = storage_path('app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'-'.Str::slug($report->name).'.zip');
-
-            $zip = new ZipArchive;
-
-            if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
-
-                $files = Storage::disk('public')->allFiles('tenant_'.tenant('domain').'_income_reports/multiple_reports/'.$report->user_id.'/'.Str::slug($report->period).'/'.$report->id);
-
-                foreach ($files as $file) {
-                    $fullPath = Storage::disk('public')->path($file);
-
-                    $zip->addFile($fullPath, basename($file));
-                }
-
-                $zip->close();
-
-                return response()->download($zipFilePath)->deleteFileAfterSend(true);
-            } else {
-                return response()->json(['error' => 'Could not create zip file'], 500);
-            }
+            return $this->handleMultipleReports($report);
         }
 
-
         $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
-
         if ($media) {
-            $path = $media->getPath();
-            $fileName = $media->file_name;
-
-            if (file_exists($path)) {
-                return response()->streamDownload(function () use ($path) {
-                    readfile($path);
-                }, $fileName);
-            } else {
-                return response()->json(['error' => 'File does not exist'], 404);
-            }
+            return $this->streamMediaFile($media);
         }
 
         return response()->json(['error' => 'No media found'], 404);
+    }
+
+    private function handleMultipleReports(Report $report): BinaryFileResponse|JsonResponse
+    {
+        $zipFilePath = $this->getZipFilePath($report);
+        $zip = new ZipArchive;
+
+        if ($zip->open($zipFilePath, ZipArchive::CREATE) !== true) {
+            return response()->json(['error' => 'Could not create zip file'], 500);
+        }
+
+        $files = $this->getReportFiles($report);
+        foreach ($files as $file) {
+            $zip->addFile(Storage::disk('public')->path($file), basename($file));
+        }
+        $zip->close();
+
+        return response()->download($zipFilePath)->deleteFileAfterSend(true);
+    }
+
+    private function getZipFilePath(Report $report): string
+    {
+        return storage_path(
+            'app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.
+            $report->user_id.'/'.Str::slug($report->period).'-'.Str::slug($report->name).'.zip'
+        );
+    }
+
+    private function getReportFiles(Report $report): array
+    {
+        return Storage::disk('public')->allFiles(
+            'tenant_'.tenant('domain').'_income_reports/multiple_reports/'.
+            $report->user_id.'/'.Str::slug($report->period).'/'.$report->id
+        );
+    }
+
+    private function streamMediaFile($media): StreamedResponse|JsonResponse
+    {
+        $path = $media->getPath();
+        $fileName = $media->file_name;
+
+        if (!file_exists($path)) {
+            return response()->json(['error' => 'File does not exist'], 404);
+        }
+
+        return response()->streamDownload(function () use ($path) {
+            readfile($path);
+        }, $fileName);
     }
 
     public function destroy(Report $report): RedirectResponse
@@ -197,7 +214,7 @@ class ReportController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Demo kazançları oluşturulurken bir hata oluştu: ' . $e->getMessage()
+                'error' => 'Demo kazançları oluşturulurken bir hata oluştu: '.$e->getMessage()
             ], 500);
         }
     }

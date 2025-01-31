@@ -18,9 +18,7 @@ class ReportResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'created_at' => Carbon::parse($this->created_at)
-                ->locale(app()->getLocale())
-                ->translatedFormat('d-m-Y H:i'),
+            'created_at' => $this->created_at,
             'period' => $this->period,
             'name' => $this->name,
             'amount' => Number::currency(
