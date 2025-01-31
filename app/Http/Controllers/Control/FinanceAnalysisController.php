@@ -56,7 +56,7 @@ class FinanceAnalysisController extends Controller
             $startDate = Carbon::createFromFormat('m-Y', $startDateInput)->startOfMonth()->format('Y-m-d');
             $endDate = Carbon::createFromFormat('m-Y', $endDateInput)->endOfMonth()->format('Y-m-d');
         } else {
-            $startDate = Carbon::now()->subMonths(1)->startOfMonth()->format('Y-m-d');
+            $startDate = Carbon::now()->subMonths(6)->startOfMonth()->format('Y-m-d');
             $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 

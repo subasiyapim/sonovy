@@ -21,6 +21,7 @@ yarn-error.log
 /.vscode
 /.zed
 storage/songs
+storage/logs
 
 **/caddy
 frankenphp
