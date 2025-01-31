@@ -21,18 +21,6 @@ class FinanceAnalysisController extends Controller
 
     public function index(Request $request)
     {
-
-        $totalCount = Earning::count();
-
-        if ($totalCount > 5000) {
-            $excessCount = $totalCount - 5000;
-
-            Earning::orderBy('created_at', 'asc')
-                ->limit($excessCount)
-                ->delete();
-
-        }
-
         $this->validateRequest($request);
         [$startDate, $endDate] = $this->getDateRange($request);
 
