@@ -459,7 +459,7 @@ onMounted(() => {
           </div>
           <div class="flex flex-col items-start gap-0.5">
             <span class="subheading-2xs c-soft-400">{{ __('control.finance.analysis.apple_music') }}</span>
-            <span class="label-medium c-strong-950">{{ monthlyTotals?.Amazon?.earning ?? 0 }}</span>
+            <span class="label-medium c-strong-950">{{ monthlyTotals?.Apple?.earning ?? 0 }}</span>
           </div>
         </div>
         <span class="w-[1px] bg-[#E1E4EA] h-10"></span>
@@ -533,7 +533,7 @@ onMounted(() => {
                       <div v-for="platform in Object.keys(monthlyData[key])"
                            :key="platform"
                            class="flex items-center gap-2">
-                        <template v-if="platform != 'month_percentage' && platform != 'total_num'">
+                           <template v-if="platform != 'month_percentage' && platform != 'total_num' && platform != 'total'">
 
                             <SpotifyIcon v-if="platform=='Spotify'"/>
                             <YoutubeIcon v-else-if="platform == 'Youtube'"/>
@@ -541,7 +541,7 @@ onMounted(() => {
                             <span v-else-if="platform == 'other'" class="bg-[#717784] w-4 h-4 rounded-full"></span>
                             <p class="paragraph-sm c-strong-950 flex-1">{{ platform }}</p>
                             <div class="border border-soft-200 rounded px-2 py-1">
-                            <p class="paragraph-xs c-sub-600">{{ monthlyData[key][platform]?.earning ?? 0 }}</p>
+                            <p class="paragraph-xs c-sub-600" style="min-width: 40px;">{{ monthlyData[key][platform]?.earning ?? 0 }}</p>
                             </div>
                         </template>
                       </div>
@@ -868,7 +868,7 @@ onMounted(() => {
           <tbody>
           <tr v-for="album in data.trending_albums" class="">
             <td class="paragraph-xs c-sub-600 py-1.5">{{ album.release_name || album.product_name }}</td>
-            <td class="paragraph-xs text-[#377C4E]">{{ formatCurrency(album.earning) }}</td>
+            <td class="paragraph-xs text-[#377C4E]">{{ album.earning }}</td>
           </tr>
           </tbody>
         </table>

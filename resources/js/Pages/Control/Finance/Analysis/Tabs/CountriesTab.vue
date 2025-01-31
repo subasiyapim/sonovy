@@ -173,8 +173,8 @@ const changePage = (page) => {
                         </td>
                         <td style="width:55%;">
                             <div class="flex items-center gap-4">
-                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{album.total_earning}}</span>
-                                <span class="paragraph-xs c-sub-600 whitespace-nowrap">{{album.total_quantity}}</span>
+                                <span class="paragraph-xs c-sub-600 whitespace-nowrap" style="min-width: 60px;">{{album.total_earning}}</span>
+                                <span class="paragraph-xs c-sub-600 whitespace-nowrap" style="min-width: 40px;">{{album.total_quantity}}</span>
                                 <div class="w-[75%] ms-auto flex items-center gap-0.5 h-4 bg-gray-100 rounded-sm">
                                     <template v-if="album.countries">
                                         <div v-for="countryKey in Object.keys(album.countries)"

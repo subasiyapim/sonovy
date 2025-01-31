@@ -134,7 +134,12 @@ const gotoSongs = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="artist in data.top_artists.slice(0,5)">
+                    <tr v-if="!data.top_artists || data.top_artists.length === 0">
+                        <td colspan="4" class="py-4 text-center">
+                            <span class="paragraph-xs c-sub-600">Henüz veri bulunmamaktadır.</span>
+                        </td>
+                    </tr>
+                    <tr v-else v-for="artist in (data.top_artists || []).slice(0,5)">
                         <td class="py-2">
                             <span class="label-sm c-strong-950">{{artist.artist_name}}</span>
                         </td>
@@ -232,7 +237,12 @@ const gotoSongs = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="song in data.top_songs.slice(0,5)">
+                    <tr v-if="!data.top_songs || data.top_songs.length === 0">
+                        <td colspan="6" class="py-4 text-center">
+                            <span class="paragraph-xs c-sub-600">Henüz veri bulunmamaktadır.</span>
+                        </td>
+                    </tr>
+                    <tr v-else v-for="song in (data.top_songs || []).slice(0,5)">
                         <td class="py-2">
                             <span class="label-sm c-strong-950">{{song.song_name}}</span>
                         </td>
@@ -278,7 +288,12 @@ const gotoSongs = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="label in data.top_labels.slice(0,5)">
+                    <tr v-if="!data.top_labels || data.top_labels.length === 0">
+                        <td colspan="3" class="py-4 text-center">
+                            <span class="paragraph-xs c-sub-600">Henüz veri bulunmamaktadır.</span>
+                        </td>
+                    </tr>
+                    <tr v-else v-for="label in (data.top_labels || []).slice(0,5)">
                         <td class="py-2">
                             <span class="label-sm c-strong-950">{{label.label_name}}</span>
                         </td>

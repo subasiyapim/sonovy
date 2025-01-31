@@ -604,7 +604,8 @@ class AnalyseService
                 $totalEarnings = $data->sum('earning');
                 $earnings = collect();
 
-                // Platform gruplarını oluştur
+                // Platform gruplarını oluştur ve kazançları hesapla
+                $platformEarnings = collect();
                 foreach ($platforms as $platformName) {
                     $platformData = $data->filter(function ($item) use ($platformName) {
                         return stripos($item->platform, $platformName) !== false;
@@ -613,11 +614,12 @@ class AnalyseService
                     $sum = $platformData->sum('earning');
                     $percentage = $totalEarnings > 0 ? ($sum / $totalEarnings) * 100 : 0;
 
-                    $earnings[$platformName] = [
+                    $platformEarnings->push([
+                        'platform' => $platformName,
                         'earning_num' => $sum,
                         'earning' => Number::currency($sum, 'USD', app()->getLocale()),
                         'percentage' => round($percentage, 2)
-                    ];
+                    ]);
                 }
 
                 // Diğer platformları hesapla
@@ -633,15 +635,28 @@ class AnalyseService
                 $otherSum = $otherData->sum('earning');
                 $otherPercentage = $totalEarnings > 0 ? ($otherSum / $totalEarnings) * 100 : 0;
 
-                $earnings['other'] = [
+                $platformEarnings->push([
+                    'platform' => 'other',
                     'earning_num' => $otherSum,
                     'earning' => Number::currency($otherSum, 'USD', app()->getLocale()),
                     'percentage' => round($otherPercentage, 2)
-                ];
+                ]);
+
+                // Platformları kazançlarına göre sırala
+                $sortedPlatforms = $platformEarnings->sortByDesc('earning_num');
+
+                // Sıralanmış platformları associative array'e dönüştür
+                $sortedEarnings = $sortedPlatforms->mapWithKeys(function ($item) {
+                    return [$item['platform'] => [
+                        'earning_num' => $item['earning_num'],
+                        'earning' => $item['earning'],
+                        'percentage' => $item['percentage']
+                    ]];
+                });
 
                 $monthPercentage = $totalAllEarnings > 0 ? round(($totalEarnings / $totalAllEarnings) * 100, 2) : 0;
 
-                return array_merge($earnings->toArray(), [
+                return array_merge($sortedEarnings->toArray(), [
                     'total' => Number::currency($totalEarnings, 'USD', app()->getLocale()),
                     'total_num' => $totalEarnings,
                     'month_percentage' => $monthPercentage
@@ -688,14 +703,17 @@ class AnalyseService
                 ]
             ];
 
-            // Series verilerini hazırla
-            $series = collect($platforms)->concat(['other'])->map(function ($platform) use ($items) {
+            // Series verilerini hazırla - platformları kazançlarına göre sırala
+            $allPlatforms = collect($platforms)->concat(['other']);
+            $series = $allPlatforms->map(function ($platform) use ($items) {
                 return [
                     'name' => $platform,
                     'data' => $items->map(function ($monthData) use ($platform) {
                         return $monthData[$platform]['earning_num'] ?? 0;
                     })->values()->toArray()
                 ];
+            })->sortByDesc(function ($series) {
+                return array_sum($series['data']);
             })->values()->toArray();
 
             return [
