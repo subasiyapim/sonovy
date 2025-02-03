@@ -44,7 +44,7 @@ class HandleInertiaRequests extends Middleware
             $this->cacheTime,
             fn() => LocaleService::getLanguageFile($appLocale, ['client', 'control', 'sidebar', 'auth'])
         );
-
+        
         // Cached site settings
         $settings = Cache::remember(
             'settings',
@@ -77,6 +77,7 @@ class HandleInertiaRequests extends Middleware
             'notifications' => fn() => $this->getNotifications($user),
             'maintenance' => fn() => $this->getMaintenanceNotification($user),
             'site_settings' => $settings,
+            'tenant_id' => fn() => tenant()?->id,
         ];
 
         if ($this->isTenant()) {
