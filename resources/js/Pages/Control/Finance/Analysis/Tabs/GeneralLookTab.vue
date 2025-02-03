@@ -230,16 +230,16 @@ const chartOptions = computed(() => ({
     type: 'donut',
     height: 200,
   },
-  labels: Object.keys(platformsData.value),
+  labels: props.data?.earning_from_platforms.map((e) => e.platform),
   colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590', '#4C956C', '#2D6A4F'],
   legend: {
     show: true,
     position: 'right',
     fontSize: '13px',
-    formatter: function (seriesName, opts) {
-      const value = opts.w.globals.series[opts.seriesIndex];
-      return `${seriesName}: ${formatCurrency(value)}`;
-    }
+    // formatter: function (seriesName, opts) {
+    //   const value = opts.w.globals.series[opts.seriesIndex];
+    //   return `${seriesName}: ${formatCurrency(value)}`;
+    // }
   },
   dataLabels: {
     enabled: false,
@@ -265,11 +265,30 @@ const chartOptions = computed(() => ({
   },
   tooltip: {
     enabled: true,
-    y: {
-      formatter: function (val) {
-        return formatCurrency(val);
-      },
-    },
+    // x: {
+    //   show: false, // Disables the default label in tooltip
+    // },
+    custom: function({ series, seriesIndex, w }) {
+    //   const platform = w.config.labels[seriesIndex];
+    const currEleent = props.data?.earning_from_platforms[seriesIndex];
+
+
+        const platform = Object.keys(platformsData.value)[seriesIndex];
+        const percentage =currEleent.percentage;
+        const streamCount = currEleent.quantity;
+        const revenue = currEleent.earning;
+
+
+      return `
+        <div style="padding: 8px; background: white; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.2); font-size: 13px; color: #333;">
+          <b>Platform adı:</b> ${platform}<br>
+          <b>Yüzdelik oranı:</b> ${percentage}%<br>
+          <b>Gelir Tutarı:</b> ${revenue}<br>
+          <b>Stream Sayısı:</b> ${streamCount}
+        </div>
+      `;
+    }
+
   },
 }));
 
@@ -283,6 +302,7 @@ const countriesChartOptions = computed(() => ({
   chart: {
     type: 'donut',
     height: 200,
+
   },
   labels: Object.keys(countriesData.value),
   colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590', '#4C956C', '#2D6A4F'],
@@ -292,7 +312,7 @@ const countriesChartOptions = computed(() => ({
     fontSize: '13px',
     formatter: function (seriesName, opts) {
       const value = opts.w.globals.series[opts.seriesIndex];
-      return `${seriesName}: ${formatCurrency(value)}`;
+      return `${seriesName}`;
     }
   },
   dataLabels: {
@@ -319,11 +339,29 @@ const countriesChartOptions = computed(() => ({
   },
   tooltip: {
     enabled: true,
-    y: {
-      formatter: function (val) {
-        return formatCurrency(val);
-      },
-    },
+    // x: {
+    //   show: false, // Disables the default label in tooltip
+    // },
+    custom: function({ series, seriesIndex, w }) {
+    //   const platform = w.config.labels[seriesIndex];
+    const currEleent = props.data?.earning_from_countries[seriesIndex];
+
+
+        const platform = Object.keys(countriesData.value)[seriesIndex];
+        const percentage =currEleent.percentage;
+
+        const revenue = currEleent.earning;
+
+
+      return `
+        <div style="padding: 8px; background: white; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.2); font-size: 13px; color: #333;">
+          <b>Platform adı:</b> ${platform}<br>
+          <b>Yüzdelik oranı:</b> ${percentage}%<br>
+          <b>Gelir Tutarı:</b> ${revenue}<br>
+        </div>
+      `;
+    }
+
   },
 }));
 
@@ -339,7 +377,8 @@ const salesChartOptions = computed(() => ({
     height: 200,
   },
   labels: props.data?.earning_from_sales_type ? Object.keys(props.data.earning_from_sales_type) : [],
-  colors: ['#5BCF82', '#F9C74F', '#F94144', '#577590'],
+  colors: ['#1D3557', '#4ECDC4', '#6C757D', '#D3D3D3'],
+
   legend: {
     show: true,
     position: 'right',
@@ -372,47 +411,14 @@ const salesChartSeries = computed(() =>
         []
 );
 
-// Debug için onMounted hook'u güncelleme
-onMounted(() => {
-//   console.log('Component mounted with data:', {
-//     data: props.data,
-//     monthlyData: monthlyData.value,
-//     monthlyTotals: monthlyTotals.value,
-//     platformsData: platformsData.value,
-//     countriesData: countriesData.value,
-//     chartSeries: chartSeries.value,
-//     countriesChartSeries: countriesChartSeries.value,
-//     salesChartSeries: salesChartSeries.value
-//   });
 
-
-//   if (props.data?.earning_from_platforms) {
-//     const samplePlatform = props.data.earning_from_platforms[0];
-//     console.log('Sample Platform Item:', {
-//       platform: samplePlatform.platform,
-//       name: samplePlatform.name,
-//       earning: samplePlatform.earning,
-//       rawEarning: typeof samplePlatform.earning,
-//       parsedEarning: Number(samplePlatform.earning)
-//     });
-//   }
-
-//   if (props.data?.earning_from_countries) {
-//     const sampleCountry = props.data.earning_from_countries[0];
-//     console.log('Sample Country Item:', {
-//       country: sampleCountry.country,
-//       name: sampleCountry.name,
-//       earning: sampleCountry.earning,
-//       rawEarning: typeof sampleCountry.earning,
-//       parsedEarning: Number(sampleCountry.earning)
-//     });
-//   }
-
-//   console.log('Processed Platform Data:', platformsData.value);
-//   console.log('Processed Countries Data:', countriesData.value);
-//   console.log('Platform Chart Series:', chartSeries.value);
-//   console.log('Countries Chart Series:', countriesChartSeries.value);
-});
+const hoverLabel = ref(null);
+const onMouseEnter = (spotifySlug) => {
+        hoverLabel.value = spotifySlug;
+};
+const onMouseLeave = (spotifySlug) => {
+    hoverLabel.value = null;
+};
 
 </script>
 
@@ -486,20 +492,20 @@ onMounted(() => {
       <hr>
       <div class="flex gap-3">
 
-        <div class="flex  flex-1">
+        <div class="flex  gap-5 flex-1">
             <div class="flex h-72 flex-col justify-between gap-5">
                 <span v-for="val in props.data.monthly_net_earnings?.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
             </div>
-    <!-- {{props.data.monthly_net_earnings.items["Ocak 2025"].month_percentage}} -->
+
           <template v-if="Object.keys(monthlyData).length > 0">
             <div v-for="key in Object.keys(monthlyData)"
                  :key="key"
                  class="h-80 flex-1 flex flex-col items-center justify-between">
-              <tippy :allowHtml="true" :interactiveBorder="30" theme="light" followCursor :sticky="true"
+              <tippy :allowHtml="true" class="w-full" :interactiveBorder="30" theme="light" followCursor :sticky="true"
                      :interactive="false">
                 <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
                   <div class="bg-weak-50 flex items-end justify-center flex-1 min-w-10">
-                    <span class="c-sub-600 label-sm !text-[10px]">
+                    <span class="c-sub-600 label-sm !text-[10px] ">
                       {{ monthlyData[key]?.total ?? 0 }}
                     </span>
                   </div>
@@ -572,13 +578,13 @@ onMounted(() => {
       <hr>
       <div class="flex gap-4 items-center">
 
-        <div class="flex items-center gap-2">
+        <div @mouseenter="onMouseEnter('spotify')" @mouseleave="onMouseLeave('spotify')" class="cursor-pointer flex items-center gap-2">
           <div class="w-3 h-3 rounded-full bg-spotify"></div>
           <span class="paragraph-xs c-strong-950">{{
               __('control.finance.analysis.estimated_earnings_md_spotify_discovery_mode_with_catalog_optimization')
             }}</span>
         </div>
-        <div class="flex items-center gap-2">
+        <div @mouseenter="onMouseEnter('regular')" @mouseleave="onMouseLeave('regular')" class="cursor-pointer flex items-center gap-2">
           <div class="w-3 h-3 rounded-full bg-[#BDECCD]"></div>
           <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.regular_spotify_revenue') }}</span>
         </div>
@@ -587,8 +593,6 @@ onMounted(() => {
       <div class="flex gap-3">
         <div class="flex flex-col gap-5">
                 <span v-for="val in props.data.spotify_discovery_mode_earnings?.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
-
-
         </div>
         <div class="flex gap-4 flex-1">
           <template v-if="Object.keys(spotifyDiscoveryData).length > 0">
@@ -605,10 +609,15 @@ onMounted(() => {
                   </div>
                   <template v-if="spotifyDiscoveryData[key]">
                     <div class="w-full bg-spotify"
+                        :class="hoverLabel ?  (hoverLabel == 'regular' ? 'opacity-20' : 'opacity-1') :''"
                          :style="{height: (spotifyDiscoveryData[key].promotion ? 40 : 0) + '%'}">
+
                     </div>
                     <div class="w-full bg-[#BDECCD]"
+                        :class="hoverLabel ?  (hoverLabel == 'spotify' ? 'opacity-20' : 'opacity-1') :''"
+
                          :style="{height: (spotifyDiscoveryData[key].earning ? 40 : 0) + '%'}">
+
                     </div>
                   </template>
                 </div>
@@ -684,7 +693,7 @@ onMounted(() => {
 
         </div>
         <hr>
-        <Vue3Apexcharts height="250" :options="countriesChartOptions" :series="countriesChartSeries"></Vue3Apexcharts>
+        <Vue3Apexcharts class="countriesChart" height="250" :options="countriesChartOptions" :series="countriesChartSeries"></Vue3Apexcharts>
 
       </div>
     </div>
@@ -886,6 +895,9 @@ onMounted(() => {
                          v-if="isFinanceIncomeProducts"></FinanceIncomeProducts>
 </template>
 
-<style scoped>
-
+<style  >
+    .apexcharts-legend{
+        display:flex !important;
+        justify-content:center !important;
+    }
 </style>

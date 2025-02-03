@@ -78,6 +78,7 @@ const countryRadioValue = ref(2)
 const selectConfig = computed(() => {
   return {
     hasSearch: true,
+     searchPlaceholder:"Dil ara",
     data: usePage().props.languages,
   }
 })

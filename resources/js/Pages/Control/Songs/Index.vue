@@ -32,14 +32,14 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn :label="'Durum'" sortable="name" >
+      <!-- <AppTableColumn :label="'Durum'" sortable="name" >
         <template #default="scope">
           <StatusBadge v-text="props.statuses[scope.row.status]"
                        :type="scope.status === 1 ? 'success': 'pending'">
           </StatusBadge>
 
         </template>
-      </AppTableColumn>
+      </AppTableColumn> -->
       <AppTableColumn :label="'Parça Adı'" sortable="name">
         <template #default="scope">
           <div class="flex flex-col items-start">

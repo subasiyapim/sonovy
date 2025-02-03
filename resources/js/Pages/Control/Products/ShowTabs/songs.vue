@@ -128,16 +128,7 @@ const pauseMusic = (song) => {
         </div>
       </template>
     </AppTableColumn>
-    <AppTableColumn label="Durum">
-      <template #default="scope" :showIcon="true">
-        <div class="flex items-center gap-2 px-2 py-1 rounded-lg border border-soft-200">
-          <div class="w-4 h-4 rounded-full bg-dark-green-500 flex items-center justify-center">
-            <div class="w-1 h-1 rounded-full bg-white"></div>
-          </div>
-          <p class="label-sm c-strong-950"> Yayında</p>
-        </div>
-      </template>
-    </AppTableColumn>
+
 
     <AppTableColumn label="Parça Adı" width="304">
       <template #default="scope">

@@ -264,6 +264,7 @@ const cityConfig = computed(() => {
     value : 'id',
     label:'name',
     hasSearch: true,
+    searchPlaceholder:"Şehir ara",
     data: [],
   }
 })
@@ -272,6 +273,7 @@ const districtConfig = computed(() => {
     value : 'id',
     label:'name',
     hasSearch: true,
+     searchPlaceholder:"Bölge ara",
     data: [],
   }
 })

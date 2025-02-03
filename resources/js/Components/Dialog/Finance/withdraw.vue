@@ -6,7 +6,7 @@
     <template #icon>
       <BankLineIcon color="var(--dark-green-950)"/>
     </template>
-      <SectionHeader :title="'TUTAR BİLGİLERİ'"/>
+      <SectionHeader v-if="!isFinal" :title="'TUTAR BİLGİLERİ'"/>
     <template #description>
         <div class="flex gap-0.5">
             <p class="paragraph-xs c-sub-600">Mevcut Bakiye </p>
@@ -53,7 +53,7 @@
         <RegularButton @click="isDialogOn = false" class="flex-1">
           {{ __('control.general.cancel') }}
         </RegularButton>
-        <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
+        <PrimaryButton :loading="adding" @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
           Talebi Gönder
         </PrimaryButton>
       </div>
@@ -68,14 +68,14 @@
         </p>
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-2">
-            <div class="w-5 h-5 rounded-full bg-dark-green-700 flex items-center justify-center">
+            <div class="w-5 h-5 rounded-full bg-[#FF8447] flex items-center justify-center">
               <CheckIcon color="#fff"/>
             </div>
             <p class="c-strong-950 paragraph-sm">Talep Edildi</p></div>
           <ChevronRightIcon color="var(--sub-600)"/>
           <div class="flex items-center gap-2">
             <div
-                class="w-5 h-5 rounded-full bg-[#FF8447] flex items-center justify-center text-white text-sm font-medium">
+                class="w-5 h-5 rounded-full bg-white border border-soft-200 flex items-center justify-center c-strong-950 text-sm font-medium">
               2
             </div>
             <p class="c-strong-950 paragraph-sm">İnceleniyor</p></div>
@@ -95,7 +95,7 @@
     </template>
   </BaseDialog>
 
-  <BankAccountModal :account="usePage().props.account" @update="onUpdate" @done="onDone" v-if="isBankAccountModalOn"
+  <BankAccountModal  :account="usePage().props.account" @update="onUpdate" @done="onDone" v-if="isBankAccountModalOn"
                     v-model="isBankAccountModalOn"/>
 </template>
 
@@ -180,6 +180,9 @@ const openBankAccountModal = () => {
   isBankAccountModalOn.value = !isBankAccountModalOn.value;
 }
 const onSubmit = async (e) => {
+
+
+    adding.value = true;
   try {
     const response = await crudStore.post(route('control.finance.payments.store'), {
       amount: amount.value,
@@ -188,10 +191,13 @@ const onSubmit = async (e) => {
     })
 
     isFinal.value = true;
+      adding.value = false;
   } catch (error) {
     console.log("ERROR", error.response.data);
     // error.response
-    toast.error(error.response.data.message);
+    toast.error(error.response?.data?.message ?? 'Hatalı işlem');
+      adding.value = false;
+
   }
 }
 const checkIfDisabled = computed(() => {

@@ -307,10 +307,8 @@
             <AppTableColumn :label="'Sanatçı'" sortable="name">
                 <template #default="scope">
                 <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
-                    <img :alt="scope.row.name"
-                        class="w-10 h-10 rounded-full overflow-hidden"
-                        :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
-                    <span>{{ artist.name }} </span>
+
+                    <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
                 </div>
                 </template>
             </AppTableColumn>
@@ -351,6 +349,7 @@
             </AppTableColumn>
             <AppTableColumn label="Rol" >
                 <template #default="scope">
+                    <p class="paragraph-xs c-sub-600" v-for="role in scope.row.artist_role">{{role}}</p>
                 </template>
             </AppTableColumn>
 

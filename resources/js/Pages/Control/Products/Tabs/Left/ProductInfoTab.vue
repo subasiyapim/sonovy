@@ -326,6 +326,7 @@ const featuringArtistSelectConfig = computed(() => {
   return {
     showTags: true,
     hasSearch: true,
+     searchPlaceholder:"Artist ara",
     data: usePage().props.artists,
     remote: async (query) => {
 
@@ -348,6 +349,7 @@ const mainArtistSelectConfig = computed(() => {
   return {
     showTags: true,
     hasSearch: true,
+     searchPlaceholder:"Artist ara",
     data: usePage().props.artists,
     remote: async (query) => {
 
@@ -371,6 +373,7 @@ const labelConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
+     searchPlaceholder:"Plak Şirketi ara",
     data: usePage().props.labels,
     remote: async (query) => {
 
@@ -391,6 +394,7 @@ const labelConfig = computed(() => {
 const genreConfig = computed(() => {
   return {
     hasSearch: true,
+     searchPlaceholder:"Tarz ara",
     data: props.genres,
   }
 })
@@ -405,6 +409,7 @@ const mainPriceConfig = computed(() => {
 
 const languageConfig = computed(() => {
   return {
+    searchPlaceholder:"Dil ara",
     hasSearch: true,
     data: props.languages
   }

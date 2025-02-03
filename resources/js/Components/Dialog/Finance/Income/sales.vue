@@ -4,7 +4,7 @@
 <BaseDialog :showClose="true" v-model="isDialogOn"  height="min-content" align="center" title="Satış Tipine Göre Gelir"
               :description="formattedDates">
     <template #icon>
-      <WorldIcon color="var(--dark-green-950)"/>
+      <Table2Icon color="var(--dark-green-950)"/>
     </template>
 
     <hr>
@@ -18,19 +18,20 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="key in Object.keys(tableData)">
+            <tr v-for="item in tableData">
                 <td class="py-3">
-                   <span class="label-sm c-strong-950">{{key}}</span>
+                   <span class="label-sm c-strong-950">{{item.platform}}</span>
 
                 </td>
                 <td style="width:55%;">
                     <div class="flex items-center gap-2">
-                        <AppProgressIndicator color="#D02533" :modelValue="parseInt(tableData[key].percentage.split(-1))" />
-                        <span class="paragraph-xs c-sub-600">{{tableData[key].percentage}}</span>
+                        <AppProgressIndicator :color="getColor(item.platform) ?? 'var(--blue-500)'" :modelValue="parseInt(item.percentage.split(-1))" />
+                        <span class="paragraph-xs c-sub-600">{{item.percentage}}</span>
+
                     </div>
 
                 </td>
-                <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{tableData[key].earning}}</span></td>
+                <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{item.earning.toFixed(2)}}</span></td>
             </tr>
         </tbody>
     </table>
@@ -49,7 +50,7 @@
 <script setup>
 import BaseDialog from '@/Components/Dialog/BaseDialog.vue';
 
-import {WorldIcon} from '@/Components/Icons'
+import {Table2Icon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore'
 import moment from 'moment';
 import  'moment/dist/locale/tr';
@@ -68,7 +69,17 @@ const props = defineProps({
     formattedDates:{},
 })
 
-
+const getColor = computed(() => {
+    return (slug) => {
+        let c = {
+            "Stream" : '#1D3557',
+            "Creation" : '#4ECDC4',
+            "Download" : '#6C757D',
+            "Platform Promotion" : '#D3D3D3',
+        }
+        return c[slug];
+    }
+})
 const emits = defineEmits(['update:modelValue']);
 const isDialogOn = computed({
   get: () => props.modelValue,

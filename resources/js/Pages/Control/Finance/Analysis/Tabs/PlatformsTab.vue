@@ -290,10 +290,10 @@ const changePage = (page) => {
     background-color: #FF6B00;
 }
 .bg-other {
-    background-color: #335CFF;
+    background-color: #E1E4EA;
 }
 .bg-others {
-    background-color: #335CFF;
+    background-color: #E1E4EA;
 }
 
 /* Progress bar container */

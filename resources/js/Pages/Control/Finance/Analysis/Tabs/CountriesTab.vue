@@ -33,7 +33,7 @@ const showPlatforms = ref({
     'others': true
 });
 const currentPage = ref(1);
-const itemsPerPage = 10;
+const itemsPerPage = 20;
 
 // Template kısmı için computed property'ler
 const releases = computed(() => props.data?.releases ?? []);
@@ -104,9 +104,11 @@ const sortedReleases = computed(() => {
 
 // Pagination için computed property
 const paginatedReleases = computed(() => {
+    console.log("asdasd",sortedReleases.value[0]);
+
     const startIndex = (currentPage.value - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return sortedReleases.value.slice(startIndex, endIndex);
+    return sortedReleases.value.sort((a,b) => parseInt(b.total_earning.substring(1)) - parseInt(a.total_earning.substring(1))).slice(startIndex, endIndex);
 });
 
 // Toplam sayfa sayısı
@@ -196,7 +198,7 @@ const changePage = (page) => {
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="label-sm c-strong-950">{{album.release_name}}</span>
-                                    <span class="paragraph-xs c-sub-600">{{album.upc_code}}</span>
+                                    <span class="paragraph-xs c-sub-600">UPC:{{album.upc_code}}</span>
                                 </div>
                             </div>
                         </td>
@@ -255,7 +257,7 @@ const changePage = (page) => {
     background-color: #F1BF00;
 }
 .bg-others {
-    background-color: #335CFF;
+    background-color: #E1E4EA;
 }
 
 /* Progress bar container */

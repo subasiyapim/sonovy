@@ -407,6 +407,7 @@ const mainArtistSelectConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
+     searchPlaceholder:"Artist ara",
     data: usePage().props.artists,
     remote: async (query) => {
 
@@ -430,6 +431,7 @@ const featuringArtistSelectConfig = computed(() => {
   return {
     showTags: false,
     hasSearch: true,
+     searchPlaceholder:"Artist ara",
     data: usePage().props.artists,
     remote: async (query) => {
 
@@ -453,6 +455,7 @@ const participantSelectConfig = computed(() => {
   return {
 
     hasSearch: true,
+     searchPlaceholder:"Katılımcı ara",
     data: usePage().props.users,
     remote: async (query) => {
       const response = await crudStore.get(route('control.search.users', {
@@ -474,12 +477,14 @@ const totalSongDuration = ref(200)
 const genreConfig = computed(() => {
   return {
     hasSearch: true,
+     searchPlaceholder:"Ara...",
     data: props.genres,
   }
 })
 const lyricsConfig = computed(() => {
   return {
     hasSearch: true,
+     searchPlaceholder:"Ara...",
     data: [],
   }
 })
@@ -593,6 +598,8 @@ onMounted(() => {
   if (props.song) {
 
     form.featuring_artists = (props.song.featuring_artists ?? []).map((e) => e.id);
+
+
 
 
     form.main_artists = props.song.main_artists?.length > 0 ? props.song.main_artists[0].id : null;

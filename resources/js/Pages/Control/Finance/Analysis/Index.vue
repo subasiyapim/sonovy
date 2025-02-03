@@ -4,10 +4,20 @@
     <template #toolbar>
     <div class="w-48">
         <VueDatePicker @update:model-value="onDateChoosen"  v-model="choosenDate"  range  month-picker :max-date="new Date()"  class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+
             <template #input-icon>
                 <div class="p-3">
                     <CalendarIcon color="var(--sub-600)"/>
                 </div>
+            </template>
+            <template #left-sidebar>
+                    <div class="flex flex-col flex-1">
+                        <button @click="setDateRange('last30days')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 1 Ay</button>
+                        <button @click="setDateRange('last3months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 3 Ay</button>
+                        <button @click="setDateRange('last6months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 6 Ay</button>
+                        <button @click="setDateRange('last12months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 12 Ay</button>
+                        <button @click="setDateRange('allTime')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Tüm Zamanlar</button>
+                    </div>
             </template>
         </VueDatePicker>
     </div>
@@ -115,6 +125,57 @@ import CountriesTab from './Tabs/CountriesTab.vue';
 const defaultStore = useDefaultStore();
 const pageTable = ref();
 
+
+const setDateRange = (type) => {
+  const now = new Date();
+  let range = [];
+
+  switch (type) {
+    case 'last30days':
+
+        range = [
+            { month: moment().subtract(1, 'months').month(), year: moment().subtract(1, 'months').year() },
+            { month: moment().month(), year: moment().year() },
+        ];
+        break;
+    case 'last3months':
+      range = [
+        { month: moment().subtract(3, 'months').month(), year: moment().subtract(3, 'months').year() },
+          { month: moment().month(), year: moment().year() },
+      ];
+      break;
+    case 'last6months':
+      range = [
+        { month: moment().subtract(6, 'months').month(), year: moment().subtract(6, 'months').year() },
+          { month: moment().month(), year: moment().year() },
+      ];
+      break;
+    case 'last12months':
+
+
+      range = [
+        { month: moment().subtract(1, 'year').month(), year: moment().subtract(1, 'year').year() },
+        { month: moment().month(), year: moment().year() },
+      ];
+      break;
+
+    case 'allTime':
+      range = [
+        {
+          month: 0,
+          year: 2000,
+        }, // Starting from January 2000
+         { month: moment().month(), year: moment().year() },
+      ];
+      break;
+    default:
+      range = [];
+  }
+  console.log("RANGEE",range);
+
+  onDateChoosen(range)
+};
+
 const choosenDate =ref();
 const props = defineProps({
   data: {
@@ -217,6 +278,7 @@ const formatMonthYear = (date) => {
 };
 
 const onDateChoosen = async (e) => {
+    console.log("EEEE",e);
 
     if (!e || !e['0'] || !e['1']) {
         await router.visit(route(route().current()), {

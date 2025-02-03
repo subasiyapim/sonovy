@@ -36,7 +36,7 @@
              class="absolute dropdownWrapper left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-10"
              :style="dropdownStyle">
           <AppTextInput v-if="config.hasSearch" v-model="searchTerm" @change="onSearchChange" class="w-full mb-2"
-                        placeholder="Yayın, Artist ara...">
+                        :placeholder="config?.searchPlaceholder">
             <template #icon>
               <SearchIcon color="var(--soft-400)"/>
             </template>

@@ -40,7 +40,7 @@
       <RegularButton @click="isDialogOn = false" class="flex-1">
         {{ __('control.general.cancel') }}
       </RegularButton>
-      <PrimaryButton @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
+      <PrimaryButton :loading="adding" @click="onSubmit" :disabled="checkIfDisabled" class="flex-1">
        <template v-if="account"> Güncelle  </template>
        <template v-else> Kaydet  </template>
       </PrimaryButton>
@@ -94,29 +94,35 @@ const countryConfig = computed(() => {
   };
 })
 const onSubmit = async (e) => {
+    adding.value = true;
     try {
 
         if(props.account){
-            console.log(route('control.bank.account.update',props.account.id));
+
 
             const response  = await crudStore.put(route('control.bank.account.update',props.account.id),{
                 ...form.value
             })
             emits('update',form.value);
             isDialogOn.value = false;
+            adding.value = true;
         }else {
             const response  = await crudStore.post(route('control.bank.account.store'),{
                 ...form.value
             })
-             emits('done',form.value);
+                console.log("EKLENDİİ",response);
+
+             emits('done',response.notification.account);
              isDialogOn.value = false;
+             adding.value = true;
         }
 
     } catch (error) {
         if(error.response?.data){
              toast.error(error.response.data.message);
         }
-       console.log("ERROR",error);
+
+       adding.value = true;
 
     // error.response
 

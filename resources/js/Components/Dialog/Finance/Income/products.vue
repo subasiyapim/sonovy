@@ -18,19 +18,19 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="key in Object.keys(tableData)">
+            <tr v-for="item in tableData">
                 <td class="py-3">
-                   <span class="label-sm c-strong-950">{{key}}</span>
+                   <span class="label-sm c-strong-950">{{item.platform}}</span>
 
                 </td>
                 <td style="width:55%;">
                     <div class="flex items-center gap-2">
-                        <AppProgressIndicator color="#D02533" :modelValue="parseInt(tableData[key].percentage.split(-1))" />
-                        <span class="paragraph-xs c-sub-600">{{tableData[key].percentage}}</span>
+                        <AppProgressIndicator color="var(--blue-500)" :modelValue="parseInt(item.percentage.split(-1))" />
+                        <span class="paragraph-xs c-sub-600">{{item.percentage}}</span>
                     </div>
 
                 </td>
-                <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{tableData[key].earning}}</span></td>
+                <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{item.earning.toFixed(2)}}</span></td>
             </tr>
         </tbody>
     </table>

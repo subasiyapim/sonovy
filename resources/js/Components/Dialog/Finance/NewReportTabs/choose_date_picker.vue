@@ -40,20 +40,28 @@ const setDateRange = (type) => {
     case 'last30days':
 
         range = [
-            { month: new Date(now.setMonth(now.getMonth() - 1)).getMonth(), year: now.getFullYear() },
-            { month: new Date().getMonth(), year: new Date().getFullYear() },
+            { month: moment().subtract(1, 'months').month(), year: moment().subtract(1, 'months').year() },
+            { month: moment().month(), year: moment().year() },
         ];
         break;
     case 'last3months':
       range = [
-        { month: new Date(now.setMonth(now.getMonth() - 3)).getMonth(), year: new Date(now.setMonth(now.getMonth() - 3)).getFullYear() },
-          { month: new Date().getMonth(), year: new Date().getFullYear() },
+        { month: moment().subtract(3, 'months').month(), year: moment().subtract(3, 'months').year() },
+          { month: moment().month(), year: moment().year() },
+      ];
+      break;
+    case 'last6months':
+      range = [
+        { month: moment().subtract(6, 'months').month(), year: moment().subtract(6, 'months').year() },
+          { month: moment().month(), year: moment().year() },
       ];
       break;
     case 'last12months':
+
+
       range = [
-        { month: new Date(now.setMonth(now.getMonth() - 12)).getMonth(), year: new Date(now.setMonth(now.getMonth() - 12)).getFullYear() },
-        { month: new Date().getMonth(), year: new Date().getFullYear() },
+        { month: moment().subtract(1, 'year').month(), year: moment().subtract(1, 'year').year() },
+        { month: moment().month(), year: moment().year() },
       ];
       break;
 
@@ -63,7 +71,7 @@ const setDateRange = (type) => {
           month: 0,
           year: 2000,
         }, // Starting from January 2000
-         { month: new Date().getMonth(), year: new Date().getFullYear() },
+         { month: moment().month(), year: moment().year() },
       ];
       break;
     default:
@@ -88,6 +96,7 @@ const setDateRange = (type) => {
     <div class="flex flex-col flex-1">
       <button @click="setDateRange('last30days')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 1 Ay</button>
       <button @click="setDateRange('last3months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 3 Ay</button>
+      <button @click="setDateRange('last6months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 6 Ay</button>
       <button @click="setDateRange('last12months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 12 Ay</button>
       <button @click="setDateRange('allTime')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Tüm Zamanlar</button>
     </div>

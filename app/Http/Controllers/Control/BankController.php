@@ -30,16 +30,17 @@ class BankController extends Controller
         $data = $request->all();
         $data['user_id'] = isset($request->user_id) ? $request->user_id : auth()->id();
 
-        BankAccount::create($data);
+        $bankAccount =  BankAccount::create($data);
 
-        return redirect()
-            ->back()
-            ->with([
-                'notification' => __(
+        return response()->json([
+            'notification' => [
+                'account' => $bankAccount,
+                'message' => __(
                     'control.notification_created',
                     ['model' => __('control.bank_account.title_singular')]
                 )
-            ]);
+            ]
+        ], Response::HTTP_OK);
     }
 
     public function edit(BankAccount $bankAccount)

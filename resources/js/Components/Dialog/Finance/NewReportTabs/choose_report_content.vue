@@ -35,6 +35,7 @@ const mainArtistSelectConfig = computed(() => {
         label:'name',
         showTags: false,
         hasSearch: true,
+        searchPlaceholder:"Artist ara",
         data: usePage().props.artists,
 
     }
@@ -45,6 +46,7 @@ const productsSelectConfig = computed(() => {
         label:'album_name',
         showTags: false,
         hasSearch: true,
+        searchPlaceholder:"Ürün ara",
         data: usePage().props.products,
     }
 });
@@ -54,6 +56,7 @@ const songsSelectConfig = computed(() => {
         label:'name',
         showTags: false,
         hasSearch: true,
+         searchPlaceholder:"Şarkı ara",
         data:  usePage().props.songs,
 
     }
@@ -64,6 +67,7 @@ const platformsSelectConfig = computed(() => {
         label:'name',
         showTags: false,
         hasSearch: true,
+        searchPlaceholder:"Platform ara",
         data: usePage().props.platforms,
 
     }
@@ -74,6 +78,7 @@ const labelSelectConfig = computed(() => {
         label:'name',
         showTags: false,
         hasSearch: true,
+        searchPlaceholder:"Plak Şirketi ara",
         data: usePage().props.labels,
 
     }
@@ -82,6 +87,7 @@ const countriesSelectConfig = computed(() => {
   return {
         showTags: false,
         hasSearch: true,
+        searchPlaceholder:"Ülke ara",
         data: [],
         remote: async (query) => {
 

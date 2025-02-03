@@ -10,6 +10,7 @@ import CalendarIcon from './CalendarIcon.vue';
 import TableOrderIcon from './TableOrderIcon.vue';
 import More2LineIcon from './More2LineIcon.vue';
 import Building2LineIcon from './Building2LineIcon.vue';
+import Table2Icon from './Table2Icon.vue';
 import WorldIcon from './WorldIcon.vue';
 import PhoneIcon from './PhoneIcon.vue';
 import MessageIcon from './MessageIcon.vue';
@@ -183,6 +184,7 @@ export {
     SongFileIcon,
     MinusIcon,
     LinkIcon,
+    Table2Icon,
     PercantageIcon,
     PhoneIcon,
     LabelEmailIcon,

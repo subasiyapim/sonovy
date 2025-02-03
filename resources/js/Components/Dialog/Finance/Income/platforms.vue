@@ -13,24 +13,29 @@
         <thead>
             <tr>
                 <td class="label-sm c-strong-950 !font-semibold">Mağaza Adı</td>
-                <td class="label-sm c-strong-950  !text-end !font-semibold pe-3 ">Oran</td>
-                <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
+                <td class="label-sm c-strong-950  !text-end !font-semibold ">Oran</td>
+                <td class="label-sm c-strong-950 !font-semibold !text-end ps-3">Gelir</td>
             </tr>
         </thead>
         <tbody>
-            <tr v-for="key in Object.keys(tableData)">
-                <td class="py-3">
-                   <span class="label-sm c-strong-950">{{key}}</span>
+            <tr v-for="(item,i) in tableData">
+                <td class="py-3" style="width:35%;">
+                   <span class="label-sm c-strong-950">{{item.platform}}</span>
 
                 </td>
                 <td style="width:55%;">
                     <div class="flex items-center gap-2">
-                        <AppProgressIndicator color="#D02533" :modelValue="parseInt(tableData[key].percentage.split(-1))" />
-                        <span class="paragraph-xs c-sub-600">{{tableData[key].percentage}}</span>
+
+                            <AppProgressIndicator class="w-full" color="var(--blue-500)" :modelValue="item.percentage" />
+
+                           <div class="w-6 text-end">
+                            <span class="paragraph-xs c-sub-600">{{item.percentage}}%</span>
+                           </div>
+
                     </div>
 
                 </td>
-                <td class=" ps-3"> <span class="paragraph-xs c-sub-600">{{tableData[key].earning}}</span></td>
+                <td class=" ps-3 text-end"> <span class="paragraph-xs c-sub-600">{{item.earning.toFixed(2)}}</span></td>
             </tr>
         </tbody>
     </table>

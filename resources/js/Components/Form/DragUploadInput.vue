@@ -127,7 +127,6 @@ onBeforeMount(() => {
             url:props.image,
         })
     }
-    console.log("images",images);
 
 });
 </script>

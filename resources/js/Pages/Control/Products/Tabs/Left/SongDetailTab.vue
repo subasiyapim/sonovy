@@ -179,7 +179,6 @@ const showAttempt = ref(false);
 const isSongDialogOn = ref(false);
 const onTusStart = (e) => {
   showAttempt.value = true;
-  console.log("STARTT", e);
   attemps.value.push(e);
 }
 
@@ -235,8 +234,23 @@ const onTusComplete = (e) => {
 }
 const isDraggingOn = ref(false);
 const openEditDialog = (song) => {
-  isSongDialogOn.value = true
+
+
+
   choosenSong.value = song
+
+
+    if(song.main_artists.length == 0){
+        if(props.product.main_artists.length > 0){
+
+
+            choosenSong.value.main_artists = props.product.main_artists;
+
+        }
+    }
+
+
+   isSongDialogOn.value = true
 }
 
 const onComplete = (e) => {
@@ -317,6 +331,9 @@ const deSelectAll = () => {
 }
 onBeforeMount(() => {
   form.value.songs = props.product.songs;
+
+
+
 });
 </script>
 

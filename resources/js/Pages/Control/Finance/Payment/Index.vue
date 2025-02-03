@@ -104,8 +104,7 @@
 
     </div>
 
-
-    <div class="flex justify-between items-start gap-2 bg-[#EBF1FF] p-3.5 rounded-lg my-12">
+    <div v-if="pending_payment?.status != null" class="flex justify-between items-start gap-2 bg-[#EBF1FF] p-3.5 rounded-lg my-12">
       <InfoFilledIcon class="mt-1" color="#335CFF"/>
       <div class="flex-1">
         <div class="flex justify-between items-center  mb-3">
@@ -116,14 +115,14 @@
           <div>
             <div class="flex items-center gap-3">
               <div class="flex items-center gap-2">
-                <div class="w-5 h-5 rounded-full bg-dark-green-700 flex items-center justify-center">
+                <div class="w-5 h-5 rounded-full bg-[#FF8447] flex items-center justify-center">
                   <CheckIcon color="#fff"/>
                 </div>
                 <p class="c-strong-950 paragraph-sm">{{ __('control.finance.payments.withdraw_request_success_description') }}</p></div>
               <ChevronRightIcon color="var(--sub-600)"/>
               <div class="flex items-center gap-2">
                 <div
-                    class="w-5 h-5 rounded-full bg-[#FF8447] flex items-center justify-center text-white text-sm font-medium">
+                    class="w-5 h-5 rounded-full bg-white border border-soft-200 flex items-center justify-center c-strong-950 text-sm font-medium">
                   2
                 </div>
                 <p class="c-strong-950 paragraph-sm">{{ __('control.finance.payments.under_review') }}</p></div>
