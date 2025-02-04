@@ -426,7 +426,7 @@ const onClickBar = (spotifySlug) => {
         isClickedbar.value = true;
         hoverLabel.value = null;
     }else {
-        isClickedbar.value = null;
+        isClickedbar.value = false;
         hoverLabel.value = spotifySlug;
     }
 
@@ -441,8 +441,7 @@ const onClickBar = (spotifySlug) => {
 }
 const onMouseLeave = (spotifySlug) => {
     if(!isClickedbar.value){
-    hoverLabel.value = null;
-
+        hoverLabel.value = null;
     }
 };
 
@@ -630,15 +629,36 @@ const onMouseLeave = (spotifySlug) => {
                 <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
                   <div class="bg-weak-50 flex items-end justify-center flex-1 h-10 min-w-10">
                     <span class="c-sub-600 label-sm !text-[10px]">
-                      {{ spotifyDiscoveryData[key]?.total ?? 0 }}
+
+                        <template v-if="clickedbars.length > 0">
+                            <template v-if="clickedbars.length == 2">
+                                $0,00
+                            </template>
+                            <template v-else>
+                                <template v-if="(clickedbars.find((e) =>  e == 'regular' ))">
+                                       {{spotifyDiscoveryData[key].promotion}}
+                                </template>
+                                <template v-if="(clickedbars.find((e) =>  e == 'spotify' ))">
+                                    {{spotifyDiscoveryData[key].earning}}
+                                </template>
+                                 <!-- {{ spotifyDiscoveryData[key]?.total ?? 0 }} -->
+                            </template>
+
+                        </template>
+                        <template v-else>
+
+                         {{ spotifyDiscoveryData[key]?.total ?? 0 }}
+                        </template>
                     </span>
                   </div>
                   <template v-if="spotifyDiscoveryData[key]">
-                    <div  v-if="!(clickedbars.find((e) =>  e == 'spotify' ))" class="flex-[5] w-full bg-spotify"
+                    <div  v-if="!(clickedbars.find((e) =>  e == 'spotify' ))" class=" w-full bg-spotify"
+                      :style="{height:`${100 - spotifyDiscoveryData[key].earning_percentage}%`}"
                         :class="hoverLabel ?  (hoverLabel == 'regular' ? 'opacity-20' : 'opacity-1') :''" >
-
+                        <!-- {{spotifyDiscoveryData[key]}} -->
                     </div>
-                    <div v-if="!(clickedbars.find((e) =>  e == 'regular' ))"  class="flex-[5] w-full bg-[#BDECCD]"
+                    <div v-if="!(clickedbars.find((e) =>  e == 'regular' ))"  class=" w-full bg-[#BDECCD]"
+                        :style="{height:`${spotifyDiscoveryData[key].earning_percentage}%`}"
                         :class="hoverLabel ?  (hoverLabel == 'spotify' ? 'opacity-20' : 'opacity-1') :''" >
 
                     </div>

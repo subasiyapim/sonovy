@@ -306,6 +306,7 @@
             </AppTableColumn>
             <AppTableColumn :label="'Sanatçı'" sortable="name">
                 <template #default="scope">
+                  <span class="paragraph-xs c-strong-950">{{ props.artist.name }} &nbsp; </span>
                 <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
 
                     <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
@@ -350,6 +351,7 @@
             <AppTableColumn label="Rol" >
                 <template #default="scope">
                     <p class="paragraph-xs c-sub-600" v-for="role in scope.row.artist_role">{{role}}</p>
+                    <span class="paragraph-xs c-sub-600 text-center" v-if="scope.row.artist_role.length == 0"> - </span>
                 </template>
             </AppTableColumn>
 
