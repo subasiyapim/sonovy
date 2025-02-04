@@ -774,13 +774,15 @@ class AnalyseService
                         'promotion' => Number::currency($promotion, 'USD', app()->getLocale()),
                         'earning' => Number::currency($earning, 'USD', app()->getLocale()),
                         'total' => Number::currency($total, 'USD', app()->getLocale()),
+                        'percentage' => $promotion > 0 ? ($promotion / $earning) * 100 : 0,
                     ];
                 });
-
+            
             return [
                 'total' => $total->toArray(),
                 'items' => $items->toArray(),
             ];
+
         });
     }
 
