@@ -23,7 +23,7 @@ function randomIntFromInterval(min: number, max: number) { // min and max includ
 
 
     <div v-if="!state"
-         class="z-10  w-full overflow-hidden bg-white px-10 py-8 sm:max-w-md rounded-2xl bg-white shadow-md">
+         class="z-10  w-full overflow-hidden bg-white px-10 py-8 sm:max-w-md rounded-2xl shadow-md">
 
 
       <div class="mx-auto bg-white-600 w-16 h-16 rounded-full flex items-center justify-center my-6">

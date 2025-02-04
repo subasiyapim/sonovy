@@ -141,8 +141,6 @@ class FinanceAnalysisController extends Controller
 
     public function show(Request $request)
     {
-        Log::info('Show method called', $request->all());
-
         try {
             $data = $this->getDataBySlug($request->slug);
 
@@ -224,11 +222,6 @@ class FinanceAnalysisController extends Controller
         }
 
         $earnings = $earnings->where('user_id', Auth::id())->get();
-
-        Log::info('Earnings data fetched', [
-            'count' => $earnings->count(),
-            'sample' => $earnings->take(1)->toArray()
-        ]);
 
         $service = new AnalyseService($earnings);
         $result = match ($slug) {

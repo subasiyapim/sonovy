@@ -248,27 +248,12 @@ class AnalyseService
     {
         $cacheKey = 'top_albums_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, 60 * 60, function () {
-            Log::info('TopAlbums başlangıç', [
-                'total_records' => $this->data->count(),
-                'total_earnings' => $this->totalEarnings,
-                'has_earnings' => $this->data->where('earning', '>', 0)->count(),
-                'unique_upcs' => $this->data->pluck('upc_code')->unique()->count(),
-                'sample_data' => $this->data->take(1)->toArray()
-            ]);
 
             $filteredData = $this->data->filter(function ($item) {
                 return !empty($item->upc_code);
             });
 
             $groupedData = $filteredData->groupBy('upc_code')->values();
-
-            Log::info('TopAlbums gruplandırma sonrası', [
-                'total_groups' => $groupedData->count(),
-                'groups_with_earnings' => $groupedData->filter(function ($group) {
-                    return $group->sum('earning') > 0;
-                })->count(),
-                'sample_group' => $groupedData->take(1)->toArray()
-            ]);
 
             $mappedData = $groupedData->map(function ($albumData) {
                 $albumEarnings = $albumData->sum('earning');
@@ -369,10 +354,15 @@ class AnalyseService
     {
         $cacheKey = 'trending_albums_'.md5($this->data->pluck('id')->implode(','));
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
+            $totalEarnings = $this->data->sum('earning');
+
             return $this->data->groupBy('upc_code')
-                ->map(function ($items) {
+                ->map(function ($items) use ($totalEarnings) {
                     $firstItem = $items->first();
                     $product = $firstItem->product;
+
+                    $earningSum = $items->sum('earning');
+                    $percentage = $totalEarnings > 0 ? round(($earningSum / $totalEarnings) * 100, 2) : 0;
 
                     return [
                         'start_date' => Cache::get('start_date'),
@@ -380,7 +370,8 @@ class AnalyseService
                         'platform' => $firstItem->platform,
                         'quantity' => $firstItem->quantity,
                         'release_name' => $firstItem->release_name,
-                        'earning' => Number::currency($items->sum('earning'), 'USD', app()->getLocale()),
+                        'earning' => Number::currency($earningSum, 'USD', app()->getLocale()),
+                        'percentage' => $percentage,
                     ];
                 })
                 ->sortByDesc('earning')
@@ -461,9 +452,12 @@ class AnalyseService
                     $result['total'] = $platformTotal;
 
                     // Oranları hesapla ve ekle (yüzde olarak)
-                    $result['Premium_percentage'] = $platformTotal > 0 ? round(($premiumSum / $platformTotal) * 100, 2) : 0;
-                    $result['Freemium_percentage'] = $platformTotal > 0 ? round(($freemiumSum / $platformTotal) * 100, 2) : 0;
-                    $result['Others_percentage'] = $platformTotal > 0 ? round(($othersSum / $platformTotal) * 100, 2) : 0;
+                    $result['Premium_percentage'] = $platformTotal > 0 ? round(($premiumSum / $platformTotal) * 100,
+                        2) : 0;
+                    $result['Freemium_percentage'] = $platformTotal > 0 ? round(($freemiumSum / $platformTotal) * 100,
+                        2) : 0;
+                    $result['Others_percentage'] = $platformTotal > 0 ? round(($othersSum / $platformTotal) * 100,
+                        2) : 0;
 
                     return $result;
                 })
@@ -647,11 +641,13 @@ class AnalyseService
 
                 // Sıralanmış platformları associative array'e dönüştür
                 $sortedEarnings = $sortedPlatforms->mapWithKeys(function ($item) {
-                    return [$item['platform'] => [
-                        'earning_num' => $item['earning_num'],
-                        'earning' => $item['earning'],
-                        'percentage' => $item['percentage']
-                    ]];
+                    return [
+                        $item['platform'] => [
+                            'earning_num' => $item['earning_num'],
+                            'earning' => $item['earning'],
+                            'percentage' => $item['percentage']
+                        ]
+                    ];
                 });
 
                 $monthPercentage = $totalAllEarnings > 0 ? round(($totalEarnings / $totalAllEarnings) * 100, 2) : 0;
