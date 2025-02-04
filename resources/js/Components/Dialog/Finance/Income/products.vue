@@ -18,7 +18,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="item in tableData">
+            <tr v-for="item in tableData.sort((a,b) => b.percentage - a.percentage)">
                 <td class="py-3">
                    <span class="label-sm c-strong-950">{{item.release_name}}</span>
 
@@ -26,7 +26,7 @@
                 <td style="width:55%;">
                     <div class="flex items-center gap-2">
                         <AppProgressIndicator color="var(--blue-500)" :modelValue="item.percentage" />
-                        <span class="w-12 paragraph-xs c-sub-600">{{item.percentage}}</span>
+                        <span class="w-12 paragraph-xs c-sub-600">{{item.percentage}} %</span>
                     </div>
 
                 </td>
