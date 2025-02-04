@@ -777,7 +777,7 @@ class AnalyseService
                         'percentage' => $promotion > 0 ? ($promotion / $earning) * 100 : 0,
                     ];
                 });
-            
+
             return [
                 'total' => $total->toArray(),
                 'items' => $items->toArray(),
