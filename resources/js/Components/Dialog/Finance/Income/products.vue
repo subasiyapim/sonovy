@@ -12,7 +12,7 @@
     <table class="w-full" v-if="!loading">
         <thead>
             <tr>
-                <td class="label-sm c-strong-950 !font-semibold">Mağaza Adı</td>
+                <td class="label-sm c-strong-950 !font-semibold">Albüm Adı</td>
                 <td class="label-sm c-strong-950  !text-end !font-semibold pe-3 ">Oran</td>
                 <td class="label-sm c-strong-950 !font-semibold ps-3">Gelir</td>
             </tr>
@@ -20,13 +20,13 @@
         <tbody>
             <tr v-for="item in tableData">
                 <td class="py-3">
-                   <span class="label-sm c-strong-950">{{item.platform}}</span>
+                   <span class="label-sm c-strong-950">{{item.release_name}}</span>
 
                 </td>
                 <td style="width:55%;">
                     <div class="flex items-center gap-2">
-                        <AppProgressIndicator color="var(--blue-500)" :modelValue="parseInt(item.percentage.split(-1))" />
-                        <span class="paragraph-xs c-sub-600">{{item.percentage}}</span>
+                        <AppProgressIndicator color="var(--blue-500)" :modelValue="item.percentage" />
+                        <span class="w-12 paragraph-xs c-sub-600">{{item.percentage}}</span>
                     </div>
 
                 </td>
@@ -83,7 +83,7 @@ const getData =  async ()  =>  {
     loading.value = true;
    try {
         const response = await crudStore.get(route('control.finance.analysis.show'),{
-            slug:'earning_from_sales_type',
+            slug:'trending_albums',
             request_type:'view',
             start_date:props.choosenDates != null ? props.choosenDates[0] : moment().subtract(1, 'year'),
             end_date:props.choosenDates != null ? props.choosenDates[1] : moment(),

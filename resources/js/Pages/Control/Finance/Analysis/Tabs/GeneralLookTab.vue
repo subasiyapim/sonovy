@@ -413,11 +413,37 @@ const salesChartSeries = computed(() =>
 
 
 const hoverLabel = ref(null);
+const isClickedbar = ref(false);
+const clickedbars = ref([]);
 const onMouseEnter = (spotifySlug) => {
+    if(!isClickedbar.value){
         hoverLabel.value = spotifySlug;
+    }
 };
+
+const onClickBar = (spotifySlug) => {
+    if(isClickedbar.value){
+        isClickedbar.value = true;
+        hoverLabel.value = null;
+    }else {
+        isClickedbar.value = null;
+        hoverLabel.value = spotifySlug;
+    }
+
+    const findedIndex = clickedbars.value.findIndex((e) => e ==spotifySlug );
+
+    if(findedIndex >= 0){
+        clickedbars.value.splice(findedIndex,1)
+    }else {
+         clickedbars.value.push(spotifySlug)
+    }
+
+}
 const onMouseLeave = (spotifySlug) => {
+    if(!isClickedbar.value){
     hoverLabel.value = null;
+
+    }
 };
 
 </script>
@@ -578,14 +604,14 @@ const onMouseLeave = (spotifySlug) => {
       <hr>
       <div class="flex gap-4 items-center">
 
-        <div @mouseenter="onMouseEnter('spotify')" @mouseleave="onMouseLeave('spotify')" class="cursor-pointer flex items-center gap-2">
-          <div class="w-3 h-3 rounded-full bg-spotify"></div>
+        <div @mouseenter="onMouseEnter('spotify')" @click="onClickBar('spotify')" @mouseleave="onMouseLeave('spotify')" class="cursor-pointer flex items-center gap-2">
+          <div :class="clickedbars.find((e) =>  e == 'spotify' ) ? 'bg-others' : 'bg-spotify'" class="w-3 h-3 rounded-full "></div>
           <span class="paragraph-xs c-strong-950">{{
               __('control.finance.analysis.estimated_earnings_md_spotify_discovery_mode_with_catalog_optimization')
             }}</span>
         </div>
-        <div @mouseenter="onMouseEnter('regular')" @mouseleave="onMouseLeave('regular')" class="cursor-pointer flex items-center gap-2">
-          <div class="w-3 h-3 rounded-full bg-[#BDECCD]"></div>
+        <div @mouseenter="onMouseEnter('regular')" @click="onClickBar('regular')" @mouseleave="onMouseLeave('regular')" class="cursor-pointer flex items-center gap-2">
+          <div :class="clickedbars.find((e) =>  e == 'regular' ) ? 'bg-others' : 'bg-[#BDECCD]'" class="w-3 h-3 rounded-full "></div>
           <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.regular_spotify_revenue') }}</span>
         </div>
       </div>
@@ -599,24 +625,21 @@ const onMouseLeave = (spotifySlug) => {
             <div v-for="key in Object.keys(spotifyDiscoveryData)"
                  :key="key"
                  class="h-80 flex-1 flex flex-col items-center justify-between">
-              <tippy :allowHtml="true" :interactiveBorder="30" theme="light" followCursor :sticky="true"
+              <tippy :allowHtml="true" class="w-full" :interactiveBorder="30" theme="light" followCursor :sticky="true"
                      :interactive="false">
                 <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
-                  <div class="bg-weak-50 flex items-end justify-center h-10 min-w-10">
+                  <div class="bg-weak-50 flex items-end justify-center flex-1 h-10 min-w-10">
                     <span class="c-sub-600 label-sm !text-[10px]">
                       {{ spotifyDiscoveryData[key]?.total ?? 0 }}
                     </span>
                   </div>
                   <template v-if="spotifyDiscoveryData[key]">
-                    <div class="w-full bg-spotify"
-                        :class="hoverLabel ?  (hoverLabel == 'regular' ? 'opacity-20' : 'opacity-1') :''"
-                         :style="{height: (spotifyDiscoveryData[key].promotion ? 40 : 0) + '%'}">
+                    <div  v-if="!(clickedbars.find((e) =>  e == 'spotify' ))" class="flex-[5] w-full bg-spotify"
+                        :class="hoverLabel ?  (hoverLabel == 'regular' ? 'opacity-20' : 'opacity-1') :''" >
 
                     </div>
-                    <div class="w-full bg-[#BDECCD]"
-                        :class="hoverLabel ?  (hoverLabel == 'spotify' ? 'opacity-20' : 'opacity-1') :''"
-
-                         :style="{height: (spotifyDiscoveryData[key].earning ? 40 : 0) + '%'}">
+                    <div v-if="!(clickedbars.find((e) =>  e == 'regular' ))"  class="flex-[5] w-full bg-[#BDECCD]"
+                        :class="hoverLabel ?  (hoverLabel == 'spotify' ? 'opacity-20' : 'opacity-1') :''" >
 
                     </div>
                   </template>
