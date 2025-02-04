@@ -5,54 +5,45 @@ namespace Database\Seeders\System;
 use App\Models\System\Country;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\DB;
 
 class CountrySeeder extends Seeder
 {
+
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $file = File::get(public_path('assets/countries.json'));
-        $items = json_decode($file, true);
+        $country_file = File::get(public_path('assets/countries.json'));
+        $countries = json_decode($country_file, true);
 
-        // Sadece Türkiye'yi ekle
-        $turkeyData = collect($items)->where('iso2', 'TR')->first();
-
-        if ($turkeyData) {
+        foreach ($countries as $country) {
             Country::firstOrCreate(
                 [
-                    'name' => $turkeyData['name'],
-                    'iso2' => $turkeyData['iso2'],
+                    'name' => $country['name'],
+                    'iso2' => $country['iso2'],
                 ],
                 [
-                    'iso3' => $turkeyData['iso3'],
-                    'numeric_code' => $turkeyData['numeric_code'],
-                    'phone_code' => $turkeyData['phone_code'],
-                    'capital' => $turkeyData['capital'],
-                    'currency' => $turkeyData['currency'],
-                    'currency_name' => $turkeyData['currency_name'],
-                    'currency_symbol' => $turkeyData['currency_symbol'],
-                    'tld' => $turkeyData['tld'],
-                    'native' => $turkeyData['native'],
-                    'region' => $turkeyData['region'],
-                    'subregion' => $turkeyData['subregion'],
-                    'nationality' => $turkeyData['nationality'],
-                    'timezones' => $turkeyData['timezones'] ?? [],
-                    'translations' => $turkeyData['translations'] ?? [],
-                    'latitude' => $turkeyData['latitude'],
-                    'longitude' => $turkeyData['longitude'],
-                    'emoji' => $turkeyData['emoji'],
-                    'emojiU' => $turkeyData['emojiU'],
+                    'iso3' => $country['iso3'],
+                    'numeric_code' => $country['numeric_code'],
+                    'phone_code' => $country['phone_code'],
+                    'capital' => $country['capital'],
+                    'currency' => $country['currency'],
+                    'currency_name' => $country['currency_name'],
+                    'currency_symbol' => $country['currency_symbol'],
+                    'tld' => $country['tld'],
+                    'native' => $country['native'],
+                    'region' => $country['region'],
+                    'subregion' => $country['subregion'],
+                    'nationality' => $country['nationality'],
+                    'timezones' => $country['timezones'] ?? [],
+                    'translations' => $country['translations'] ?? [],
+                    'latitude' => $country['latitude'],
+                    'longitude' => $country['longitude'],
+                    'emoji' => $country['emoji'],
+                    'emojiU' => $country['emojiU'],
                 ]);
         }
-
-        $this->call([
-            CountrySeeder::class,
-            CountryLanguageSeeder::class,
-            CitySeeder::class,
-            DistrictSeeder::class,
-        ]);
     }
 }
