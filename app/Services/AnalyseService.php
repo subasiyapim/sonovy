@@ -665,7 +665,7 @@ class AnalyseService
                     'date' => Carbon::createFromLocaleFormat('F Y', app()->getLocale(), $monthKey),
                     'data' => $monthData
                 ];
-            })->sortByDesc(function ($item) {
+            })->sortBy(function ($item) {
                 return $item['date']->timestamp;
             });
 
