@@ -19,11 +19,15 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Stancl\Tenancy\Concerns\HasATenantsOption;
+use Stancl\Tenancy\Concerns\TenantAwareCommand;
 
 class EarningJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use HelperTrait;
+    use TenantAwareCommand;
+    use HasATenantsOption;
 
     public Collection $earningReports;
     public EarningReport $earningReport;
@@ -145,7 +149,7 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
     {
         return Song::with(['participants', 'products.label.user'])
             ->whereNotNull('isrc')
-            ->whereHas('products', function($query) {
+            ->whereHas('products', function ($query) {
                 $query->where('upc_code', $this->earningReport->upc_code);
             })
             ->where('isrc', $this->earningReport->isrc_code)

@@ -15,7 +15,7 @@ declare global {
 
 window.Echo
     .private('tenant.' + props.tenant_id + '.ws-test')
-    .listen('Ws', (e: any) => {
+    .listen('.Ws', (e: any) => {
       console.log(e)
     });
 
