@@ -100,17 +100,6 @@ const onTabChange = (tab) => {
 const onUpdate = (e) => {
   pageTable.value.editRow(e);
 }
-
-onMounted(() => {
-  const channel = Echo.private(`reportProcessed.${usePage().props.auth.user.id}`)
-      .listen('.reportProcessed', (e) => {
-        console.log('Processed Category Data:', e);
-      });
-
-  onUnmounted(() => {
-    channel.stopListening('.reportProcessed');
-  });
-});
 </script>
 
 <style lang="scss" scoped>

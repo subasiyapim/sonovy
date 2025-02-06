@@ -2,9 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Events\ReportProcessed;
 use App\Exports\ReportExport;
 use App\Models\Earning;
 use App\Models\Report;
+use App\Models\System\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -27,6 +29,7 @@ class AutomaticIncomeReportJob implements ShouldQueue
     protected $period;
     protected $name;
     protected $monthly_amount;
+    protected $report;
 
     public function __construct($start_date, $end_date, $user_id, $report_type, $data)
     {
@@ -74,7 +77,7 @@ class AutomaticIncomeReportJob implements ShouldQueue
 
     protected function generateReport(): void
     {
-        $report = Report::create([
+        $this->report = Report::create([
             'period' => $this->period,
             'name' => $this->name,
             'user_id' => $this->user_id,
@@ -85,7 +88,12 @@ class AutomaticIncomeReportJob implements ShouldQueue
 
         // Rapor dışa aktarma ve kaydetme
         $disk = 'tenant_'.tenant('domain').'_income_reports';
-        $reportExport = new ReportExport($this->earnings, $this->period, $report);
+        $reportExport = new ReportExport($this->earnings, $this->period, $this->report);
         $reportExport->saveAndUpload($disk);
+
+        tenancy()->runForMultiple(Tenant::all(), function ($tenant) {
+            broadcast(event: new ReportProcessed(['process' => 'success', 'report_id' => $this->report],
+                $tenant->id, $this->user_id));
+        });
     }
 }

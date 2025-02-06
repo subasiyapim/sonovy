@@ -6,6 +6,8 @@ use App\Events\ReportProcessed;
 use App\Exports\ReportExport;
 use App\Models\Earning;
 use App\Models\Report;
+use App\Models\System\Tenant;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -27,7 +29,7 @@ class RequestedIncomeReportJob implements ShouldQueue
     public $earnings;
     protected $period;
     protected $name;
-    protected $monthly_amount;
+    protected $report;
 
     public function __construct($start_date, $end_date, $user_id, $report_type, $data)
     {
@@ -40,9 +42,8 @@ class RequestedIncomeReportJob implements ShouldQueue
 
     public function handle(): void
     {
-
-        $this->start_date = \Carbon\Carbon::parse($this->start_date);
-        $this->end_date = \Carbon\Carbon::parse($this->end_date);
+        $this->start_date = Carbon::parse($this->start_date);
+        $this->end_date = Carbon::parse($this->end_date);
 
         $this->earnings = Earning::with('report.song.products', 'user')
             ->where('user_id', $this->user_id)
@@ -61,7 +62,7 @@ class RequestedIncomeReportJob implements ShouldQueue
             'status' => 1,
             'parent_id' => null,
         ]);
-        broadcast(new ReportProcessed(['process' => 'Hazırlanıyor', 'id' => $parentReport->id]));
+
 
         $groupedEarnings = match ($this->report_type) {
             'multiple_artists' => $this->earnings->groupBy('artist_id'),
@@ -98,7 +99,7 @@ class RequestedIncomeReportJob implements ShouldQueue
 
     protected function generateReport($filePath, $groupName, $earnings, $parentId = null): void
     {
-        $report = Report::create([
+        $this->report = Report::create([
             'period' => $this->period,
             'name' => $this->name,
             'user_id' => $this->user_id,
@@ -111,11 +112,14 @@ class RequestedIncomeReportJob implements ShouldQueue
 
         $disk = 'tenant_'.tenant('domain').'_income_reports';
 
-        $reportExport = new ReportExport($earnings, $this->period, $report);
+        $reportExport = new ReportExport($earnings, $this->period, $this->report);
         $fileName = $filePath.'/'.Str::slug($groupName).'.xlsx';
         Excel::store($reportExport, $fileName, $disk);
 
-        broadcast(new ReportProcessed(['process' => 'Tamamlandı', 'id' => $parentId]));
+        tenancy()->runForMultiple(Tenant::all(), function ($tenant) {
+            broadcast(event: new ReportProcessed(['process' => 'success', 'report' => $this->report],
+                $tenant->id, $this->user_id));
+        });
     }
 
 
