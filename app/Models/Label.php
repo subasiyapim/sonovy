@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\ProductStatusEnum;
 use App\Models\Scopes\FilterByUserRoleScope;
+use App\Models\System\Country;
 use App\Traits\DataTables\HasAdvancedFilter;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @method static advancedFilter()
@@ -43,7 +42,6 @@ class Label extends Model implements HasMedia
     protected array $orderable = [
         'id',
         'name',
-        'phone',
         'web',
         'email',
         'address'
@@ -52,7 +50,6 @@ class Label extends Model implements HasMedia
     protected array $filterable = [
         'id',
         'name',
-        'phone',
         'web',
         'email',
         'address'
@@ -72,19 +69,16 @@ class Label extends Model implements HasMedia
         $model->setAttribute('created_by', auth()->id() ?? 1);
     }
 
-    public function hasActive()
-    {
-        return $this->products()->where('status', ProductStatusEnum::APPROVED->value)->exists();
-    }
-    public function dspLabels()
+    public function dspLabels(): HasMany
     {
         return $this->hasMany(DspLabel::class);
     }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('labels')
             ->singleFile()
-            ->registerMediaConversions(function (Media $media) {
+            ->registerMediaConversions(function () {
                 $this->addMediaConversion('thumb')
                     ->width(100)
                     ->height(100)
@@ -113,7 +107,7 @@ class Label extends Model implements HasMedia
 
     public function country(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\System\Country::class);
+        return $this->belongsTo(Country::class);
     }
 
     public function user(): BelongsTo

@@ -113,6 +113,12 @@ Route::group(
             Route::get('analysis/show', [FinanceAnalysisController::class, 'show'])->name('analysis.show');
         });
 
+        //Statistics Routes
+        Route::group(['prefix' => 'statistics', 'as' => 'statistics.'], function () {
+            Route::get('/', [StatisticController::class, 'index'])->name('index');
+        });
+
+
         Route::group(['prefix' => 'bank', 'as' => 'bank.'], function () {
             Route::post('account', [BankController::class, 'store'])->name('account.store');
             Route::put('account/{bankAccount}', [BankController::class, 'update'])->name('account.update');

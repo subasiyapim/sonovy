@@ -43,7 +43,7 @@ class StatisticController extends Controller
             "total" => 1253758,
             //Sıra önemlidir
             "platforms" => [
-                "spotify" =>  20000,
+                "spotify" => 20000,
                 "apple" => 75000,
                 "other" => 5000
             ]
@@ -53,7 +53,7 @@ class StatisticController extends Controller
         //TODO slug'a bakarak songs,products,artists,labels,platforms,countries gelecek
 
 
-        $slug = $request->query('slug')  ?? 'songs';
+        $slug = $request->query('slug') ?? 'songs';
 
 
         $tab = [];
@@ -64,59 +64,69 @@ class StatisticController extends Controller
                 $tempPlatforms[$index]['percantage'] = 90;
             }
             $tab = $tempPlatforms;
-        } else if ($slug == 'songs') {
-            $tempSongs = Song::with('mainArtists')->get();
+        } else {
+            if ($slug == 'songs') {
+                $tempSongs = Song::with('mainArtists')->get();
 
-            foreach ($tempSongs as $country) {
-                $country->amount = 1245;
-                $country->percantage = 90;
+                foreach ($tempSongs as $country) {
+                    $country->amount = 1245;
+                    $country->percantage = 90;
+                }
+
+                $tab = $tempSongs;
+            } else {
+                if ($slug == 'products') {
+                    $tempProducts =
+                    $tempPlatforms = Product::with('artists', 'label')
+                        ->when($request->input('status'), function ($query) use ($request) {
+                            $query->where('status', $request->input('status'));
+                        })
+                        ->when($request->input('type'), function ($query) use ($request) {
+                            $query->where('type', $request->input('type'));
+                        })->get();
+
+                    foreach ($tempProducts as $country) {
+                        $country->amount = 1245;
+                        $country->percantage = 90;
+                    }
+
+                    $tab = $tempProducts;
+                } else {
+                    if ($slug == 'artists') {
+                        $tempArtists = Artist::with('platforms', 'products')->get();
+
+                        foreach ($tempArtists as $country) {
+                            $country->amount = 1245;
+                            $country->percantage = 90;
+                        }
+
+                        $tab = $tempArtists;
+                    } else {
+                        if ($slug == 'labels') {
+                            $tempLabels = Label::with('products')->get();
+
+                            foreach ($tempLabels as $country) {
+                                $country->amount = 1245;
+                                $country->percantage = 90;
+                            }
+
+                            $tab = $tempLabels;
+                        } else {
+                            if ($slug == 'countries') {
+                                $tempCountries = CountryServices::get();
+
+                                foreach ($tempCountries as $index => $country) {
+                                    $tempCountries[$index]['total_product'] = 12;
+                                    $tempCountries[$index]['amount'] = 1245;
+                                    $tempCountries[$index]['percantage'] = 90;
+                                }
+
+                                $tab = $tempCountries;
+                            }
+                        }
+                    }
+                }
             }
-
-            $tab = $tempSongs;
-        } else if ($slug == 'products') {
-            $tempProducts =
-                $tempPlatforms =  Product::with('artists',  'label')
-                ->when($request->input('status'), function ($query) use ($request) {
-                    $query->where('status', $request->input('status'));
-                })
-                ->when($request->input('type'), function ($query) use ($request) {
-                    $query->where('type', $request->input('type'));
-                })->get();
-
-            foreach ($tempProducts as $country) {
-                $country->amount = 1245;
-                $country->percantage = 90;
-            }
-
-            $tab = $tempProducts;
-        } else if ($slug == 'artists') {
-            $tempArtists = Artist::with('platforms', 'products')->get();
-
-            foreach ($tempArtists as $country) {
-                $country->amount = 1245;
-                $country->percantage = 90;
-            }
-
-            $tab = $tempArtists;
-        } else if ($slug == 'labels') {
-            $tempLabels = Label::with('products')->get();
-
-            foreach ($tempLabels as $country) {
-                $country->amount = 1245;
-                $country->percantage = 90;
-            }
-
-            $tab = $tempLabels;
-        } else if ($slug == 'countries') {
-            $tempCountries = CountryServices::get();
-
-            foreach ($tempCountries as $index => $country) {
-                $tempCountries[$index]['total_product'] = 12;
-                $tempCountries[$index]['amount'] = 1245;
-                $tempCountries[$index]['percantage'] = 90;
-            }
-
-            $tab = $tempCountries;
         }
 
         return inertia('Control/Statistics/index', [
@@ -126,6 +136,7 @@ class StatisticController extends Controller
             'platformStatistics' => $platformStatistics,
         ]);
     }
+
     public function product(Product $product, Request $request)
     {
 
@@ -140,7 +151,7 @@ class StatisticController extends Controller
 
         );
 
-        $slug = $request->query('slug')  ?? 'platforms';
+        $slug = $request->query('slug') ?? 'platforms';
 
 
         $tab = [];
@@ -151,15 +162,17 @@ class StatisticController extends Controller
                 $tempPlatforms[$index]['percantage'] = 90;
             }
             $tab = $tempPlatforms;
-        } else if ($slug == 'countries') {
-            $tempCountries = $product->publishedCountries()->get(); // Fetch data as a collection
+        } else {
+            if ($slug == 'countries') {
+                $tempCountries = $product->publishedCountries()->get(); // Fetch data as a collection
 
-            foreach ($tempCountries as $country) {
-                $country->amount = 1245;
-                $country->percantage = 90;
+                foreach ($tempCountries as $country) {
+                    $country->amount = 1245;
+                    $country->percantage = 90;
+                }
+
+                $tab = $tempCountries;
             }
-
-            $tab = $tempCountries;
         }
 
 
@@ -182,7 +195,7 @@ class StatisticController extends Controller
             "total" => 1253758,
             //Sıra önemlidir
             "platforms" => [
-                "spotify" =>  20000,
+                "spotify" => 20000,
                 "apple" => 75000,
                 "other" => 5000
             ]
@@ -196,6 +209,7 @@ class StatisticController extends Controller
             'tab' => $tab,
         ]);
     }
+
     public function getMonthlyStreams(MonthlyStreamsRequest $request)
     {
 

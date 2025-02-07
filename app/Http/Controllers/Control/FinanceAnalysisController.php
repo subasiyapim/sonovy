@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FinanceAnalysisController extends Controller
 {
@@ -109,32 +108,13 @@ class FinanceAnalysisController extends Controller
                 ->where('user_id', Auth::id())
                 ->get();
 
-            Log::info('Earnings Query Result', [
-                'count' => $earnings->count(),
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-                'user_id' => Auth::id(),
-                'sample_data' => $earnings->take(1)->toArray()
-            ]);
-
             return $earnings;
         });
     }
 
     private function formatResponse($earnings, string $tab)
     {
-        Log::info('Format Response', [
-            'tab' => $tab,
-            'earnings_count' => $earnings->count()
-        ]);
-
         $response = (new AnalyseResource($earnings, $tab))->resolve();
-
-        Log::info('Response Data', [
-            'has_data' => !empty($response['data']),
-            'metadata' => $response['metadata'] ?? null,
-            'data' => $response['data'] ?? null
-        ]);
 
         return $response;
     }
@@ -181,12 +161,6 @@ class FinanceAnalysisController extends Controller
             Cache::put('start_date', $startDate, self::CACHE_DURATION);
             Cache::put('end_date', $endDate, self::CACHE_DURATION);
         }
-
-        Log::info('getDataBySlug called', [
-            'slug' => $slug,
-            'start_date' => $startDate,
-            'end_date' => $endDate
-        ]);
 
         $earnings = Earning::with([
             'song:id,name,isrc',
@@ -247,12 +221,6 @@ class FinanceAnalysisController extends Controller
             });
         }
 
-        Log::info('Result data', [
-            'slug' => $slug,
-            'has_data' => !empty($result),
-            'data_sample' => array_slice($result, 0, 1)
-        ]);
-
         return $result;
     }
 
@@ -263,12 +231,6 @@ class FinanceAnalysisController extends Controller
 
     private function download($earnings, $slug)
     {
-        Log::info('Download method called', [
-            'earnings_count' => count($earnings),
-            'slug' => $slug,
-            'sample_data' => array_slice($earnings, 0, 1)
-        ]);
-
         try {
             Excel::download(new AnalyseExport($earnings, $slug), $slug.'.xlsx');
         } catch (\Exception $e) {
