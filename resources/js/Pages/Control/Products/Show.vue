@@ -207,8 +207,6 @@ const filterMainArtists = computed(() => {
             return props.product.main_artists.slice(0, 2);
         }
     }
-
-
 })
 const currentTab = ref(params.get('slug') ?? 'metadata')
 const filteredPlatforms = computed(() => {

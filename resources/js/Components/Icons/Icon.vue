@@ -1,6 +1,6 @@
 <template>
 
-  <span v-html="icon">
+  <span :style="{'width':width, 'height' : height}" v-html="icon">
 
   </span>
 
@@ -10,6 +10,8 @@
 const props = defineProps({
   icon: {
     required: true
-  }
+  },
+  width:{},
+  height:{}
 });
 </script>

@@ -1,0 +1,228 @@
+<template>
+    <AppCard class="flex-1 w-full min-h-40">
+        <template #header>
+            <div class="flex items-center">
+                <LineChartIcon color="var(--sub-600)"/>
+                <div class="flex-1 ms-2"><p class="label-sm c-strong-950 !text-start">{{ __('control.statistics.cards.platforms_sale_counts') }}</p></div>
+            </div>
+
+        </template>
+        <template #tool>
+
+            <div class="flex gap-2">
+                <select @change="onPlatformChange" id="platformOptions"
+                        class="block w-full ps-3 pe-7  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
+                    <option v-for="platform in platforms" :value="platform.id">{{platform.name}}</option>
+
+                </select>
+                <select @change="onPeriodChange" id="weeklyOptions"
+                        class="block w-full ps-3 pe-7  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
+                    <option>Haftalık</option>
+                    <option>Aylık</option>
+                    <option>Yıllık</option>
+                </select>
+            </div>
+
+        </template>
+
+        <template #body>
+            <template v-if="!loading" >
+                 <div class="flex items-center border border-soft-200 rounded mt-6">
+                    <button @click="onChangeType('audio_streams')" :class="type == 'audio_streams' ? 'bg-weak-50' : 'bg-white' " class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Audio Str.</button>
+                    <button @click="onChangeType('songs')" :class="type == 'songs' ? 'bg-weak-50' : 'bg-white' " class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Parça</button>
+                    <button @click="onChangeType('ringtones')" :class="type == 'ringtones' ? 'bg-weak-50' : 'bg-white' " class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Zil Sesleri</button>
+                    <button @click="onChangeType('videos')" :class="type == 'videos' ? 'bg-weak-50' : 'bg-white' " class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Videolar</button>
+                    <button @click="onChangeType('video_streams')" :class="type == 'video_streams' ? 'bg-weak-50' : 'bg-white' " class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Video Str.</button>
+                    <button @click="onChangeType('product_downloads')" :class="type == 'product_downloads' ? 'bg-weak-50' : 'bg-white' " class="flex label-xs c-sub-600 flex-1 flex justify-center py-1">Albüm İnd.</button>
+                </div>
+                <div v-if="false" class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
+                    <img src="@/assets/images/empty_state_statistic_platform_sales.png">
+                    <p class="paragraph-sm c-soft-400">{{__('control.statistics.cards.empty')}}</p>
+                </div>
+                <div class="flex flex-col gap-3 p-4">
+                    <div>
+                        <div class="flex items-center mb-2 gap-2">
+
+
+                            <p class="label-xl c-strong-950">{{totalSales}}</p>
+                            <span v-if="percentage != 0" class="label-xs rounded-full px-2 py-0.5" :class="percentage > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+                                <template v-if="percentage >0">
+                                    +
+                                </template>
+                                {{percentage}} %
+                            </span>
+                        </div>
+
+
+                        <div v-if="platform_id" class="flex items-center gap-1">
+                            <Icon :icon="platforms.find((e) => e.id == platform_id)?.icon" width="18" height="18" />
+                            <span class="subheading-2xs c-soft-400 uppercase">{{platforms.find((e) => e.id == platform_id)?.name}}</span>
+                        </div>
+
+                    </div>
+                    <div>
+                        <VueApexCharts
+                            type="line"
+                            height="250"
+                            :options="chartOptions"
+                            :series="series"
+                            ></VueApexCharts>
+
+                    </div>
+                </div>
+            </template>
+            <template v-else >
+
+            <div  class="flex flex-col gap-2 items-center justify-center min-h-32">
+
+                    <svg  aria-hidden="true" class="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#fff"/>
+                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                    </svg>
+                    <p class="label-sm c-strong-950">Yükleniyor</p>
+                </div>
+            </template>
+
+        </template>
+
+      </AppCard>
+
+
+</template>
+
+<script setup>
+import { ref,onMounted } from 'vue';
+import VueApexCharts from 'vue3-apexcharts';
+import {AppCard} from '@/Components/Cards';
+import {SpotifyIcon,LineChartIcon,Icon} from '@/Components/Icons'
+import {useCrudStore} from '@/stores/useCrudStore';
+const props = defineProps({
+    platforms:{},
+    product_id:{
+        default:null
+    }
+})
+
+const series = ref([
+  {
+    name: 'Sales',
+    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  },
+]);
+
+
+const chartOptions = ref({
+  chart: {
+    type: 'line',
+    toolbar: {
+      show: false,
+    },
+
+  },
+   dataLabels: {
+    enabled: false
+  },
+  stroke: {
+    curve: 'smooth',
+    colors: ['#335CFF'],
+    width: 2,
+  },
+
+  xaxis: {
+    // categories: ['OCA', 'SUB', 'MAR', 'NIS', 'MAY', 'HAZ', 'TEM', 'AGU', 'EYL', 'EKI', 'KAS', 'ARA'],
+    labels: {
+        show: false,
+        style: {
+            fontFamily: 'Poppins',
+            cssClass: 'subheading-2xs c-soft-400',
+        },
+    },
+    axisBorder: {
+      show: false,
+    },
+    axisTicks: {
+      show: false,
+    },
+  },
+  yaxis: {
+    axisBorder: {
+      show: false,
+    },
+    labels: {
+
+      show: false, // Ensure labels are visible
+
+    },
+  },
+  grid: {
+    show: false, // Show grid lines
+
+  },
+  tooltip: {
+    enabled: true,
+    y: {
+      formatter: function (value) {
+        return value / 1000 + 'K';
+      },
+    },
+  },
+});
+
+const loading = ref();
+const crudStore = useCrudStore();
+const period = ref('weekly');
+const platform_id = ref();
+const type = ref('audio_streams');
+
+const onPlatformChange = (e) => {
+    platform_id.value = e.target.value;
+     getData();
+}
+const onPeriodChange = (e) => {
+    period.value = e.target.value;
+     getData();
+}
+const onChangeType = (e) => {
+    type.value = e;
+    getData();
+}
+
+
+const totalSales = ref(0);
+const percentage = ref(0);
+
+const getData = async () => {
+     loading.value = true;
+    try {
+
+        let payload = {
+            "period" : period.value,
+            "platform_id" : platform_id.value,
+            "type" : type.value,
+        }
+        if(props.product_id){
+            payload['product_id'] = props.product_id;
+        }
+        const response = await crudStore.post(route('control.statistics.platform.sales'),payload);
+        series.value[0].data = response.data;
+        totalSales.value = response.total;
+        percentage.value = response.percentage;
+        console.log("REPSONSE",response);
+
+
+    } catch (error) {
+         loading.value = false;
+    }
+    loading.value = false;
+}
+onMounted(() => {
+    if(props.platforms.length > 0){
+        platform_id.value = props.platforms[0].id;
+        getData();
+    }
+});
+</script>
+
+<style scoped>
+/* Add any custom styles here */
+</style>

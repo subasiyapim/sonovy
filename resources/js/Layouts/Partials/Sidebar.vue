@@ -41,8 +41,8 @@
           </template>
         </MenuItem>
 
-        <MenuItem title="Teklif Yönetimi" :icon="TeklifManagementIcon"/>
-        <MenuItem title="İstatistikler" :icon="StatisticsIcon"/>
+        <MenuItem title="Teklif Yönetimi"  :icon="TeklifManagementIcon"/>
+        <MenuItem :path="route('control.statistics.index')" wrapper="statistics" title="İstatistikler" :icon="StatisticsIcon"/>
         <MenuItem title="Finans" wrapper="finance" :icon="WalletIcon">
           <template #sub>
             <sub-menu-item :path="'control.finance.payments.index'">{{ __('control.finance.payments.header') }}</sub-menu-item>

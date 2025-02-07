@@ -1,0 +1,183 @@
+<script setup>
+import {ref,computed} from 'vue';
+import AppTable from '@/Components/Table/AppTable.vue';
+import {IconButton} from '@/Components/Buttons';
+
+import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
+import {usePage} from '@inertiajs/vue3';
+import {Howl} from "howler";
+import {
+  AudioIcon,
+  RingtoneIcon,
+  MusicVideoIcon,
+  PlayCircleFillIcon,
+
+} from '@/Components/Icons'
+import {useDefaultStore} from "@/Stores/default";
+
+const defaultStore = useDefaultStore();
+
+const props = defineProps({
+  tableData: {},
+});
+
+const songs = computed({
+    get:() => props.tableData,
+    set:(value) => emits('updateSong',value)
+})
+
+
+
+
+const getBody = computed(() => {
+    return document.querySelector('body');
+})
+
+const onComplete = (e) => {
+  location.reload();
+  // console.log("EEE",e);
+
+  // const findedIndex = props.product.songs.findIndex((el) => el.id == e.id );
+  // if(findedIndex >= 0){
+  //     props.product.songs[findedIndex] = e;
+  // }
+}
+
+const currentSound = ref(null);
+const currentSong = ref(null);
+const playSound = (song) => {
+  if (currentSound.value) {
+    currentSound.value.pause();
+    currentSound.value = null;
+  }
+  currentSong.value = song;
+
+  currentSound.value = new Howl({
+    src: [song.path],
+    html5: true,
+    onload: (e) => {
+      currentSound.value.play();
+    }
+  });
+};
+
+const pauseMusic = (song) => {
+  if (currentSound.value && currentSound.value.playing()) {
+    currentSound.value.pause();
+
+  }
+  currentSound.value = null;
+  currentSong.value = null;
+};
+</script>
+<template>
+  <AppTable :hasSelect="true" v-model="songs" :isClient="true" :hasSearch="false" :showAddButton="false">
+
+    <AppTableColumn label="tür" width="60">
+      <template #default="scope">
+        <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
+
+            <tippy :interactive="true" theme="dark" :appendTo="getBody">
+                    <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
+                   <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
+                    <MusicVideoIcon v-if="scope.row.type == 4" color="var(--sub-600)"/>
+                    <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
+
+                <template #content>
+                    <p v-if="scope.row.type == 1">
+                        {{ __('control.song.audio') }}
+                    </p>
+                    <p v-if="scope.row.type == 2">
+                        {{ __('control.song.music_video') }}
+                    </p>
+                    <p v-if="scope.row.type == 3">
+                        {{ __('control.song.ringtone') }}
+                    </p>
+                    <p v-if="scope.row.type == 4">
+                        {{ __('control.song.apple_video') }}
+                    </p>
+
+                </template>
+            </tippy>
+        </div>
+      </template>
+    </AppTableColumn>
+
+
+    <AppTableColumn label="Parça Adı">
+      <template #default="scope">
+
+        <div class="flex items-center gap-3">
+
+          <div>
+            <p class="label-sm c-solid-950"> {{ scope.row.name }} ({{scope.row.version}})</p>
+            <p class="paragraph-xs c-sub-600"> {{ scope.row.isrc }} </p>
+          </div>
+        </div>
+
+      </template>
+    </AppTableColumn>
+    <AppTableColumn label="Süre">
+      <template #default="scope">
+        <div v-if="currentSong !== scope.row" @click="playSound(scope.row)"
+             class="cursor-pointer flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+            <PlayCircleFillIcon color="var(--dark-green-500)"/>
+          </div>
+          <p class="label-sm c-strong-950">
+            {{ scope.row.duration ?? '2.35' }}
+          </p>
+        </div>
+        <div v-else @click="pauseMusic(scope.row)" class="cursor-pointer flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+            <PlayCircleFillIcon color="var(--dark-green-500)"/>
+          </div>
+          <p class="label-sm c-strong-950">
+            Durdur
+          </p>
+        </div>
+      </template>
+    </AppTableColumn>
+    <AppTableColumn label="Sanatçı" width="200">
+      <template #default="scope">
+        <div class="flex items-center gap-2">
+          <div class="flex -space-x-3 rtl:space-x-reverse">
+            <template v-for="artist in scope.row.artists">
+              <a class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full  "
+                 :href="route('control.catalog.artists.show', artist.id)">
+                <img :alt="artist.name"
+                     :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)"
+                     class="w-8 h-8 border-2 border-white rounded-full "
+                >
+              </a>
+            </template>
+          </div>
+        </div>
+      </template>
+    </AppTableColumn>
+   <AppTableColumn label="Dinlenme Sayısı">
+      <template #default="scope">
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.amount}}</span>
+            <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
+
+                <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
+            </div>
+
+      </template>
+    </AppTableColumn>
+    <AppTableColumn label="Dinlenme Oranı%">
+      <template #default="scope">
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.percantage}}%</span>
+      </template>
+    </AppTableColumn>
+
+    <template #empty>
+      Şarkı bulunamadı
+    </template>
+  </AppTable>
+
+</template>
+
+<style scoped>
+
+</style>

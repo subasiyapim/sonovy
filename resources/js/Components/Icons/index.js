@@ -8,6 +8,7 @@ import SearchIcon from './SearchIcon.vue';
 import NotificationIcon from './NotificationIcon.vue';
 import CalendarIcon from './CalendarIcon.vue';
 import TableOrderIcon from './TableOrderIcon.vue';
+import OthersIcon from './OthersIcon.vue';
 import More2LineIcon from './More2LineIcon.vue';
 import Building2LineIcon from './Building2LineIcon.vue';
 import Table2Icon from './Table2Icon.vue';
@@ -53,6 +54,9 @@ import DraggableIcon from './DraggableIcon.vue';
 import StatisticsIcon from './StatisticsIcon.vue';
 import IcraIcon from './IcraIcon.vue';
 import SettingsIcon from './SettingsIcon.vue';
+import StackOverflowIcon from './StackOverflowIcon.vue';
+import VideoLineIcon from './VideoLineIcon.vue';
+import Music2LineIcon from './Music2LineIcon.vue';
 import SupportCenterIcon from './SupportCenterIcon.vue';
 import CmsIcon from './CmsIcon.vue';
 import EarningManagementIcon from './EarningManagementIcon.vue';
@@ -65,6 +69,8 @@ import PackagesIcon from './PackagesIcon.vue';
 import EditLineIcon from './EditLine.vue';
 import ChangePackageIcon from './ChangePackageIcon.vue';
 import SendIcon from './SendIcon.vue';
+import PieChartIcon from './PieChartIcon.vue';
+import LineChartIcon from './LineChartIcon.vue';
 import InfoFilledIcon from './InfoFilledIcon.vue';
 import SpotifyIcon from './SpotifyIcon.vue';
 import AppleMusicIcon from './AppleMusicIcon.vue';
@@ -128,6 +134,7 @@ export {
     AppLoadingIcon,
     HistoryIcon,
     DraggableIcon,
+    VideoLineIcon,
     Building2LineIcon,
     PlayCircleFillIcon,
     CheckIcon,
@@ -135,6 +142,7 @@ export {
     MessageIcon2,
     CalendarIcon,
     TableOrderIcon,
+    Music2LineIcon,
     ChevronLeftIcon,
     ArrowDoubleRightIcon,
     ArrowDoubleLeftIcon,
@@ -146,6 +154,7 @@ export {
     RemoveUserIcon,
     TopRightArrowIcon,
     DurationIcon,
+    OthersIcon,
     ChangePackageIcon,
     BroadcastTitleIcon,
     GenreIcon,
@@ -154,6 +163,8 @@ export {
     TrashIcon,
     WorldIcon,
     WWWIcon,
+    PieChartIcon,
+    LineChartIcon,
     PersonCardIcon,
     EditIcon,
     TeklifManagementIcon,
@@ -185,6 +196,7 @@ export {
     MinusIcon,
     LinkIcon,
     Table2Icon,
+    StackOverflowIcon,
     PercantageIcon,
     PhoneIcon,
     LabelEmailIcon,

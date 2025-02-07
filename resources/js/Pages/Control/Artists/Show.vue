@@ -307,10 +307,10 @@
             <AppTableColumn :label="'Sanatçı'" sortable="name">
                 <template #default="scope">
                   <span class="paragraph-xs c-strong-950">{{ props.artist.name }} &nbsp; </span>
-                <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
+                    <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
 
-                    <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
-                </div>
+                        <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
+                    </div>
                 </template>
             </AppTableColumn>
             <AppTableColumn :label="'Süre'" sortable="name" width="150">

@@ -37,8 +37,10 @@ Route::group(
         Route::group(['prefix' => 'catalog', 'as' => 'catalog.'], function () {
             Route::resource('artists', ArtistController::class)->names('artists');
             Route::post('labels/{label}/dsp/create', [LabelController::class, 'createDSP'])->name('label.dsp.create');
-            Route::post('labels/{label}/dsp/status',
-                [LabelController::class, 'changeStatus'])->name('label.dsp.status');
+            Route::post(
+                'labels/{label}/dsp/status',
+                [LabelController::class, 'changeStatus']
+            )->name('label.dsp.status');
             Route::resource('labels', LabelController::class)->names('labels');
             Route::apiResource('artist-branches', ArtistBranchController::class)->names('artist-branches');
 
@@ -118,7 +120,10 @@ Route::group(
 
         //Statistics Routes
         Route::group(['prefix' => 'statistics', 'as' => 'statistics.'], function () {
-            Route::get('statistics', [StatisticController::class, 'index'])->name('statistics.index');
+            Route::post('statistics/monthly_streams', [StatisticController::class, 'getMonthlyStreams'])->name('monthly.streams');
+            Route::post('statistics/platform_based_sales', [StatisticController::class, 'getPlatformBasedSales'])->name('platform.sales');
+            Route::get('statistics/product/{product}', [StatisticController::class, 'product'])->name('product');
+            Route::get('statistics', [StatisticController::class, 'index'])->name('index');
         });
 
         Route::resource('roles', RoleController::class)->names('roles');
@@ -173,8 +178,8 @@ Route::group(
         Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
 
-        require __DIR__.'/control/modules/search.php';
-        require __DIR__.'/control/modules/last.php';
-        require __DIR__.'/control/modules/find.php';
+        require __DIR__ . '/control/modules/search.php';
+        require __DIR__ . '/control/modules/last.php';
+        require __DIR__ . '/control/modules/find.php';
     }
 );
