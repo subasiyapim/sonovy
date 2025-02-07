@@ -14,12 +14,16 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Stancl\Tenancy\Concerns\HasATenantsOption;
+use Stancl\Tenancy\Concerns\TenantAwareCommand;
 use Stancl\Tenancy\Database\TenantCollection;
 use App\Models\System\Tenant;
 
 class MonthlyIncomeJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use TenantAwareCommand;
+    use HasATenantsOption;
 
     private const MONTHS_IN_YEAR = 12;
 

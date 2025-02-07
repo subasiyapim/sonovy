@@ -5,7 +5,6 @@ use App\Jobs\IsrcJob;
 
 use App\Jobs\MonthlyIncomeJob;
 use App\Jobs\QuartersIncomeJob;
-use App\Models\System\Tenant;
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::job(new QuartersIncomeJob())->everyMinute();

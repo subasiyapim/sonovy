@@ -665,7 +665,7 @@ class AnalyseService
                     'date' => Carbon::createFromLocaleFormat('F Y', app()->getLocale(), $monthKey),
                     'data' => $monthData
                 ];
-            })->sortByDesc(function ($item) {
+            })->sortBy(function ($item) {
                 return $item['date']->timestamp;
             });
 
@@ -741,48 +741,46 @@ class AnalyseService
                 $month = $item['date']->locale(app()->getLocale())->translatedFormat('F Y');
 
                 $promotion = $monthData->filter(function ($item) {
-                    return $item['platform_id'] == 2 && $item['sales_type'] === 'PLATFORM PROMOTION';
+                    return stripos($item['platform'], 'Spotify') !== false && $item['sales_type'] === 'PLATFORM PROMOTION';
                 })->sum('earning');
 
                 $earning = $monthData->filter(function ($item) {
-                    return $item['platform_id'] == 2 && $item['sales_type'] !== 'PLATFORM PROMOTION';
+                    return stripos($item['platform'], 'Spotify') !== false && $item['sales_type'] !== 'PLATFORM PROMOTION';
                 })->sum('earning');
 
-                $net = $promotion + $earning;
+                $net = $earning + abs($promotion);
 
                 return [
                     $month => [
                         'promotion' => Number::currency($promotion, 'USD', app()->getLocale()),
                         'earning' => Number::currency($earning, 'USD', app()->getLocale()),
                         'total' => Number::currency($net, 'USD', app()->getLocale()),
-                        'earning_percentage' => $net > 0 ? ($net / $earning) * 100 : 0,
+                        'earning_percentage' => $net > 0 ? round((abs($promotion) / $net) * 100, 2) : 0,
                     ]
                 ];
             });
 
-            $total = $this->data->where('platform_id', 2)
-                ->groupBy('platform_id')
-                ->mapWithKeys(function ($platformData) {
-                    $promotion = $platformData->where('sales_type', 'PLATFORM PROMOTION')->sum('earning');
-                    $earning = $platformData->filter(function ($item) {
-                        return $item['sales_type'] !== 'PLATFORM PROMOTION';
-                    })->sum('earning');
+            $total = $this->data
+                ->filter(function ($item) {
+                    return stripos($item['platform'], 'Spotify') !== false;
+                })
+                ->pipe(function ($spotifyData) {
+                    $promotion = $spotifyData->where('sales_type', 'PLATFORM PROMOTION')->sum('earning');
+                    $earning = $spotifyData->where('sales_type', '!=', 'PLATFORM PROMOTION')->sum('earning');
+                    $total = $earning + abs($promotion);
 
-                    $total = $promotion + $earning;
-
-                    return [
+                    return collect([
                         'promotion' => Number::currency($promotion, 'USD', app()->getLocale()),
                         'earning' => Number::currency($earning, 'USD', app()->getLocale()),
                         'total' => Number::currency($total, 'USD', app()->getLocale()),
-                        'percentage' => $promotion > 0 ? ($promotion / $earning) * 100 : 0,
-                    ];
+                        'percentage' => $total > 0 ? round((abs($promotion) / $total) * 100, 2) : 0,
+                    ]);
                 });
-            
+
             return [
                 'total' => $total->toArray(),
                 'items' => $items->toArray(),
             ];
-
         });
     }
 

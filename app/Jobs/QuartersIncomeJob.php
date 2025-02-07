@@ -14,10 +14,14 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Stancl\Tenancy\Concerns\HasATenantsOption;
+use Stancl\Tenancy\Concerns\TenantAwareCommand;
 
 class QuartersIncomeJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use TenantAwareCommand;
+    use HasATenantsOption;
 
     const MEMORY_LIMIT = '512M';
     const QUARTERS = [

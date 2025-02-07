@@ -7,11 +7,11 @@ const props = defineProps({
   tenant_id: Number,
 });
 
-window.Echo
-    .private('tenant.' + props.tenant_id + '.ws-test')
-    .listen('Ws', (e) => {
-      console.log(e)
-    });
+declare global {
+  interface Window {
+    Echo: any;
+  }
+}
 
 </script>
 

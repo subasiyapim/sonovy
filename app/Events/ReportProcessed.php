@@ -10,31 +10,29 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ReportProcessed
+class ReportProcessed implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $result;
+    private string $tenantId;
+    private string $userId;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($result)
+    public function __construct($result, int $tenantId, int $userId)
     {
         $this->result = $result;
+        $this->tenantId = $tenantId;
+        $this->userId = $userId;
     }
 
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
+    public function broadcastOn(): Channel
     {
-        return [
-            new PrivateChannel('reportProcessed.'.auth()->id()),
-        ];
+        $channelName = "tenant.{$this->tenantId}.reportProcessed.{$this->userId}";
+
+        return new PrivateChannel($channelName);
     }
 
     public function broadcastAs(): string
