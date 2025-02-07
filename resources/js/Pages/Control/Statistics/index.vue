@@ -1,156 +1,169 @@
 <template>
-  <AdminLayout :showGoBack="false" :showBreadCrumb="false" :showDatePicker="false"  :title="__('control.statistics.header')" parentTitle="Katalog">
+  <AdminLayout :showGoBack="false" :showBreadCrumb="false" :showDatePicker="false"
+               :title="__('control.statistics.header')" parentTitle="Katalog">
     <!-- {{usePage().props.platformStatistics}} -->
     <template #toolbar>
-    <div class="w-48">
-        <VueDatePicker @update:model-value="onDateChoosen"  v-model="choosenDate"  range  month-picker :max-date="new Date()"  class="radius-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
+      <div class="w-48">
+        <VueDatePicker @update:model-value="onDateChoosen" v-model="choosenDate" range month-picker
+                       :max-date="new Date()" class="radius-8" auto-apply :enable-time-picker="false"
+                       placeholder="Tarih Giriniz">
 
-            <template #input-icon>
-                <div class="p-3">
-                    <CalendarIcon color="var(--sub-600)"/>
-                </div>
-            </template>
-            <template #left-sidebar>
-                    <div class="flex flex-col flex-1">
-                        <button @click="setDateRange('last30days')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 1 Ay</button>
-                        <button @click="setDateRange('last3months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 3 Ay</button>
-                        <button @click="setDateRange('last6months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 6 Ay</button>
-                        <button @click="setDateRange('last12months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 12 Ay</button>
-                        <button @click="setDateRange('allTime')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Tüm Zamanlar</button>
-                    </div>
-            </template>
+          <template #input-icon>
+            <div class="p-3">
+              <CalendarIcon color="var(--sub-600)"/>
+            </div>
+          </template>
+          <template #left-sidebar>
+            <div class="flex flex-col flex-1">
+              <button @click="setDateRange('last30days')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 1 Ay
+              </button>
+              <button @click="setDateRange('last3months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 3 Ay
+              </button>
+              <button @click="setDateRange('last6months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 6 Ay
+              </button>
+              <button @click="setDateRange('last12months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 12
+                Ay
+              </button>
+              <button @click="setDateRange('allTime')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Tüm Zamanlar
+              </button>
+            </div>
+          </template>
         </VueDatePicker>
-    </div>
+      </div>
 
     </template>
 
     <div class="flex grid grid-cols-3 gap-3 mb-5">
 
-        <MonthlyListeningChart />
+      <MonthlyListeningChart/>
 
-        <div class="flex flex-col gap-3">
-            <AppCard>
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                            <Music2LineIcon color="var(--sub-600)"/>
-                        </div>
-                        <div class="flex flex-col items-start ">
-                            <p class="subheading-2xs c-soft-400">PARÇA İNDİRMELERİ</p>
-                            <div class="flex items-center gap-2">
-                                <p class="label-medium c-strong-950">{{downloadCounts.songs.count}}</p>
-                                <span v-if="downloadCounts.songs.change != 0" class="label-xs rounded-full px-2 py-0.5" :class="downloadCounts.songs.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+      <div class="flex flex-col gap-3">
+        <AppCard>
+          <template #header>
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                <Music2LineIcon color="var(--sub-600)"/>
+              </div>
+              <div class="flex flex-col items-start ">
+                <p class="subheading-2xs c-soft-400">PARÇA İNDİRMELERİ</p>
+                <div class="flex items-center gap-2">
+                  <p class="label-medium c-strong-950">{{ downloadCounts.songs.count }}</p>
+                  <span v-if="downloadCounts.songs.change != 0" class="label-xs rounded-full px-2 py-0.5"
+                        :class="downloadCounts.songs.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
                                     <template v-if="downloadCounts.songs.change >0">
                                         +
                                     </template>
-                                {{downloadCounts.songs.change}} %
+                                {{ downloadCounts.songs.change }} %
                                 </span>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </AppCard>
-            <AppCard>
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                            <StackOverflowIcon color="var(--sub-600)"/>
-                        </div>
-                        <div class="flex flex-col items-start ">
-                            <p class="subheading-2xs c-soft-400">ALBÜM İNDİRMELERİ</p>
-                            <div class="flex items-center gap-2">
+                </div>
+              </div>
+            </div>
+          </template>
+        </AppCard>
+        <AppCard>
+          <template #header>
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                <StackOverflowIcon color="var(--sub-600)"/>
+              </div>
+              <div class="flex flex-col items-start ">
+                <p class="subheading-2xs c-soft-400">ALBÜM İNDİRMELERİ</p>
+                <div class="flex items-center gap-2">
 
-                                <p class="label-medium c-strong-950">{{downloadCounts.products.count}}</p>
+                  <p class="label-medium c-strong-950">{{ downloadCounts.products.count }}</p>
 
-                                <span v-if="downloadCounts.products.change != 0" class="label-xs rounded-full px-2 py-0.5 " :class="downloadCounts.products.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+                  <span v-if="downloadCounts.products.change != 0" class="label-xs rounded-full px-2 py-0.5 "
+                        :class="downloadCounts.products.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
                                     <template v-if="downloadCounts.products.change > 0">
                                         +
                                     </template>
-                                    {{downloadCounts.products.change}} %
+                                    {{ downloadCounts.products.change }} %
                                 </span>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </AppCard>
+                </div>
+              </div>
+            </div>
+          </template>
+        </AppCard>
 
-            <AppCard>
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                            <VideoLineIcon color="var(--sub-600)"/>
-                        </div>
-                        <div class="flex flex-col items-start ">
-                            <p class="subheading-2xs c-soft-400">VIDEO İNDİRMELERİ</p>
+        <AppCard>
+          <template #header>
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                <VideoLineIcon color="var(--sub-600)"/>
+              </div>
+              <div class="flex flex-col items-start ">
+                <p class="subheading-2xs c-soft-400">VIDEO İNDİRMELERİ</p>
 
-                            <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2">
 
-                                <p class="label-medium c-strong-950">{{downloadCounts.videos.count}}</p>
+                  <p class="label-medium c-strong-950">{{ downloadCounts.videos.count }}</p>
 
-                                <span v-if="downloadCounts.videos.change != 0" class="label-xs rounded-full px-2 py-0.5" :class="downloadCounts.videos.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+                  <span v-if="downloadCounts.videos.change != 0" class="label-xs rounded-full px-2 py-0.5"
+                        :class="downloadCounts.videos.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
                                     <template v-if="downloadCounts.videos.change > 0">
                                         +
                                     </template>
-                                    {{downloadCounts.videos.change}} %
+                                    {{ downloadCounts.videos.change }} %
                                 </span>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </AppCard>
+                </div>
+              </div>
+            </div>
+          </template>
+        </AppCard>
 
-        </div>
+      </div>
 
     </div>
     <div class="flex grid grid-cols-2 gap-3 mb-5">
-        <AppCard class="flex-1 w-full">
-            <template #header>
-                    <div class="flex items-center">
-                        <PieChartIcon color="var(--sub-600)"/>
-                        <div class="flex-1 ms-2"><p class="label-sm c-strong-950 !text-start">{{ __('control.statistics.cards.platforms') }}</p></div>
+      <AppCard class="flex-1 w-full">
+        <template #header>
+          <div class="flex items-center">
+            <PieChartIcon color="var(--sub-600)"/>
+            <div class="flex-1 ms-2"><p class="label-sm c-strong-950 !text-start">
+              {{ __('control.statistics.cards.platforms') }}</p></div>
 
-                    </div>
-            </template>
-            <template #body>
-                <hr class="my-6">
-                    <div v-if="false" class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
-                        <img src="@/assets/images/empty_state_statistic_platforms.png">
-                        <p class="paragraph-sm c-soft-400">{{__('control.statistics.cards.empty')}}</p>
-                    </div>
-                    <div  class="flex flex-col gap-4">
-                    <div>
-                        <PlatformsTotalStreamChart :data="platformStatistics" />
-                    </div>
-                    <hr>
-                    <div class="flex items-center h-24">
-                            <div class="flex-1 flex flex-col items-center gap-2">
-                                <SpotifyIcon width="32" height="32" />
-                                <p class="paragraph-xs c-sub-600">Spotify</p>
-                                <p class="label-sm c-strong-950">{{platformStatistics.platforms.spotify}}</p>
-                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                            </div>
-                            <div class="bg-soft-200 w-[1px] h-full"></div>
-                            <div class="flex-1 flex flex-col items-center gap-2">
-                                <AppleMusicIcon width="32" height="32" />
-                                <p class="paragraph-xs c-sub-600">Apple Music</p>
-                                <p class="label-sm c-strong-950">{{platformStatistics.platforms.apple}}</p>
-                                <div class="w-2 h-2 bg-[#47C2FF] rounded-full"></div>
-                            </div>
-                            <div class="bg-soft-200 w-[1px] h-full"></div>
-                            <div class="flex-1 flex flex-col items-center gap-2">
-                                <div class="w-8 h-8 bg-soft-200 rounded-full flex items-center justify-center"><OthersIcon color="var(--sub-600)" /></div>
-                                <p class="paragraph-xs c-sub-600">Diğer</p>
-                                <p class="label-sm c-strong-950">{{platformStatistics.platforms.other}}</p>
-                                <div class="w-2 h-2 bg-soft-200 rounded-full"></div>
-                            </div>
-                    </div>
-                    </div>
-            </template>
-        </AppCard>
+          </div>
+        </template>
+        <template #body>
+          <hr class="my-6">
+          <div v-if="false" class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
+            <img src="@/assets/images/empty_state_statistic_platforms.png">
+            <p class="paragraph-sm c-soft-400">{{ __('control.statistics.cards.empty') }}</p>
+          </div>
+          <div class="flex flex-col gap-4">
+            <div>
+              <PlatformsTotalStreamChart :data="platformStatistics"/>
+            </div>
+            <hr>
+            <div class="flex items-center h-24">
+              <div class="flex-1 flex flex-col items-center gap-2">
+                <SpotifyIcon width="32" height="32"/>
+                <p class="paragraph-xs c-sub-600">Spotify</p>
+                <p class="label-sm c-strong-950">{{ platformStatistics.platforms.spotify }}</p>
+                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+              </div>
+              <div class="bg-soft-200 w-[1px] h-full"></div>
+              <div class="flex-1 flex flex-col items-center gap-2">
+                <AppleMusicIcon width="32" height="32"/>
+                <p class="paragraph-xs c-sub-600">Apple Music</p>
+                <p class="label-sm c-strong-950">{{ platformStatistics.platforms.apple }}</p>
+                <div class="w-2 h-2 bg-[#47C2FF] rounded-full"></div>
+              </div>
+              <div class="bg-soft-200 w-[1px] h-full"></div>
+              <div class="flex-1 flex flex-col items-center gap-2">
+                <div class="w-8 h-8 bg-soft-200 rounded-full flex items-center justify-center">
+                  <OthersIcon color="var(--sub-600)"/>
+                </div>
+                <p class="paragraph-xs c-sub-600">Diğer</p>
+                <p class="label-sm c-strong-950">{{ platformStatistics.platforms.other }}</p>
+                <div class="w-2 h-2 bg-soft-200 rounded-full"></div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </AppCard>
 
-        <PlatformBasedSalesCountChart  :platforms="platforms" />
-
-
+      <PlatformBasedSalesCountChart :platforms="platforms"/>
 
 
     </div>
@@ -158,21 +171,21 @@
 
     <div>
       <AppTabs
-        :slug="currentTab"
-        :tabs="tabs"
-        class="my-5"
-        @change="onTabChange"
+          :slug="currentTab"
+          :tabs="tabs"
+          class="my-5"
+          @change="onTabChange"
       />
     </div>
 
     <div v-if="loading" class="flex justify-center items-center py-8">
-        <div class="loading-spinner"></div>
+      <div class="loading-spinner"></div>
     </div>
     <div v-else>
-        <component :is="currentComponent"
-                  :choosenDates="choosenDates"
-                  :tableData="tab"
-                  :formattedDate="formattedDates" />
+      <component :is="currentComponent"
+                 :choosenDates="choosenDates"
+                 :tableData="tab"
+                 :formattedDate="formattedDates"/>
     </div>
 
     <NewReportModal @update="onUpdate" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
@@ -192,9 +205,8 @@ import PlatformBasedSalesCountChart from './charts/PlatformBasedSalesCountChart.
 
 import moment from 'moment';
 import 'moment/dist/locale/tr';
+
 moment.locale('tr');
-
-
 
 
 import {AppTabs} from '@/Components/Widgets'
@@ -218,10 +230,10 @@ import {
   EditLineIcon,
   CalendarIcon,
   StackOverflowIcon,
-VideoLineIcon,
-Music2LineIcon,
-PieChartIcon,
-LineChartIcon,
+  VideoLineIcon,
+  Music2LineIcon,
+  PieChartIcon,
+  LineChartIcon,
 } from '@/Components/Icons'
 import {router} from '@inertiajs/vue3';
 
@@ -229,12 +241,12 @@ import {NewReportModal} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 
 
-import SongsTab from './Tabs/songs.vue';
-import ProductsTab from './Tabs/products.vue';
-import ArtistsTab from './Tabs/artists.vue';
-import LabelsTab from './Tabs/labels.vue';
-import PlatformsTab from './Tabs/platforms.vue';
-import CountriesTab from './Tabs/countries.vue';
+import SongsTab from './tabs/songs.vue';
+import ProductsTab from './tabs/products.vue';
+import ArtistsTab from './tabs/artists.vue';
+import LabelsTab from './tabs/labels.vue';
+import PlatformsTab from './tabs/platforms.vue';
+import CountriesTab from './tabs/countries.vue';
 
 const defaultStore = useDefaultStore();
 const pageTable = ref();
@@ -247,29 +259,29 @@ const setDateRange = (type) => {
   switch (type) {
     case 'last30days':
 
-        range = [
-            { month: moment().subtract(1, 'months').month(), year: moment().subtract(1, 'months').year() },
-            { month: moment().month(), year: moment().year() },
-        ];
-        break;
+      range = [
+        {month: moment().subtract(1, 'months').month(), year: moment().subtract(1, 'months').year()},
+        {month: moment().month(), year: moment().year()},
+      ];
+      break;
     case 'last3months':
       range = [
-        { month: moment().subtract(3, 'months').month(), year: moment().subtract(3, 'months').year() },
-          { month: moment().month(), year: moment().year() },
+        {month: moment().subtract(3, 'months').month(), year: moment().subtract(3, 'months').year()},
+        {month: moment().month(), year: moment().year()},
       ];
       break;
     case 'last6months':
       range = [
-        { month: moment().subtract(6, 'months').month(), year: moment().subtract(6, 'months').year() },
-          { month: moment().month(), year: moment().year() },
+        {month: moment().subtract(6, 'months').month(), year: moment().subtract(6, 'months').year()},
+        {month: moment().month(), year: moment().year()},
       ];
       break;
     case 'last12months':
 
 
       range = [
-        { month: moment().subtract(1, 'year').month(), year: moment().subtract(1, 'year').year() },
-        { month: moment().month(), year: moment().year() },
+        {month: moment().subtract(1, 'year').month(), year: moment().subtract(1, 'year').year()},
+        {month: moment().month(), year: moment().year()},
       ];
       break;
 
@@ -279,23 +291,23 @@ const setDateRange = (type) => {
           month: 0,
           year: 2000,
         }, // Starting from January 2000
-         { month: moment().month(), year: moment().year() },
+        {month: moment().month(), year: moment().year()},
       ];
       break;
     default:
       range = [];
   }
-  console.log("RANGEE",range);
+  console.log("RANGEE", range);
 
   onDateChoosen(range)
 };
 
-const choosenDate =ref();
+const choosenDate = ref();
 const props = defineProps({
-    platformStatistics:{},
-    downloadCounts:{},
-    platforms:{},
-    tab:{}
+  platformStatistics: {},
+  downloadCounts: {},
+  platforms: {},
+  tab: {}
 })
 
 
@@ -317,33 +329,32 @@ const loading = ref(false);
 
 // Sayfa yüklendiğinde çalışacak setup
 onMounted(() => {
-    // URL'den slug'ı al ve geçerli bir slug mu kontrol et
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlSlug = urlParams.get('slug');
+  // URL'den slug'ı al ve geçerli bir slug mu kontrol et
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlSlug = urlParams.get('slug');
 
-    if (urlSlug && tabs.value.some(tab => tab.slug === urlSlug)) {
-        currentTab.value = urlSlug;
-    } else {
-        currentTab.value = 'songs';
-    }
+  if (urlSlug && tabs.value.some(tab => tab.slug === urlSlug)) {
+    currentTab.value = urlSlug;
+  } else {
+    currentTab.value = 'songs';
+  }
 
-    // Tarih parametrelerini kontrol et
-    const startDate = urlParams.get('start_date');
-    const endDate = urlParams.get('end_date');
+  // Tarih parametrelerini kontrol et
+  const startDate = urlParams.get('start_date');
+  const endDate = urlParams.get('end_date');
 
-    if (startDate && endDate) {
-        choosenDates.value = [
-            moment(startDate, 'M-YYYY'),
-            moment(endDate, 'M-YYYY')
-        ];
-    }
+  if (startDate && endDate) {
+    choosenDates.value = [
+      moment(startDate, 'M-YYYY'),
+      moment(endDate, 'M-YYYY')
+    ];
+  }
 
-    console.log('Sayfa yüklendi:', {
-        currentTab: currentTab.value,
-        choosenDates: choosenDates.value
-    });
+  console.log('Sayfa yüklendi:', {
+    currentTab: currentTab.value,
+    choosenDates: choosenDates.value
+  });
 });
-
 
 
 const removeDateFilter = async () => {
@@ -362,48 +373,48 @@ const removeDateFilter = async () => {
 
 // Tarih işlemleri için yardımcı fonksiyon
 const formatMonthYear = (date) => {
-    if (!date) return null;
-    return moment(date).format('M-YYYY');
+  if (!date) return null;
+  return moment(date).format('M-YYYY');
 };
 
 const onDateChoosen = async (e) => {
-    console.log("EEEE",e);
+  console.log("EEEE", e);
 
-    if (!e || !e['0'] || !e['1']) {
-        await router.visit(route(route().current()), {
-            data: {
-                slug: currentTab.value,
-            },
-            preserveScroll: true,
-            only: ['data']
-        });
-        return;
-    }
+  if (!e || !e['0'] || !e['1']) {
+    await router.visit(route(route().current()), {
+      data: {
+        slug: currentTab.value,
+      },
+      preserveScroll: true,
+      only: ['data']
+    });
+    return;
+  }
 
-    loading.value = true;
-    try {
-        // Tarihleri oluştur
-        const dates = [
-            moment().set({ month: e['0'].month, year: e['0'].year }),
-            moment().set({ month: e['1'].month, year: e['1'].year })
-        ];
+  loading.value = true;
+  try {
+    // Tarihleri oluştur
+    const dates = [
+      moment().set({month: e['0'].month, year: e['0'].year}),
+      moment().set({month: e['1'].month, year: e['1'].year})
+    ];
 
-        choosenDates.value = dates;
+    choosenDates.value = dates;
 
-        await router.visit(route(route().current()), {
-            data: {
-                start_date: formatMonthYear(dates[0]),
-                end_date: formatMonthYear(dates[1]),
-                slug: currentTab.value,
-            },
-            preserveScroll: true,
-            only: ['data']
-        });
-    } catch (error) {
-        console.error('Tarih güncelleme hatası:', error);
-    } finally {
-        loading.value = false;
-    }
+    await router.visit(route(route().current()), {
+      data: {
+        start_date: formatMonthYear(dates[0]),
+        end_date: formatMonthYear(dates[1]),
+        slug: currentTab.value,
+      },
+      preserveScroll: true,
+      only: ['data']
+    });
+  } catch (error) {
+    console.error('Tarih güncelleme hatası:', error);
+  } finally {
+    loading.value = false;
+  }
 };
 
 const tabs = ref([
@@ -449,56 +460,56 @@ const onDone = (e) => {
 }
 
 const formattedDates = computed(() => {
-    if (!choosenDates.value) {
-        const startDate = moment().format('MMMM YYYY');
-        const endDate = moment().subtract(1, 'year').format('MMMM YYYY');
-        return `${startDate} - ${endDate}`;
-    } else if (choosenDates.value.length === 2) {
-        const startDate = moment(choosenDates.value[0]).format('MMMM YYYY');
-        const endDate = moment(choosenDates.value[1]).format('MMMM YYYY');
-        return `${startDate} - ${endDate}`;
-    }
-    return '';
+  if (!choosenDates.value) {
+    const startDate = moment().format('MMMM YYYY');
+    const endDate = moment().subtract(1, 'year').format('MMMM YYYY');
+    return `${startDate} - ${endDate}`;
+  } else if (choosenDates.value.length === 2) {
+    const startDate = moment(choosenDates.value[0]).format('MMMM YYYY');
+    const endDate = moment(choosenDates.value[1]).format('MMMM YYYY');
+    return `${startDate} - ${endDate}`;
+  }
+  return '';
 });
 
 
 const onTabChange = async (tab) => {
 
-    loading.value = true;
+  loading.value = true;
 
-    try {
-        // Önce tab'ı güncelle
-        // currentTab.value = tab.slug;
+  try {
+    // Önce tab'ı güncelle
+    // currentTab.value = tab.slug;
 
-        // URL parametrelerini hazırla
-        const query = new URLSearchParams();
-        query.set('slug', tab.slug);
+    // URL parametrelerini hazırla
+    const query = new URLSearchParams();
+    query.set('slug', tab.slug);
 
-        // Tarih parametrelerini ekle
-        if (choosenDates.value && choosenDates.value.length === 2) {
-            const startDate = moment(choosenDates.value[0]).format('M-YYYY');
-            const endDate = moment(choosenDates.value[1]).format('M-YYYY');
-            query.set('start_date', startDate);
-            query.set('end_date', endDate);
-        }
-
-        // URL'i güncelle ve veriyi yükle
-        const url = `${route(route().current())}?${query.toString()}`;
-        console.log('Ziyaret edilecek URL:', url);
-
-        await router.visit(route(route().current()), {
-            // preserveState: true,
-            preserveScroll: true,
-            data:{
-                slug:tab.slug,
-            }
-
-        });
-    } catch (error) {
-        console.error('Tab değişimi hatası:', error);
-    } finally {
-        loading.value = false;
+    // Tarih parametrelerini ekle
+    if (choosenDates.value && choosenDates.value.length === 2) {
+      const startDate = moment(choosenDates.value[0]).format('M-YYYY');
+      const endDate = moment(choosenDates.value[1]).format('M-YYYY');
+      query.set('start_date', startDate);
+      query.set('end_date', endDate);
     }
+
+    // URL'i güncelle ve veriyi yükle
+    const url = `${route(route().current())}?${query.toString()}`;
+    console.log('Ziyaret edilecek URL:', url);
+
+    await router.visit(route(route().current()), {
+      // preserveState: true,
+      preserveScroll: true,
+      data: {
+        slug: tab.slug,
+      }
+
+    });
+  } catch (error) {
+    console.error('Tab değişimi hatası:', error);
+  } finally {
+    loading.value = false;
+  }
 };
 
 const onUpdate = (e) => {
@@ -507,24 +518,24 @@ const onUpdate = (e) => {
 
 // Debug için computed property
 const currentComponent = computed(() => {
-    const component = tabs.value.find(tab => tab.slug === currentTab.value)?.component;
-    console.log('Current component:', {
-        tab: currentTab.value,
-        component: component?.name
-    });
-    return component ?? GeneralLookTab;
+  const component = tabs.value.find(tab => tab.slug === currentTab.value)?.component;
+  console.log('Current component:', {
+    tab: currentTab.value,
+    component: component?.name
+  });
+  return component ?? GeneralLookTab;
 });
 
 onMounted(() => {
-    if(choosenDates.value?.length > 0){
-         choosenDate.value = choosenDates.value.map((date) => {
-            const momentDate = moment(date);
-            return {
-                month: momentDate.month(),
-                year: momentDate.year(),
-            };
-        });
-    }
+  if (choosenDates.value?.length > 0) {
+    choosenDate.value = choosenDates.value.map((date) => {
+      const momentDate = moment(date);
+      return {
+        month: momentDate.month(),
+        year: momentDate.year(),
+      };
+    });
+  }
 
 });
 
@@ -532,16 +543,20 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .loading-spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
