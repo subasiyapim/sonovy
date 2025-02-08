@@ -16,12 +16,7 @@
           <option v-for="platform in platforms" :value="platform.id">{{ platform.name }}</option>
 
         </select>
-        <select @change="onPeriodChange" id="weeklyOptions"
-                class="block w-full ps-3 pe-7  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
-          <option>Haftalık</option>
-          <option>Aylık</option>
-          <option>Yıllık</option>
-        </select>
+
       </div>
 
     </template>
@@ -112,15 +107,24 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, watch} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {AppCard} from '@/Components/Cards';
 import {SpotifyIcon, LineChartIcon, Icon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';
+import moment from 'moment';
 
 const props = defineProps({
-  platforms: {},
+  platformSalesCount: {
+    type: Object,
+    default: () => ({})
+  },
+  platforms: {
+    type: Array,
+    default: () => []
+  },
   product_id: {
+    type: [String, Number],
     default: null
   }
 })
@@ -139,7 +143,6 @@ const chartOptions = ref({
     toolbar: {
       show: false,
     },
-
   },
   dataLabels: {
     enabled: false
@@ -149,15 +152,17 @@ const chartOptions = ref({
     colors: ['#335CFF'],
     width: 2,
   },
-
   xaxis: {
-    // categories: ['OCA', 'SUB', 'MAR', 'NIS', 'MAY', 'HAZ', 'TEM', 'AGU', 'EYL', 'EKI', 'KAS', 'ARA'],
+    categories: [],
     labels: {
-      show: false,
+      show: true,
       style: {
         fontFamily: 'Poppins',
         cssClass: 'subheading-2xs c-soft-400',
       },
+      formatter: function(value) {
+        return moment(value).format('MMM YY');
+      }
     },
     axisBorder: {
       show: false,
@@ -171,22 +176,29 @@ const chartOptions = ref({
       show: false,
     },
     labels: {
-
-      show: false, // Ensure labels are visible
-
+      show: true,
+      formatter: function(value) {
+        return Math.round(value).toLocaleString();
+      }
     },
   },
   grid: {
-    show: false, // Show grid lines
-
+    show: true,
+    borderColor: '#f1f1f1',
+    strokeDashArray: 4,
   },
   tooltip: {
     enabled: true,
     y: {
-      formatter: function (value) {
-        return value / 1000 + 'K';
+      formatter: function(value) {
+        return value.toLocaleString();
       },
     },
+    x: {
+      formatter: function(value) {
+        return moment(value).format('MMMM YYYY');
+      }
+    }
   },
 });
 
@@ -237,11 +249,33 @@ const getData = async () => {
   }
   loading.value = false;
 }
+
+const updateChart = () => {
+  if (!props.platformSalesCount) return;
+
+  const currentType = type.value;
+  const data = props.platformSalesCount[currentType] || {};
+  const dates = Object.keys(data).sort();
+  const values = dates.map(date => data[date]);
+
+  series.value[0].data = values;
+  chartOptions.value.xaxis.categories = dates;
+
+  // Toplam satışı hesapla
+  totalSales.value = values.reduce((acc, curr) => acc + curr, 0);
+}
+
+watch(() => type.value, () => {
+  updateChart();
+});
+
+watch(() => props.platformSalesCount, () => {
+  updateChart();
+}, { deep: true });
+
 onMounted(() => {
-  if (props.platforms.length > 0) {
-    platform_id.value = props.platforms[0].id;
-    getData();
-  }
+  console.log('Platform Sales Count:', props.platformSalesCount);
+  updateChart();
 });
 </script>
 

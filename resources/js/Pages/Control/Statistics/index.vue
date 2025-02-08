@@ -35,7 +35,7 @@
 
     <div class="flex grid grid-cols-3 gap-3 mb-5">
 
-      <MonthlyListeningChart/>
+      <MonthlyListeningChart :monthly-stats="monthlyStats"/>
 
       <div class="flex flex-col gap-3">
         <AppCard>
@@ -47,13 +47,13 @@
               <div class="flex flex-col items-start ">
                 <p class="subheading-2xs c-soft-400">PARÇA İNDİRMELERİ</p>
                 <div class="flex items-center gap-2">
-                  <p class="label-medium c-strong-950">{{ downloadCounts.songs.count }}</p>
-                  <span v-if="downloadCounts.songs.change != 0" class="label-xs rounded-full px-2 py-0.5"
-                        :class="downloadCounts.songs.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
-                                    <template v-if="downloadCounts.songs.change >0">
+                  <p class="label-medium c-strong-950">{{ downloadCounts?.['Music Release']?.toLocaleString() || 0 }}</p>
+                  <span v-if="downloadCounts?.['Music Release']?.change != 0" class="label-xs rounded-full px-2 py-0.5"
+                        :class="downloadCounts?.['Music Release']?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+                                    <template v-if="downloadCounts?.['Music Release']?.change > 0">
                                         +
                                     </template>
-                                {{ downloadCounts.songs.change }} %
+                                {{ downloadCounts?.['Music Release']?.change || 0 }} %
                                 </span>
                 </div>
               </div>
@@ -70,14 +70,14 @@
                 <p class="subheading-2xs c-soft-400">ALBÜM İNDİRMELERİ</p>
                 <div class="flex items-center gap-2">
 
-                  <p class="label-medium c-strong-950">{{ downloadCounts.products.count }}</p>
+                  <p class="label-medium c-strong-950">{{ downloadCounts?.product?.toLocaleString() || 0 }}</p>
 
-                  <span v-if="downloadCounts.products.change != 0" class="label-xs rounded-full px-2 py-0.5 "
-                        :class="downloadCounts.products.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
-                                    <template v-if="downloadCounts.products.change > 0">
+                  <span v-if="downloadCounts?.product?.change != 0" class="label-xs rounded-full px-2 py-0.5 "
+                        :class="downloadCounts?.product?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+                                    <template v-if="downloadCounts?.product?.change > 0">
                                         +
                                     </template>
-                                    {{ downloadCounts.products.change }} %
+                                    {{ downloadCounts?.product?.change || 0 }} %
                                 </span>
                 </div>
               </div>
@@ -96,14 +96,14 @@
 
                 <div class="flex items-center gap-2">
 
-                  <p class="label-medium c-strong-950">{{ downloadCounts.videos.count }}</p>
+                  <p class="label-medium c-strong-950">{{ downloadCounts?.video?.toLocaleString() || 0 }}</p>
 
-                  <span v-if="downloadCounts.videos.change != 0" class="label-xs rounded-full px-2 py-0.5"
-                        :class="downloadCounts.videos.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
-                                    <template v-if="downloadCounts.videos.change > 0">
+                  <span v-if="downloadCounts?.video?.change != 0" class="label-xs rounded-full px-2 py-0.5"
+                        :class="downloadCounts?.video?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+                                    <template v-if="downloadCounts?.video?.change > 0">
                                         +
                                     </template>
-                                    {{ downloadCounts.videos.change }} %
+                                    {{ downloadCounts?.video?.change || 0 }} %
                                 </span>
                 </div>
               </div>
@@ -132,21 +132,21 @@
           </div>
           <div class="flex flex-col gap-4">
             <div>
-              <PlatformsTotalStreamChart :data="platformStatistics"/>
+              <PlatformsTotalStreamChart :data="{ platforms: platformStatistics?.platforms || { spotify: 0, apple: 0, other: 0 } }"/>
             </div>
             <hr>
             <div class="flex items-center h-24">
               <div class="flex-1 flex flex-col items-center gap-2">
                 <SpotifyIcon width="32" height="32"/>
                 <p class="paragraph-xs c-sub-600">Spotify</p>
-                <p class="label-sm c-strong-950">{{ platformStatistics.platforms.spotify }}</p>
+                <p class="label-sm c-strong-950">{{ (platformStatistics?.platforms?.spotify || 0).toLocaleString() }}</p>
                 <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
               </div>
               <div class="bg-soft-200 w-[1px] h-full"></div>
               <div class="flex-1 flex flex-col items-center gap-2">
                 <AppleMusicIcon width="32" height="32"/>
                 <p class="paragraph-xs c-sub-600">Apple Music</p>
-                <p class="label-sm c-strong-950">{{ platformStatistics.platforms.apple }}</p>
+                <p class="label-sm c-strong-950">{{ (platformStatistics?.platforms?.apple || 0).toLocaleString() }}</p>
                 <div class="w-2 h-2 bg-[#47C2FF] rounded-full"></div>
               </div>
               <div class="bg-soft-200 w-[1px] h-full"></div>
@@ -155,7 +155,7 @@
                   <OthersIcon color="var(--sub-600)"/>
                 </div>
                 <p class="paragraph-xs c-sub-600">Diğer</p>
-                <p class="label-sm c-strong-950">{{ platformStatistics.platforms.other }}</p>
+                <p class="label-sm c-strong-950">{{ (platformStatistics?.platforms?.other || 0).toLocaleString() }}</p>
                 <div class="w-2 h-2 bg-soft-200 rounded-full"></div>
               </div>
             </div>
@@ -163,7 +163,7 @@
         </template>
       </AppCard>
 
-      <PlatformBasedSalesCountChart :platforms="platforms"/>
+      <PlatformBasedSalesCountChart :platform-sales-count="platformSalesCount || {}"/>
 
 
     </div>
@@ -304,10 +304,37 @@ const setDateRange = (type) => {
 
 const choosenDate = ref();
 const props = defineProps({
-  platformStatistics: {},
-  downloadCounts: {},
-  platforms: {},
-  tab: {}
+  monthlyStats: {
+    type: Object,
+    default: () => ({
+      labels: [],
+      series: [],
+      total: 0,
+      percentage: 0,
+      average: 0
+    })
+  },
+  platformStatistics: {
+    type: Object,
+    default: () => ({
+      platforms: {
+        spotify: 0,
+        apple: 0,
+        other: 0
+      }
+    })
+  },
+  downloadCounts: {
+    default: () => ({
+      'Music Release': 0
+    })
+  },
+  platformSalesCount: {
+    default: () => ({})
+  },
+  tab: {
+    default: () => ({})
+  }
 })
 
 

@@ -2,21 +2,12 @@
 
 namespace App\Http\Controllers\Control;
 
-use Symfony\Component\HttpFoundation\Response;
-
-use App\Enums\ProductStatusEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Statistics\MonthlyStreamsRequest;
-use App\Http\Requests\Statistics\PlatformBasedSaleRequest;
-use App\Models\Artist;
-use App\Models\Product;
-use App\Models\Label;
-use App\Models\Platform;
-use App\Models\Song;
-use App\Services\CountryServices;
-use App\Services\EarningService;
+use App\Models\Earning;
+use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StatisticController extends Controller
 {
@@ -24,217 +15,170 @@ class StatisticController extends Controller
 
     public function index(Request $request)
     {
-        $platforms = Platform::all();
-        $downloadCounts = [
-            "songs" => [
-                "count" => 124.000,
-                "change" => 5.00,
-            ],
-            "products" => [
-                "count" => 50.000,
-                "change" => -3.00,
-            ],
-            "videos" => [
-                "count" => 120.00,
-                "change" => 0,
-            ],
-        ];
-        $platformStatistics = [
-            "total" => 1253758,
-            //Sıra önemlidir
-            "platforms" => [
-                "spotify" => 20000,
-                "apple" => 75000,
-                "other" => 5000
-            ]
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        ];
-
-        //TODO slug'a bakarak songs,products,artists,labels,platforms,countries gelecek
-
-
-        $slug = $request->query('slug') ?? 'songs';
-
-
-        $tab = [];
-        if ($slug == 'platforms') {
-            $tempPlatforms = Platform::all();
-            foreach ($tempPlatforms as $index => $value) {
-                $tempPlatforms[$index]['amount'] = 1245;
-                $tempPlatforms[$index]['percantage'] = 90;
-            }
-            $tab = $tempPlatforms;
-        } else {
-            if ($slug == 'songs') {
-                $tempSongs = Song::with('mainArtists')->get();
-
-                foreach ($tempSongs as $country) {
-                    $country->amount = 1245;
-                    $country->percantage = 90;
-                }
-
-                $tab = $tempSongs;
-            } else {
-                if ($slug == 'products') {
-                    $tempProducts =
-                    $tempPlatforms = Product::with('artists', 'label')
-                        ->when($request->input('status'), function ($query) use ($request) {
-                            $query->where('status', $request->input('status'));
-                        })
-                        ->when($request->input('type'), function ($query) use ($request) {
-                            $query->where('type', $request->input('type'));
-                        })->get();
-
-                    foreach ($tempProducts as $country) {
-                        $country->amount = 1245;
-                        $country->percantage = 90;
-                    }
-
-                    $tab = $tempProducts;
-                } else {
-                    if ($slug == 'artists') {
-                        $tempArtists = Artist::with('platforms', 'products')->get();
-
-                        foreach ($tempArtists as $country) {
-                            $country->amount = 1245;
-                            $country->percantage = 90;
-                        }
-
-                        $tab = $tempArtists;
-                    } else {
-                        if ($slug == 'labels') {
-                            $tempLabels = Label::with('products')->get();
-
-                            foreach ($tempLabels as $country) {
-                                $country->amount = 1245;
-                                $country->percantage = 90;
-                            }
-
-                            $tab = $tempLabels;
-                        } else {
-                            if ($slug == 'countries') {
-                                $tempCountries = CountryServices::get();
-
-                                foreach ($tempCountries as $index => $country) {
-                                    $tempCountries[$index]['total_product'] = 12;
-                                    $tempCountries[$index]['amount'] = 1245;
-                                    $tempCountries[$index]['percantage'] = 90;
-                                }
-
-                                $tab = $tempCountries;
-                            }
-                        }
-                    }
-                }
-            }
+        //$startDate null ise 6 ay önce
+        if (!$startDate) {
+            $startDate = Carbon::now()->subMonths(6)->format('Y-m-d');
         }
 
-        return inertia('Control/Statistics/index', [
-            'tab' => $tab,
-            'platforms' => $platforms,
-            'downloadCounts' => $downloadCounts,
-            'platformStatistics' => $platformStatistics,
+        // $endDate null ise şu anki tarih
+        if (!$endDate) {
+            $endDate = Carbon::now()->format('Y-m-d');
+        }
+
+        $user = Auth::user();
+        $earnings = Earning::query()->where('user_id', $user->id)->whereBetween('report_date', [$startDate, $endDate])->get();
+
+
+        //Aylık Dinleme istatistikleri
+        $monthlyStats = $this->getMonthlyListeningStatistics($earnings);
+
+        //Aylık İndirme istatistikleri
+        $downloadStats = $this->getDownloadStatistics($earnings);
+
+        //Aylık Satış istatistikleri
+        //$salesStats = $this->getSalesStatistics($earnings);
+
+        //Aylık Platform istatistikleri
+        $platformStats = $this->getPlatformStatistics($earnings);
+
+
+        //Platform bazlı satış sayıları
+        $platformSalesCount = $this->getPlatformSalesCount($earnings);
+
+        return Inertia::render('Control/Statistics/index', [
+            'monthlyStats' => $monthlyStats,
+            'downloadCounts' => $downloadStats,
+            //'salesStats' => $salesStats,
+            'platformStatistics' => $platformStats,
+            'platformSalesCount' => $platformSalesCount
         ]);
     }
 
-    public function product(Product $product, Request $request)
+    //Aylık dinleme istatistikleri
+    private function getMonthlyListeningStatistics($earnings)
     {
+        $monthlyStats = $earnings->where('sales_type', 'Stream')
+            ->groupBy('report_date')
+            ->map(function ($item) {
+                return $item->sum('quantity');
+            })
+            ->mapWithKeys(function ($value, $key) {
+                return [Carbon::parse($key)->format('Y-m') => $value];
+            })
+            ->sortKeys()
+            ->mapWithKeys(function ($value, $key) {
+                $date = Carbon::createFromFormat('Y-m', $key);
+                $date->setLocale(app()->getLocale());
+                return [$date->translatedFormat('F Y') => $value];
+            });
 
+        $average = round($monthlyStats->avg(), 2);
+        $total = $monthlyStats->sum();
+        $monthlyStats = $monthlyStats->sortKeys();
+        $labels = $monthlyStats->keys()->toArray();
+        $series = $monthlyStats->values()->toArray();
 
-        $platforms = Platform::all();
+        return [
+            'monthly_data' => $monthlyStats->toArray(),
+            'average' => $average,
+            'total' => $total,
+            'labels' => $labels,
+            'series' => $series,
+        ];
+    }
 
-        $product->loadMissing(
+    private function getDownloadStatistics($earnings)
+    {
+        // release_type a göre gruplandırılan dataların toplam indirme istatistikleri quantity toplamları
+        // song download
+        // album download
+        // video download
 
-            'downloadPlatforms',
-            'mainArtists',
+        $downloadStats = $earnings->where('sales_type', 'Download')
+            ->groupBy('release_type')
+            ->map(function ($item) {
+                return $item->sum('quantity');
+            })
+            ->mapWithKeys(function ($value, $key) {
+                return [$key => $value];
+            });
 
+        return $downloadStats;
+    }
 
-        );
+    private function getPlatformStatistics($earnings)
+    {
+        $platforms = ['Spotify', 'Apple'];
 
-        $slug = $request->query('slug') ?? 'platforms';
+        // Ana platformları topla
+        $mainPlatforms = collect();
+        foreach ($platforms as $platform) {
+            $platformData = $earnings->filter(function ($item) use ($platform) {
+                return str_contains(strtolower($item->platform), strtolower($platform));
+            });
 
-
-        $tab = [];
-        if ($slug == 'platforms') {
-            $tempPlatforms = $product->downloadPlatforms()->get();
-            foreach ($tempPlatforms as $index => $value) {
-                $tempPlatforms[$index]['amount'] = 1245;
-                $tempPlatforms[$index]['percantage'] = 90;
-            }
-            $tab = $tempPlatforms;
-        } else {
-            if ($slug == 'countries') {
-                $tempCountries = $product->publishedCountries()->get(); // Fetch data as a collection
-
-                foreach ($tempCountries as $country) {
-                    $country->amount = 1245;
-                    $country->percantage = 90;
-                }
-
-                $tab = $tempCountries;
-            }
+            $mainPlatforms[strtolower($platform)] = $platformData->isNotEmpty() ? $platformData->sum('quantity') : 0;
         }
 
+        // Diğer platformları topla
+        $otherPlatforms = $earnings->filter(function ($item) use ($platforms) {
+            foreach ($platforms as $platform) {
+                if (str_contains(strtolower($item->platform), strtolower($platform))) {
+                    return false;
+                }
+            }
+            return true;
+        });
 
-        // Bunlar yine gelecek ama product nezdinde
-        $downloadCounts = [
-            "songs" => [
-                "count" => 124.000,
-                "change" => 5.00,
-            ],
-            "products" => [
-                "count" => 50.000,
-                "change" => -3.00,
-            ],
-            "videos" => [
-                "count" => 120.00,
-                "change" => 0,
-            ],
-        ];
-        $platformStatistics = [
-            "total" => 1253758,
-            //Sıra önemlidir
-            "platforms" => [
-                "spotify" => 20000,
-                "apple" => 75000,
-                "other" => 5000
+        $mainPlatforms['other'] = $otherPlatforms->isNotEmpty() ? $otherPlatforms->sum('quantity') : 0;
+
+        // Frontend'in beklediği formatta veriyi döndür
+        return [
+            'platforms' => [
+                'spotify' => $mainPlatforms['spotify'] ?? 0,
+                'apple' => $mainPlatforms['apple'] ?? 0,
+                'other' => $mainPlatforms['other'] ?? 0
             ]
-
         ];
-        return inertia('Control/Statistics/product', [
-            'product' => $product,
-            'platforms' => $platforms,
-            'downloadCounts' => $downloadCounts,
-            'platformStatistics' => $platformStatistics,
-            'tab' => $tab,
-        ]);
     }
 
-    public function getMonthlyStreams(MonthlyStreamsRequest $request)
+    private function getPlatformMonthlyStatistics($earnings, $platform = 'Spotify')
     {
+        $platformMonthlyStats = $earnings->where('platform', $platform)
+            ->groupBy('platform')
+            ->map(function ($item) {
+                return $item->sum('quantity');
+            })
+            ->mapWithKeys(function ($value, $key) {
+                return [Carbon::parse($key)->format('Y-m') => $value];
+            });
 
-        $labels = ['OCA', 'SUB', 'MAR', 'NIS', 'MAY', 'HAZ', 'TEM', 'AGU', 'EYL', 'EKI', 'KAS', 'ARA'];
-        $series = [480000, 500000, 250000, 100000, 50000, 750000, 500000, 250000, 100000, 50000, 750000, 500000];
-        $total = 350000;
-        $percentage = -1.24; // bu - değer de alabilir değişimi numerik olarak represente eder
-        return response()->json([
-            "labels" => $labels,
-            "series" => $series,
-            "total" => $total,
-            "percentage" => $percentage,
-        ], Response::HTTP_OK);
+        return $platformMonthlyStats;
+
     }
 
-    public function getPlatformBasedSales(PlatformBasedSaleRequest $request)
+    private function getPlatformSalesCount($earnings)
     {
+        //release_type a göre gruplandırılan dataların toplam satış sayıları aylık gruplandırılmış quantity toplamları
+        //Aylık Dinleme istatistikleri ile aynı mantık
 
-        $data = [480000, 500000, 250000, 100000, 50000, 750000, 500000, 250000, 100000, 50000, 750000, 500000];
-        $total = 120000;
-        $percentage = 0.48; // bu - değer de alabilir değişimi numerik olarak represente eder
-        return response()->json([
-            "data" => $data,
-            "total" => $total,
-            "percentage" => $percentage,
-        ], Response::HTTP_OK);
+        $platformSalesCount = $earnings->where('sales_type', 'Download')
+            ->groupBy(['release_type', 'report_date'])
+            ->map(function ($releaseTypeGroup) {
+                return $releaseTypeGroup->map(function ($dateGroup) {
+                    return $dateGroup->sum('quantity');
+                });
+            })
+            ->map(function ($releaseTypeData) {
+                return $releaseTypeData->mapWithKeys(function ($value, $key) {
+                    return [Carbon::parse($key)->format('Y-m') => $value];
+                })->sortKeys();
+            })->sortKeys();
+
+        return $platformSalesCount;
     }
+
 }

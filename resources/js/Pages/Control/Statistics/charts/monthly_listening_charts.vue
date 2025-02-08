@@ -6,14 +6,14 @@
       <div class=" flex flex-col items-start ">
         <p class="paragraph-sm c-sub-600">Aylık Dinlenme (Ort)</p>
         <div class="flex items-center gap-2">
-          <p class="label-xl c-strong-950">{{ totalCount }}</p>
-          <span v-if="percentage != 0" class="label-xs rounded-full px-2 py-0.5"
+          <p class="label-xl c-strong-950">{{ monthlyStats?.average || 0 }}</p>
+          <span v-if="percentage != null && percentage != 0" class="label-xs rounded-full px-2 py-0.5"
                 :class="percentage > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
-                    <template v-if="percentage >0">
-                        +
-                    </template>
-                {{ percentage }} %
-                </span>
+            <template v-if="percentage > 0">
+              +
+            </template>
+            {{ percentage || 0 }} %
+          </span>
         </div>
       </div>
     </template>
@@ -31,20 +31,12 @@
             <p class="subheading-2xs !text-[8px] c-sub-600">+3</p>
           </div>
         </div>
-        <div class="w-max">
-          <select v-model="period" @change="onChange" id="options" name="options"
-                  class="block w-full ps-3 pe-7  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
-            <option value="weekly">Haftalık</option>
-            <option value="monthly">Aylık</option>
-            <option value="annual">Yıllık</option>
-          </select>
-        </div>
       </div>
 
     </template>
     <template #body>
       <VueApexCharts
-          v-if="!loading"
+          v-if="!loading && series?.[0]?.data?.length > 0"
           type="area"
           height="150"
           :options="chartOptions"
@@ -70,7 +62,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, watch} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {AppCard} from '@/Components/Cards';
@@ -78,7 +70,18 @@ import {SpotifyIcon} from '@/Components/Icons';
 
 const props = defineProps({
   product_id: {
+    type: [String, Number],
     default: null
+  },
+  monthlyStats: {
+    type: Object,
+    default: () => ({
+      labels: [],
+      series: [],
+      total: 0,
+      percentage: 0,
+      average: 0
+    })
   }
 })
 
@@ -86,9 +89,8 @@ const loading = ref(true);
 const crudStore = useCrudStore();
 const series = ref([
   {
-    name: 'Sales',
-    // data: [480000, 500000, 250000, 100000, 50000, 750000, 500000, 250000, 100000, 50000, 750000, 500000],
-    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    name: 'Dinlenme',
+    data: props.monthlyStats?.series || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
 ]);
 
@@ -120,7 +122,7 @@ const chartOptions = ref({
 
   },
   xaxis: {
-    categories: ['OCA', 'SUB', 'MAR', 'NIS', 'MAY', 'HAZ', 'TEM', 'AGU', 'EYL', 'EKI', 'KAS', 'ARA'],
+    categories: props.monthlyStats?.labels || ['OCA', 'SUB', 'MAR', 'NIS', 'MAY', 'HAZ', 'TEM', 'AGU', 'EYL', 'EKI', 'KAS', 'ARA'],
     labels: {
       show: true,
       style: {
@@ -146,7 +148,7 @@ const chartOptions = ref({
       },
       show: true, // Ensure labels are visible
       formatter: function (value) {
-        return value / 1000 + 'K';
+        return (value || 0) / 1000 + 'K';
       },
     },
   },
@@ -168,44 +170,25 @@ const chartOptions = ref({
     enabled: true,
     y: {
       formatter: function (value) {
-        return value / 1000 + 'K';
+        return (value || 0) / 1000 + 'K';
       },
     },
   },
 });
-const totalCount = ref(0);
 const period = ref('weekly')
-const percentage = ref(0)
-const getData = async () => {
-  loading.value = true;
-  try {
-    let payload = {
-      "period": period.value
-    }
-    if (props.product_id) {
-      payload['product_id'] = props.product_id;
-    }
-    const response = await crudStore.post(route('control.statistics.monthly.streams'), payload);
-    chartOptions.value.xaxis.categories = response.labels;
+const percentage = ref(props.monthlyStats?.percentage || 0)
 
-    series.value[0].data = response.series;
-    totalCount.value = response.total;
-    percentage.value = response.percentage;
-  } catch (error) {
-    loading.value = false;
+watch(() => props.monthlyStats, (newStats) => {
+  if (newStats) {
+    series.value[0].data = newStats.series || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    chartOptions.value.xaxis.categories = newStats.labels || ['OCA', 'SUB', 'MAR', 'NIS', 'MAY', 'HAZ', 'TEM', 'AGU', 'EYL', 'EKI', 'KAS', 'ARA'];
+    percentage.value = newStats.percentage || 0;
   }
+}, { deep: true, immediate: true });
+
+watch(() => props.monthlyStats, () => {
   loading.value = false;
-}
-
-const onChange = (e) => {
-  period.value = e.target.value;
-  getData();
-
-
-}
-onMounted(() => {
-  getData();
-});
+}, { immediate: true });
 </script>
 
 <style scoped>
