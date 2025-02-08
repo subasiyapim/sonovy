@@ -16,20 +16,21 @@ class StatisticController extends Controller
     public function index(Request $request)
     {
         //gelen tarih formatı m-Y den Y-m-d ye çevir
-            $startDate = $request->input('start_date');
+        $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-
-        $startDate = Carbon::createFromFormat('m-Y', $startDate)->format('Y-m-d');
-        $endDate = Carbon::createFromFormat('m-Y', $endDate)->format('Y-m-d');
 
         //$startDate null ise 6 ay önce
         if (!$startDate) {
             $startDate = Carbon::now()->subMonths(6)->format('Y-m-d');
+        } else {
+            $startDate = Carbon::createFromFormat('m-Y', $startDate)->format('Y-m-d');
         }
 
         // $endDate null ise şu anki tarih
         if (!$endDate) {
             $endDate = Carbon::now()->format('Y-m-d');
+        } else {
+            $endDate = Carbon::createFromFormat('m-Y', $endDate)->format('Y-m-d');
         }
 
         $user = Auth::user();
