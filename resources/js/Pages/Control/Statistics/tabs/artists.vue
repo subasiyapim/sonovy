@@ -31,13 +31,15 @@ const data = computed({
         <template #default="scope">
           <div class="flex justify-start items-center gap-2 w-full">
             <div class="w-12 h-12 rounded-full overflow-hidden">
-              <img :alt="scope.row.name"
-                   :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.name)"
+              <img :alt="scope.row.artist_name"
+                   :src="scope.row.artist_image ? scope.row.artist_image.thumb : defaultStore.profileImage(scope.row.artist_name)"
               >
             </div>
             <div>
-              <a :href="route('control.catalog.artists.show',scope.row.id)"
-                 class="font-poppins table-name-text c-sub-600">{{ scope.row.name }}</a>
+
+              <a :href="route('control.catalog.artists.show',scope.row.artist_id)"
+                 class="font-poppins table-name-text c-sub-600">{{ scope.row.artist_name }}</a>
+
               <div class="flex flex-row gap-x-2 items-center" v-if="scope.row.platforms">
 
                 <template v-for="platform in scope.row.platforms" :key="platform.id">
@@ -68,19 +70,19 @@ const data = computed({
       </AppTableColumn>
     <AppTableColumn label="Toplam Parça Sayısı">
       <template #default="scope">
-        <span class="paragraph-xs c-sub-600">{{scope.row.products.length}} Parça</span>
+        <span class="paragraph-xs c-sub-600">{{scope.row.song_count}} Parça</span>
 
 
       </template>
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Sayısı">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.amount}}</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity}}</span>
       </template>
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Oranı%">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.percantage}}%</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity_percentage}}%</span>
       </template>
     </AppTableColumn>
 

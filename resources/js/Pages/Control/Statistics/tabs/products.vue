@@ -73,7 +73,7 @@ const data = computed({
         <div class="flex items-center gap-3">
 
            <div class="w-8 h-8 rounded flex items-center justify-center border border-soft-200">
-                <img :src="scope.row.image"  class="w-full h-full object-cover">
+                <img v-if="scope.row.album_image" :src="scope.row.album_image?.thumb"  class="w-full h-full object-cover">
            </div>
             <div>
                 <a :href="route('control.statistics.product',scope.row.album_id)" class="paragraph-xs c-blue-500"> {{scope.row.album_name}}</a>

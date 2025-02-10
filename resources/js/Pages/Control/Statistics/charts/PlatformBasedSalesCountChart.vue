@@ -25,7 +25,7 @@
 
     <template #body>
       <template v-if="!loading">
-        <div class="flex items-center border border-soft-200 rounded mt-6">
+        <div v-if="!product_id" class="flex items-center border border-soft-200 rounded mt-6">
             <button @click="onChangeType('audio_streams')" :class="type == 'audio_streams' ? 'bg-weak-50' : 'bg-white' "
                     class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Ses Yayını
             </button>
@@ -41,43 +41,44 @@
             </button>
 
         </div>
-        <div v-if="false" class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
+         <div v-if="props.platformSalesCount && props.platformSalesCount.length > 0" class="flex flex-col gap-3 p-4">
+            <div>
+                <div class="flex items-center mb-2 gap-2">
+
+
+                <p class="label-xl c-strong-950">{{ Object.values(props.platformSalesCount["Music Release"] ?? {})?.reduce((curr,ar) => curr+ar,0) }}</p>
+                <span v-if="percentage != 0" class="label-xs rounded-full px-2 py-0.5"
+                        :class="percentage > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+                                    <template v-if="percentage >0">
+                                        +
+                                    </template>
+                                    {{ percentage }} %
+                                </span>
+                </div>
+
+
+                <div v-if="platform_id" class="flex items-center gap-1">
+                <Icon :icon="platforms.find((e) => e.id == platform_id)?.icon" width="18" height="18"/>
+                <span
+                    class="subheading-2xs c-soft-400 uppercase">{{ platforms.find((e) => e.id == platform_id)?.name }}</span>
+                </div>
+
+            </div>
+            <div>
+                <VueApexCharts
+                    type="line"
+                    height="250"
+                    :options="chartOptions"
+                    :series="series"
+                ></VueApexCharts>
+
+            </div>
+        </div>
+        <div v-else class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
           <img src="@/assets/images/empty_state_statistic_platform_sales.png">
           <p class="paragraph-sm c-soft-400">{{ __('control.statistics.cards.empty') }}</p>
         </div>
-        <div class="flex flex-col gap-3 p-4">
-          <div>
-            <div class="flex items-center mb-2 gap-2">
 
-
-              <p class="label-xl c-strong-950">{{ Object.values(props.platformSalesCount["Music Release"])?.reduce((curr,ar) => curr+ar,0) }}</p>
-              <span v-if="percentage != 0" class="label-xs rounded-full px-2 py-0.5"
-                    :class="percentage > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
-                                <template v-if="percentage >0">
-                                    +
-                                </template>
-                                {{ percentage }} %
-                            </span>
-            </div>
-
-
-            <div v-if="platform_id" class="flex items-center gap-1">
-              <Icon :icon="platforms.find((e) => e.id == platform_id)?.icon" width="18" height="18"/>
-              <span
-                  class="subheading-2xs c-soft-400 uppercase">{{ platforms.find((e) => e.id == platform_id)?.name }}</span>
-            </div>
-
-          </div>
-          <div>
-            <VueApexCharts
-                type="line"
-                height="250"
-                :options="chartOptions"
-                :series="series"
-            ></VueApexCharts>
-
-          </div>
-        </div>
       </template>
       <template v-else>
 
@@ -125,12 +126,11 @@ const props = defineProps({
     default: null
   }
 })
-console.log("sdasd",Object.values(props.platformSalesCount["Music Release"]));
 
 const series = ref([
   {
     name: 'Sales',
-    data: ref(Object.values(props.platformSalesCount["Music Release"]))
+    data: ref(Object.values(props.platformSalesCount["Music Release"] ?? {}))
   },
 ]);
 

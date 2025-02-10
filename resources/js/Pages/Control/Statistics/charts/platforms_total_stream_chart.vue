@@ -13,7 +13,8 @@
 import { defineComponent, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 const props = defineProps({
-    data:{}
+    data:{},
+   
 })
 const series = ref(Object.values(props.data.platforms)); // Adjust the percentages as needed
     const chartOptions = ref({

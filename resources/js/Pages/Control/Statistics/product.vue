@@ -82,80 +82,84 @@
 
         <div class="flex grid grid-cols-3 gap-3 mb-5">
 
-            <MonthlyListeningChart />
+         <MonthlyListeningChart :monthly-stats="monthlyStats"/>
 
-            <div class="flex flex-col gap-3">
-                <AppCard>
-                    <template #header>
-                        <div class="flex items-center gap-2">
-                            <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                                <Music2LineIcon color="var(--sub-600)"/>
-                            </div>
-                            <div class="flex flex-col items-start ">
-                                <p class="subheading-2xs c-soft-400">PARÇA İNDİRMELERİ</p>
-                                <div class="flex items-center gap-2">
-                                    <p class="label-medium c-strong-950">{{downloadCounts.songs.count}}</p>
-                                    <span v-if="downloadCounts.songs.change != 0" class="label-xs rounded-full px-2 py-0.5" :class="downloadCounts.songs.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
-                                        <template v-if="downloadCounts.songs.change >0">
-                                            +
-                                        </template>
-                                    {{downloadCounts.songs.change}} %
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </AppCard>
-                <AppCard>
-                    <template #header>
-                        <div class="flex items-center gap-2">
-                            <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                                <StackOverflowIcon color="var(--sub-600)"/>
-                            </div>
-                            <div class="flex flex-col items-start ">
-                                <p class="subheading-2xs c-soft-400">ALBÜM İNDİRMELERİ</p>
-                                <div class="flex items-center gap-2">
+      <div class="flex flex-col gap-3">
+        <AppCard>
+          <template #header>
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                <Music2LineIcon color="var(--sub-600)"/>
+              </div>
+              <div class="flex flex-col items-start ">
+                <p class="subheading-2xs c-soft-400">PARÇA İNDİRMELERİ</p>
+                <div class="flex items-center gap-2">
+                    <p class="label-medium c-strong-950">{{ downloadCounts?.['Music Release']?.toLocaleString() || 0 }}</p>
 
-                                    <p class="label-medium c-strong-950">{{downloadCounts.products.count}}</p>
-
-                                    <span v-if="downloadCounts.products.change != 0" class="label-xs rounded-full px-2 py-0.5 " :class="downloadCounts.products.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
-                                        <template v-if="downloadCounts.products.change > 0">
-                                            +
-                                        </template>
-                                        {{downloadCounts.products.change}} %
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </AppCard>
-
-                <AppCard>
-                    <template #header>
-                        <div class="flex items-center gap-2">
-                            <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
-                                <VideoLineIcon color="var(--sub-600)"/>
-                            </div>
-                            <div class="flex flex-col items-start ">
-                                <p class="subheading-2xs c-soft-400">VIDEO İNDİRMELERİ</p>
-
-                                <div class="flex items-center gap-2">
-
-                                    <p class="label-medium c-strong-950">{{downloadCounts.videos.count}}</p>
-
-                                    <span v-if="downloadCounts.videos.change != 0" class="label-xs rounded-full px-2 py-0.5" :class="downloadCounts.videos.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
-                                        <template v-if="downloadCounts.videos.change > 0">
-                                            +
-                                        </template>
-                                        {{downloadCounts.videos.change}} %
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </AppCard>
-
+                    <span v-if="downloadCounts?.['Music Release']?.change" class="label-xs rounded-full px-2 py-0.5"
+                        :class="downloadCounts?.['Music Release']?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+                        <template v-if="downloadCounts?.['Music Release']?.change > 0">
+                            +
+                        </template>
+                    {{ downloadCounts?.['Music Release']?.change || 0 }} %
+                    </span>
+                </div>
+              </div>
             </div>
+          </template>
+        </AppCard>
+        <AppCard>
+          <template #header>
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                <StackOverflowIcon color="var(--sub-600)"/>
+              </div>
+              <div class="flex flex-col items-start ">
+                <p class="subheading-2xs c-soft-400">ALBÜM İNDİRMELERİ</p>
+                <div class="flex items-center gap-2">
+
+                  <p class="label-medium c-strong-950">{{ downloadCounts?.product?.toLocaleString() || 0 }}</p>
+
+                  <span v-if="downloadCounts?.product?.change" class="label-xs rounded-full px-2 py-0.5 "
+                        :class="downloadCounts?.product?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+                                    <template v-if="downloadCounts?.product?.change > 0">
+                                        +
+                                    </template>
+                                    {{ downloadCounts?.product?.change || 0 }} %
+                                </span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </AppCard>
+
+        <AppCard>
+          <template #header>
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                <VideoLineIcon color="var(--sub-600)"/>
+              </div>
+              <div class="flex flex-col items-start ">
+                <p class="subheading-2xs c-soft-400">VIDEO İNDİRMELERİ</p>
+
+               <div class="flex items-center gap-2">
+
+                  <p class="label-medium c-strong-950">{{ downloadCounts?.video?.toLocaleString() || 0 }}</p>
+
+                  <span v-if="downloadCounts?.video?.change" class="label-xs rounded-full px-2 py-0.5"
+                        :class="downloadCounts?.video?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
+                                    <template v-if="downloadCounts?.video?.change > 0">
+                                        +
+                                    </template>
+                                    {{ downloadCounts?.video?.change || 0 }} %
+                                </span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </AppCard>
+
+      </div>
 
         </div>
         <div class="flex grid grid-cols-2 gap-3 mb-5">
@@ -169,42 +173,44 @@
                 </template>
                 <template #body>
                     <hr class="my-6">
-                        <div v-if="false" class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
-                            <img src="@/assets/images/empty_state_statistic_platforms.png">
-                            <p class="paragraph-sm c-soft-400">{{__('control.statistics.cards.empty')}}</p>
-                        </div>
-                        <div  class="flex flex-col gap-4">
+                    <div v-if="false" class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
+                        <img src="@/assets/images/empty_state_statistic_platforms.png">
+                        <p class="paragraph-sm c-soft-400">{{ __('control.statistics.cards.empty') }}</p>
+                    </div>
+                    <div class="flex flex-col gap-4">
                         <div>
-                            <PlatformsTotalStreamChart :data="platformStatistics" />
+                            <PlatformsTotalStreamChart :data="{ platforms: platformStatistics?.platforms || { spotify: 0, apple: 0, other: 0 } }"/>
                         </div>
                         <hr>
                         <div class="flex items-center h-24">
-                                <div class="flex-1 flex flex-col items-center gap-2">
-                                    <SpotifyIcon width="32" height="32" />
-                                    <p class="paragraph-xs c-sub-600">Spotify</p>
-                                    <p class="label-sm c-strong-950">{{platformStatistics.platforms.spotify}}</p>
-                                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                </div>
-                                <div class="bg-soft-200 w-[1px] h-full"></div>
-                                <div class="flex-1 flex flex-col items-center gap-2">
-                                    <AppleMusicIcon width="32" height="32" />
-                                    <p class="paragraph-xs c-sub-600">Apple Music</p>
-                                    <p class="label-sm c-strong-950">{{platformStatistics.platforms.apple}}</p>
-                                    <div class="w-2 h-2 bg-[#47C2FF] rounded-full"></div>
-                                </div>
-                                <div class="bg-soft-200 w-[1px] h-full"></div>
-                                <div class="flex-1 flex flex-col items-center gap-2">
-                                    <div class="w-8 h-8 bg-soft-200 rounded-full flex items-center justify-center"><OthersIcon color="var(--sub-600)" /></div>
-                                    <p class="paragraph-xs c-sub-600">Diğer</p>
-                                    <p class="label-sm c-strong-950">{{platformStatistics.platforms.other}}</p>
-                                    <div class="w-2 h-2 bg-soft-200 rounded-full"></div>
-                                </div>
+                        <div class="flex-1 flex flex-col items-center gap-2">
+                            <SpotifyIcon width="32" height="32"/>
+                            <p class="paragraph-xs c-sub-600">Spotify</p>
+                            <p class="label-sm c-strong-950">{{ (platformStatistics?.platforms?.spotify || 0).toLocaleString() }}</p>
+                            <div class="w-2 h<-2 bg-blue-500 rounded-full"></div>
+                        </div>
+                        <div class="bg-soft-200 w-[1px] h-full"></div>
+                        <div class="flex-1 flex flex-col items-center gap-2">
+                            <AppleMusicIcon width="32" height="32"/>
+                            <p class="paragraph-xs c-sub-600">Apple Music</p>
+                            <p class="label-sm c-strong-950">{{ (platformStatistics?.platforms?.apple || 0).toLocaleString() }}</p>
+                            <div class="w-2 h-2 bg-[#47C2FF] rounded-full"></div>
+                        </div>
+                        <div class="bg-soft-200 w-[1px] h-full"></div>
+                        <div class="flex-1 flex flex-col items-center gap-2">
+                            <div class="w-8 h-8 bg-soft-200 rounded-full flex items-center justify-center">
+                            <OthersIcon color="var(--sub-600)"/>
+                            </div>
+                            <p class="paragraph-xs c-sub-600">Diğer</p>
+                            <p class="label-sm c-strong-950">{{ (platformStatistics?.platforms?.other || 0).toLocaleString() }}</p>
+                            <div class="w-2 h-2 bg-soft-200 rounded-full"></div>
                         </div>
                         </div>
-                </template>
+                    </div>
+                    </template>
             </AppCard>
 
-            <PlatformBasedSalesCountChart  :platforms="platforms" />
+            <PlatformBasedSalesCountChart :product_id="props.product.id" :platforms="platforms" />
 
 
 
@@ -395,6 +401,17 @@ const filterMainArtists = computed(() => {
 
 const choosenDate =ref();
 const props = defineProps({
+
+      monthlyStats: {
+        type: Object,
+        default: () => ({
+        labels: [],
+        series: [],
+        total: 0,
+        percentage: 0,
+        average: 0
+        })
+    },
     platformStatistics:{},
     downloadCounts:{},
     platforms:{},
@@ -460,7 +477,7 @@ const onDateChoosen = async (e) => {
     console.log("EEEE",e);
 
     if (!e || !e['0'] || !e['1']) {
-        await router.visit(route(route().current()), {
+        await router.visit(route(route().current(),props.product.id), {
             data: {
                 slug: currentTab.value,
             },
@@ -480,7 +497,7 @@ const onDateChoosen = async (e) => {
 
         choosenDates.value = dates;
 
-        await router.visit(route(route().current()), {
+        await router.visit(route(route().current(),props.product.id), {
             data: {
                 start_date: formatMonthYear(dates[0]),
                 end_date: formatMonthYear(dates[1]),

@@ -513,7 +513,6 @@ const onTabChange = async (tab) => {
   try {
      router.visit(route(route().current()), {
         replace: true,
-        preserveState: true,
         preserveScroll: true,
         data: { ...route().params, slug: tab.slug },
     });

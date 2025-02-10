@@ -32,12 +32,12 @@ const data = computed({
 
           <div class="flex items-center gap-2 ">
             <div class="w-12 h-12 rounded-full overflow-hidden">
-              <img :alt="scope.row.name"
-                   :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.name)"
+              <img :alt="scope.row.label_name"
+                   :src="scope.row.label_image ? scope.row.label_image.thumb : defaultStore.profileImage(scope.row.label_name)"
               >
             </div>
-            <a :href="route('control.catalog.labels.show',scope.row.id)"
-               class="c-sub-600 table-name-text">{{ scope.row.name }}</a>
+            <a :href="route('control.catalog.labels.show',scope.row.label_id)"
+               class="c-sub-600 table-name-text">{{ scope.row.label_name }}</a>
 
 
           </div>
@@ -45,7 +45,7 @@ const data = computed({
       </AppTableColumn>
     <AppTableColumn label="Toplam Parça Sayısı">
       <template #default="scope">
-               <span class="paragraph-xs c-sub-600">{{scope.row.products.length}} Parça</span>
+               <span class="paragraph-xs c-sub-600">{{scope.row.song_count}} Parça</span>
 
 
 
@@ -53,12 +53,12 @@ const data = computed({
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Sayısı">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.amount}}</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity}}</span>
       </template>
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Oranı%">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.percantage}}%</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity_percentage}}%</span>
       </template>
     </AppTableColumn>
 
