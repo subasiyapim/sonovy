@@ -1,5 +1,5 @@
 <script setup>
-import {ref,computed} from 'vue';
+import {ref, computed} from 'vue';
 import AppTable from '@/Components/Table/AppTable.vue';
 import {IconButton} from '@/Components/Buttons';
 
@@ -22,15 +22,13 @@ const props = defineProps({
 });
 
 const songs = computed({
-    get:() => props.tableData,
-    set:(value) => emits('updateSong',value)
+  get: () => props.tableData,
+  set: (value) => emits('updateSong', value)
 })
 
 
-
-
 const getBody = computed(() => {
-    return document.querySelector('body');
+  return document.querySelector('body');
 })
 
 const onComplete = (e) => {
@@ -71,34 +69,34 @@ const pauseMusic = (song) => {
 };
 </script>
 <template>
-  <AppTable  v-model="songs" :isClient="true" :hasSearch="false" :showAddButton="false">
+  <AppTable v-model="songs" :isClient="true" :hasSearch="false" :showAddButton="false">
 
     <AppTableColumn label="tür" width="70">
       <template #default="scope">
         <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 
-            <tippy :interactive="true" theme="dark" :appendTo="getBody">
-                    <AudioIcon v-if="scope.row.song_type == 1" color="var(--sub-600)"/>
-                   <MusicVideoIcon v-if="scope.row.song_type == 2" color="var(--sub-600)"/>
-                    <MusicVideoIcon v-if="scope.row.song_type == 4" color="var(--sub-600)"/>
-                    <RingtoneIcon v-if="scope.row.song_type == 3" color="var(--sub-600)"/>
+          <tippy :interactive="true" theme="dark" :appendTo="getBody">
+            <AudioIcon v-if="scope.row.song_type == 1" color="var(--sub-600)"/>
+            <MusicVideoIcon v-if="scope.row.song_type == 2" color="var(--sub-600)"/>
+            <MusicVideoIcon v-if="scope.row.song_type == 4" color="var(--sub-600)"/>
+            <RingtoneIcon v-if="scope.row.song_type == 3" color="var(--sub-600)"/>
 
-                <template #content>
-                    <p v-if="scope.row.song_type == 1">
-                        {{ __('control.song.audio') }}
-                    </p>
-                    <p v-if="scope.row.song_type == 2">
-                        {{ __('control.song.music_video') }}
-                    </p>
-                    <p v-if="scope.row.song_type == 3">
-                        {{ __('control.song.ringtone') }}
-                    </p>
-                    <p v-if="scope.row.song_type == 4">
-                        {{ __('control.song.apple_video') }}
-                    </p>
+            <template #content>
+              <p v-if="scope.row.song_type == 1">
+                {{ __('control.song.audio') }}
+              </p>
+              <p v-if="scope.row.song_type == 2">
+                {{ __('control.song.music_video') }}
+              </p>
+              <p v-if="scope.row.song_type == 3">
+                {{ __('control.song.ringtone') }}
+              </p>
+              <p v-if="scope.row.song_type == 4">
+                {{ __('control.song.apple_video') }}
+              </p>
 
-                </template>
-            </tippy>
+            </template>
+          </tippy>
         </div>
       </template>
     </AppTableColumn>
@@ -106,50 +104,44 @@ const pauseMusic = (song) => {
 
     <AppTableColumn label="Parça Adı">
       <template #default="scope">
-
         <div class="flex items-center gap-3">
-
           <div>
-            <p class="label-sm c-solid-950"> {{ scope.row.name }} ({{scope.row.version}})</p>
+            <p class="label-sm c-solid-950"> {{ scope.row.name }} ({{ scope.row.version }})</p>
             <p class="paragraph-xs c-sub-600"> ISRC:{{ scope.row.isrc_code }} </p>
           </div>
         </div>
-
       </template>
     </AppTableColumn>
 
-    <AppTableColumn label="Sanatçı" width="200">
+    <AppTableColumn label="Sanatçı">
       <template #default="scope">
-        <div class="flex items-center gap-2">
-          <div class="flex -space-x-3 rtl:space-x-reverse">
-            <template v-for="artist in scope.row.artists">
-              <a class="flex items-center justify-center w-8 h-8  font-medium c-sub-600 label-sm bg-weak-50 border-2 border-white rounded-full  "
-                 :href="route('control.catalog.artists.show', artist.id)">
-                <img :alt="artist.name"
-                     :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)"
-                     class="w-8 h-8 border-2 border-white rounded-full "
-                >
-              </a>
-            </template>
-          </div>
-        </div>
+        <a class="flex items-center gap-2 max-w-[200px] truncate"
+           :href="route('control.catalog.artists.show', scope.row.artist_id)">
+          <img :alt="scope.row.artist_name"
+               :src="scope.row.artist_image ? scope.row.artist_image.thumb : defaultStore.profileImage(scope.row.artist_name)"
+               class="w-8 h-8 border-2 border-white rounded-full shrink-0">
+          <p class="label-sm c-sub-600 truncate">{{ scope.row.artist_name }}</p>
+        </a>
       </template>
     </AppTableColumn>
 
-    <AppTableColumn label="Plak Şirketi" >
+    <AppTableColumn label="Plak Şirketi">
       <template #default="scope">
-        <p class="paragraph-xs c-sub-600">{{scope.row.label_name}}</p>
+        <p class="paragraph-xs c-sub-600">{{ scope.row.label_name }}</p>
 
       </template>
     </AppTableColumn>
-   <AppTableColumn label="Dinlenme Sayısı">
+    <AppTableColumn label="Dinlenme Sayısı">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity}}</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{ scope.row.quantity }}</span>
       </template>
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Oranı%">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity_percentage}}%</span>
+        <span
+            class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{
+            scope.row.quantity_percentage
+          }}%</span>
       </template>
     </AppTableColumn>
 

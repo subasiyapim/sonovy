@@ -16,12 +16,13 @@ class StatisticController extends Controller
 {
     public function index(Request $request)
     {
+
         //gelen tarih formatı m-Y den Y-m-d ye çevir
         [$startDate, $endDate] = $this->getDateRange($request);
-
+        //dd($startDate, $endDate);
         $user = Auth::user();
         $earnings = Earning::query()->where('user_id', $user->id)->whereBetween(
-            'report_date',
+            'sales_date',
             [$startDate, $endDate]
         )->get();
 
@@ -354,7 +355,7 @@ class StatisticController extends Controller
 
         $totalQuantity = $earnings->sum('quantity');
 
-        return $earnings->load('song')
+        return $earnings->load('song', 'artist')
             ->groupBy('song_id')
             ->map(function ($group) use ($totalQuantity) {
                 return [
@@ -363,8 +364,9 @@ class StatisticController extends Controller
                     'name' => $group->first()->release_name,
                     'version' => $group->first()->song->version,
                     'isrc_code' => $group->first()->isrc_code,
+                    'artist_id' => $group->first()->artist->id,
+                    'artist_name' => $group->first()->artist->name,
                     'artist_image' => $group->first()->artist->image,
-                    'artist_name' => $group->first()->artist_name,
                     'label_name' => $group->first()->label_name,
                     'quantity' => $group->sum('quantity'),
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
@@ -382,6 +384,7 @@ class StatisticController extends Controller
         $endDateInput = trim($request->input('end_date'));
 
         if ($request->filled(['start_date', 'end_date'])) {
+
             $startDate = Carbon::createFromFormat('m-Y', $startDateInput)->startOfMonth()->format('Y-m-d');
             $endDate = Carbon::createFromFormat('m-Y', $endDateInput)->endOfMonth()->format('Y-m-d');
         } else {
