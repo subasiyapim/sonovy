@@ -235,6 +235,7 @@ class StatisticController extends Controller
                     'song_type' => $group->first()->song->type,
                     'song_id' => $group->first()->song_id,
                     'name' => $group->first()->release_name,
+                    'artist_image' => $group->first()->artist->image,
                     'artist_name' => $group->first()->artist_name,
                     'label_name' => $group->first()->label_name,
                     'quantity' => $group->sum('quantity'),
