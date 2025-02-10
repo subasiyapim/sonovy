@@ -71,7 +71,7 @@ class StatisticController extends Controller
             ->mapWithKeys(function ($value, $key) {
                 $date = Carbon::createFromFormat('Y-m', $key);
                 $date->setLocale(app()->getLocale());
-                return [$date->translatedFormat('F Y') => $value];
+                return [$date->translatedFormat('M y') => $value];
             });
 
         $average = round($monthlyStats->avg(), 2);
