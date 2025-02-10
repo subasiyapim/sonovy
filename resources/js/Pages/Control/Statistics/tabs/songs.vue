@@ -71,29 +71,29 @@ const pauseMusic = (song) => {
 };
 </script>
 <template>
-  <AppTable :hasSelect="true" v-model="songs" :isClient="true" :hasSearch="false" :showAddButton="false">
+  <AppTable  v-model="songs" :isClient="true" :hasSearch="false" :showAddButton="false">
 
-    <AppTableColumn label="tür" width="60">
+    <AppTableColumn label="tür" width="70">
       <template #default="scope">
         <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 
             <tippy :interactive="true" theme="dark" :appendTo="getBody">
-                    <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
-                   <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
-                    <MusicVideoIcon v-if="scope.row.type == 4" color="var(--sub-600)"/>
-                    <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
+                    <AudioIcon v-if="scope.row.song_type == 1" color="var(--sub-600)"/>
+                   <MusicVideoIcon v-if="scope.row.song_type == 2" color="var(--sub-600)"/>
+                    <MusicVideoIcon v-if="scope.row.song_type == 4" color="var(--sub-600)"/>
+                    <RingtoneIcon v-if="scope.row.song_type == 3" color="var(--sub-600)"/>
 
                 <template #content>
-                    <p v-if="scope.row.type == 1">
+                    <p v-if="scope.row.song_type == 1">
                         {{ __('control.song.audio') }}
                     </p>
-                    <p v-if="scope.row.type == 2">
+                    <p v-if="scope.row.song_type == 2">
                         {{ __('control.song.music_video') }}
                     </p>
-                    <p v-if="scope.row.type == 3">
+                    <p v-if="scope.row.song_type == 3">
                         {{ __('control.song.ringtone') }}
                     </p>
-                    <p v-if="scope.row.type == 4">
+                    <p v-if="scope.row.song_type == 4">
                         {{ __('control.song.apple_video') }}
                     </p>
 
@@ -111,33 +111,13 @@ const pauseMusic = (song) => {
 
           <div>
             <p class="label-sm c-solid-950"> {{ scope.row.name }} ({{scope.row.version}})</p>
-            <p class="paragraph-xs c-sub-600"> {{ scope.row.isrc }} </p>
+            <p class="paragraph-xs c-sub-600"> ISRC:{{ scope.row.isrc_code }} </p>
           </div>
         </div>
 
       </template>
     </AppTableColumn>
-    <AppTableColumn label="Süre">
-      <template #default="scope">
-        <div v-if="currentSong !== scope.row" @click="playSound(scope.row)"
-             class="cursor-pointer flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
-            <PlayCircleFillIcon color="var(--dark-green-500)"/>
-          </div>
-          <p class="label-sm c-strong-950">
-            {{ scope.row.duration ?? '2.35' }}
-          </p>
-        </div>
-        <div v-else @click="pauseMusic(scope.row)" class="cursor-pointer flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
-            <PlayCircleFillIcon color="var(--dark-green-500)"/>
-          </div>
-          <p class="label-sm c-strong-950">
-            Durdur
-          </p>
-        </div>
-      </template>
-    </AppTableColumn>
+
     <AppTableColumn label="Sanatçı" width="200">
       <template #default="scope">
         <div class="flex items-center gap-2">
@@ -155,19 +135,21 @@ const pauseMusic = (song) => {
         </div>
       </template>
     </AppTableColumn>
+
+    <AppTableColumn label="Plak Şirketi" >
+      <template #default="scope">
+        <p class="paragraph-xs c-sub-600">{{scope.row.label_name}}</p>
+
+      </template>
+    </AppTableColumn>
    <AppTableColumn label="Dinlenme Sayısı">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.amount}}</span>
-            <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
-
-                <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
-            </div>
-
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity}}</span>
       </template>
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Oranı%">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.percantage}}%</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity_percentage}}%</span>
       </template>
     </AppTableColumn>
 

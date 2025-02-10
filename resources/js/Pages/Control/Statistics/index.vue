@@ -430,15 +430,18 @@ const onDateChoosen = async (e) => {
     ];
 
     choosenDates.value = dates;
-
-    await router.visit(route(route().current()), {
-      data: {
+     let dataParams = {
         start_date: formatMonthYear(dates[0]),
         end_date: formatMonthYear(dates[1]),
+
         slug: currentTab.value,
-      },
+      };
+      if(params.get('platform')){
+        dataParams['platform'] = params.get('platform');
+      }
+    await router.visit(route(route().current()), {
+      data: dataParams,
       preserveScroll: true,
-      only: ['data']
     });
   } catch (error) {
     console.error('Tarih güncelleme hatası:', error);
@@ -508,32 +511,11 @@ const onTabChange = async (tab) => {
   loading.value = true;
 
   try {
-    // Önce tab'ı güncelle
-    // currentTab.value = tab.slug;
-
-    // URL parametrelerini hazırla
-    const query = new URLSearchParams();
-    query.set('slug', tab.slug);
-
-    // Tarih parametrelerini ekle
-    if (choosenDates.value && choosenDates.value.length === 2) {
-      const startDate = moment(choosenDates.value[0]).format('M-YYYY');
-      const endDate = moment(choosenDates.value[1]).format('M-YYYY');
-      query.set('start_date', startDate);
-      query.set('end_date', endDate);
-    }
-
-    // URL'i güncelle ve veriyi yükle
-    const url = `${route(route().current())}?${query.toString()}`;
-    console.log('Ziyaret edilecek URL:', url);
-
-    await router.visit(route(route().current()), {
-      // preserveState: true,
-      preserveScroll: true,
-      data: {
-        slug: tab.slug,
-      }
-
+     router.visit(route(route().current()), {
+        replace: true,
+        preserveState: true,
+        preserveScroll: true,
+        data: { ...route().params, slug: tab.slug },
     });
   } catch (error) {
     console.error('Tab değişimi hatası:', error);
