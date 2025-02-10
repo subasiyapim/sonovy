@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -128,6 +129,11 @@ class Artist extends Model implements HasMedia
     {
         return $this->belongsToMany(Product::class, 'artist_product', 'artist_id', 'product_id')
             ->withPivot(['is_main']);
+    }
+
+    public function songs(): BelongsToMany
+    {
+        return $this->belongsToMany(Song::class, 'artist_song', 'artist_id', 'song_id');
     }
 
     public function serializeDate(DateTimeInterface $date): string

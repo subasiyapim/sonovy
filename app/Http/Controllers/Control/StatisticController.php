@@ -21,7 +21,8 @@ class StatisticController extends Controller
         [$startDate, $endDate] = $this->getDateRange($request);
 
         $user = Auth::user();
-        $earnings = Earning::query()->where('user_id', $user->id)->whereBetween('report_date', [$startDate, $endDate])->get();
+        $earnings = Earning::query()->where('user_id', $user->id)->whereBetween('report_date',
+            [$startDate, $endDate])->get();
 
         //Aylık Dinleme istatistikleri
         $monthlyStats = $this->getMonthlyListeningStatistics($earnings);
@@ -180,19 +181,19 @@ class StatisticController extends Controller
     private function getTabData($tab, $earnings)
     {
         switch ($tab) {
-        case 'products':
-            return $this->getAlbumsTabData($earnings);
-        case 'artists':
-            return $this->getArtistsTabData($earnings);
-        case 'countries':
-            return $this->getCountriesTabData($earnings);
-        case 'platforms':
-            return $this->getPlatformsTabData($earnings);
-        case 'labels':
-            return $this->getLabelsTabData($earnings);
-        default:
-            return $this->getSongsTabData($earnings);
-       }
+            case 'products':
+                return $this->getAlbumsTabData($earnings);
+            case 'artists':
+                return $this->getArtistsTabData($earnings);
+            case 'countries':
+                return $this->getCountriesTabData($earnings);
+            case 'platforms':
+                return $this->getPlatformsTabData($earnings);
+            case 'labels':
+                return $this->getLabelsTabData($earnings);
+            default:
+                return $this->getSongsTabData($earnings);
+        }
     }
 
     private function getAlbumsTabData($earnings)
@@ -225,34 +226,37 @@ class StatisticController extends Controller
 
     }
 
-    private function getArtistsTabData($earnings    )
+    private function getArtistsTabData($earnings)
     {
-        //artist_name a göre gruplandırılan dataların toplam dinleme sayıları
-        //artist name, spotify_id, apple_id, parça sayısı, toplam dinleme sayısı, toplam dinleme sayısına oranı
+        //artist_id a göre gruplandırılan dataların toplam dinleme sayıları
+        //artist_id, artist_image, artist_name, spotify_id, apple_id, toplam parça sayısı, toplam dinleme sayısı, toplam dinleme sayısına oranı
+
 
         $totalQuantity = $earnings->sum('quantity');
         $spotifyId = Platform::where('code', 'spotify')->first()->id;
         $appleId = Platform::where('code', 'apple')->first()->id;
-        $artists = $earnings->load('artist.platforms')
-            ->groupBy('artist_name')
+
+        $artists = $earnings->load(['artist', 'artist.platforms', 'artist.songs'])
+            ->groupBy('artist_id')
             ->map(function ($group) use ($totalQuantity, $spotifyId, $appleId) {
+                $artist = $group->first()->artist;
                 return [
-                    'artist_name' => $group->first()->artist_name,
-                    'spotify_id' => $group->first()->mainArtists->platforms?->where('platform_id', $spotifyId )->first()->id ?? null,
-                    'apple_id' => $group->first()->mainArtists->platforms?->where('platform_id',$appleId)->first()->id ?? null,
-                    'song_count' => $group->count(),
+                    'artist_id' => $artist->id,
+                    'artist_image' => $artist->image,
+                    'artist_name' => $artist->name,
+                    'spotify_id' => $artist->platforms->where('platform_id', $spotifyId)->first()?->platform_artist_id,
+                    'apple_id' => $artist->platforms->where('platform_id', $appleId)->first()?->platform_artist_id,
+                    'song_count' => $artist->songs->count(),
                     'quantity' => $group->sum('quantity'),
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
                 ];
-            })->sortByDesc('quantity')
+            })
+            ->sortByDesc('quantity')
             ->take(100)
             ->values()
             ->toArray();
 
-
-            dd($artists);
-
-
+        return $artists;
     }
 
     private function getCountriesTabData($earnings)
@@ -327,7 +331,7 @@ class StatisticController extends Controller
     {
         $platforms = Platform::all();
 
-        $product->loadMissing('downloadPlatforms','mainArtists');
+        $product->loadMissing('downloadPlatforms', 'mainArtists');
 
         return Inertia::render('Control/Statistics/product', [
             'product' => $product,
