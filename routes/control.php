@@ -118,8 +118,6 @@ Route::group(
 
         //Statistics Routes
         Route::group(['prefix' => 'statistics', 'as' => 'statistics.'], function () {
-            Route::post('statistics/monthly_streams', [StatisticController::class, 'getMonthlyStreams'])->name('monthly.streams');
-            Route::post('statistics/platform_based_sales', [StatisticController::class, 'getPlatformBasedSales'])->name('platform.sales');
             Route::get('statistics/product/{product}', [StatisticController::class, 'product'])->name('product');
             Route::get('/', [StatisticController::class, 'index'])->name('index');
         });
@@ -176,8 +174,8 @@ Route::group(
         Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
 
-        require __DIR__ . '/control/modules/search.php';
-        require __DIR__ . '/control/modules/last.php';
-        require __DIR__ . '/control/modules/find.php';
+        require __DIR__.'/control/modules/search.php';
+        require __DIR__.'/control/modules/last.php';
+        require __DIR__.'/control/modules/find.php';
     }
 );

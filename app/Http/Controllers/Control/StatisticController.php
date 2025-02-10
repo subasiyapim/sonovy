@@ -302,10 +302,11 @@ class StatisticController extends Controller
         $platforms = $earnings->load('platform')
             ->groupBy('platform_id')
             ->map(function ($group) use ($totalQuantity) {
+                $platform = Platform::where('name', $group->first()->platform)?->first();
                 return [
-                    'platform_id' => $group->first()->platform->id ?? null,
-                    'platform_name' => $group->first()->platform->name ?? null,
-                    'platform_image' => $group->first()->platform->image ?? null,
+                    'platform_id' => $platform->id ?? null,
+                    'platform_name' => $platform?->name ?? $group->first()->platform,
+                    'platform_image' => $platform ? ($platform->icon ?? null) : ($group->first()->platform instanceof Platform ? $group->first()->platform->icon : null),
                     'song_count' => $group->first()->artist->songs->count(),
                     'quantity' => $group->sum('quantity'),
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
@@ -456,15 +457,18 @@ class StatisticController extends Controller
     private function getBestPlatforms($earnings)
     {
         $totalQuantity = $earnings->sum('quantity');
-        return $earnings->groupBy('platform_id')
+        return $earnings->load('platform')->groupBy('platform')
             ->map(function ($group) use ($totalQuantity) {
+
+                $platform = Platform::where('name', $group->first()->platform)?->first();
                 return [
-                    'platform_id' => $group->first()->platform_id,
-                    'platform_name' => $group->first()->platform->name ?? $group->first()->plaform,
+                    'platform_id' => $platform->id ?? null,
+                    'platform_name' => $platform?->name ?? $group->first()->platform,
+                    'icon' => $platform ? ($platform->icon ?? null) : ($group->first()->platform instanceof Platform ? $group->first()->platform->icon : null),
                     'quantity' => $group->sum('quantity'),
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
                 ];
-            })->sortByDesc('quantity')->take(10);
+            })->sortByDesc('quantity')->take(100);
     }
 
     private function getBestCountries($earnings)
@@ -481,6 +485,6 @@ class StatisticController extends Controller
                     'quantity' => $group->sum('quantity'),
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
                 ];
-            })->sortByDesc('quantity')->take(10);
+            })->sortByDesc('quantity')->take(100);
     }
 }
