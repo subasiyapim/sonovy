@@ -22,8 +22,10 @@ class StatisticController extends Controller
         [$startDate, $endDate] = $this->getDateRange($request);
 
         $user = Auth::user();
-        $earnings = Earning::query()->where('user_id', $user->id)->whereBetween('report_date',
-            [$startDate, $endDate])->get();
+        $earnings = Earning::query()->where('user_id', $user->id)->whereBetween(
+            'report_date',
+            [$startDate, $endDate]
+        )->get();
 
         //Aylık Dinleme istatistikleri
         $monthlyStats = $this->getMonthlyListeningStatistics($earnings);
@@ -155,7 +157,6 @@ class StatisticController extends Controller
             });
 
         return $platformMonthlyStats;
-
     }
 
     private function getPlatformSalesCount($earnings, $platform = 'Spotify', Product $product = null)
@@ -228,8 +229,6 @@ class StatisticController extends Controller
             ->toArray();
 
         return $albums;
-
-
     }
 
     private function getArtistsTabData($earnings)
@@ -461,7 +460,7 @@ class StatisticController extends Controller
             ->map(function ($group) use ($totalQuantity) {
                 return [
                     'platform_id' => $group->first()->platform_id,
-                    'platform_name' => $group->first()->platform->name,
+                    'platform_name' => $group->first()->platform->name ?? $group->first()->plaform,
                     'quantity' => $group->sum('quantity'),
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
                 ];

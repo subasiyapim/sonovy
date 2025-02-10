@@ -25,6 +25,7 @@
 
     <template #body>
       <template v-if="!loading">
+       <hr class="mt-4" v-if="product_id && !(props.platformSalesCount && props.platformSalesCount.length > 0)">
         <div v-if="!product_id" class="flex items-center border border-soft-200 rounded mt-6">
             <button @click="onChangeType('audio_streams')" :class="type == 'audio_streams' ? 'bg-weak-50' : 'bg-white' "
                     class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Ses Yayını
@@ -41,6 +42,7 @@
             </button>
 
         </div>
+
          <div v-if="props.platformSalesCount && props.platformSalesCount.length > 0" class="flex flex-col gap-3 p-4">
             <div>
                 <div class="flex items-center mb-2 gap-2">
@@ -75,6 +77,8 @@
             </div>
         </div>
         <div v-else class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
+
+
           <img src="@/assets/images/empty_state_statistic_platform_sales.png">
           <p class="paragraph-sm c-soft-400">{{ __('control.statistics.cards.empty') }}</p>
         </div>

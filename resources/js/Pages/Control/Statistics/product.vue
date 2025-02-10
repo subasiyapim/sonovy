@@ -173,11 +173,8 @@
                 </template>
                 <template #body>
                     <hr class="my-6">
-                    <div v-if="false" class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
-                        <img src="@/assets/images/empty_state_statistic_platforms.png">
-                        <p class="paragraph-sm c-soft-400">{{ __('control.statistics.cards.empty') }}</p>
-                    </div>
-                    <div class="flex flex-col gap-4">
+
+                    <div v-if="platformStatistics && platformStatistics.platforms && (platformStatistics?.platforms?.spotify > 0 || platformStatistics?.platforms?.apple > 0 || platformStatistics?.platforms?.other > 0)" class="flex flex-col gap-4">
                         <div>
                             <PlatformsTotalStreamChart :data="{ platforms: platformStatistics?.platforms || { spotify: 0, apple: 0, other: 0 } }"/>
                         </div>
@@ -206,6 +203,11 @@
                             <div class="w-2 h-2 bg-soft-200 rounded-full"></div>
                         </div>
                         </div>
+                    </div>
+
+                    <div v-else class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
+                        <img src="@/assets/images/empty_state_statistic_platforms.png">
+                        <p class="paragraph-sm c-soft-400">{{ __('control.statistics.cards.empty') }}</p>
                     </div>
                     </template>
             </AppCard>

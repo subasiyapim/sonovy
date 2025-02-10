@@ -31,7 +31,7 @@ const data = computed({
       <template #default="scope">
         <div class="flex items-center gap-3">
            <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200"> <Icon :icon="scope.row.icon" /></div>
-            <p class="label-sm c-strong-950"> {{scope.row.name}}</p>
+            <p class="label-sm c-strong-950"> {{scope.row.platform_name}}</p>
         </div>
 
       </template>
@@ -39,14 +39,14 @@ const data = computed({
 
     <AppTableColumn label="Dinlenme Sayısı">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.amount}}</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity}}</span>
 
 
       </template>
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Oranı%">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.percantage}}%</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity_percentage}}%</span>
       </template>
     </AppTableColumn>
 
