@@ -1,4 +1,6 @@
 <template>
+  <!-- {{Object.keys(usePage().props)}} -->
+
   <AppCard class="flex-1 w-full min-h-40">
     <template #header>
       <div class="flex items-center">
@@ -9,7 +11,6 @@
 
     </template>
     <template #tool>
-
       <div class="flex gap-2">
         <select @change="onPlatformChange" id="platformOptions"
                 class="block w-full ps-3 pe-7  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
@@ -24,25 +25,20 @@
     <template #body>
       <template v-if="!loading">
         <div class="flex items-center border border-soft-200 rounded mt-6">
-          <button @click="onChangeType('audio_streams')" :class="type == 'audio_streams' ? 'bg-weak-50' : 'bg-white' "
-                  class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Audio Str.
-          </button>
-          <button @click="onChangeType('songs')" :class="type == 'songs' ? 'bg-weak-50' : 'bg-white' "
-                  class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Parça
-          </button>
-          <button @click="onChangeType('ringtones')" :class="type == 'ringtones' ? 'bg-weak-50' : 'bg-white' "
-                  class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Zil Sesleri
-          </button>
-          <button @click="onChangeType('videos')" :class="type == 'videos' ? 'bg-weak-50' : 'bg-white' "
-                  class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Videolar
-          </button>
-          <button @click="onChangeType('video_streams')" :class="type == 'video_streams' ? 'bg-weak-50' : 'bg-white' "
-                  class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Video Str.
-          </button>
-          <button @click="onChangeType('product_downloads')"
-                  :class="type == 'product_downloads' ? 'bg-weak-50' : 'bg-white' "
-                  class="flex label-xs c-sub-600 flex-1 flex justify-center py-1">Albüm İnd.
-          </button>
+            <button @click="onChangeType('audio_streams')" :class="type == 'audio_streams' ? 'bg-weak-50' : 'bg-white' "
+                    class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Ses Yayını
+            </button>
+
+            <button @click="onChangeType('ringtones')" :class="type == 'ringtones' ? 'bg-weak-50' : 'bg-white' "
+                    class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Zil Sesleri
+            </button>
+            <button @click="onChangeType('videos')" :class="type == 'videos' ? 'bg-weak-50' : 'bg-white' "
+                    class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Videolar
+            </button>
+            <button @click="onChangeType('apple_video')" :class="type == 'songs' ? 'bg-weak-50' : 'bg-white' "
+                  class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Apple Video
+            </button>
+
         </div>
         <div v-if="false" class="flex flex-col items-center gap-2 justify-center h-full min-h-60">
           <img src="@/assets/images/empty_state_statistic_platform_sales.png">
@@ -113,6 +109,7 @@ import {AppCard} from '@/Components/Cards';
 import {SpotifyIcon, LineChartIcon, Icon} from '@/Components/Icons'
 import {useCrudStore} from '@/Stores/useCrudStore';
 import moment from 'moment';
+import { usePage} from '@inertiajs/vue3';
 
 const props = defineProps({
   platformSalesCount: {
@@ -128,11 +125,12 @@ const props = defineProps({
     default: null
   }
 })
+console.log("sdasd",Object.values(props.platformSalesCount["Music Release"]));
 
 const series = ref([
   {
     name: 'Sales',
-    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    data: ref(Object.values(props.platformSalesCount["Music Release"]))
   },
 ]);
 
@@ -210,15 +208,12 @@ const type = ref('audio_streams');
 
 const onPlatformChange = (e) => {
   platform_id.value = e.target.value;
-  getData();
+//   getData();
 }
-const onPeriodChange = (e) => {
-  period.value = e.target.value;
-  getData();
-}
+
 const onChangeType = (e) => {
   type.value = e;
-  getData();
+//   getData();
 }
 
 
@@ -250,33 +245,6 @@ const getData = async () => {
   loading.value = false;
 }
 
-const updateChart = () => {
-  if (!props.platformSalesCount) return;
-
-  const currentType = type.value;
-  const data = props.platformSalesCount[currentType] || {};
-  const dates = Object.keys(data).sort();
-  const values = dates.map(date => data[date]);
-
-  series.value[0].data = values;
-  chartOptions.value.xaxis.categories = dates;
-
-  // Toplam satışı hesapla
-  totalSales.value = values.reduce((acc, curr) => acc + curr, 0);
-}
-
-watch(() => type.value, () => {
-  updateChart();
-});
-
-watch(() => props.platformSalesCount, () => {
-  updateChart();
-}, { deep: true });
-
-onMounted(() => {
-  console.log('Platform Sales Count:', props.platformSalesCount);
-  updateChart();
-});
 </script>
 
 <style scoped>

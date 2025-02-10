@@ -4,7 +4,7 @@
     <VueApexCharts height="350"  type="donut" :options="chartOptions" :series="series"  />
     <div class="flex flex-col items-center absolute bottom-8 left-0 right-0 mx-auto w-full ">
         <p class="subheading-xs c-sub-600">TOPLAM STREAM</p>
-        <span class="label-xl c-strong-950">{{data.total}}</span>
+        <span class="label-xl c-strong-950">{{Object.values(props.data.platforms).reduce((acc,curr) => curr+acc,0)?.toLocaleString()}}</span>
     </div>
   </div>
 </template>

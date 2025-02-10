@@ -16,25 +16,10 @@ class StatisticController extends Controller
     public function index(Request $request)
     {
         //gelen tarih formatı m-Y den Y-m-d ye çevir
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-
-        $startDate = Carbon::createFromFormat('m-Y', $startDate)->format('Y-m-d');
-        $endDate = Carbon::createFromFormat('m-Y', $endDate)->format('Y-m-d');
-
-        //$startDate null ise 6 ay önce
-        if (!$startDate) {
-            $startDate = Carbon::now()->subMonths(6)->format('Y-m-d');
-        }
-
-        // $endDate null ise şu anki tarih
-        if (!$endDate) {
-            $endDate = Carbon::now()->format('Y-m-d');
-        }
+        [$startDate, $endDate] = $this->getDateRange($request);
 
         $user = Auth::user();
         $earnings = Earning::query()->where('user_id', $user->id)->whereBetween('report_date', [$startDate, $endDate])->get();
-
 
         //Aylık Dinleme istatistikleri
         $monthlyStats = $this->getMonthlyListeningStatistics($earnings);
@@ -42,22 +27,26 @@ class StatisticController extends Controller
         //Aylık İndirme istatistikleri
         $downloadStats = $this->getDownloadStatistics($earnings);
 
-        //Aylık Satış istatistikleri
-        //$salesStats = $this->getSalesStatistics($earnings);
-
         //Aylık Platform istatistikleri
         $platformStats = $this->getPlatformStatistics($earnings);
-
 
         //Platform bazlı satış sayıları
         $platformSalesCount = $this->getPlatformSalesCount($earnings);
 
+        //En iyiler
+
+        $tab = $request->input('slug');
+
+        $tabData = $this->getTabData($tab);
+
         return Inertia::render('Control/Statistics/index', [
             'monthlyStats' => $monthlyStats,
             'downloadCounts' => $downloadStats,
-            //'salesStats' => $salesStats,
             'platformStatistics' => $platformStats,
-            'platformSalesCount' => $platformSalesCount
+            'platformSalesCount' => $platformSalesCount,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+
         ]);
     }
 
@@ -182,5 +171,26 @@ class StatisticController extends Controller
             })->sortKeys();
 
         return $platformSalesCount;
+    }
+
+    private function getTabData($tab)
+    {
+        //
+    }
+
+    private function getDateRange(Request $request): array
+    {
+        $startDateInput = trim($request->input('start_date'));
+        $endDateInput = trim($request->input('end_date'));
+
+        if ($request->filled(['start_date', 'end_date'])) {
+            $startDate = Carbon::createFromFormat('m-Y', $startDateInput)->startOfMonth()->format('Y-m-d');
+            $endDate = Carbon::createFromFormat('m-Y', $endDateInput)->endOfMonth()->format('Y-m-d');
+        } else {
+            $startDate = Carbon::now()->subMonths(6)->startOfMonth()->format('Y-m-d');
+            $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
+        }
+
+        return [$startDate, $endDate];
     }
 }

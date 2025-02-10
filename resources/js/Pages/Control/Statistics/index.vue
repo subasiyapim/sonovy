@@ -47,14 +47,15 @@
               <div class="flex flex-col items-start ">
                 <p class="subheading-2xs c-soft-400">PARÇA İNDİRMELERİ</p>
                 <div class="flex items-center gap-2">
-                  <p class="label-medium c-strong-950">{{ downloadCounts?.['Music Release']?.toLocaleString() || 0 }}</p>
-                  <span v-if="downloadCounts?.['Music Release']?.change != 0" class="label-xs rounded-full px-2 py-0.5"
+                    <p class="label-medium c-strong-950">{{ downloadCounts?.['Music Release']?.toLocaleString() || 0 }}</p>
+
+                    <span v-if="downloadCounts?.['Music Release']?.change" class="label-xs rounded-full px-2 py-0.5"
                         :class="downloadCounts?.['Music Release']?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
-                                    <template v-if="downloadCounts?.['Music Release']?.change > 0">
-                                        +
-                                    </template>
-                                {{ downloadCounts?.['Music Release']?.change || 0 }} %
-                                </span>
+                        <template v-if="downloadCounts?.['Music Release']?.change > 0">
+                            +
+                        </template>
+                    {{ downloadCounts?.['Music Release']?.change || 0 }} %
+                    </span>
                 </div>
               </div>
             </div>
@@ -72,7 +73,7 @@
 
                   <p class="label-medium c-strong-950">{{ downloadCounts?.product?.toLocaleString() || 0 }}</p>
 
-                  <span v-if="downloadCounts?.product?.change != 0" class="label-xs rounded-full px-2 py-0.5 "
+                  <span v-if="downloadCounts?.product?.change" class="label-xs rounded-full px-2 py-0.5 "
                         :class="downloadCounts?.product?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
                                     <template v-if="downloadCounts?.product?.change > 0">
                                         +
@@ -98,7 +99,7 @@
 
                   <p class="label-medium c-strong-950">{{ downloadCounts?.video?.toLocaleString() || 0 }}</p>
 
-                  <span v-if="downloadCounts?.video?.change != 0" class="label-xs rounded-full px-2 py-0.5"
+                  <span v-if="downloadCounts?.video?.change" class="label-xs rounded-full px-2 py-0.5"
                         :class="downloadCounts?.video?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
                                     <template v-if="downloadCounts?.video?.change > 0">
                                         +
