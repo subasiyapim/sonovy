@@ -244,7 +244,7 @@ class StatisticController extends Controller
                 ];
             })
             ->sortByDesc('quantity')
-            ->take(15)
+            ->take(100)
             ->values()
             ->toArray();
     }
