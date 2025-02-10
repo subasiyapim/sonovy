@@ -47,14 +47,15 @@
               <div class="flex flex-col items-start ">
                 <p class="subheading-2xs c-soft-400">PARÇA İNDİRMELERİ</p>
                 <div class="flex items-center gap-2">
-                  <p class="label-medium c-strong-950">{{ downloadCounts?.['Music Release']?.toLocaleString() || 0 }}</p>
-                  <span v-if="downloadCounts?.['Music Release']?.change != 0" class="label-xs rounded-full px-2 py-0.5"
+                    <p class="label-medium c-strong-950">{{ downloadCounts?.['Music Release']?.toLocaleString() || 0 }}</p>
+
+                    <span v-if="downloadCounts?.['Music Release']?.change" class="label-xs rounded-full px-2 py-0.5"
                         :class="downloadCounts?.['Music Release']?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
-                                    <template v-if="downloadCounts?.['Music Release']?.change > 0">
-                                        +
-                                    </template>
-                                {{ downloadCounts?.['Music Release']?.change || 0 }} %
-                                </span>
+                        <template v-if="downloadCounts?.['Music Release']?.change > 0">
+                            +
+                        </template>
+                    {{ downloadCounts?.['Music Release']?.change || 0 }} %
+                    </span>
                 </div>
               </div>
             </div>
@@ -72,7 +73,7 @@
 
                   <p class="label-medium c-strong-950">{{ downloadCounts?.product?.toLocaleString() || 0 }}</p>
 
-                  <span v-if="downloadCounts?.product?.change != 0" class="label-xs rounded-full px-2 py-0.5 "
+                  <span v-if="downloadCounts?.product?.change" class="label-xs rounded-full px-2 py-0.5 "
                         :class="downloadCounts?.product?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
                                     <template v-if="downloadCounts?.product?.change > 0">
                                         +
@@ -98,7 +99,7 @@
 
                   <p class="label-medium c-strong-950">{{ downloadCounts?.video?.toLocaleString() || 0 }}</p>
 
-                  <span v-if="downloadCounts?.video?.change != 0" class="label-xs rounded-full px-2 py-0.5"
+                  <span v-if="downloadCounts?.video?.change" class="label-xs rounded-full px-2 py-0.5"
                         :class="downloadCounts?.video?.change > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
                                     <template v-if="downloadCounts?.video?.change > 0">
                                         +
@@ -140,7 +141,7 @@
                 <SpotifyIcon width="32" height="32"/>
                 <p class="paragraph-xs c-sub-600">Spotify</p>
                 <p class="label-sm c-strong-950">{{ (platformStatistics?.platforms?.spotify || 0).toLocaleString() }}</p>
-                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div class="w-2 h<-2 bg-blue-500 rounded-full"></div>
               </div>
               <div class="bg-soft-200 w-[1px] h-full"></div>
               <div class="flex-1 flex flex-col items-center gap-2">
@@ -162,8 +163,7 @@
           </div>
         </template>
       </AppCard>
-
-      <PlatformBasedSalesCountChart :platform-sales-count="platformSalesCount || {}"/>
+      <PlatformBasedSalesCountChart :platforms="platforms" :platform-sales-count="platformSalesCount || {}"/>
 
 
     </div>
@@ -334,6 +334,9 @@ const props = defineProps({
   },
   tab: {
     default: () => ({})
+  },
+  platforms:{
+
   }
 })
 
@@ -427,15 +430,18 @@ const onDateChoosen = async (e) => {
     ];
 
     choosenDates.value = dates;
-
-    await router.visit(route(route().current()), {
-      data: {
+     let dataParams = {
         start_date: formatMonthYear(dates[0]),
         end_date: formatMonthYear(dates[1]),
+
         slug: currentTab.value,
-      },
+      };
+      if(params.get('platform')){
+        dataParams['platform'] = params.get('platform');
+      }
+    await router.visit(route(route().current()), {
+      data: dataParams,
       preserveScroll: true,
-      only: ['data']
     });
   } catch (error) {
     console.error('Tarih güncelleme hatası:', error);
@@ -505,32 +511,11 @@ const onTabChange = async (tab) => {
   loading.value = true;
 
   try {
-    // Önce tab'ı güncelle
-    // currentTab.value = tab.slug;
-
-    // URL parametrelerini hazırla
-    const query = new URLSearchParams();
-    query.set('slug', tab.slug);
-
-    // Tarih parametrelerini ekle
-    if (choosenDates.value && choosenDates.value.length === 2) {
-      const startDate = moment(choosenDates.value[0]).format('M-YYYY');
-      const endDate = moment(choosenDates.value[1]).format('M-YYYY');
-      query.set('start_date', startDate);
-      query.set('end_date', endDate);
-    }
-
-    // URL'i güncelle ve veriyi yükle
-    const url = `${route(route().current())}?${query.toString()}`;
-    console.log('Ziyaret edilecek URL:', url);
-
-    await router.visit(route(route().current()), {
-      // preserveState: true,
-      preserveScroll: true,
-      data: {
-        slug: tab.slug,
-      }
-
+     router.visit(route(route().current()), {
+        replace: true,
+        preserveState: true,
+        preserveScroll: true,
+        data: { ...route().params, slug: tab.slug },
     });
   } catch (error) {
     console.error('Tab değişimi hatası:', error);

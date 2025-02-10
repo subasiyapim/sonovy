@@ -42,6 +42,7 @@ class StatisticController extends Controller
 
         $tabData = $this->getTabData($tab, $earnings);
 
+
         return Inertia::render('Control/Statistics/index', [
             'monthlyStats' => $monthlyStats,
             'downloadCounts' => $downloadStats,
@@ -154,7 +155,6 @@ class StatisticController extends Controller
             });
 
         return $platformMonthlyStats;
-
     }
 
     private function getPlatformSalesCount($earnings)
