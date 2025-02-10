@@ -49,7 +49,7 @@ class StatisticController extends Controller
             'startDate' => $startDate,
             'endDate' => $endDate,
             'platforms' => $this->getPlatforms($earnings),
-            'tabData' => $tabData,
+            'tab' => $tabData,
         ]);
     }
 
@@ -221,11 +221,32 @@ class StatisticController extends Controller
 
     private function getSongsTabData($earnings)
     {
-        $earnings = $earnings->load('song');
-        $songs = $earnings->pluck('song')->unique('id');
-        return $songs;
+        //en çok dinlenen 20 şarkı sayısını bulmak için quantity toplamlarını al
+        //verilecek format
+        //song_type, song_id, name, artist_name,label_name quantity, toplam dinleme sayısına oranı
+        //quantity, toplam dinleme sayısına oranı = quantity / toplam dinleme sayısı
 
-        dd($songs);
+        $totalQuantity = $earnings->sum('quantity');
+
+        return $earnings->load('song')
+            ->groupBy('song_id')
+            ->map(function ($group) use ($totalQuantity) {
+                return [
+                    'song_type' => $group->first()->song->type,
+                    'song_id' => $group->first()->song_id,
+                    'name' => $group->first()->release_name,
+                    'isrc_code' => $group->first()->isrc_code,
+                    'artist_image' => $group->first()->artist->image,
+                    'artist_name' => $group->first()->artist_name,
+                    'label_name' => $group->first()->label_name,
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })
+            ->sortByDesc('quantity')
+            ->take(100)
+            ->values()
+            ->toArray();
     }
 
     private function getDateRange(Request $request, $defaultMonths = 6): array
