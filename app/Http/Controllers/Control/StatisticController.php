@@ -430,6 +430,17 @@ class StatisticController extends Controller
 
         $platformSalesCount = $this->getPlatformSalesCount($product->earnings, $platform, $product);
 
+        $slug = $request->input('slug');
+
+        switch ($slug) {
+            case 'countries':
+                $tab = $this->getBestCountries($product->earnings);
+                break;
+            default:
+                $tab = $this->getBestPlatforms($product->earnings);
+                break;
+        }
+
         return Inertia::render('Control/Statistics/product', [
             'product' => $product,
             'platforms' => $platforms,
@@ -439,6 +450,38 @@ class StatisticController extends Controller
             'platformSalesCount' => $platformSalesCount,
             'startDate' => $startDate,
             'endDate' => $endDate,
+            'tab' => $tab
         ]);
+    }
+
+    private function getBestPlatforms($earnings)
+    {
+        $totalQuantity = $earnings->sum('quantity');
+        return $earnings->groupBy('platform_id')
+            ->map(function ($group) use ($totalQuantity) {
+                return [
+                    'platform_id' => $group->first()->platform_id,
+                    'platform_name' => $group->first()->platform->name,
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })->sortByDesc('quantity')->take(10);
+    }
+
+    private function getBestCountries($earnings)
+    {
+        $totalQuantity = $earnings->sum('quantity');
+        return $earnings->groupBy('country')
+            ->map(function ($group) use ($totalQuantity) {
+                $countries = Country::whereIn('name', $group->pluck('country'))->get();
+                $country = $countries->where('name', $group->first()->country)->first();
+                return [
+                    'country' => $country->name ?? $group->first()->country,
+                    'country_id' => $country->id ?? null,
+                    'emoji' => $country->emoji ?? null,
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })->sortByDesc('quantity')->take(10);
     }
 }
