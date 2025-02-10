@@ -242,6 +242,12 @@ class Product extends Model implements HasMedia
             ->withPivot('status', 'created_at', 'updated_at');
     }
 
+    public function earnings(): HasMany
+    {
+        return $this->hasMany(Earning::class, 'upc_code', 'upc_code');
+    }
+
+
     public function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');

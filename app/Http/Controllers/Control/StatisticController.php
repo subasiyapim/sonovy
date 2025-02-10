@@ -391,15 +391,33 @@ class StatisticController extends Controller
     }
 
 
-    public function product(Product $product, Request $request)
+        public function product(Product $product, Request $request)
     {
         $platforms = Platform::all();
+        $spotifyId = Platform::where('code', 'spotify')->first()->id;
+        $appleId = Platform::where('code', 'apple')->first()->id;
+        $otherIds = Platform::whereNotIn('code', ['spotify', 'apple'])->first()->id;
 
-        $product->loadMissing('downloadPlatforms','mainArtists');
+        $product->loadMissing('downloadPlatforms','mainArtists', 'songs', 'earnings');
+
+        $downloadCounts = [
+            'songs' => $product->earnings->where('release_type', 'Music')?->sum('quantity'),
+            'albums' => $product->earnings->where('release_type', 'Album')?->sum('quantity'),
+            'videos' => $product->earnings->where('release_type', 'Video')?->sum('quantity'),
+        ];
+
+        $platformStats = [
+            'total' => $product->earnings->sum('quantity'),
+            'spotify' => $product->earnings->where('platform_id', $spotifyId)->sum('quantity'),
+            'apple' => $product->earnings->where('platform_id', $appleId)->sum('quantity'),
+            'other' => $product->earnings->where('platform_id', $otherIds)->sum('quantity'),
+        ];
 
         return Inertia::render('Control/Statistics/product', [
             'product' => $product,
             'platforms' => $platforms,
+            'downloadCounts' => $downloadCounts,
+            'platformStats' => $platformStats,
         ]);
     }
 }
