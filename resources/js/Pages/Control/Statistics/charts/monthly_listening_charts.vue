@@ -38,7 +38,7 @@
       <VueApexCharts
           v-if="!loading && series?.[0]?.data?.length > 0"
           type="area"
-          height="150"
+          height="200"
           :options="chartOptions"
           :series="series"
       ></VueApexCharts>

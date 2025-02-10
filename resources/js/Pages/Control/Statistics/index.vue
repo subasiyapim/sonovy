@@ -38,7 +38,7 @@
       <MonthlyListeningChart :monthly-stats="monthlyStats"/>
 
       <div class="flex flex-col gap-3">
-        <AppCard>
+        <AppCard class="flex-1">
           <template #header>
             <div class="flex items-center gap-2">
               <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
@@ -61,7 +61,7 @@
             </div>
           </template>
         </AppCard>
-        <AppCard>
+        <AppCard class="flex-1">
           <template #header>
             <div class="flex items-center gap-2">
               <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
@@ -86,7 +86,7 @@
           </template>
         </AppCard>
 
-        <AppCard>
+        <AppCard class="flex-1">
           <template #header>
             <div class="flex items-center gap-2">
               <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
