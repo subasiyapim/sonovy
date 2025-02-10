@@ -16,7 +16,7 @@ class StatisticController extends Controller
     public function index(Request $request)
     {
         //gelen tarih formatı m-Y den Y-m-d ye çevir
-            $startDate = $request->input('start_date');
+        $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
         $startDate = Carbon::createFromFormat('m-Y', $startDate)->format('Y-m-d');
@@ -161,7 +161,6 @@ class StatisticController extends Controller
             });
 
         return $platformMonthlyStats;
-
     }
 
     private function getPlatformSalesCount($earnings)
@@ -184,5 +183,4 @@ class StatisticController extends Controller
 
         return $platformSalesCount;
     }
-
 }
