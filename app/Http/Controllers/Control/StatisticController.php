@@ -205,7 +205,8 @@ class StatisticController extends Controller
                 return [
                     'album_type' => $group->first()->product->type,
                     'album_id' => $group->first()->product->id,
-                    'album_name' => $group->first()->album_name,
+                    'album_image' => $group->first()->product->image,
+                    'album_name' => $group->first()->release_name,
                     'upc_code' => $group->first()->upc_code,
                     'artist_name' => $group->first()->artist_name,
                     'label_name' => $group->first()->label_name,
@@ -226,7 +227,32 @@ class StatisticController extends Controller
 
     private function getArtistsTabData($earnings    )
     {
-        //
+        //artist_name a göre gruplandırılan dataların toplam dinleme sayıları
+        //artist name, spotify_id, apple_id, parça sayısı, toplam dinleme sayısı, toplam dinleme sayısına oranı
+
+        $totalQuantity = $earnings->sum('quantity');
+        $spotifyId = Platform::where('code', 'spotify')->first()->id;
+        $appleId = Platform::where('code', 'apple')->first()->id;
+        $artists = $earnings->load('artist.platforms')
+            ->groupBy('artist_name')
+            ->map(function ($group) use ($totalQuantity, $spotifyId, $appleId) {
+                return [
+                    'artist_name' => $group->first()->artist_name,
+                    'spotify_id' => $group->first()->mainArtists->platforms?->where('platform_id', $spotifyId )->first()->id ?? null,
+                    'apple_id' => $group->first()->mainArtists->platforms?->where('platform_id',$appleId)->first()->id ?? null,
+                    'song_count' => $group->count(),
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })->sortByDesc('quantity')
+            ->take(100)
+            ->values()
+            ->toArray();
+
+
+            dd($artists);
+
+
     }
 
     private function getCountriesTabData($earnings)
