@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Auth;
 
 class StatisticController extends Controller
 {
-
-
     public function index(Request $request)
     {
         //gelen tarih formatı m-Y den Y-m-d ye çevir
