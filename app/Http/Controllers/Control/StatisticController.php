@@ -21,8 +21,7 @@ class StatisticController extends Controller
         [$startDate, $endDate] = $this->getDateRange($request);
 
         $user = Auth::user();
-        $earnings = Earning::query()->where('user_id', $user->id)->whereBetween('report_date',
-            [$startDate, $endDate])->get();
+        $earnings = Earning::query()->where('user_id', $user->id)->whereBetween('report_date', [$startDate, $endDate])->get();
 
         //Aylık Dinleme istatistikleri
         $monthlyStats = $this->getMonthlyListeningStatistics($earnings);
@@ -41,7 +40,6 @@ class StatisticController extends Controller
         $tab = $request->input('slug');
 
         $tabData = $this->getTabData($tab, $earnings);
-
 
         return Inertia::render('Control/Statistics/index', [
             'monthlyStats' => $monthlyStats,
@@ -155,6 +153,7 @@ class StatisticController extends Controller
             });
 
         return $platformMonthlyStats;
+
     }
 
     private function getPlatformSalesCount($earnings)
@@ -181,19 +180,19 @@ class StatisticController extends Controller
     private function getTabData($tab, $earnings)
     {
         switch ($tab) {
-            case 'products':
-                return $this->getAlbumsTabData($earnings);
-            case 'artists':
-                return $this->getArtistsTabData($earnings);
-            case 'countries':
-                return $this->getCountriesTabData($earnings);
-            case 'platforms':
-                return $this->getPlatformsTabData($earnings);
-            case 'labels':
-                return $this->getLabelsTabData($earnings);
-            default:
-                return $this->getSongsTabData($earnings);
-        }
+        case 'products':
+            return $this->getAlbumsTabData($earnings);
+        case 'artists':
+            return $this->getArtistsTabData($earnings);
+        case 'countries':
+            return $this->getCountriesTabData($earnings);
+        case 'platforms':
+            return $this->getPlatformsTabData($earnings);
+        case 'labels':
+            return $this->getLabelsTabData($earnings);
+        default:
+            return $this->getSongsTabData($earnings);
+       }
     }
 
     private function getAlbumsTabData($earnings)
@@ -261,17 +260,82 @@ class StatisticController extends Controller
 
     private function getCountriesTabData($earnings)
     {
-        //
+        //country ye göre gruplandırılan dataların toplam dinleme sayıları
+        //country, country_image song_count quantity, quantity_percentage
+
+        $totalQuantity = $earnings->sum('quantity');
+
+        $countries = $earnings->load('country')
+            ->groupBy('country_id')
+            ->map(function ($group) use ($totalQuantity) {
+                return [
+                    'country' => $group->first()->country->name,
+                    'country_image' => $group->first()->country->emoji,
+                    'song_count' => $group->first()->artist->songs->count(),
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })
+            ->sortByDesc('quantity')
+            ->take(100)
+            ->values()
+            ->toArray();
+
+        return $countries;
     }
 
     private function getPlatformsTabData($earnings)
     {
-        //
+        //platform_id a göre gruplandırılan dataların toplam dinleme sayıları
+        //platform_id, platform_name, platform_image song_count, quantity, quantity_percentage
+
+        $totalQuantity = $earnings->sum('quantity');
+
+        $platforms = $earnings->load('platform')
+            ->groupBy('platform_id')
+            ->map(function ($group) use ($totalQuantity) {
+                return [
+                    'platform_id' => $group->first()->platform->id,
+                    'platform_name' => $group->first()->platform->name,
+                    'platform_image' => $group->first()->platform->image,
+                    'song_count' => $group->first()->artist->songs->count(),
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })
+            ->sortByDesc('quantity')
+            ->take(100)
+            ->values()
+            ->toArray();
+
+        return $platforms;
     }
 
     private function getLabelsTabData($earnings)
     {
-        //
+        //label_id a göre gruplandırılan dataların toplam dinleme sayıları
+        //label_id, label_name, label_image song_count, quantity, quantity_percentage
+
+        $totalQuantity = $earnings->sum('quantity');
+
+        $labels = $earnings->load('label')
+            ->groupBy('label_id')
+            ->map(function ($group) use ($totalQuantity) {
+                return [
+                    'label_id' => $group->first()->label->id,
+                    'label_name' => $group->first()->label->name,
+                    'label_image' => $group->first()->label->image,
+                    'song_count' => $group->first()->artist->songs->count(),
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })
+            ->sortByDesc('quantity')
+            ->take(100)
+            ->values()
+            ->toArray();
+
+        return $labels;
     }
 
     private function getSongsTabData($earnings)
@@ -331,7 +395,7 @@ class StatisticController extends Controller
     {
         $platforms = Platform::all();
 
-        $product->loadMissing('downloadPlatforms', 'mainArtists');
+        $product->loadMissing('downloadPlatforms','mainArtists');
 
         return Inertia::render('Control/Statistics/product', [
             'product' => $product,
