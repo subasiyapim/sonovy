@@ -117,8 +117,6 @@ const props = defineProps({
     default: () => ({})
   },
   platforms: {
-    type: Array,
-    default: () => []
   },
   product_id: {
     type: [String, Number],

@@ -141,7 +141,7 @@
                 <SpotifyIcon width="32" height="32"/>
                 <p class="paragraph-xs c-sub-600">Spotify</p>
                 <p class="label-sm c-strong-950">{{ (platformStatistics?.platforms?.spotify || 0).toLocaleString() }}</p>
-                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div class="w-2 h<-2 bg-blue-500 rounded-full"></div>
               </div>
               <div class="bg-soft-200 w-[1px] h-full"></div>
               <div class="flex-1 flex flex-col items-center gap-2">
@@ -163,8 +163,7 @@
           </div>
         </template>
       </AppCard>
-
-      <PlatformBasedSalesCountChart :platform-sales-count="platformSalesCount || {}"/>
+      <PlatformBasedSalesCountChart :platforms="platforms" :platform-sales-count="platformSalesCount || {}"/>
 
 
     </div>
@@ -335,6 +334,9 @@ const props = defineProps({
   },
   tab: {
     default: () => ({})
+  },
+  platforms:{
+
   }
 })
 
