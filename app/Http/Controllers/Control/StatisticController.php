@@ -156,12 +156,17 @@ class StatisticController extends Controller
 
     }
 
-    private function getPlatformSalesCount($earnings)
+    private function getPlatformSalesCount($earnings, $platform = 'Spotify', Product $product = null)
     {
         //release_type a göre gruplandırılan dataların toplam satış sayıları aylık gruplandırılmış quantity toplamları
         //Aylık Dinleme istatistikleri ile aynı mantık
 
+        if ($product) {
+            $earnings = $earnings->where('upc_code', $product->upc_code);
+        }
+
         $platformSalesCount = $earnings->where('sales_type', 'Download')
+            ->where('platform', $platform)
             ->groupBy(['release_type', 'report_date'])
             ->map(function ($releaseTypeGroup) {
                 return $releaseTypeGroup->map(function ($dateGroup) {
@@ -393,6 +398,10 @@ class StatisticController extends Controller
 
         public function product(Product $product, Request $request)
     {
+
+        $platform = $request->input('platform') ?? 'Spotify';
+
+        $spotifyId = Platform::where('code', 'spotify')->first()->id;
         $platforms = Platform::all();
         $spotifyId = Platform::where('code', 'spotify')->first()->id;
         $appleId = Platform::where('code', 'apple')->first()->id;
@@ -413,11 +422,14 @@ class StatisticController extends Controller
             'other' => $product->earnings->where('platform_id', $otherIds)->sum('quantity'),
         ];
 
+        $platformSalesCount = $this->getPlatformSalesCount($product->earnings, $platform, $product);
+
         return Inertia::render('Control/Statistics/product', [
             'product' => $product,
             'platforms' => $platforms,
             'downloadCounts' => $downloadCounts,
             'platformStats' => $platformStats,
+            'platformSalesCount' => $platformSalesCount,
         ]);
     }
 }
