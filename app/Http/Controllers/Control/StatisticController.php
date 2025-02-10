@@ -54,7 +54,7 @@ class StatisticController extends Controller
     }
 
     //Aylık dinleme istatistikleri
-    private function getMonthlyListeningStatistics($earnings)
+    private function getMonthlyListeningStatistics($earnings, Product $product = null)
     {
         $monthlyStats = $earnings->where('sales_type', 'Stream')
             ->groupBy('report_date')
@@ -398,7 +398,7 @@ class StatisticController extends Controller
 
         public function product(Product $product, Request $request)
     {
-
+        [$startDate, $endDate] = $this->getDateRange($request);
         $platform = $request->input('platform') ?? 'Spotify';
 
         $spotifyId = Platform::where('code', 'spotify')->first()->id;
@@ -408,6 +408,8 @@ class StatisticController extends Controller
         $otherIds = Platform::whereNotIn('code', ['spotify', 'apple'])->first()->id;
 
         $product->loadMissing('downloadPlatforms','mainArtists', 'songs', 'earnings');
+
+        $monthlyStats = $this->getMonthlyListeningStatistics($product->earnings, $product);
 
         $downloadCounts = [
             'songs' => $product->earnings->where('release_type', 'Music')?->sum('quantity'),
@@ -429,7 +431,10 @@ class StatisticController extends Controller
             'platforms' => $platforms,
             'downloadCounts' => $downloadCounts,
             'platformStats' => $platformStats,
+            'monthlyStats' => $monthlyStats,
             'platformSalesCount' => $platformSalesCount,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
         ]);
     }
 }
