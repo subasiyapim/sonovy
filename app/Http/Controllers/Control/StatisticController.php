@@ -72,7 +72,7 @@ class StatisticController extends Controller
                 $date = Carbon::createFromFormat('Y-m', $key);
                 $date->setLocale(app()->getLocale());
                 return [$date->translatedFormat('M y') => $value];
-            });
+            })->sortKeys();
 
         $average = round($monthlyStats->avg(), 2);
         $total = $monthlyStats->sum();
