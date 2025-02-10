@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
 use App\Models\Earning;
+use App\Models\Platform;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class StatisticController extends Controller
 
         $tab = $request->input('slug');
 
-        $tabData = $this->getTabData($tab);
+        $tabData = $this->getTabData($tab, $earnings);
 
         return Inertia::render('Control/Statistics/index', [
             'monthlyStats' => $monthlyStats,
@@ -45,8 +46,9 @@ class StatisticController extends Controller
             'platformStatistics' => $platformStats,
             'platformSalesCount' => $platformSalesCount,
             'startDate' => $startDate,
-            'endDate' => $endDate
-
+            'endDate' => $endDate,
+            'platforms' => $this->getPlatforms($earnings),
+            'tabData' => $tabData,
         ]);
     }
 
@@ -173,12 +175,59 @@ class StatisticController extends Controller
         return $platformSalesCount;
     }
 
-    private function getTabData($tab)
+    private function getTabData($tab, $earnings)
+    {
+        switch ($tab) {
+            case 'products':
+                return $this->getAlbumsTabData($earnings);
+            case 'artists':
+                return $this->getArtistsTabData($earnings);
+            case 'countries':
+                return $this->getCountriesTabData($earnings);
+            case 'platforms':
+                return $this->getPlatformsTabData($earnings);
+            case 'labels':
+                return $this->getLabelsTabData($earnings);
+            default:
+                return $this->getSongsTabData($earnings);
+        }
+    }
+
+    private function getAlbumsTabData($earnings)
     {
         //
     }
 
-    private function getDateRange(Request $request): array
+    private function getArtistsTabData($earnings)
+    {
+        //
+    }
+
+    private function getCountriesTabData($earnings)
+    {
+        //
+    }
+
+    private function getPlatformsTabData($earnings)
+    {
+        //
+    }
+
+    private function getLabelsTabData($earnings)
+    {
+        //
+    }
+
+    private function getSongsTabData($earnings)
+    {
+        $earnings = $earnings->load('song');
+        $songs = $earnings->pluck('song')->unique('id');
+        return $songs;
+
+        dd($songs);
+    }
+
+    private function getDateRange(Request $request, $defaultMonths = 6): array
     {
         $startDateInput = trim($request->input('start_date'));
         $endDateInput = trim($request->input('end_date'));
@@ -187,10 +236,15 @@ class StatisticController extends Controller
             $startDate = Carbon::createFromFormat('m-Y', $startDateInput)->startOfMonth()->format('Y-m-d');
             $endDate = Carbon::createFromFormat('m-Y', $endDateInput)->endOfMonth()->format('Y-m-d');
         } else {
-            $startDate = Carbon::now()->subMonths(6)->startOfMonth()->format('Y-m-d');
+            $startDate = Carbon::now()->subMonths($defaultMonths)->startOfMonth()->format('Y-m-d');
             $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
         return [$startDate, $endDate];
+    }
+
+    private function getPlatforms($earnings)
+    {
+        return Platform::all();
     }
 }
