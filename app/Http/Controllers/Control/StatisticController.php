@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Control;
 use App\Http\Controllers\Controller;
 use App\Models\Earning;
 use App\Models\Platform;
+use App\Models\Product;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -196,7 +197,31 @@ class StatisticController extends Controller
 
     private function getAlbumsTabData($earnings)
     {
-        //
+        $totalQuantity = $earnings->sum('quantity');
+
+        $albums = $earnings->load('product')
+            ->groupBy('upc_code')
+            ->map(function ($group) use ($totalQuantity) {
+                return [
+                    'album_type' => $group->first()->product->type,
+                    'album_id' => $group->first()->product->id,
+                    'album_name' => $group->first()->album_name,
+                    'upc_code' => $group->first()->upc_code,
+                    'artist_name' => $group->first()->artist_name,
+                    'label_name' => $group->first()->label_name,
+                    'release_date' => $group->first()->sales_date,
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })
+            ->sortByDesc('quantity')
+            ->take(100)
+            ->values()
+            ->toArray();
+
+        return $albums;
+
+
     }
 
     private function getArtistsTabData($earnings)
@@ -235,6 +260,7 @@ class StatisticController extends Controller
                     'song_type' => $group->first()->song->type,
                     'song_id' => $group->first()->song_id,
                     'name' => $group->first()->release_name,
+                    'version' => $group->first()->song->version,
                     'isrc_code' => $group->first()->isrc_code,
                     'artist_image' => $group->first()->artist->image,
                     'artist_name' => $group->first()->artist_name,
@@ -268,5 +294,18 @@ class StatisticController extends Controller
     private function getPlatforms($earnings)
     {
         return Platform::all();
+    }
+
+
+    public function product(Product $product, Request $request)
+    {
+        $platforms = Platform::all();
+
+        $product->loadMissing('downloadPlatforms','mainArtists');
+
+        return Inertia::render('Control/Statistics/product', [
+            'product' => $product,
+            'platforms' => $platforms,
+        ]);
     }
 }

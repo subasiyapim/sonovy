@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Control\BroadcastController;
 use App\Http\Controllers\Control\DashboardController;
 use App\Http\Controllers\Control\ArtistController;
 use App\Http\Controllers\Control\ArtistBranchController;
@@ -17,9 +16,7 @@ use App\Http\Controllers\Control\ProductController;
 use App\Http\Controllers\Control\SongController;
 use App\Http\Controllers\Control\PaymentController;
 use App\Http\Controllers\Control\StatisticController;
-use App\Http\Controllers\Control\FinanceAnalysController;
 use App\Http\Controllers\Control\FinanceAnalysisController;
-use App\Http\Controllers\Control\EarningReportController;
 
 Route::group(
     [
@@ -113,11 +110,6 @@ Route::group(
             Route::get('analysis/show', [FinanceAnalysisController::class, 'show'])->name('analysis.show');
         });
 
-        //Statistics Routes
-        Route::group(['prefix' => 'statistics', 'as' => 'statistics.'], function () {
-            Route::get('/', [StatisticController::class, 'index'])->name('index');
-        });
-
 
         Route::group(['prefix' => 'bank', 'as' => 'bank.'], function () {
             Route::post('account', [BankController::class, 'store'])->name('account.store');
@@ -129,7 +121,7 @@ Route::group(
             Route::post('statistics/monthly_streams', [StatisticController::class, 'getMonthlyStreams'])->name('monthly.streams');
             Route::post('statistics/platform_based_sales', [StatisticController::class, 'getPlatformBasedSales'])->name('platform.sales');
             Route::get('statistics/product/{product}', [StatisticController::class, 'product'])->name('product');
-            Route::get('statistics', [StatisticController::class, 'index'])->name('index');
+            Route::get('/', [StatisticController::class, 'index'])->name('index');
         });
 
         Route::resource('roles', RoleController::class)->names('roles');
