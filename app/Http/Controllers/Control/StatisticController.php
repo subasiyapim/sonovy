@@ -60,7 +60,7 @@ class StatisticController extends Controller
     private function getMonthlyListeningStatistics($earnings, Product $product = null)
     {
         $monthlyStats = $earnings->where('sales_type', 'Stream')
-            ->groupBy('report_date')
+            ->groupBy('sales_date')
             ->map(function ($item) {
                 return $item->sum('quantity');
             })
@@ -169,7 +169,7 @@ class StatisticController extends Controller
 
         $platformSalesCount = $earnings->where('sales_type', 'Download')
             ->where('platform', $platform)
-            ->groupBy(['release_type', 'report_date'])
+            ->groupBy(['release_type', 'sales_date'])
             ->map(function ($releaseTypeGroup) {
                 return $releaseTypeGroup->map(function ($dateGroup) {
                     return $dateGroup->sum('quantity');
