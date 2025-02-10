@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Earning;
 use App\Models\Platform;
 use App\Models\Product;
+use App\Models\System\Country;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class StatisticController extends Controller
         [$startDate, $endDate] = $this->getDateRange($request);
 
         $user = Auth::user();
-        $earnings = Earning::query()->where('user_id', $user->id)->whereBetween('report_date', [$startDate, $endDate])->get();
+        $earnings = Earning::query()->where('user_id', $user->id)->whereBetween('report_date',
+            [$startDate, $endDate])->get();
 
         //Aylık Dinleme istatistikleri
         $monthlyStats = $this->getMonthlyListeningStatistics($earnings);
@@ -185,19 +187,19 @@ class StatisticController extends Controller
     private function getTabData($tab, $earnings)
     {
         switch ($tab) {
-        case 'products':
-            return $this->getAlbumsTabData($earnings);
-        case 'artists':
-            return $this->getArtistsTabData($earnings);
-        case 'countries':
-            return $this->getCountriesTabData($earnings);
-        case 'platforms':
-            return $this->getPlatformsTabData($earnings);
-        case 'labels':
-            return $this->getLabelsTabData($earnings);
-        default:
-            return $this->getSongsTabData($earnings);
-       }
+            case 'products':
+                return $this->getAlbumsTabData($earnings);
+            case 'artists':
+                return $this->getArtistsTabData($earnings);
+            case 'countries':
+                return $this->getCountriesTabData($earnings);
+            case 'platforms':
+                return $this->getPlatformsTabData($earnings);
+            case 'labels':
+                return $this->getLabelsTabData($earnings);
+            default:
+                return $this->getSongsTabData($earnings);
+        }
     }
 
     private function getAlbumsTabData($earnings)
@@ -270,12 +272,14 @@ class StatisticController extends Controller
 
         $totalQuantity = $earnings->sum('quantity');
 
-        $countries = $earnings->load('country')
-            ->groupBy('country_id')
+        $countryData = $earnings->groupBy('country')
             ->map(function ($group) use ($totalQuantity) {
+                $countries = Country::whereIn('name', $group->pluck('country'))->get();
+                $country = $countries->where('name', $group->first()->country)->first();
                 return [
-                    'country' => $group->first()->country->name,
-                    'country_image' => $group->first()->country->emoji,
+                    'country' => $country->name ?? $group->first()->country,
+                    'country_id' => $country->id ?? null,
+                    'emoji' => $country->emoji ?? null,
                     'song_count' => $group->first()->artist->songs->count(),
                     'quantity' => $group->sum('quantity'),
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
@@ -286,7 +290,7 @@ class StatisticController extends Controller
             ->values()
             ->toArray();
 
-        return $countries;
+        return $countryData;
     }
 
     private function getPlatformsTabData($earnings)
@@ -300,9 +304,9 @@ class StatisticController extends Controller
             ->groupBy('platform_id')
             ->map(function ($group) use ($totalQuantity) {
                 return [
-                    'platform_id' => $group->first()->platform->id,
-                    'platform_name' => $group->first()->platform->name,
-                    'platform_image' => $group->first()->platform->image,
+                    'platform_id' => $group->first()->platform->id ?? null,
+                    'platform_name' => $group->first()->platform->name ?? null,
+                    'platform_image' => $group->first()->platform->image ?? null,
                     'song_count' => $group->first()->artist->songs->count(),
                     'quantity' => $group->sum('quantity'),
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
@@ -396,7 +400,7 @@ class StatisticController extends Controller
     }
 
 
-        public function product(Product $product, Request $request)
+    public function product(Product $product, Request $request)
     {
         [$startDate, $endDate] = $this->getDateRange($request);
         $platform = $request->input('platform') ?? 'Spotify';
@@ -407,7 +411,7 @@ class StatisticController extends Controller
         $appleId = Platform::where('code', 'apple')->first()->id;
         $otherIds = Platform::whereNotIn('code', ['spotify', 'apple'])->first()->id;
 
-        $product->loadMissing('downloadPlatforms','mainArtists', 'songs', 'earnings');
+        $product->loadMissing('downloadPlatforms', 'mainArtists', 'songs', 'earnings');
 
         $monthlyStats = $this->getMonthlyListeningStatistics($product->earnings, $product);
 
