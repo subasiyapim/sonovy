@@ -304,9 +304,9 @@ class StatisticController extends Controller
             ->groupBy('platform_id')
             ->map(function ($group) use ($totalQuantity) {
                 return [
-                    'platform_id' => $group->first()->platform->id,
-                    'platform_name' => $group->first()->platform->name,
-                    'platform_image' => $group->first()->platform->image,
+                    'platform_id' => $group->first()->platform->id ?? null,
+                    'platform_name' => $group->first()->platform->name ?? null,
+                    'platform_image' => $group->first()->platform->image ?? null,
                     'song_count' => $group->first()->artist->songs->count(),
                     'quantity' => $group->sum('quantity'),
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
