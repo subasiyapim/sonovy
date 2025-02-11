@@ -274,7 +274,10 @@ class UserController extends Controller
 
         //Eğer admin ise silinemez
         if ($user->roles()->pluck('code')->contains('admin')) {
-            return back()->withErrors(['notification' => 'Admin kullanıcısı silinemez.']);
+            //validation error
+            $validator = Validator::make([], []);
+            $validator->errors()->add('notification', 'Admin kullanıcısı silinemez.');
+            return back()->withErrors($validator);
         }
 
         //Eğer alt kullanıcıları varsa tüm alt kullanıcıların parent_id değeri null yapılır

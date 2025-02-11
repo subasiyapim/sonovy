@@ -32,7 +32,7 @@ class StatisticController extends Controller
         )->get();
 
         //Aylık Dinleme istatistikleri
-        $monthlyStats = $this->getMonthlyListeningStatistics($earnings);
+        $monthlyStats = $this->getMonthlyListeningStatistics($earnings, null, null, null, null, null);
 
         //Aylık İndirme istatistikleri
         $downloadStats = $this->getDownloadStatistics($earnings);
@@ -67,7 +67,8 @@ class StatisticController extends Controller
         Product $product = null,
         Artist $artist = null,
         Label $label = null,
-        Platform $platform = null
+        Platform $platform = null,
+        Song $song = null,
     ) {
         $monthlyStats = $earnings->where('sales_type', 'Stream')
             ->when($product, function ($query, $product) {
@@ -81,6 +82,9 @@ class StatisticController extends Controller
             })
             ->when($platform, function ($query, $platform) {
                 return $query->where('platform_id', $platform->id);
+            })
+            ->when($song, function ($query, $song) {
+                return $query->where('song_id', $song->id);
             })
             ->groupBy('sales_date')
             ->map(function ($item) {
@@ -213,6 +217,7 @@ class StatisticController extends Controller
         Product $product = null,
         Artist $artist = null,
         Label $label = null,
+        Song $song = null,
     ) {
         return collect($earnings)
             ->when($product, function ($query, $product) {
@@ -223,6 +228,9 @@ class StatisticController extends Controller
             })
             ->when($label, function ($query, $label) {
                 return $query->where('label_id', $label->id);
+            })
+            ->when($song, function ($query, $song) {
+                return $query->where('song_id', $song->id);
             })
             ->where('sales_type', '!=', 'Platform Promotion')
             ->where('platform', $platform)
@@ -499,7 +507,7 @@ class StatisticController extends Controller
             ->map(function ($group) use ($totalQuantity) {
                 return [
                     'album_type' => $group->first()->product->type,
-                    'album_id' =>  $group->first()->id,
+                    'album_id' => $group->first()->id,
                     'upc_code' => $group->first()->upc_code,
                     'album_name' => $group->first()->release_name,
                     'label_name' => $group->first()->label?->name,
@@ -551,7 +559,7 @@ class StatisticController extends Controller
         $platform = $request->input('platform') ?? 'Spotify';
         $product->loadMissing('downloadPlatforms', 'mainArtists', 'songs', 'earnings');
 
-        $monthlyStats = $this->getMonthlyListeningStatistics($product->earnings, $product, null, null);
+        $monthlyStats = $this->getMonthlyListeningStatistics($product->earnings, $product, null, null, null, null);
 
         $downloadCounts = $this->getDownloadCounts($product);
 
@@ -583,12 +591,12 @@ class StatisticController extends Controller
 
         [$startDate, $endDate] = $this->getDateRange($request);
         $platform = $request->input('platform') ?? 'Spotify';
-        $monthlyStats = $this->getMonthlyListeningStatistics($artist->earnings, null, $artist, null);
+        $monthlyStats = $this->getMonthlyListeningStatistics($artist->earnings, null, $artist, null, null, null);
 
         $downloadCounts = $this->getDownloadCounts($artist);
 
         $platformStats = $this->getPlatformStats($artist);
-        $platformSalesCount = $this->getPlatformSalesCount($artist, $platform, null, $artist, null);
+        $platformSalesCount = $this->getPlatformSalesCount($artist, $platform, null, $artist, null, null);
 
         $slug = $request->input('slug');
 
@@ -620,12 +628,12 @@ class StatisticController extends Controller
 
         [$startDate, $endDate] = $this->getDateRange($request);
         $platform = $request->input('platform') ?? 'Spotify';
-        $monthlyStats = $this->getMonthlyListeningStatistics($label->earnings, null, null, $label);
+        $monthlyStats = $this->getMonthlyListeningStatistics($label->earnings, null, null, $label, null, null);
 
         $downloadCounts = $this->getDownloadCounts($label);
 
         $platformStats = $this->getPlatformStats($label);
-        $platformSalesCount = $this->getPlatformSalesCount($label, $platform, null, null, $label);
+        $platformSalesCount = $this->getPlatformSalesCount($label, $platform, null, null, $label, null);
 
         $slug = $request->input('slug') ?? 'songs';
 
@@ -657,12 +665,12 @@ class StatisticController extends Controller
 
         [$startDate, $endDate] = $this->getDateRange($request);
         $platform = $request->input('platform') ?? 'Spotify';
-        $monthlyStats = $this->getMonthlyListeningStatistics($song->earnings, null, null, $song);
+        $monthlyStats = $this->getMonthlyListeningStatistics($song->earnings, null, null, null, null, $song);
 
         $downloadCounts = $this->getDownloadCounts($song);
 
         $platformStats = $this->getPlatformStats($song);
-        $platformSalesCount = $this->getPlatformSalesCount($song, $platform, null, null, $song);
+        $platformSalesCount = $this->getPlatformSalesCount($song, $platform, null, null, null, $song);
 
         $slug = $request->input('slug') ?? 'songs';
 
