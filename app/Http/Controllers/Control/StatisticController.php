@@ -403,6 +403,7 @@ class StatisticController extends Controller
         [$startDate, $endDate] = $this->getDateRange($request);
         $platform = $request->input('platform') ?? 'Spotify';
 
+
         $spotifyId = Platform::where('code', 'spotify')->first()->id;
         $platforms = Platform::all();
         $spotifyId = Platform::where('code', 'spotify')->first()->id;
