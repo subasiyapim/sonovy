@@ -577,7 +577,7 @@ class StatisticController extends Controller
 
         $tab = $this->getBestData($slug, $label);
         return Inertia::render('Control/Statistics/label', [
-            'artist' => $label,
+            'label' => $label,
             'platforms' => $this->getPlatforms(),
             'downloadCounts' => $downloadCounts,
             'platformStatistics' => $platformStats,
