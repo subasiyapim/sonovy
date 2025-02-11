@@ -1,5 +1,4 @@
 <template>
-
   <BaseDialog
     :showClose="true"
     v-model="isDialogOn"
@@ -23,7 +22,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(artist, index) in paginatedTableData" :key="index">
+          <tr v-for="(artist, index) in visibleData" :key="index">
             <td class="py-3">
               <span class="label-sm c-strong-950">{{ artist.artist_name }}</span>
             </td>
@@ -46,9 +45,9 @@
       </table>
       <div v-else class="h-64 flex items-center justify-center">Yükleniyor</div>
 
-      <!-- Pagination -->
-      <div v-if="totalPages > 1" class="flex justify-center mt-4">
-        <AppPagination :total-pages="totalPages" :current-page="currentPage" @page-change="changePage" />
+      <!-- Load More Button (Client-Side) -->
+      <div v-if="visibleCount < sortedTableData.length" class="flex justify-center mt-4">
+       <button @click="loadMore" class=" c-blue-500 label-sm ">Daha Fazla Yükle</button>
       </div>
     </div>
   </BaseDialog>
@@ -62,13 +61,11 @@ import { PersonIcon } from '@/Components/Icons';
 import { useCrudStore } from '@/Stores/useCrudStore';
 import { computed, ref, onMounted } from 'vue';
 import { AppProgressIndicator } from '@/Components/Widgets';
-import AppPagination from '@/Components/Navigation/AppPagination.vue';
 
 moment.locale('tr');
 
 const tableData = ref([]);
-const currentPage = ref(1);
-const itemsPerPage = 10;
+const visibleCount = ref(20); // Initially show 10 items
 
 const sortedTableData = computed(() => {
   return Array.isArray(tableData.value)
@@ -76,17 +73,12 @@ const sortedTableData = computed(() => {
     : [];
 });
 
-const paginatedTableData = computed(() => {
-  const startIndex = (currentPage.value - 1) * itemsPerPage;
-  return sortedTableData.value.slice(startIndex, startIndex + itemsPerPage);
-});
+// Computed property to slice the data for display
+const visibleData = computed(() => sortedTableData.value.slice(0, visibleCount.value));
 
-const totalPages = computed(() => {
-  return Math.ceil(sortedTableData.value.length / itemsPerPage);
-});
-
-const changePage = (page) => {
-  currentPage.value = page;
+const loadMore = () => {
+  const nextBatch = 10; // Load 10 more items
+  visibleCount.value = Math.min(visibleCount.value + nextBatch, sortedTableData.value.length);
 };
 
 const crudStore = useCrudStore();

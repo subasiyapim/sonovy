@@ -526,7 +526,7 @@ const onMouseLeave = (spotifySlug) => {
             <div v-for="key in Object.keys(monthlyData)"
                  :key="key"
                  class="h-80 flex-1 flex flex-col items-center justify-between">
-              <tippy :allowHtml="true" class="w-full" :interactiveBorder="30" theme="light" followCursor :sticky="true"
+              <tippy :allowHtml="true" :class="Object.keys(monthlyData).length < 6 ? 'w-1/2' : Object.keys(monthlyData).length == 6 ? 'w-3/4' : 'w-full'" :interactiveBorder="30" theme="light" followCursor :sticky="true"
                      :interactive="false">
                 <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
                   <div class="bg-weak-50 flex items-end justify-center flex-1 min-w-10">
@@ -624,7 +624,7 @@ const onMouseLeave = (spotifySlug) => {
             <div v-for="key in Object.keys(spotifyDiscoveryData)"
                  :key="key"
                  class="h-80 flex-1 flex flex-col items-center justify-between">
-              <tippy :allowHtml="true" class="w-full" :interactiveBorder="30" theme="light" followCursor :sticky="true"
+              <tippy :allowHtml="true" :class="Object.keys(spotifyDiscoveryData).length < 6 ? 'w-1/2' : Object.keys(spotifyDiscoveryData).length == 6 ? 'w-3/4' : 'w-full'" :interactiveBorder="30" theme="light" followCursor :sticky="true"
                      :interactive="false">
                 <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
                   <div class="bg-weak-50 flex items-end justify-center flex-1 h-10 min-w-10">

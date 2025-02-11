@@ -36,7 +36,7 @@ class UserStoreRequest extends FormRequest
             'city_id' => ['required', Rule::exists(City::class, 'id')],
             'district_id' => ['required', Rule::exists(District::class, 'id')],
             'address' => ['required', 'string', 'max:255'],
-            'commission_rate' => ['nullable', 'numeric', 'min:0.1', 'max:99.99'],
+            'commission_rate' => ['nullable', 'numeric', 'min:0.1', 'max:100'],
             'is_company' => ['required', 'boolean'],
             'company_info' => ['required_if:is_company,1', 'array'],
             'company_info.name' => ['required_if:is_company,1', 'string'],
@@ -44,7 +44,8 @@ class UserStoreRequest extends FormRequest
             'company_info.tax_office' => ['required_if:is_company,1', 'string'],
             'company_info.phone' => ['required_if:is_company,1', 'string'],
             'password' => [
-                'required', 'string',
+                'required',
+                'string',
                 Password::min(8)
                     ->mixedCase()
                     ->numbers()
@@ -58,21 +59,21 @@ class UserStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => __('control.user.form.name'),
-            'country_id' => __('control.user.form.country_id'),
-            'email' => __('control.user.form.email'),
-            'language_id' => __('control.user.form.language_id'),
-            'city_id' => __('control.user.form.city_id'),
-            'district_id' => __('control.user.form.district_id'),
-            'address' => __('control.user.form.address'),
-            'commission_rate' => __('control.user.form.commission_rate'),
-            'is_company' => __('control.user.form.is_company'),
-            'company_info.name' => __('control.user.form.company_info.name'),
-            'company_info.tax_number' => __('control.user.form.company_info.tax_number'),
-            'company_info.tax_office' => __('control.user.form.company_info.tax_office'),
-            'company_info.phone' => __('control.user.form.company_info.phone'),
-            'password' => __('control.user.form.password.label'),
-            'password_confirmation' => __('control.user.form.password_confirmation'),
+            'name' => __('control.user.fields.name'),
+            'country_id' => __('control.user.fields.country_id'),
+            'email' => __('control.user.fields.email'),
+            'language_id' => __('control.user.fields.language_id'),
+            'city_id' => __('control.user.fields.city_id'),
+            'district_id' => __('control.user.fields.district_id'),
+            'address' => __('control.user.fields.address'),
+            'commission_rate' => __('control.user.fields.commission_rate'),
+            'is_company' => __('control.user.fields.is_company'),
+            'company_info.name' => __('control.user.fields.company_info.name'),
+            'company_info.tax_number' => __('control.user.fields.company_info.tax_number'),
+            'company_info.tax_office' => __('control.user.fields.company_info.tax_office'),
+            'company_info.phone' => __('control.user.fields.company_info.phone'),
+            'password' => __('control.user.fields.password.label'),
+            'password_confirmation' => __('control.user.fields.password_confirmation'),
         ];
     }
 }

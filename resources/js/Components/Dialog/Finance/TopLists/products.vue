@@ -1,5 +1,5 @@
 <template>
-  <BaseDialog :showClose="true" v-model="isDialogOn" height="min-content" align="center" title="Plak Şirketlerinze Göre Gelir"
+  <BaseDialog :showClose="true" v-model="isDialogOn" height="min-content" align="center" title="Albüme Göre Gelir"
               :description="formattedDates">
     <template #icon>
       <Building2LineIcon color="var(--dark-green-950)"/>
@@ -16,7 +16,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="artist in paginatedData" :key="artist.name">
+          <tr v-for="(artist, index) in visibleData" :key="index">
             <td class="py-3">
               <span class="label-sm c-strong-950">{{ artist.album_name }}</span>
             </td>
@@ -34,8 +34,9 @@
         Yükleniyor
       </div>
 
-      <div v-if="totalPages > 1" class="flex justify-center mt-4">
-        <AppPagination :total-pages="totalPages" :current-page="currentPage" @page-change="changePage" />
+      <!-- Load More Button (Client-Side) -->
+      <div v-if="visibleCount < tableData.length" class="flex justify-center mt-4">
+         <button @click="loadMore" class=" c-blue-500 label-sm ">Daha Fazla Yükle</button>
       </div>
     </div>
   </BaseDialog>
@@ -50,18 +51,10 @@ import { Building2LineIcon } from '@/Components/Icons';
 import { useCrudStore } from '@/Stores/useCrudStore';
 import { computed, ref, onMounted } from 'vue';
 import { AppProgressIndicator } from '@/Components/Widgets';
-import AppPagination from '@/Components/Navigation/AppPagination.vue';
 
-
-
-const changePage = (page) => {
-  currentPage.value = page;
-};
 const crudStore = useCrudStore();
 const props = defineProps({
-  modelValue: {
-    default: false,
-  },
+  modelValue: { default: false },
   choosenDates: {},
   formattedDates: {}
 });
@@ -74,22 +67,13 @@ const isDialogOn = computed({
 
 const loading = ref(false);
 const tableData = ref([]);
-const currentPage = ref(1);
-const itemsPerPage = 5;
+const visibleCount = ref(20);
 
-const paginatedData = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  return tableData.value.slice(start, start + itemsPerPage);
-});
+const visibleData = computed(() => tableData.value.slice(0, visibleCount.value));
 
-const totalPages = computed(() => Math.ceil(tableData.value.length / itemsPerPage));
-
-const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--;
-};
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++;
+const loadMore = () => {
+  const nextBatch = 20; // Load 5 more items
+  visibleCount.value = Math.min(visibleCount.value + nextBatch, tableData.value.length);
 };
 
 const getData = async () => {
@@ -101,7 +85,9 @@ const getData = async () => {
       start_date: props.choosenDates ? props.choosenDates[0] : moment().subtract(1, 'year'),
       end_date: props.choosenDates ? props.choosenDates[1] : moment(),
     });
-    tableData.value = response;
+    console.log("RESPONSEEE",response);
+
+    tableData.value = response; // Store full dataset
   } catch (error) {
     console.error(error);
   }

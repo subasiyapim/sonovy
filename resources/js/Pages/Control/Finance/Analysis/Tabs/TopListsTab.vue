@@ -163,7 +163,7 @@ const gotoSongs = () => {
                     <BookReadLineIcon color="var(--sub-600)" />
                     <p class="label-medium c-strong-950">{{ __('control.finance.analysis.albums_earnings') }}</p>
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
-                </div>fsdfsdfsdf
+                </div>
                 <div class="flex gap-3">
                     <button @click="isFinanceTopListsProducts = true"><EyeOnIcon color="var(--sub-600)" /></button>
                     <button @click="gotoProducts"><DownloadIcon color="var(--sub-600)" /></button>

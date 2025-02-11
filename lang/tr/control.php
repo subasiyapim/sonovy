@@ -877,7 +877,9 @@ return [
             'email' => 'E-posta',
             'email_placeholder' => 'Örn: sibelaydinmusic@gmail.com',
             'password' => "Şifre",
+            'password_confirmation' => "Şifre Tekrar",
             'password_placeholder' => "Şifre giriniz",
+
             'address' => "Adres",
             'adress_placeholder' => "Adres giriniz",
             're_password' => "Şifre tekrar",

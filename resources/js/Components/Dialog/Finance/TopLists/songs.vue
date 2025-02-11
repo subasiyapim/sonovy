@@ -25,7 +25,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="song in paginatedData" :key="song.isrc_code">
+          <tr v-for="(song, index) in visibleData" :key="index">
             <td class="py-3">
               <span class="label-sm c-strong-950">{{ song.song_name }}</span>
             </td>
@@ -53,19 +53,16 @@
       </table>
       <div v-else class="h-64 flex items-center justify-center"> Yükleniyor </div>
 
-      <AppPagination
-        v-if="tableData.length > 0"
-        :total-items="tableData.length"
-        :items-per-page="itemsPerPage"
-        v-model:current-page="currentPage"
-      />
+      <!-- Load More Button -->
+      <div v-if="visibleCount < tableData.length" class="flex justify-center mt-4">
+       <button @click="loadMore" class=" c-blue-500 label-sm ">Daha Fazla Yükle</button>
+      </div>
     </div>
   </BaseDialog>
 </template>
 
 <script setup>
 import BaseDialog from '@/Components/Dialog/BaseDialog.vue';
-import AppPagination from '@/Components/Navigation/AppPagination.vue';
 import moment from 'moment';
 import 'moment/dist/locale/tr';
 moment.locale('tr');
@@ -76,9 +73,7 @@ import { AppProgressIndicator } from '@/Components/Widgets';
 
 const crudStore = useCrudStore();
 const props = defineProps({
-  modelValue: {
-    default: false,
-  },
+  modelValue: { default: false },
   choosenDates: {},
   formattedDates: {},
 });
@@ -91,13 +86,15 @@ const isDialogOn = computed({
 
 const loading = ref(false);
 const tableData = ref([]);
-const currentPage = ref(1);
-const itemsPerPage = ref(10);
+const visibleCount = ref(20); // Initially show 10 items
 
-const paginatedData = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  return tableData.value.slice(start, start + itemsPerPage.value);
-});
+// Computed property to show only a part of the data
+const visibleData = computed(() => tableData.value.slice(0, visibleCount.value));
+
+const loadMore = () => {
+  const nextBatch = 10; // Load 10 more items
+  visibleCount.value = Math.min(visibleCount.value + nextBatch, tableData.value.length);
+};
 
 const getData = async () => {
   loading.value = true;

@@ -30,7 +30,7 @@ class UserUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'country_id' => ['required', Rule::exists(Country::class, 'id')],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$this->user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $this->user->id],
             'language_id' => ['required', Rule::exists(Country::class, 'id')],
             'city_id' => ['nullable', Rule::exists(City::class, 'id')],
             'district_id' => ['nullable', Rule::exists(District::class, 'id')],
@@ -43,7 +43,8 @@ class UserUpdateRequest extends FormRequest
             'company_info.tax_office' => ['required_if:is_company,1', 'string'],
             'company_info.phone' => ['required_if:is_company,1', 'string'],
             'password' => [
-                'nullable', 'string',
+                'nullable',
+                'string',
                 Password::min(6)
             ],
             'password_confirmation' => ['nullable', 'string', 'same:password'],

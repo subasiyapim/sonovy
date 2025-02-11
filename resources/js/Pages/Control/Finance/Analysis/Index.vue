@@ -423,6 +423,7 @@ const currentComponent = computed(() => {
 });
 
 onMounted(() => {
+
     if(choosenDates.value?.length > 0){
          choosenDate.value = choosenDates.value.map((date) => {
             const momentDate = moment(date);
@@ -431,6 +432,17 @@ onMounted(() => {
                 year: momentDate.year(),
             };
         });
+    }else {
+        choosenDate.value = [
+            {
+                month: moment().subtract(6,'months').month(),
+                year: moment().subtract(6,'months').year(),
+            },
+            {
+                month:moment().month(),
+                year: moment().year(),
+            }
+        ]
     }
 
 });
