@@ -491,6 +491,52 @@ class StatisticController extends Controller
             })->sortByDesc('quantity')->take(100);
     }
 
+    private function getBestAlbums($earnings)
+    {
+        $totalQuantity = $earnings->sum('quantity');
+        return $earnings->groupBy('upc_code')
+            ->map(function ($group) use ($totalQuantity) {
+                return [
+                    'upc_code' => $group->first()->upc_code,
+                    'product_name' => $group->first()->release_name,
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })->sortByDesc('quantity')->take(100);
+    }
+
+    private function getBestSongs($earnings)
+    {
+        $totalQuantity = $earnings->sum('quantity');
+        return $earnings->groupBy('song_id')
+            ->map(function ($group) use ($totalQuantity) {
+                return [
+                    'song_id' => $group->first()->song_id,
+                    'song_name' => $group->first()->song_name,
+                    'isrc_code' => $group->first()->isrc_code,
+                    'label_name' => $group->first()->label_name,
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })->sortByDesc('quantity')->take(100);
+    }
+
+    private function getBestArtists($earnings)
+    {
+        $totalQuantity = $earnings->sum('quantity');
+        return $earnings->groupBy('artist_id')
+            ->map(function ($group) use ($totalQuantity) {
+                return [
+                    'artist_id' => $group->first()->artist_id,
+                    'artist_name' => $group->first()->artist_name,
+                    'label_name' => $group->first()->label_name,
+                    'quantity' => $group->sum('quantity'),
+                    'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
+                ];
+            })->sortByDesc('quantity')->take(100);
+    }
+
+
     public function product(Product $product, Request $request)
     {
         [$startDate, $endDate] = $this->getDateRange($request);
@@ -593,8 +639,13 @@ class StatisticController extends Controller
     private function getBestData(?string $slug = 'songs', $model)
     {
         return match ($slug) {
+            'artists' => $this->getBestArtists($model->earnings),
             'countries' => $this->getBestCountries($model->earnings),
-            default => $this->getBestPlatforms($model->earnings),
+            'products' => $this->getBestAlbums($model->earnings),
+            'platforms' => $this->getBestPlatforms($model->earnings),
+            default => $this->getBestSongs($model->earnings),
         };
     }
+
+
 }
