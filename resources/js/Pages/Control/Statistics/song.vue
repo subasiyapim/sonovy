@@ -34,47 +34,19 @@
     <div class="bg-white-400 h-44 p-6 relative mb-24">
       <div class="">
         <div class="flex items-center gap-2">
-            <h1 class="label-xl c-strong-950" v-text="product.album_name"/>
-             <div class="whitespace-nowrap border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2">
-                <component :is="statusData.find((e) => e.value == product.status)?.icon"
-                        :color="statusData.find((e) => e.value == product.status)?.color"></component>
-                <p class="subheading-xs c-sub-600">
-                {{ statusData.find((e) => e.value == product.status)?.label }}
-                </p>
-            </div>
+            <h1 class="label-xl c-strong-950" v-text="song.song_name"/>
+
         </div>
 
-        <div class="flex flex-1 items-center justify-start gap-2 flex-wrap  py-4">
-            <div class="flex items-center" v-for="artist in filterMainArtists ">
-                <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-2">
-                    <img :alt="artist.name"
-                        :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)"
-                        class="border-2 border-white rounded-full "
-                    >
-                </div>
-                <p class="label-sm c-sub-600 me-1">{{ artist.name }}</p>
-               <span class="label-sm c-neutral-500"> •</span>
-            </div>
-
-            <button @click="showAllArtists = !showAllArtists" class="c-neutral-500 label-xs hover:underline" v-if="props.product.main_artists.length > 2">
-              <template v-if="!showAllArtists">  +5 Sanatçı Daha </template>
-              <template v-else>  Daha az göster </template>
-            </button>
-        </div>
       </div>
 
-      <div
-          class="absolute rounded-lg w-[120px] h-[120px] bg-blue-300 left-8 -bottom-16 flex items-center justify-center overflow-hidden">
-        <img class="w-full h-full object-cover"
-             :alt="product.album_name"
-             :src="product.image ? product.image.thumb : defaultStore.profileImage(product.album_name)">
-      </div>
+
       <div class="flex items-center justify-end gap-2 absolute top-5 right-5 w-[600px] flex-wrap">
 
-        <div v-for="(platform,index) in product.download_platforms" class="flex items-center gap-1">
+        <div v-for="(platform,index) in song.download_platforms" class="flex items-center gap-1">
             <Icon  :icon="platform.icon" />
            <span class="paragraph-sm c-sub-600 w-max"> {{platform.name}}</span>
-           <template v-if="index < product.download_platforms?.length - 1"><span class="label-sm c-soft-400 mx-2">•</span> </template>
+           <template v-if="index < song.download_platforms?.length - 1"><span class="label-sm c-soft-400 mx-2">•</span> </template>
         </div>
       </div>
     </div>
@@ -193,7 +165,7 @@
                     </template>
             </AppCard>
 
-            <PlatformBasedSalesCountChart :platform-sales-count="platformSalesCount || {}" :product_id="props.product.id" :platforms="platforms" />
+            <PlatformBasedSalesCountChart :platform-sales-count="platformSalesCount || {}" :song_id="props.song.id" :platforms="platforms" />
 
 
 
@@ -268,8 +240,8 @@ import {useDefaultStore} from "@/Stores/default";
 
 
 
-import PlatformsTab from './product_tabs/platforms.vue';
-import CountriesTab from './product_tabs/countries.vue';
+import PlatformsTab from './song_tabs/platforms.vue';
+import CountriesTab from './song_tabs/countries.vue';
 
 
 const defaultStore = useDefaultStore();
@@ -279,45 +251,7 @@ const showAllArtists = ref(false);
 
 const data  = ref([]);
 
-const statusData = ref([
-  {
-    label: "Taslak",
-    value: 1,
-    icon: EditLineIcon,
-    color: "#FF8447",
 
-  },
-  {
-    label: "İnceleniyor",
-    value: 2,
-    icon: EditLineIcon,
-    color: "#FF8447",
-  },
-  {
-    label: "Yayınlandı",
-    value: 3,
-    icon: CheckFilledIcon,
-    color: "#335CFF",
-  },
-  {
-    label: "Reddedildi",
-    value: 4,
-    icon: WarningIcon,
-    color: "#FB3748",
-  },
-  {
-    label: "Geri Çekildi",
-    value: 5,
-    icon: RetractedIcon,
-    color: "#717784",
-  },
-  {
-    label: "Planlandı",
-    value: 6,
-    icon: CheckFilledIcon,
-    color: "#FF8447",
-  }
-]);
 
 const setDateRange = (type) => {
   const now = new Date();
@@ -369,17 +303,7 @@ const setDateRange = (type) => {
 };
 
 
-const filterMainArtists = computed(() => {
-    if(props.product.main_artists.length <= 2){
-          return props.product.main_artists;
-    }else {
-        if(showAllArtists.value){
-            return props.product.main_artists;
-        }else {
-            return props.product.main_artists.slice(0, 2);
-        }
-    }
-})
+
 
 const choosenDate =ref();
 const props = defineProps({
@@ -400,7 +324,7 @@ const props = defineProps({
     platformStatistics:{},
     downloadCounts:{},
     platforms:{},
-    product:{},
+    song:{},
     tab:{},
 })
 
@@ -462,7 +386,7 @@ const onDateChoosen = async (e) => {
     console.log("EEEE",e);
 
     if (!e || !e['0'] || !e['1']) {
-        await router.visit(route(route().current(),props.product.id), {
+        await router.visit(route(route().current(),props.song.id), {
             data: {
                 slug: currentTab.value,
             },
@@ -482,7 +406,7 @@ const onDateChoosen = async (e) => {
 
         choosenDates.value = dates;
 
-        await router.visit(route(route().current(),props.product.id), {
+        await router.visit(route(route().current(),props.song.id), {
             data: {
                 start_date: formatMonthYear(dates[0]),
                 end_date: formatMonthYear(dates[1]),
@@ -540,7 +464,7 @@ const onTabChange = async (tab) => {
     try {
 
 
-        router.visit(route(route().current(),props.product.id), {
+        router.visit(route(route().current(),props.song.id), {
             // preserveState: true,
             preserveScroll: true,
             data:{

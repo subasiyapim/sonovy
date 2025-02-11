@@ -122,6 +122,7 @@ Route::group(
             Route::get('/product/{product}', [StatisticController::class, 'product'])->name('product');
             Route::get('/artist/{artist}', [StatisticController::class, 'artist'])->name('artist');
             Route::get('/label/{label}', [StatisticController::class, 'label'])->name('label');
+            Route::get('/song/{song}', [StatisticController::class, 'song'])->name('song');
         });
 
         Route::resource('roles', RoleController::class)->names('roles');
@@ -176,8 +177,8 @@ Route::group(
         Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
 
-        require __DIR__.'/control/modules/search.php';
-        require __DIR__.'/control/modules/last.php';
-        require __DIR__.'/control/modules/find.php';
+        require __DIR__ . '/control/modules/search.php';
+        require __DIR__ . '/control/modules/last.php';
+        require __DIR__ . '/control/modules/find.php';
     }
 );

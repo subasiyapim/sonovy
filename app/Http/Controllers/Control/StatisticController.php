@@ -8,6 +8,7 @@ use App\Models\Earning;
 use App\Models\Label;
 use App\Models\Platform;
 use App\Models\Product;
+use App\Models\Song;
 use App\Models\System\Country;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -637,6 +638,43 @@ class StatisticController extends Controller
             'monthlyStats' => $monthlyStats,
             'platformSalesCount' => $platformSalesCount,
             'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($label, $platform),
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'tab' => $tab
+        ]);
+    }
+
+
+    /**
+     * @param  Label    $label
+     * @param  Request  $request
+     *
+     * @return Response
+     */
+    public function song(Song $song, Request $request): \Inertia\Response
+    {
+        $song->loadMissing('earnings');
+
+        [$startDate, $endDate] = $this->getDateRange($request);
+        $platform = $request->input('platform') ?? 'Spotify';
+        $monthlyStats = $this->getMonthlyListeningStatistics($song->earnings, null, null, $song);
+
+        $downloadCounts = $this->getDownloadCounts($song);
+
+        $platformStats = $this->getPlatformStats($song);
+        $platformSalesCount = $this->getPlatformSalesCount($song, $platform, null, null, $song);
+
+        $slug = $request->input('slug') ?? 'songs';
+
+        $tab = $this->getBestData($slug, $song);
+        return Inertia::render('Control/Statistics/song', [
+            'song' => $song,
+            'platforms' => $this->getPlatforms(),
+            'downloadCounts' => $downloadCounts,
+            'platformStatistics' => $platformStats,
+            'monthlyStats' => $monthlyStats,
+            'platformSalesCount' => $platformSalesCount,
+            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($song, $platform),
             'startDate' => $startDate,
             'endDate' => $endDate,
             'tab' => $tab
