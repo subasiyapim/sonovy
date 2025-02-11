@@ -154,7 +154,6 @@ class StatisticController extends Controller
         });
 
         $mainPlatforms['other'] = $otherPlatforms->isNotEmpty() ? $otherPlatforms->sum('quantity') : 0;
-
         // Frontend'in beklediği formatta veriyi döndür
         return [
             'platforms' => [
@@ -173,9 +172,9 @@ class StatisticController extends Controller
     protected function getDownloadCounts($model): array
     {
         return [
-            'songs' => $model->earnings->where('release_type', 'Music')?->sum('quantity'),
-            'albums' => $model->earnings->where('release_type', 'Album')?->sum('quantity'),
-            'videos' => $model->earnings->where('release_type', 'Video')?->sum('quantity'),
+            'songs' => $model->earnings->where('release_type', 'Music Release')?->sum('quantity'),
+            'albums' => $model->earnings->where('release_type', 'Album Release')?->sum('quantity'),
+            'videos' => $model->earnings->where('release_type', 'Video Release')?->sum('quantity'),
         ];
     }
 
@@ -195,17 +194,17 @@ class StatisticController extends Controller
         ];
     }
 
-    private function getPlatformMonthlyStatistics($earnings, $platform = 'Spotify')
+    private function getPlatformMonthlyStatistics($model, string $platform = 'Spotify')
     {
-        return $earnings->where('platform', $platform)
-            ->groupBy('platform')
-            ->map(function ($item) {
-                return $item->sum('quantity');
-            })
-            ->mapWithKeys(function ($value, $key) {
-                return [Carbon::parse($key)->format('Y-m') => $value];
-            });
+        $filteredData = $model->earnings->where('platform', $platform);
+
+        return $filteredData->groupBy(function ($item) {
+            return Carbon::parse($item['date'])->format('Y-m');
+        })->map(function ($group) {
+            return $group->sum('quantity');
+        });
     }
+
 
     private function getPlatformSalesCount(
         $earnings,
@@ -505,7 +504,7 @@ class StatisticController extends Controller
 
         $platformSalesCount = $this->getPlatformSalesCount($product->earnings, $platform, $product, null, null);
 
-        $slug = $request->input('slug');
+        $slug = $request->input('slug') ?? 'songs';
 
         $tab = $this->getBestData($slug, $product);
 
@@ -513,10 +512,10 @@ class StatisticController extends Controller
             'product' => $product,
             'platforms' => $this->getPlatforms(),
             'downloadCounts' => $downloadCounts,
-            'platformStats' => $platformStats,
+            'platformStatistics' => $platformStats,
             'monthlyStats' => $monthlyStats,
             'platformSalesCount' => $platformSalesCount,
-            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($request),
+            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($product, $platform),
             'startDate' => $startDate,
             'endDate' => $endDate,
             'tab' => $tab
@@ -544,10 +543,10 @@ class StatisticController extends Controller
             'artist' => $artist,
             'platforms' => $this->getPlatforms(),
             'downloadCounts' => $downloadCounts,
-            'platformStats' => $platformStats,
+            'platformStatistics' => $platformStats,
             'monthlyStats' => $monthlyStats,
             'platformSalesCount' => $platformSalesCount,
-            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($request),
+            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($platform),
             'startDate' => $startDate,
             'endDate' => $endDate,
             'tab' => $tab
@@ -581,10 +580,10 @@ class StatisticController extends Controller
             'artist' => $label,
             'platforms' => $this->getPlatforms(),
             'downloadCounts' => $downloadCounts,
-            'platformStats' => $platformStats,
+            'platformStatistics' => $platformStats,
             'monthlyStats' => $monthlyStats,
             'platformSalesCount' => $platformSalesCount,
-            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($request),
+            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($platform),
             'startDate' => $startDate,
             'endDate' => $endDate,
             'tab' => $tab
@@ -594,15 +593,9 @@ class StatisticController extends Controller
 
     private function getBestData(string $slug, $model)
     {
-        switch ($slug) {
-            case 'countries':
-                $tab = $this->getBestCountries($model->earnings);
-                break;
-            default:
-                $tab = $this->getBestPlatforms($model->earnings);
-                break;
-        }
-
-        return $tab;
+        return match ($slug) {
+            'countries' => $this->getBestCountries($model->earnings),
+            default => $this->getBestPlatforms($model->earnings),
+        };
     }
 }
