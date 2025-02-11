@@ -577,7 +577,7 @@ class StatisticController extends Controller
 
         $tab = $this->getBestData($slug, $label);
         return Inertia::render('Control/Statistics/label', [
-            'artist' => $label,
+            'label' => $label,
             'platforms' => $this->getPlatforms(),
             'downloadCounts' => $downloadCounts,
             'platformStatistics' => $platformStats,
@@ -590,7 +590,7 @@ class StatisticController extends Controller
         ]);
     }
 
-    private function getBestData(?string $slug = 'platforms', $model)
+    private function getBestData(?string $slug = 'songs', $model)
     {
         return match ($slug) {
             'countries' => $this->getBestCountries($model->earnings),
