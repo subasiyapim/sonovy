@@ -73,6 +73,7 @@ const pauseMusic = (song) => {
 
     <AppTableColumn label="tür" width="70">
       <template #default="scope">
+
         <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 
           <tippy :interactive="true" theme="dark" :appendTo="getBody">
@@ -106,24 +107,13 @@ const pauseMusic = (song) => {
       <template #default="scope">
         <div class="flex items-center gap-3">
           <div>
-            <p class="label-sm c-solid-950"> {{ scope.row.name }} ({{ scope.row.version }})</p>
+            <p class="label-sm c-solid-950"> {{ scope.row.song_name }} ({{ scope.row.version }})</p>
             <p class="paragraph-xs c-sub-600"> ISRC:{{ scope.row.isrc_code }} </p>
           </div>
         </div>
       </template>
     </AppTableColumn>
 
-    <AppTableColumn label="Sanatçı">
-      <template #default="scope">
-        <a class="flex items-center gap-2 max-w-[200px] truncate"
-           :href="route('control.catalog.artists.show', scope.row.artist_id)">
-          <img :alt="scope.row.artist_name"
-               :src="scope.row.artist_image ? scope.row.artist_image.thumb : defaultStore.profileImage(scope.row.artist_name)"
-               class="w-8 h-8 border-2 border-white rounded-full shrink-0">
-          <p class="label-sm c-sub-600 truncate">{{ scope.row.artist_name }}</p>
-        </a>
-      </template>
-    </AppTableColumn>
 
     <AppTableColumn label="Plak Şirketi">
       <template #default="scope">

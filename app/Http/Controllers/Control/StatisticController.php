@@ -497,8 +497,12 @@ class StatisticController extends Controller
         return $earnings->groupBy('upc_code')
             ->map(function ($group) use ($totalQuantity) {
                 return [
+                    'album_type' => $group->first()->product->type,
+                    'album_id' =>  $group->first()->id,
                     'upc_code' => $group->first()->upc_code,
-                    'product_name' => $group->first()->release_name,
+                    'album_name' => $group->first()->release_name,
+                    'label_name' => $group->first()->label?->name,
+                    'artist_name' => $group->first()->artist?->name,
                     'quantity' => $group->sum('quantity'),
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
                 ];
@@ -507,11 +511,14 @@ class StatisticController extends Controller
 
     private function getBestSongs($earnings)
     {
+
         $totalQuantity = $earnings->sum('quantity');
         return $earnings->groupBy('song_id')
             ->map(function ($group) use ($totalQuantity) {
                 return [
+                    'song_type' => $group->first()->song->type,
                     'song_id' => $group->first()->song_id,
+                    'version' => $group->first()->version,
                     'song_name' => $group->first()->song_name,
                     'isrc_code' => $group->first()->isrc_code,
                     'label_name' => $group->first()->label_name,
@@ -646,6 +653,4 @@ class StatisticController extends Controller
             default => $this->getBestSongs($model->earnings),
         };
     }
-
-
 }

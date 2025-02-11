@@ -69,8 +69,8 @@ const setDateRange = (type) => {
       range = [
         {
           month: 0,
-          year: 2000,
-        }, // Starting from January 2000
+          year: 1970,
+        },
          { month: moment().month(), year: moment().year() },
       ];
       break;

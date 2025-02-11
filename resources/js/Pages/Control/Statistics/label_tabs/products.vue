@@ -70,7 +70,8 @@ const data = computed({
     </AppTableColumn>
     <AppTableColumn label="Yayın Bilgisi" >
       <template #default="scope">
-        <div class="flex items-center gap-3">
+
+        <div v-if="scope.row.album_id" class="flex items-center gap-3">
 
            <div class="w-8 h-8 rounded flex items-center justify-center border border-soft-200">
                 <img v-if="scope.row.album_image" :src="scope.row.album_image?.thumb"  class="w-full h-full object-cover">
