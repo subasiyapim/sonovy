@@ -47,10 +47,6 @@ class UserStoreRequest extends FormRequest
                 'required',
                 'string',
                 Password::min(8)
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-                    ->uncompromised()
             ],
             'password_confirmation' => ['required', 'string', 'same:password'],
         ];
