@@ -121,7 +121,7 @@ class ProductController extends Controller
             'artists' => $this->getArtistsAddedLastMonth(),
 
         ];
-       // dd($statistics);
+        // dd($statistics);
 
         $country_count = Country::count();
         $statuses = ProductStatusEnum::getTitles();
@@ -534,7 +534,8 @@ class ProductController extends Controller
 
     /**
      * @param  ProductStoreRequest  $request
-     * @param $product
+     * @param                       $product
+     *
      * @return void
      */
     protected static function attachSongs(ProductStoreRequest $request, $product): void
@@ -555,8 +556,9 @@ class ProductController extends Controller
     }
 
     /**
-     * @param $product
+     * @param         $product
      * @param  array  $data
+     *
      * @return void
      */
     protected static function attachArtistFromProduct($product, array $data): void
@@ -575,7 +577,8 @@ class ProductController extends Controller
 
     /**
      * @param  mixed  $song
-     * @param $product
+     * @param         $product
+     *
      * @return mixed
      */
     protected static function createParticipants(mixed $song, $product): mixed
@@ -602,7 +605,8 @@ class ProductController extends Controller
 
     /**
      * @param  ProductStoreRequest  $request
-     * @param $product
+     * @param                       $product
+     *
      * @return void
      */
     protected static function publishedCountries($product, $data): void
@@ -619,7 +623,8 @@ class ProductController extends Controller
 
     /**
      * @param  ProductStoreRequest  $request
-     * @param $product
+     * @param                       $product
+     *
      * @return void
      */
     protected static function createHashtags(ProductStoreRequest $request, $product): void
@@ -639,7 +644,8 @@ class ProductController extends Controller
 
     /**
      * @param  ProductStoreRequest  $request
-     * @param $product
+     * @param                       $product
+     *
      * @return void
      */
     protected static function createPromotions($product, $data): void
@@ -657,7 +663,8 @@ class ProductController extends Controller
 
     /**
      * @param  ProductStoreRequest  $request
-     * @param $product
+     * @param                       $product
+     *
      * @return void
      */
     protected static function createDownloadPlatforms($product, $data): void
@@ -672,7 +679,7 @@ class ProductController extends Controller
                     'pre_order_date' => isset($platform['pre_order_date']) ? Carbon::parse($platform['pre_order_date'])->format('Y-m-d') : null,
                     'publish_date' => isset($platform['publish_date']) ? Carbon::parse($platform['publish_date'])->format('Y-m-d') : null,
                     'date' => isset($platform['date']) ? Carbon::parse($platform['date'])->format('Y-m-d') : null,
-                    'time' => isset($platform['time']) ? $platform['time']['hours'] . ':' . $platform['time']['minutes'] : null,
+                    'time' => isset($platform['time']) ? $platform['time']['hours'].':'.$platform['time']['minutes'] : null,
                     'hashtags' => isset($platform['hashtags']) ? json_encode($platform['hashtags']) : null,
                     // Ensure it's a valid JSON
                     'description' => isset($platform['description']) ? $platform['description'] : null,
@@ -687,7 +694,8 @@ class ProductController extends Controller
 
     /**
      * @param  ProductStoreRequest  $request
-     * @param $product
+     * @param                       $product
+     *
      * @return void
      */
     protected static function imageUpload(ProductStoreRequest $request, $product): void
@@ -718,11 +726,11 @@ class ProductController extends Controller
 
             $totalProductCount = Product::where('created_at', '>=', $startDate)
                 ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as period, COUNT(*) as count")
-
                 ->count();
             return $totalProductCount;
         });
     }
+
     public function getProductsGroupedByPeriod($period)
     {
         $cacheKey = "products_grouped_by_{$period}";
@@ -736,9 +744,9 @@ class ProductController extends Controller
         return Cache::remember($cacheKey, $cacheTime, function () use ($period) {
             $startDate = match ($period) {
                 'day' => Carbon::now()->subDays(6),
-                'week' => Carbon::now()->subWeeks(6),
-                'year' => Carbon::now()->subYears(6),
-                default => Carbon::now()->subMonths(6),
+                'week' => Carbon::now()->subWeeks(4),
+                'year' => Carbon::now()->subYears(1),
+                default => Carbon::now()->subMonths(12),
             };
 
             $products = Product::where('created_at', '>=', $startDate)

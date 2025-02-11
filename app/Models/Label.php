@@ -42,17 +42,13 @@ class Label extends Model implements HasMedia
     protected array $orderable = [
         'id',
         'name',
-        'web',
         'email',
-        'address'
     ];
 
     protected array $filterable = [
         'id',
         'name',
-        'web',
         'email',
-        'address'
     ];
 
     protected $appends = ['image'];
