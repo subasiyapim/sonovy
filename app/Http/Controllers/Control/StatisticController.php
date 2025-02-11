@@ -590,7 +590,7 @@ class StatisticController extends Controller
         ]);
     }
 
-    private function getBestData(?string $slug = 'platforms', $model)
+    private function getBestData(?string $slug = 'songs', $model)
     {
         return match ($slug) {
             'countries' => $this->getBestCountries($model->earnings),
