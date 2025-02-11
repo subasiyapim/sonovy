@@ -213,7 +213,7 @@ class StatisticController extends Controller
         Artist $artist = null,
         Label $label = null,
     ) {
-        return $earnings
+        return collect($earnings)
             ->when($product, function ($query, $product) {
                 return $query->where('upc_code', $product->upc_code);
             })
@@ -590,7 +590,7 @@ class StatisticController extends Controller
         ]);
     }
 
-    private function getBestData(string $slug, $model)
+    private function getBestData(?string $slug = 'platforms', $model)
     {
         return match ($slug) {
             'countries' => $this->getBestCountries($model->earnings),

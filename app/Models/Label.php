@@ -120,6 +120,11 @@ class Label extends Model implements HasMedia
         return $this->hasMany(Product::class);
     }
 
+    public function earnings(): HasMany
+    {
+        return $this->hasMany(Earning::class, 'label_id');
+    }
+
     public function hasActive(): bool
     {
         $this->load('products');

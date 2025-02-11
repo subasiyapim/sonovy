@@ -136,6 +136,11 @@ class Artist extends Model implements HasMedia
         return $this->belongsToMany(Song::class, 'artist_song', 'artist_id', 'song_id');
     }
 
+    public function earnings(): HasMany
+    {
+        return $this->hasMany(Earning::class, 'artist_id');
+    }
+
     public function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
