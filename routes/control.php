@@ -118,8 +118,10 @@ Route::group(
 
         //Statistics Routes
         Route::group(['prefix' => 'statistics', 'as' => 'statistics.'], function () {
-            Route::get('statistics/product/{product}', [StatisticController::class, 'product'])->name('product');
             Route::get('/', [StatisticController::class, 'index'])->name('index');
+            Route::get('statistics/product/{product}', [StatisticController::class, 'product'])->name('product');
+            Route::get('statistics/artist/{artist}', [StatisticController::class, 'artist'])->name('artist');
+            Route::get('statistics/label/{label}', [StatisticController::class, 'label'])->name('label');
         });
 
         Route::resource('roles', RoleController::class)->names('roles');

@@ -120,6 +120,14 @@ class Label extends Model implements HasMedia
         return $this->hasMany(Product::class);
     }
 
+    public function hasActive(): bool
+    {
+        $this->load('products');
+
+        return $this->products()->count() > 0;
+
+    }
+
     public function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
