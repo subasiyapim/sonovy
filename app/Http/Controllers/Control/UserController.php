@@ -45,6 +45,7 @@ class UserController extends Controller
             'period' => ['nullable', 'in:[day,week,month,year]'],
         ]);
 
+        // dd($request->all());
         if ($validator->fails()) {
             return redirect()
                 ->route('control.user-management.users.index')
@@ -60,8 +61,8 @@ class UserController extends Controller
         $user = Auth::user();
         $hasAdmin = $user->roles()->pluck('code')->contains('admin');
         $query = User::with('roles', 'parent', 'children', 'country', 'district', 'city')
-            ->when($request->input('status'), function ($query) use ($request) {
-                $query->where('status', $request->input('status'));
+            ->when(isset($request->status), function ($query) use ($request) {
+                $query->where('status', $request->status);
             })
             ->when($request->input('role'), function ($query) use ($request) {
                 $query->whereHas('roles', function ($query) use ($request) {
@@ -139,7 +140,7 @@ class UserController extends Controller
 
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
         $user->refresh();
@@ -229,7 +230,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+" . $country->phone_code . $user->phone;
+            $user->phone = "+".$country->phone_code.$user->phone;
         }
 
         return inertia(
@@ -340,7 +341,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
