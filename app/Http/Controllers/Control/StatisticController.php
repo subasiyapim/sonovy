@@ -223,7 +223,7 @@ class StatisticController extends Controller
             ->when($label, function ($query, $label) {
                 return $query->where('label_id', $label->id);
             })
-            ->where('sales_type', 'Download')
+            ->where('sales_type', '!=', 'Platform Promotion')
             ->where('platform', $platform)
             ->groupBy(['release_type', 'sales_date'])
             ->map(function ($releaseTypeGroup) {
