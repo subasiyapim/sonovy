@@ -37,7 +37,7 @@ const data = computed({
             </div>
             <div>
 
-              <a :href="route('control.catalog.artists.show',scope.row.artist_id)"
+              <a :href="route('control.statistics.artist',scope.row.artist_id)"
                  class="font-poppins table-name-text c-sub-600">{{ scope.row.artist_name }}</a>
 
               <div class="flex flex-row gap-x-2 items-center" v-if="scope.row.platforms">

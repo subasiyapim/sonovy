@@ -36,7 +36,7 @@ const data = computed({
                    :src="scope.row.label_image ? scope.row.label_image.thumb : defaultStore.profileImage(scope.row.label_name)"
               >
             </div>
-            <a :href="route('control.catalog.labels.show',scope.row.label_id)"
+            <a :href="route('control.statistics.label',scope.row.label_id)"
                class="c-sub-600 table-name-text">{{ scope.row.label_name }}</a>
 
 

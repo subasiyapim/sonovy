@@ -525,7 +525,7 @@ class StatisticController extends Controller
 
     public function artist(Artist $artist, Request $request): \Inertia\Response
     {
-        $artist->loadMissing('downloadPlatforms', 'songs', 'earnings');
+        $artist->loadMissing('platforms', 'songs', 'earnings');
 
         [$startDate, $endDate] = $this->getDateRange($request);
         $platform = $request->input('platform') ?? 'Spotify';
@@ -562,7 +562,7 @@ class StatisticController extends Controller
      */
     public function label(Label $label, Request $request): \Inertia\Response
     {
-        $label->loadMissing('downloadPlatforms', 'songs', 'earnings');
+        $label->loadMissing('earnings');
 
         [$startDate, $endDate] = $this->getDateRange($request);
         $platform = $request->input('platform') ?? 'Spotify';
@@ -576,7 +576,7 @@ class StatisticController extends Controller
         $slug = $request->input('slug') ?? 'songs';
 
         $tab = $this->getBestData($slug, $label);
-        return Inertia::render('Control/Statistics/artist', [
+        return Inertia::render('Control/Statistics/label', [
             'artist' => $label,
             'platforms' => $this->getPlatforms(),
             'downloadCounts' => $downloadCounts,
