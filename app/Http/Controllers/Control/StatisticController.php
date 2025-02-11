@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Control;
 
 use App\Http\Controllers\Controller;
+use App\Models\Artist;
 use App\Models\Earning;
+use App\Models\Label;
 use App\Models\Platform;
 use App\Models\Product;
 use App\Models\System\Country;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Response;
 
 class StatisticController extends Controller
 {
@@ -51,15 +55,32 @@ class StatisticController extends Controller
             'platformSalesCount' => $platformSalesCount,
             'startDate' => $startDate,
             'endDate' => $endDate,
-            'platforms' => $this->getPlatforms($earnings),
+            'platforms' => $this->getPlatforms(),
             'tab' => $tabData,
         ]);
     }
 
     //Aylık dinleme istatistikleri
-    private function getMonthlyListeningStatistics($earnings, Product $product = null)
-    {
+    private function getMonthlyListeningStatistics(
+        $earnings,
+        Product $product = null,
+        Artist $artist = null,
+        Label $label = null,
+        Platform $platform = null
+    ) {
         $monthlyStats = $earnings->where('sales_type', 'Stream')
+            ->when($product, function ($query, $product) {
+                return $query->where('upc_code', $product->upc_code);
+            })
+            ->when($artist, function ($query, $artist) {
+                return $query->where('artist_id', $artist->id);
+            })
+            ->when($label, function ($query, $label) {
+                return $query->where('label_id', $label->id);
+            })
+            ->when($platform, function ($query, $platform) {
+                return $query->where('platform_id', $platform->id);
+            })
             ->groupBy('sales_date')
             ->map(function ($item) {
                 return $item->sum('quantity');
@@ -72,7 +93,7 @@ class StatisticController extends Controller
                 $date = Carbon::createFromFormat('Y-m', $key);
                 $date->setLocale(app()->getLocale());
                 return [$date->translatedFormat('M y') => $value];
-            })->sortKeys();
+            });
 
         $average = round($monthlyStats->avg(), 2);
         $total = $monthlyStats->sum();
@@ -144,9 +165,39 @@ class StatisticController extends Controller
         ];
     }
 
+    /**
+     * @param  Product  $product
+     *
+     * @return array
+     */
+    protected function getDownloadCounts($model): array
+    {
+        return [
+            'songs' => $model->earnings->where('release_type', 'Music')?->sum('quantity'),
+            'albums' => $model->earnings->where('release_type', 'Album')?->sum('quantity'),
+            'videos' => $model->earnings->where('release_type', 'Video')?->sum('quantity'),
+        ];
+    }
+
+    protected function getPlatformStats($model): array
+    {
+        $platforms = $this->getPlatforms();
+
+        return [
+            'total' => $model->earnings->sum('quantity'),
+            'spotify' => $model->earnings
+                ->where('platform_id', $platforms->where('code', 'spotify')->first()->id)
+                ->sum('quantity'),
+            'apple' => $model->earnings->where('platform_id', $platforms->where('code', 'apple')->first()->id)
+                ->sum('quantity'),
+            'other' => $model->earnings->where('platform_id', $platforms->whereNotIn('code', ['spotify', 'apple']))
+                ->sum('quantity'),
+        ];
+    }
+
     private function getPlatformMonthlyStatistics($earnings, $platform = 'Spotify')
     {
-        $platformMonthlyStats = $earnings->where('platform', $platform)
+        return $earnings->where('platform', $platform)
             ->groupBy('platform')
             ->map(function ($item) {
                 return $item->sum('quantity');
@@ -154,20 +205,26 @@ class StatisticController extends Controller
             ->mapWithKeys(function ($value, $key) {
                 return [Carbon::parse($key)->format('Y-m') => $value];
             });
-
-        return $platformMonthlyStats;
     }
 
-    private function getPlatformSalesCount($earnings, $platform = 'Spotify', Product $product = null)
-    {
-        //release_type a göre gruplandırılan dataların toplam satış sayıları aylık gruplandırılmış quantity toplamları
-        //Aylık Dinleme istatistikleri ile aynı mantık
-
-        if ($product) {
-            $earnings = $earnings->where('upc_code', $product->upc_code);
-        }
-
-        $platformSalesCount = $earnings->where('sales_type', 'Download')
+    private function getPlatformSalesCount(
+        $earnings,
+        $platform = 'Spotify',
+        Product $product = null,
+        Artist $artist = null,
+        Label $label = null,
+    ) {
+        return $earnings
+            ->when($product, function ($query, $product) {
+                return $query->where('upc_code', $product->upc_code);
+            })
+            ->when($artist, function ($query, $artist) {
+                return $query->where('artist_id', $artist->id);
+            })
+            ->when($label, function ($query, $label) {
+                return $query->where('label_id', $label->id);
+            })
+            ->where('sales_type', 'Download')
             ->where('platform', $platform)
             ->groupBy(['release_type', 'sales_date'])
             ->map(function ($releaseTypeGroup) {
@@ -180,8 +237,6 @@ class StatisticController extends Controller
                     return [Carbon::parse($key)->format('Y-m') => $value];
                 })->sortKeys();
             })->sortKeys();
-
-        return $platformSalesCount;
     }
 
     private function getTabData($tab, $earnings)
@@ -395,64 +450,11 @@ class StatisticController extends Controller
         return [$startDate, $endDate];
     }
 
-    private function getPlatforms($earnings)
+    private function getPlatforms()
     {
-        return Platform::all();
-    }
-
-
-    public function product(Product $product, Request $request)
-    {
-        [$startDate, $endDate] = $this->getDateRange($request);
-        $platform = $request->input('platform') ?? 'Spotify';
-
-        $spotifyId = Platform::where('code', 'spotify')->first()->id;
-        $platforms = Platform::all();
-        $spotifyId = Platform::where('code', 'spotify')->first()->id;
-        $appleId = Platform::where('code', 'apple')->first()->id;
-        $otherIds = Platform::whereNotIn('code', ['spotify', 'apple'])->first()->id;
-
-        $product->loadMissing('downloadPlatforms', 'mainArtists', 'songs', 'earnings');
-
-        $monthlyStats = $this->getMonthlyListeningStatistics($product->earnings, $product);
-
-        $downloadCounts = [
-            'songs' => $product->earnings->where('release_type', 'Music')?->sum('quantity'),
-            'albums' => $product->earnings->where('release_type', 'Album')?->sum('quantity'),
-            'videos' => $product->earnings->where('release_type', 'Video')?->sum('quantity'),
-        ];
-
-        $platformStats = [
-            'total' => $product->earnings->sum('quantity'),
-            'spotify' => $product->earnings->where('platform_id', $spotifyId)->sum('quantity'),
-            'apple' => $product->earnings->where('platform_id', $appleId)->sum('quantity'),
-            'other' => $product->earnings->where('platform_id', $otherIds)->sum('quantity'),
-        ];
-
-        $platformSalesCount = $this->getPlatformSalesCount($product->earnings, $platform, $product);
-
-        $slug = $request->input('slug');
-
-        switch ($slug) {
-            case 'countries':
-                $tab = $this->getBestCountries($product->earnings);
-                break;
-            default:
-                $tab = $this->getBestPlatforms($product->earnings);
-                break;
-        }
-
-        return Inertia::render('Control/Statistics/product', [
-            'product' => $product,
-            'platforms' => $platforms,
-            'downloadCounts' => $downloadCounts,
-            'platformStats' => $platformStats,
-            'monthlyStats' => $monthlyStats,
-            'platformSalesCount' => $platformSalesCount,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-            'tab' => $tab
-        ]);
+        return Cache::remember('platforms', 3600, function () {
+            return Platform::all();
+        });
     }
 
     private function getBestPlatforms($earnings)
@@ -487,5 +489,120 @@ class StatisticController extends Controller
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
                 ];
             })->sortByDesc('quantity')->take(100);
+    }
+
+    public function product(Product $product, Request $request)
+    {
+        [$startDate, $endDate] = $this->getDateRange($request);
+        $platform = $request->input('platform') ?? 'Spotify';
+        $product->loadMissing('downloadPlatforms', 'mainArtists', 'songs', 'earnings');
+
+        $monthlyStats = $this->getMonthlyListeningStatistics($product->earnings, $product, null, null);
+
+        $downloadCounts = $this->getDownloadCounts($product);
+
+        $platformStats = $this->getPlatformStats($product);
+
+        $platformSalesCount = $this->getPlatformSalesCount($product->earnings, $platform, $product, null, null);
+
+        $slug = $request->input('slug');
+
+        $tab = $this->getBestData($slug, $product);
+
+        return Inertia::render('Control/Statistics/product', [
+            'product' => $product,
+            'platforms' => $this->getPlatforms(),
+            'downloadCounts' => $downloadCounts,
+            'platformStats' => $platformStats,
+            'monthlyStats' => $monthlyStats,
+            'platformSalesCount' => $platformSalesCount,
+            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($request),
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'tab' => $tab
+        ]);
+    }
+
+    public function artist(Artist $artist, Request $request): \Inertia\Response
+    {
+        $artist->loadMissing('downloadPlatforms', 'songs', 'earnings');
+
+        [$startDate, $endDate] = $this->getDateRange($request);
+        $platform = $request->input('platform') ?? 'Spotify';
+        $monthlyStats = $this->getMonthlyListeningStatistics($artist->earnings, null, $artist, null);
+
+        $downloadCounts = $this->getDownloadCounts($artist);
+
+        $platformStats = $this->getPlatformStats($artist);
+        $platformSalesCount = $this->getPlatformSalesCount($artist, $platform, null, $artist, null);
+
+        $slug = $request->input('slug');
+
+        $tab = $this->getBestData($slug, $artist);
+
+        return Inertia::render('Control/Statistics/artist', [
+            'artist' => $artist,
+            'platforms' => $this->getPlatforms(),
+            'downloadCounts' => $downloadCounts,
+            'platformStats' => $platformStats,
+            'monthlyStats' => $monthlyStats,
+            'platformSalesCount' => $platformSalesCount,
+            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($request),
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'tab' => $tab
+        ]);
+
+    }
+
+    /**
+     * @param  Label    $label
+     * @param  Request  $request
+     *
+     * @return Response
+     */
+    public function label(Label $label, Request $request): \Inertia\Response
+    {
+        $label->loadMissing('downloadPlatforms', 'songs', 'earnings');
+
+        [$startDate, $endDate] = $this->getDateRange($request);
+        $platform = $request->input('platform') ?? 'Spotify';
+        $monthlyStats = $this->getMonthlyListeningStatistics($label->earnings, null, null, $label);
+
+        $downloadCounts = $this->getDownloadCounts($label);
+
+        $platformStats = $this->getPlatformStats($label);
+        $platformSalesCount = $this->getPlatformSalesCount($label, $platform, null, null, $label);
+
+        $slug = $request->input('slug') ?? 'songs';
+
+        $tab = $this->getBestData($slug, $label);
+        return Inertia::render('Control/Statistics/artist', [
+            'artist' => $label,
+            'platforms' => $this->getPlatforms(),
+            'downloadCounts' => $downloadCounts,
+            'platformStats' => $platformStats,
+            'monthlyStats' => $monthlyStats,
+            'platformSalesCount' => $platformSalesCount,
+            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($request),
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'tab' => $tab
+        ]);
+
+    }
+
+    private function getBestData(string $slug, $model)
+    {
+        switch ($slug) {
+            case 'countries':
+                $tab = $this->getBestCountries($model->earnings);
+                break;
+            default:
+                $tab = $this->getBestPlatforms($model->earnings);
+                break;
+        }
+
+        return $tab;
     }
 }
