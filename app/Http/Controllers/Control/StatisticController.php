@@ -165,7 +165,7 @@ class StatisticController extends Controller
     }
 
     /**
-     * @param  Product  $product
+     * @param $model
      *
      * @return array
      */
@@ -546,7 +546,7 @@ class StatisticController extends Controller
             'platformStatistics' => $platformStats,
             'monthlyStats' => $monthlyStats,
             'platformSalesCount' => $platformSalesCount,
-            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($platform),
+            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($artist, $platform),
             'startDate' => $startDate,
             'endDate' => $endDate,
             'tab' => $tab
@@ -583,7 +583,7 @@ class StatisticController extends Controller
             'platformStatistics' => $platformStats,
             'monthlyStats' => $monthlyStats,
             'platformSalesCount' => $platformSalesCount,
-            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($platform),
+            'platformMonthlyStats' => $this->getPlatformMonthlyStatistics($label, $platform),
             'startDate' => $startDate,
             'endDate' => $endDate,
             'tab' => $tab
