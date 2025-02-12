@@ -16,7 +16,7 @@ trait HasAdvancedFilter
             'f' => request('f', []),
 
         ])
-            ->paginate(request('limit', config('project.pageLength')))->appends(request()->all());
+            ->paginate(request('limit', $this->defaultLimit ?? config('project.pageLength')))->appends(request()->all());
     }
 
     public function processQuery($query, $data)
@@ -31,7 +31,7 @@ trait HasAdvancedFilter
         $data = $this->processGlobalSearch($data);
 
         $v = validator()->make($data, [
-            'order_column' => 'sometimes|required',//|in:'.$this->orderableColumns(),
+            'order_column' => 'sometimes|required', //|in:'.$this->orderableColumns(),
             'order_direction' => 'sometimes|required|in:asc,desc',
             'limit' => 'sometimes|required|integer|min:1',
             's' => 'sometimes|nullable|string',

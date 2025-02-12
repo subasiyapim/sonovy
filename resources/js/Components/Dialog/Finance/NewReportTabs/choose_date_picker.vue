@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import moment from 'moment';
 import 'moment/dist/locale/tr';
 moment.locale('tr');
@@ -17,12 +17,9 @@ const element = computed({
   set: (value) => emits('update:modelValue', value),
 });
 
+// Compute formatted date range for display
 const getFormatedDate = computed(() => {
-  if (
-    element.value.date &&
-    Array.isArray(element.value.date) &&
-    element.value.date.length === 2
-  ) {
+  if (element.value.date && Array.isArray(element.value.date) && element.value.date.length === 2) {
     const [startDate, endDate] = element.value.date;
     const formattedStartDate = moment(startDate).format('MMM DD, YYYY').replace('Dec', 'Ara').replace('Jan', 'Oca');
     const formattedEndDate = moment(endDate).format('MMM DD, YYYY').replace('Dec', 'Ara').replace('Jan', 'Oca');
@@ -32,6 +29,34 @@ const getFormatedDate = computed(() => {
   }
 });
 
+// Define reactive variables for min and max selectable dates
+const minDate = ref(null);
+const maxDate = ref(null);
+
+const onModelChange = (newVal) =>{
+
+
+
+     if (newVal && Array.isArray(newVal)) {
+      if (newVal.length === 2) {
+        // If both start and end dates are selected, reset min/max limits
+        minDate.value = null;
+        maxDate.value = null;
+      } else if (newVal.length === 1) {
+
+        const firstDate = moment(newVal[0]);
+
+        // Set the min and max range dynamically
+        minDate.value = firstDate.clone().subtract(3, 'months').toDate();
+        maxDate.value = firstDate.clone().add(3, 'months').toDate();
+      }
+    } else {
+      // Reset min/max dates if no date is selected
+      minDate.value = null;
+      maxDate.value = null;
+    }
+
+}
 const setDateRange = (type) => {
   const now = new Date();
   let range = [];
@@ -44,36 +69,19 @@ const setDateRange = (type) => {
             { month: moment().month(), year: moment().year() },
         ];
         break;
+    case 'last2months':
+      range = [
+        { month: moment().subtract(2, 'months').month(), year: moment().subtract(2, 'months').year() },
+          { month: moment().month(), year: moment().year() },
+      ];
+      break;
     case 'last3months':
       range = [
         { month: moment().subtract(3, 'months').month(), year: moment().subtract(3, 'months').year() },
           { month: moment().month(), year: moment().year() },
       ];
       break;
-    case 'last6months':
-      range = [
-        { month: moment().subtract(6, 'months').month(), year: moment().subtract(6, 'months').year() },
-          { month: moment().month(), year: moment().year() },
-      ];
-      break;
-    case 'last12months':
 
-
-      range = [
-        { month: moment().subtract(1, 'year').month(), year: moment().subtract(1, 'year').year() },
-        { month: moment().month(), year: moment().year() },
-      ];
-      break;
-
-    case 'allTime':
-      range = [
-        {
-          month: 0,
-          year: 1970,
-        },
-         { month: moment().month(), year: moment().year() },
-      ];
-      break;
     default:
       range = [];
   }
@@ -95,13 +103,25 @@ const setDateRange = (type) => {
   <div class="flex justify-between">
     <div class="flex flex-col flex-1">
       <button @click="setDateRange('last30days')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 1 Ay</button>
+      <button @click="setDateRange('last2months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 2 Ay</button>
       <button @click="setDateRange('last3months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 3 Ay</button>
-      <button @click="setDateRange('last6months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 6 Ay</button>
-      <button @click="setDateRange('last12months')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Son 12 Ay</button>
-      <button @click="setDateRange('allTime')" class="p-3 hover:bg-[#F5F7FA] label-sm c-sub-600">Tüm Zamanlar</button>
     </div>
     <div class="dateWrapper mx-auto">
-      <VueDatePicker ref="vueDatePicker" class="w-full" v-model="element.date" auto-apply :enable-time-picker="false" month-picker inline range multi-calendars />
+      <VueDatePicker
+        @internal-model-change="onModelChange"
+        ref="vueDatePicker"
+        class="w-full"
+        v-model="element.date"
+
+        auto-apply
+        :enable-time-picker="false"
+        month-picker
+        inline
+        range
+        multi-calendars
+        :min-date="minDate"
+        :max-date="maxDate"
+      />
     </div>
   </div>
 </template>
