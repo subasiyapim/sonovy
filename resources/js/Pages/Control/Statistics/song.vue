@@ -34,21 +34,14 @@
     <div class="bg-white-400 h-44 p-6 relative mb-24">
       <div class="">
         <div class="flex items-center gap-2">
-            <h1 class="label-xl c-strong-950" v-text="song.song_name"/>
+            <h1 class="label-xl c-strong-950" v-text="song.name"/>
 
         </div>
 
       </div>
 
 
-      <div class="flex items-center justify-end gap-2 absolute top-5 right-5 w-[600px] flex-wrap">
 
-        <div v-for="(platform,index) in song.download_platforms" class="flex items-center gap-1">
-            <Icon  :icon="platform.icon" />
-           <span class="paragraph-sm c-sub-600 w-max"> {{platform.name}}</span>
-           <template v-if="index < song.download_platforms?.length - 1"><span class="label-sm c-soft-400 mx-2">•</span> </template>
-        </div>
-      </div>
     </div>
     <div class="px-6">
 

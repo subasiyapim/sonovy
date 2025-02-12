@@ -25,7 +25,7 @@
 
     <template #body>
       <template v-if="!loading">
-       <hr class="mt-4" v-if="product_id && !(props.platformSalesCount && props.platformSalesCount.length > 0)">
+       <hr class="mt-4" v-if="product_id && !(platformSalesCount && platformSalesCount.length > 0)">
         <div v-if="!product_id" class="flex items-center border border-soft-200 rounded mt-6">
             <button @click="onChangeType('audio_streams')" :class="type == 'audio_streams' ? 'bg-weak-50' : 'bg-white' "
                     class="flex border-r border-soft-200 label-xs c-sub-600 flex-1 flex justify-center py-1">Ses Yayını
@@ -42,13 +42,12 @@
             </button>
 
         </div>
-
-         <div v-if="props.platformSalesCount && props.platformSalesCount.length > 0" class="flex flex-col gap-3 p-4">
+         <div v-if="platformSalesCount" class="flex flex-col gap-3 p-4">
             <div>
                 <div class="flex items-center mb-2 gap-2">
 
 
-                <p class="label-xl c-strong-950">{{ Object.values(props.platformSalesCount["Music Release"] ?? {})?.reduce((curr,ar) => curr+ar,0) }}</p>
+                <p class="label-xl c-strong-950">{{ Object.values(platformSalesCount["Music Release"] ?? {})?.reduce((curr,ar) => curr+ar,0) }}</p>
                 <span v-if="percentage != 0" class="label-xs rounded-full px-2 py-0.5"
                         :class="percentage > 0 ? 'bg-[#D8E5ED] text-[#060E2F]' : 'bg-[#FFC0C5] text-[#681219]' ">
                                     <template v-if="percentage >0">
