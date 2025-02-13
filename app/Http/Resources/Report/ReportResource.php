@@ -57,10 +57,15 @@ class ReportResource extends JsonResource
                 $startMonth = self::QUARTERS[$quarterIndex]['startMonth'];
                 $endMonth = self::QUARTERS[$quarterIndex]['endMonth'];
 
+//                return sprintf(
+//                    "%s. Çeyrek (%s - %s %s)",
+//                    $matches[1],
+//                    Carbon::create(null, $startMonth)->translatedFormat('F'),
+//                    Carbon::create(null, $endMonth)->translatedFormat('F'),
+//                    $year
+//                );
                 return sprintf(
-                //"%s. Çeyrek (%s - %s %s)",
-                //(%s - %s %s)",
-                //$matches[1],
+                    "(%s - %s %s)",
                     Carbon::create(null, $startMonth)->translatedFormat('F'),
                     Carbon::create(null, $endMonth)->translatedFormat('F'),
                     $year
