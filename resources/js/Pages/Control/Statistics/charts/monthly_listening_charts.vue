@@ -19,16 +19,15 @@
     </template>
     <template #tool>
       <div class="flex items-start gap-2 ">
-        <div class="flex items-center gap-0.5">
-          <SpotifyIcon/>
-          <SpotifyIcon/>
-          <SpotifyIcon/>
-          <SpotifyIcon/>
-          <SpotifyIcon/>
-          <SpotifyIcon/>
-          <SpotifyIcon/>
+
+        <div v-if="platforms" class="flex items-center gap-0.5">
+
+            <div v-html="p.icon" class="small-svg" v-for="p in platforms.slice(0,8)">
+            </div>
+
+
           <div class="bg-weak-50 ms-0.5 border border-soft-200 rounded-full w-4 h-4 flex items-center justify-center">
-            <p class="subheading-2xs !text-[8px] c-sub-600">+3</p>
+            <p class="subheading-2xs !text-[8px] c-sub-600">+{{platforms.length-8}}</p>
           </div>
         </div>
       </div>
@@ -66,13 +65,14 @@ import {ref, onMounted, watch} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {AppCard} from '@/Components/Cards';
-import {SpotifyIcon} from '@/Components/Icons';
+import {SpotifyIcon,Icon} from '@/Components/Icons';
 
 const props = defineProps({
   product_id: {
     type: [String, Number],
     default: null
   },
+  platforms:{},
   monthlyStats: {
     type: Object,
     default: () => ({
@@ -191,6 +191,9 @@ watch(() => props.monthlyStats, () => {
 }, { immediate: true });
 </script>
 
-<style scoped>
-/* Add any custom styles here */
+<style >
+.small-svg svg{
+    width:18px !important;
+    height:18px !important;
+}
 </style>
