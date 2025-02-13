@@ -38,7 +38,7 @@ class CreateTenant extends Command
         $username = $this->getUniqueUsername($baseUsername);
 
         // Check if the domain already exists
-        $tenant = \App\Models\Tenant::where('domain', $domain)->first();
+        $tenant = \App\Models\System\Tenant::where('domain', $domain)->first();
 
         if ($tenant) {
             $this->warn("Tenant with domain {$domain} already exists!");
