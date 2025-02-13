@@ -4,7 +4,7 @@
       <span class="label-xs c-soft-400 cursor-pointer" @click="router.visit(route('control.statistics.index'))">İstatistikler</span>
       <span class="label-xs c-soft-400">•</span>
       <span class="label-xs c-soft-400">
-         Parça İstatistikleri
+         Plak Şirketi İstatistikleri
       </span>
     </template>
     <!-- {{usePage().props.platformStatistics}} -->

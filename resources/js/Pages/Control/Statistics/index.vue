@@ -1,6 +1,6 @@
 <template>
-  <AdminLayout :showGoBack="false" :showBreadCrumb="false" :showDatePicker="false"
-               :title="__('control.statistics.header')" parentTitle="Katalog">
+  <AdminLayout  :showBreadCrumb="true" :showDatePicker="false"
+               :title="__('control.statistics.header')" >
     <!-- {{usePage().props.platformStatistics}} -->
     <template #toolbar>
       <div class="w-48">

@@ -136,7 +136,7 @@ const pauseMusic = (song) => {
         <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{ scope.row.quantity }}</span>
       </template>
     </AppTableColumn>
-    <AppTableColumn label="Dinlenme Oranı%">
+    <AppTableColumn label="% Stream">
       <template #default="scope">
         <span
             class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{
