@@ -38,7 +38,7 @@ class CreateTenant extends Command
         $username = $this->getUniqueUsername($baseUsername);
 
         // Check if the domain already exists
-        $tenant = \App\Models\System\Tenant::where('domain', $domain)->first();
+        $tenant = \App\Models\Tenant::where('domain', $domain)->first();
 
         if ($tenant) {
             $this->warn("Tenant with domain {$domain} already exists!");
@@ -108,7 +108,6 @@ class CreateTenant extends Command
 
         $this->info("Tenant key: {$tenantKey}");
         $this->info("Tenant created successfully with domain: {$domain}");
-
     }
 
     private function getUniqueUsername(string $baseUsername): string
@@ -128,18 +127,27 @@ class CreateTenant extends Command
      * Generate a unique database name by appending an incrementing number if needed.
      *
      * @param  string  $baseDbName
+     *
      * @return string
      */
     private function getUniqueDatabaseName(string $baseDbName): string
     {
-        return $baseDbName;
-    }
+        $dbName = $baseDbName;
+        $counter = 1;
 
+        while ($this->databaseExists($dbName)) {
+            $dbName = $baseDbName.'_'.$counter;
+            $counter++;
+        }
+
+        return $dbName;
+    }
 
     /**
      * Check if a database with the given name already exists.
      *
      * @param  string  $dbName
+     *
      * @return bool
      */
     private function databaseExists(string $dbName): bool
@@ -154,6 +162,7 @@ class CreateTenant extends Command
      * Check if a username already exists.
      *
      * @param  string  $username
+     *
      * @return bool
      */
     private function usernameExists(string $username): bool
