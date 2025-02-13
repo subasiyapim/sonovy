@@ -60,7 +60,7 @@
 
         <div class="flex grid grid-cols-3 gap-3 mb-5">
 
-         <MonthlyListeningChart :monthly-stats="monthlyStats"/>
+         <MonthlyListeningChart :platforms="platforms" :monthly-stats="monthlyStats"/>
 
       <div class="flex flex-col gap-3">
         <AppCard>
