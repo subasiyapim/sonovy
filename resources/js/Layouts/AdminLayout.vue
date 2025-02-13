@@ -4,7 +4,7 @@
 
     <Sidebar>
     </Sidebar>
-    <div class="flex-1 relative overflow-scroll">
+    <div class="flex-1 relative custom-scrollbar overflow-auto">
       <div class="flex items-center staticTopInfo">
         <div class="flex items-center gap-3.5 flex-1">
           <IconButton v-if="showGoBack" @click="goBack" hasBorder size="medium">
@@ -78,13 +78,35 @@
 .searchResultWrapper .el-card {
   border-radius: 8px;
 }
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  position:absolute !important;
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.3s ease-in-out;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.custom-scrollbar.scrolling::-webkit-scrollbar {
+  opacity: 1; /* Show scrollbar when scrolling */
+}
+
 </style>
 
 
 <script setup>
 
 
-import {computed, onMounted, ref, nextTick, useSlots, onBeforeMount, onBeforeUnmount} from 'vue'
+import {computed, onMounted, onUnmounted,ref, nextTick, useSlots, onBeforeMount, onBeforeUnmount} from 'vue'
 import Sidebar from '@/Layouts/Partials/Sidebar.vue';
 import {SecondaryButton, IconButton, RegularButton} from '@/Components/Buttons'
 import {ArrowLeftIcon, SearchIcon, NotificationIcon, CalendarIcon, ExitIcon} from '@/Components/Icons';
@@ -156,6 +178,34 @@ onMounted(() => {
       .listen('.reportProcessed', (e) => {
         console.log("REPORT PROCESSED Event Alındı:", e);
       })
+});
+
+
+const isScrolling = ref(false);
+
+const handleScroll = (event) => {
+  isScrolling.value = true;
+  event.target.classList.add('scrolling');
+
+  clearTimeout(event.target.scrollTimeout);
+  event.target.scrollTimeout = setTimeout(() => {
+    isScrolling.value = false;
+    event.target.classList.remove('scrolling');
+  }, 1000); // Hide scrollbar after 1s of inactivity
+};
+
+onMounted(() => {
+  const scrollableDiv = document.querySelector('.custom-scrollbar');
+  if (scrollableDiv) {
+    scrollableDiv.addEventListener('scroll', handleScroll);
+  }
+});
+
+onUnmounted(() => {
+  const scrollableDiv = document.querySelector('.custom-scrollbar');
+  if (scrollableDiv) {
+    scrollableDiv.removeEventListener('scroll', handleScroll);
+  }
 });
 
 

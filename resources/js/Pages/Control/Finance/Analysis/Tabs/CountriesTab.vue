@@ -104,7 +104,6 @@ const sortedReleases = computed(() => {
 
 // Pagination için computed property
 const paginatedReleases = computed(() => {
-    console.log("asdasd",sortedReleases.value[0]);
 
     const startIndex = (currentPage.value - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -153,7 +152,8 @@ const changePage = (page) => {
                 <div class="flex items-center gap-2 flex-1">
                     <PersonIcon color="var(--sub-600)" />
                     <p class="label-medium c-strong-950">{{ __('control.finance.analysis.country_wise_earnings') }}</p>
-                    <p class="c-soft-400 label-sm">{{formattedDate}}</p>
+                    <p class="c-soft-400 label-sm">Albüm | </p>
+                    <p class="c-soft-400 label-sm">{{formattedDate}} </p>
                 </div>
                 <div class="flex gap-3">
                     <button><DownloadIcon color="var(--sub-600)" /></button>
@@ -242,19 +242,19 @@ const changePage = (page) => {
 
 <style scoped>
 .bg-turkey {
-    background-color: #E30A17;
+    background-color: #4A90E2; /* Light Blue */
 }
 .bg-united-states {
-    background-color: #0052B4;
+    background-color: #6699FF; /* Soft Blue */
 }
 .bg-united-kingdom {
-    background-color: #012169;
+    background-color: #87CEEB; /* Sky Blue */
 }
 .bg-portugal {
-    background-color: #006600;
+    background-color: #5DADE2; /* Medium Light Blue */
 }
 .bg-spain {
-    background-color: #F1BF00;
+    background-color: #ADD8E6; /* Lighter Blue */
 }
 
 

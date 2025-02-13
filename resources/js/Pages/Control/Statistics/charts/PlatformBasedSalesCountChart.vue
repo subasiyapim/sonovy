@@ -212,7 +212,6 @@ const type = ref('audio_streams');
 
 const onPlatformChange = (e) => {
   platform_id.value = e.target.value;
-  console.log("GELDİİ");
 
   router.visit(route(route().current()), {
     replace: true,

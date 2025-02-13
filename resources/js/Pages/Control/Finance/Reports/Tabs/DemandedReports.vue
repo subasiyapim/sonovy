@@ -49,8 +49,8 @@ const getBody = computed(() => {
             <DocumentIcon color="var(--sub-600)"/>
           </div>
           <div v-if="scope.row.period" class="flex flex-col items-start">
-               <p class="label-xs c-strong-950">{{ moment(scope.row.period.split(" ")[0],'MM-YYYY').format("MMMM YYYY") }} - </p>
-                <p class="label-xs c-strong-950">{{ moment(scope.row.period.split(" ")[1],'MM-YYYY').format("MMMM YYYY") }}</p>
+               <p class="label-xs c-strong-950 whitespace-nowrap">{{ moment(scope.row.period.split(" ")[0],'MM-YYYY').format("MMMM YYYY") }} -  {{ moment(scope.row.period.split(" ")[1],'MM-YYYY').format("MMMM YYYY") }}</p>
+
           </div>
 
         </div>
