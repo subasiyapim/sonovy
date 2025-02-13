@@ -355,7 +355,7 @@ const countriesChartOptions = computed(() => ({
 
       return `
         <div style="padding: 8px; background: white; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.2); font-size: 13px; color: #333;">
-          <b>Platform adı:</b> ${platform}<br>
+          <b>Ülke:</b> ${platform}<br>
           <b>Yüzdelik oranı:</b> ${percentage}%<br>
           <b>Gelir Tutarı:</b> ${revenue}<br>
         </div>
