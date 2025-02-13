@@ -65,7 +65,7 @@ class ReportResource extends JsonResource
 //                    $year
 //                );
                 return sprintf(
-                    "(%s - %s %s)",
+                    "(%s - %s) %s",
                     Carbon::create(null, $startMonth)->translatedFormat('F'),
                     Carbon::create(null, $endMonth)->translatedFormat('F'),
                     $year
