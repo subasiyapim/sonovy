@@ -346,8 +346,8 @@ class AnalyseService
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'label_id' => $firstItem->label->id,
-                    'label_name' => $firstItem->label->name,
+                    'label_id' => $firstItem->label->id ?? $firstItem->label_id,
+                    'label_name' => $firstItem->label->name ?? $firstItem->label_name,
                     'earning' => Number::currency($labelEarnings, 'USD', app()->getLocale()),
                     'percentage' => round($percentage, 2),
                 ];
