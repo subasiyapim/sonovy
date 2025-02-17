@@ -393,7 +393,7 @@ class StatisticController extends Controller
             ->groupBy('label_id')
             ->map(function ($group) use ($totalQuantity) {
                 return [
-                    'label_id' => $group->first()->label->id,
+                    'label_id' => $group->first()->label->id ?? $group->first()->label_id ?? null,
                     'label_name' => $group->first()->label->name,
                     'label_image' => $group->first()->label->image,
                     'song_count' => $group->first()->artist->songs->count(),
