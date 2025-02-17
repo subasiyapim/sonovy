@@ -394,10 +394,10 @@ class StatisticController extends Controller
             ->map(function ($group) use ($totalQuantity) {
                 return [
                     'label_id' => $group->first()->label->id ?? $group->first()->label_id ?? null,
-                    'label_name' => $group->first()->label->name,
-                    'label_image' => $group->first()->label->image,
-                    'song_count' => $group->first()->artist->songs->count(),
-                    'quantity' => $group->sum('quantity'),
+                    'label_name' => $group->first()->label->name ?? $group->first()->label_name,
+                    'label_image' => $group->first()->label->image ?? null,
+                    'song_count' => $group->first()->artist->songs->count() ?? 0,
+                    'quantity' => $group->sum('quantity') ?? 0,
                     'quantity_percentage' => round(($group->sum('quantity') / $totalQuantity) * 100, 2),
                 ];
             })
