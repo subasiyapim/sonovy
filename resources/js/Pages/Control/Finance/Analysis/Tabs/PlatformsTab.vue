@@ -1,5 +1,5 @@
 <script setup>
-import {ref,reactive,onMounted, computed} from 'vue';
+import {ref,reactive,onMounted, computed, watch} from 'vue';
 import {PersonIcon,EyeOnIcon,DownloadIcon,BookReadLineIcon,LabelsIcon,AudioIcon} from '@/Components/Icons';
 import {AppProgressIndicator} from '@/Components/Widgets';
 import {AppSwitchComponent} from '@/Components/Form'
@@ -45,7 +45,15 @@ const currentPage = ref(1);
 const itemsPerPage = 20;
 
 // Template kısmı için computed property'ler
-const releases = computed(() => props.data?.releases ?? []);
+const releases = computed(() => {
+    // Backend'den gelen veriyi direkt olarak quantity'ye göre sırala
+    return (props.data?.releases ?? []).sort((a, b) => {
+        const quantityA = parseInt(a.total_quantity ?? 0);
+        const quantityB = parseInt(b.total_quantity ?? 0);
+        return quantityB - quantityA;
+    });
+});
+
 const platforms = computed(() => props.data?.platforms ?? []);
 
 // Filtrelenmiş ve sıralanmış releases computed property'si
@@ -56,17 +64,7 @@ const sortedReleases = computed(() => {
         const visiblePlatforms = {};
         let totalEarning = 0;
         let totalQuantity = 0;
-        let totalAllQuantity = 0;
-        let totalPercentage = 0;
-
-        // Tüm platformlar için toplam hesapla
-        Object.keys(album.platforms).forEach(platform => {
-            const platformData = album.platforms[platform];
-            if (platformData) {
-                const quantity = parseInt(platformData.quantity ?? "0");
-                totalAllQuantity += isNaN(quantity) ? 0 : quantity;
-            }
-        });
+        let totalAllQuantity = parseInt(album.total_quantity ?? 0);
 
         // Görünür platformlar için hesaplamalar
         Object.keys(album.platforms).forEach(platform => {
@@ -88,13 +86,13 @@ const sortedReleases = computed(() => {
             }
         });
 
-        // Platformları yüzdeye göre sırala
+        // Platformları quantity'ye göre sırala
         const sortedPlatforms = {};
         Object.entries(visiblePlatforms)
             .sort((a, b) => {
-                const percentageA = parseFloat(a[1].percentage ?? 0);
-                const percentageB = parseFloat(b[1].percentage ?? 0);
-                return percentageB - percentageA;
+                const quantityA = parseInt(a[1].quantity ?? 0);
+                const quantityB = parseInt(b[1].quantity ?? 0);
+                return quantityB - quantityA;
             })
             .forEach(([platform, data]) => {
                 sortedPlatforms[platform] = data;
@@ -105,18 +103,16 @@ const sortedReleases = computed(() => {
             platforms: sortedPlatforms,
             total_earning: `$${totalEarning.toFixed(2)}`,
             total_quantity: totalQuantity.toLocaleString(),
-            total_all_quantity: totalAllQuantity,
-            totalPercentage
+            total_all_quantity: totalAllQuantity
         };
-    }).sort((a, b) => (b.total_all_quantity || 0) - (a.total_all_quantity || 0));
+    });
 });
 
 // Pagination için computed property
 const paginatedReleases = computed(() => {
     const startIndex = (currentPage.value - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-       return sortedReleases.value.sort((a,b) => parseInt(b.total_earning.substring(1)) - parseInt(a.total_earning.substring(1))).slice(startIndex, endIndex);
-
+    return sortedReleases.value.slice(startIndex, endIndex);
 });
 
 // Toplam sayfa sayısı
@@ -127,6 +123,11 @@ const totalPages = computed(() => {
 onMounted(() => {
     // Eğer data.platforms varsa, eksik olan platformları da true olarak ekle
     if (props.data?.platforms) {
+        console.log('Backend\'den gelen orijinal veri:', {
+            platforms: props.data.platforms,
+            releases: props.data.releases
+        });
+
         props.data.platforms.forEach(platform => {
             if (platform) {
                 const key = platform.toLowerCase().replace(/\s+/g, '-');
@@ -136,11 +137,22 @@ onMounted(() => {
             }
         });
     }
-    console.log('PlatformsTab mounted:', {
-        data: props.data,
-        showPlatforms: showPlatforms.value
+
+    // Frontend'de sıralanan veriyi de logla
+    console.log('Frontend\'de sıralanan veri:', {
+        sortedReleases: sortedReleases.value,
+        paginatedReleases: paginatedReleases.value
     });
 });
+
+// Sıralama değişikliklerini izlemek için watch ekleyelim
+watch(sortedReleases, (newValue) => {
+    console.log('sortedReleases değişti:', newValue);
+}, { deep: true });
+
+watch(paginatedReleases, (newValue) => {
+    console.log('paginatedReleases değişti:', newValue);
+}, { deep: true });
 
 const updateVisibility = (platform) => {
     const key = platform.toLowerCase().replace(/\s+/g, '-');
