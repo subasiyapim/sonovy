@@ -61,14 +61,17 @@ class AnalyseService
                 ];
             });
 
-            $sortedEarnings = $countryEarnings->sortDesc();
+            $sortedEarnings = $countryEarnings->sortByDesc(function ($data) {
+                return $data['total_quantity'];
+            });
 
             $topCountries = $sortedEarnings->only($countries);
             $otherEarnings = $sortedEarnings->except($countries)->sum('total_earning');
+            $otherQuantity = $sortedEarnings->except($countries)->sum('total_quantity');
 
             $topCountries['Others'] = [
                 'total_earning' => $otherEarnings,
-                'total_quantity' => $sortedEarnings->except($countries)->sum('total_quantity'),
+                'total_quantity' => $otherQuantity,
                 'releases' => [],
             ];
 
@@ -156,14 +159,17 @@ class AnalyseService
                 ];
             });
 
-            $sortedEarnings = $platformEarnings->sortDesc();
+            $sortedEarnings = $platformEarnings->sortByDesc(function ($data) {
+                return $data['total_quantity'];
+            });
 
             $topPlatforms = $sortedEarnings->only($platforms);
             $otherEarnings = $sortedEarnings->except($platforms)->sum('total_earning');
+            $otherQuantity = $sortedEarnings->except($platforms)->sum('total_quantity');
 
             $topPlatforms['Other'] = [
                 'total_earning' => $otherEarnings,
-                'total_quantity' => $sortedEarnings->except($platforms)->sum('total_quantity'),
+                'total_quantity' => $otherQuantity,
                 'releases' => [],
             ];
 
@@ -233,8 +239,8 @@ class AnalyseService
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'artist_id' => $artistData->first()->artist_id,
-                    'artist_name' => $artistData->first()->artist_name,
+                    'artist_id' => $artistData->first()->artist->id,
+                    'artist_name' => $artistData->first()->artist->name,
                     'earning' => Number::currency($artistEarnings, 'USD', app()->getLocale()),
                     'streams' => $artistData->sum('quantity'),
                     'percentage' => round($percentage, 2),
@@ -340,8 +346,8 @@ class AnalyseService
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'label_id' => $firstItem->label_id,
-                    'label_name' => $firstItem->label_name,
+                    'label_id' => $firstItem->label->id,
+                    'label_name' => $firstItem->label->name,
                     'earning' => Number::currency($labelEarnings, 'USD', app()->getLocale()),
                     'percentage' => round($percentage, 2),
                 ];
