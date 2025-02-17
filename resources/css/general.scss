@@ -26,6 +26,10 @@
   display: none;
 }
 
+.scrolling::-webkit-scrollbar {
+  display: block !important;
+}
+
 
 .sub-menu-item{
      padding: 8px 12px;

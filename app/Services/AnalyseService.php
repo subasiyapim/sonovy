@@ -206,8 +206,10 @@ class AnalyseService
                     'total_quantity' => $releaseData->sum('quantity'),
                     'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
                     'platforms' => $platformData,
+
                     'product' => $product ? [
                         'id' => $product->id,
+                        'upc_code' => $product->upc_code,
                         'image' => $product->image
                     ] : null
                 ];
@@ -453,11 +455,14 @@ class AnalyseService
 
                     // Oranları hesapla ve ekle (yüzde olarak)
                     $result['Premium_percentage'] = $platformTotal > 0 ? round(($premiumSum / $platformTotal) * 100,
-                        2) : 0;
+                        2
+                    ) : 0;
                     $result['Freemium_percentage'] = $platformTotal > 0 ? round(($freemiumSum / $platformTotal) * 100,
-                        2) : 0;
+                        2
+                    ) : 0;
                     $result['Others_percentage'] = $platformTotal > 0 ? round(($othersSum / $platformTotal) * 100,
-                        2) : 0;
+                        2
+                    ) : 0;
 
                     return $result;
                 })
@@ -665,7 +670,7 @@ class AnalyseService
                     'date' => Carbon::createFromLocaleFormat('F Y', app()->getLocale(), $monthKey),
                     'data' => $monthData
                 ];
-            })->sortBy(function ($item) {
+            })->sortByDesc(function ($item) {
                 return $item['date']->timestamp;
             });
 
@@ -741,11 +746,13 @@ class AnalyseService
                 $month = $item['date']->locale(app()->getLocale())->translatedFormat('F Y');
 
                 $promotion = $monthData->filter(function ($item) {
-                    return stripos($item['platform'], 'Spotify') !== false && $item['sales_type'] === 'PLATFORM PROMOTION';
+                    return stripos($item['platform'],
+                            'Spotify') !== false && $item['sales_type'] === 'PLATFORM PROMOTION';
                 })->sum('earning');
 
                 $earning = $monthData->filter(function ($item) {
-                    return stripos($item['platform'], 'Spotify') !== false && $item['sales_type'] !== 'PLATFORM PROMOTION';
+                    return stripos($item['platform'],
+                            'Spotify') !== false && $item['sales_type'] !== 'PLATFORM PROMOTION';
                 })->sum('earning');
 
                 $net = $earning + abs($promotion);

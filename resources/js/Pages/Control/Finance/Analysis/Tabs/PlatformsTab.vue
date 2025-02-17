@@ -42,7 +42,7 @@ const showPlatforms = ref({
 });
 
 const currentPage = ref(1);
-const itemsPerPage = 10;
+const itemsPerPage = 20;
 
 // Template kısmı için computed property'ler
 const releases = computed(() => props.data?.releases ?? []);
@@ -115,7 +115,8 @@ const sortedReleases = computed(() => {
 const paginatedReleases = computed(() => {
     const startIndex = (currentPage.value - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return sortedReleases.value.slice(startIndex, endIndex);
+       return sortedReleases.value.sort((a,b) => parseInt(b.total_earning.substring(1)) - parseInt(a.total_earning.substring(1))).slice(startIndex, endIndex);
+
 });
 
 // Toplam sayfa sayısı
@@ -158,6 +159,7 @@ const changePage = (page) => {
                 <div class="flex items-center gap-2 flex-1">
                     <PersonIcon color="var(--sub-600)" />
                     <p class="label-medium c-strong-950">{{ __('control.finance.platforms') }}</p>
+                    <p class="c-soft-400 label-sm">Albüm | </p>
                     <p class="c-soft-400 label-sm">{{formattedDate}}</p>
                 </div>
                 <div class="flex gap-3">
@@ -213,7 +215,7 @@ const changePage = (page) => {
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="label-sm c-strong-950">{{album.release_name}}</span>
-                                    <span class="paragraph-xs c-sub-600">{{album.upc_code}}</span>
+                                    <span class="paragraph-xs c-sub-600">UPC:{{album?.product.upc_code}}</span>
                                 </div>
                             </div>
                         </td>

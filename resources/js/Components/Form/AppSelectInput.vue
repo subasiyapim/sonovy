@@ -32,9 +32,10 @@
     <transition name="dropdown">
       <teleport to="body">
         <div v-if="isOpen"
-             :class="dropdownDirection"
-             class="absolute dropdownWrapper left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-10"
-             :style="dropdownStyle">
+            ref="dropdownWrapper"
+            :class="[dropdownDirection, 'dropdownWrapper']"
+            class="absolute left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-10"
+            :style="dropdownStyle">
           <AppTextInput v-if="config.hasSearch" v-model="searchTerm" @change="onSearchChange" class="w-full mb-2"
                         :placeholder="config?.searchPlaceholder">
             <template #icon>
@@ -110,6 +111,8 @@ const getShowLabel = computed(() => {
   return findedElement == null ? '' : findedElement[props.config.label ?? 'label'];
 });
 
+const dropdownWrapper = ref(null);
+
 const open = async () => {
   if (props.disabled) return;
   isOpen.value = true;
@@ -118,6 +121,10 @@ const open = async () => {
     await nextTick(); // Wait until DOM has updated
     adjustDropdownDirection();
 
+  }
+    // Attach scroll event listener when dropdown opens
+  if (dropdownWrapper.value) {
+    dropdownWrapper.value.addEventListener("scroll", handleScroll);
   }
 }
 
@@ -235,6 +242,16 @@ const onSearchChange = async (e) => {
 
 }
 
+const handleScroll = () => {
+  if (dropdownWrapper.value) {
+    dropdownWrapper.value.classList.add("scrolling");
+    clearTimeout(handleScroll.timeout);
+    handleScroll.timeout = setTimeout(() => {
+      dropdownWrapper.value.classList.remove("scrolling");
+    }, 500); // Remove class after 500ms of no scrolling
+  }
+};
+
 // Add event listener for window resize on mounted, and remove on unmounted
 onMounted(() => {
   window.addEventListener('resize', handleResize);
@@ -243,6 +260,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 })
+onBeforeUnmount(() => {
+  if (dropdownWrapper.value) {
+    dropdownWrapper.value.removeEventListener("scroll", handleScroll);
+  }
+});
 const insertData = (e) => {
     props.config?.data.push(e);
     chooseValue(e);
@@ -251,11 +273,24 @@ const insertData = (e) => {
 defineExpose({
   insertData,
   appendOptions
-})
+});
+
 </script>
+<style>
+    .dropdownWrapper {
+        transition: scroll 2.5s ease-out; /* Smooth transition */
+    }
+
+    .scrolling {
+        scroll-behavior: smooth;
+    }
+</style>
+
 
 <style scoped>
 .selectMenuItem:hover {
   background: var(--white-500);
 }
+
+
 </style>

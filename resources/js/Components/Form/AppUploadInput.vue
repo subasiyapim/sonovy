@@ -120,7 +120,6 @@ const getImageView = computed(() => {
 onMounted(() => {
     nextTick(() => {
         if(props.config?.image){
-            console.log("GELDİİİ");
             isImageExist.value = true;
         }
     })

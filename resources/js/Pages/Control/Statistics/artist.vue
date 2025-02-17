@@ -4,7 +4,7 @@
       <span class="label-xs c-soft-400 cursor-pointer" @click="router.visit(route('control.statistics.index'))">İstatistikler</span>
       <span class="label-xs c-soft-400">•</span>
       <span class="label-xs c-soft-400">
-         Parça İstatistikleri
+         Sanatçı İstatistikleri
       </span>
     </template>
     <!-- {{usePage().props.platformStatistics}} -->
@@ -69,7 +69,7 @@
 
       <div class="grid grid-cols-3 gap-3 mb-5">
 
-        <MonthlyListeningChart :monthly-stats="monthlyStats"/>
+        <MonthlyListeningChart :platforms="platforms" :monthly-stats="monthlyStats"/>
 
         <div class="flex flex-col gap-3">
           <AppCard>

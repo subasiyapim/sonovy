@@ -47,8 +47,8 @@ const onModelChange = (newVal) =>{
         const firstDate = moment(newVal[0]);
 
         // Set the min and max range dynamically
-        minDate.value = firstDate.clone().subtract(3, 'months').toDate();
-        maxDate.value = firstDate.clone().add(3, 'months').toDate();
+        minDate.value = firstDate.clone().subtract(2, 'months').toDate();
+        maxDate.value = firstDate.clone().add(2, 'months').toDate();
       }
     } else {
       // Reset min/max dates if no date is selected

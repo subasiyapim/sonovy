@@ -539,7 +539,6 @@ onMounted(() => {
         };
 
         if(props.scrollable){
-            console.log("GELDİİ");
 
             // Initial check
             updateIndicators();
