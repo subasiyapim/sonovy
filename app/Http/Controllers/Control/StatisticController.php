@@ -93,7 +93,7 @@ class StatisticController extends Controller
             ->mapWithKeys(function ($value, $key) {
                 return [Carbon::parse($key)->format('Y-m') => $value];
             })
-            ->sortKeys()
+            ->sortKeys(false)
             ->mapWithKeys(function ($value, $key) {
                 $date = Carbon::createFromFormat('Y-m', $key);
                 $date->setLocale(app()->getLocale());
@@ -102,7 +102,7 @@ class StatisticController extends Controller
 
         $average = round($monthlyStats->avg(), 2);
         $total = $monthlyStats->sum();
-        $monthlyStats = $monthlyStats->sortKeys();
+        $monthlyStats = $monthlyStats->sortKeys(false);
         $labels = $monthlyStats->keys()->toArray();
         $series = $monthlyStats->values()->toArray();
 
@@ -243,8 +243,8 @@ class StatisticController extends Controller
             ->map(function ($releaseTypeData) {
                 return $releaseTypeData->mapWithKeys(function ($value, $key) {
                     return [Carbon::parse($key)->format('Y-m') => $value];
-                })->sortKeys();
-            })->sortKeys();
+                })->sortKeys(false);
+            })->sortKeys(false);
     }
 
     private function getTabData($tab, $earnings)

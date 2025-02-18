@@ -718,7 +718,7 @@ class AnalyseService
                     'date' => Carbon::createFromLocaleFormat('F Y', app()->getLocale(), $monthKey),
                     'data' => $monthData
                 ];
-            })->sortByDesc(function ($item) {
+            })->sortBy(function ($item) {
                 return $item['date']->timestamp;
             });
 
@@ -761,7 +761,7 @@ class AnalyseService
                         return $monthData[$platform]['earning_num'] ?? 0;
                     })->values()->toArray()
                 ];
-            })->sortByDesc(function ($series) {
+            })->sortBy(function ($series) {
                 return array_sum($series['data']);
             })->values()->toArray();
 
@@ -785,7 +785,7 @@ class AnalyseService
                     'date' => Carbon::createFromLocaleFormat('F Y', app()->getLocale(), $monthKey),
                     'data' => $monthData
                 ];
-            })->sortByDesc(function ($item) {
+            })->sortBy(function ($item) {
                 return $item['date']->timestamp;
             });
 

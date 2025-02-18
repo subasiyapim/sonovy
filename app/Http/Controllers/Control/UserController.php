@@ -24,6 +24,7 @@ use App\Services\TimezoneService;
 use App\Services\UserServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -140,7 +141,7 @@ class UserController extends Controller
 
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
         $user->refresh();
@@ -230,7 +231,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+" . $country->phone_code . $user->phone;
+            $user->phone = "+".$country->phone_code.$user->phone;
         }
 
         return inertia(
@@ -346,7 +347,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
+                    'notification' => __('control.notification_error'.': '.$e->getMessage())
                 ]);
         }
 
@@ -355,6 +356,7 @@ class UserController extends Controller
                 'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
             ]);
     }
+
     public function toggleEmailVerification(Request $request, User $user)
     {
 
@@ -367,6 +369,7 @@ class UserController extends Controller
 
         return response()->json(["message" => "işlem başarılı"], Response::HTTP_OK);
     }
+
     public function togglePhoneVerification(Request $request, User $user)
     {
         if ($user->is_verified) {
