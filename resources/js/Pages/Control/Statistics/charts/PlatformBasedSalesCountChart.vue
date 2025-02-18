@@ -1,6 +1,4 @@
 <template>
-  <!-- {{Object.keys(usePage().props)}} -->
-
   <AppCard class="flex-1 w-full min-h-40">
     <template #header>
       <div class="flex items-center">
@@ -154,7 +152,7 @@ const chartOptions = ref({
     width: 2,
   },
   xaxis: {
-    categories: [],
+    categories: Object.keys(props.platformSalesCount["Music Release"] ?? {}),
     labels: {
       show: true,
       style: {
@@ -162,7 +160,9 @@ const chartOptions = ref({
         cssClass: 'subheading-2xs c-soft-400',
       },
       formatter: function(value) {
-        return moment(value).format('MMM YY');
+
+
+       return moment(value, 'YYYY-MM').format('MMM YYYY').toUpperCase();
       }
     },
     axisBorder: {
@@ -179,6 +179,8 @@ const chartOptions = ref({
     labels: {
       show: true,
       formatter: function(value) {
+        console.log("VALUEE",value);
+
         return Math.round(value).toLocaleString();
       }
     },
@@ -190,14 +192,11 @@ const chartOptions = ref({
   },
   tooltip: {
     enabled: true,
-    y: {
-      formatter: function(value) {
-        return value.toLocaleString();
-      },
-    },
+
     x: {
       formatter: function(value) {
-        return moment(value).format('MMMM YYYY');
+        return "Satış:"+value;
+
       }
     }
   },
