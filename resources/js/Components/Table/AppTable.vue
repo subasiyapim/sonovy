@@ -478,6 +478,7 @@ const removeRowDataFromRemote = async (row) => {
 
       toast.success(response.message);
     } catch (error) {
+
       toast.error(error.response?.data?.message ?? 'İşlem Hatalı');
     }
 

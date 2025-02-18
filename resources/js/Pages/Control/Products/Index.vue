@@ -141,7 +141,7 @@
         </template>
       </AppTableColumn>
 
-      <AppTableColumn label="Yayın Bilgisi" width="250">
+      <AppTableColumn label="Yayın Bilgisi" width="300">
         <template #default="scope">
           <div class="flex gap-x-2 items-start">
             <div class="w-8 h-8 rounded overflow-hidden">
