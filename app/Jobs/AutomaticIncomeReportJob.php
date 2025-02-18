@@ -22,20 +22,20 @@ class AutomaticIncomeReportJob implements ShouldQueue
     public $end_date;
     public $user_id;
     public $report_type;
-    public $data;
+    public $ids;
     public $earnings;
     protected $period;
     protected $name;
     protected $monthly_amount;
     protected $report;
 
-    public function __construct($start_date, $end_date, $user_id, $report_type, $data)
+    public function __construct($start_date, $end_date, $user_id, $report_type, $ids)
     {
         $this->start_date = $start_date;
         $this->end_date = $end_date;
         $this->user_id = $user_id;
         $this->report_type = $report_type;
-        $this->data = $data;
+        $this->ids = $ids;
     }
 
     public function handle(): void
@@ -44,6 +44,21 @@ class AutomaticIncomeReportJob implements ShouldQueue
             ->whereBetween('report_date', [$this->start_date, $this->end_date])
             ->where('user_id', $this->user_id);
 
+        if ($this->report_type !== 'all' && !empty($this->ids)) {
+            $query->where(function ($q) {
+                match ($this->report_type) {
+                    'artists' => $q->whereIn('artist_id', $this->ids),
+                    'songs' => $q->whereIn('song_id', $this->ids),
+                    'platforms' => $q->whereIn('platform_id', $this->ids),
+                    'products' => $q->whereHas('product', function ($query) {
+                        $query->whereIn('id', $this->ids);
+                    }),
+                    'countries' => $q->whereIn('country_id', $this->ids),
+                    'labels' => $q->whereIn('label_id', $this->ids),
+                    default => null
+                };
+            });
+        }
 
         $this->name = $this->generateName();
         $this->period = Carbon::parse($this->start_date)->format('m-Y').' '.Carbon::parse($this->end_date)->format('m-Y');
@@ -82,6 +97,8 @@ class AutomaticIncomeReportJob implements ShouldQueue
             'amount' => $this->earnings->sum('earning'),
             'monthly_amount' => $this->monthly_amount,
             'status' => 1,
+            'report_type' => $this->report_type,
+            'report_ids' => $this->ids
         ]);
 
         // Rapor dışa aktarma ve kaydetme

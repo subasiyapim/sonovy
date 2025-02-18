@@ -2,6 +2,12 @@
 
 namespace App\Http\Resources\Report;
 
+use App\Models\Artist;
+use App\Models\Label;
+use App\Models\Platform;
+use App\Models\Product;
+use App\Models\Song;
+use App\Models\System\Country;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
@@ -44,6 +50,7 @@ class ReportResource extends JsonResource
                 ->implode('<br>'),
             'status' => $this->status,
             'status_text' => $this->status == 1 ? 'Oluşturuldu' : 'Rapor Oluşturuluyor',
+            'tooltipData' => $this->getTooltipData(),
         ];
     }
 
@@ -57,16 +64,10 @@ class ReportResource extends JsonResource
                 $startMonth = self::QUARTERS[$quarterIndex]['startMonth'];
                 $endMonth = self::QUARTERS[$quarterIndex]['endMonth'];
 
-//                return sprintf(
-//                    "%s. Çeyrek (%s - %s %s)",
-//                    $matches[1],
-//                    Carbon::create(null, $startMonth)->translatedFormat('F'),
-//                    Carbon::create(null, $endMonth)->translatedFormat('F'),
-//                    $year
-//                );
                 return sprintf(
-                    "(%s - %s) %s",
+                    "%s %s- %s %s",
                     Carbon::create(null, $startMonth)->translatedFormat('F'),
+                    $year,
                     Carbon::create(null, $endMonth)->translatedFormat('F'),
                     $year
                 );
@@ -74,5 +75,54 @@ class ReportResource extends JsonResource
         }
 
         return $period; // Format uymuyorsa olduğu gibi döndür
+    }
+
+    private function getTooltipData(): ?array
+    {
+        if (!$this->report_type || !$this->report_ids) {
+            return null;
+        }
+
+        $data = match ($this->report_type) {
+            'artists', 'multiple_artists' => Artist::whereIn('id', $this->report_ids)
+                ->select('id', 'name')
+                ->get()
+                ->map(fn($item) => ['id' => $item->id, 'name' => $item->name])
+                ->toArray(),
+
+            'songs', 'multiple_songs' => Song::whereIn('id', $this->report_ids)
+                ->select('id', 'name')
+                ->get()
+                ->map(fn($item) => ['id' => $item->id, 'name' => $item->name])
+                ->toArray(),
+
+            'platforms', 'multiple_platforms' => Platform::whereIn('id', $this->report_ids)
+                ->select('id', 'name')
+                ->get()
+                ->map(fn($item) => ['id' => $item->id, 'name' => $item->name])
+                ->toArray(),
+
+            'products', 'multiple_products' => Product::whereIn('id', $this->report_ids)
+                ->select('id', 'album_name')
+                ->get()
+                ->map(fn($item) => ['id' => $item->id, 'name' => $item->name])
+                ->toArray(),
+
+            'countries', 'multiple_countries' => Country::whereIn('id', $this->report_ids)
+                ->select('id', 'name')
+                ->get()
+                ->map(fn($item) => ['id' => $item->id, 'name' => $item->name])
+                ->toArray(),
+
+            'labels', 'multiple_labels' => Label::whereIn('id', $this->report_ids)
+                ->select('id', 'name')
+                ->get()
+                ->map(fn($item) => ['id' => $item->id, 'name' => $item->name])
+                ->toArray(),
+
+            default => null
+        };
+
+        return $data ?? [];
     }
 }

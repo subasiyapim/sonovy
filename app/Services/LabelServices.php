@@ -19,6 +19,7 @@ class LabelServices
 
     /**
      * @param  array  $data
+     *
      * @return mixed
      */
     public static function create(array $data): mixed
@@ -44,10 +45,15 @@ class LabelServices
 
     /**
      * @param $search
+     *
      * @return mixed
      */
     public static function search($search): mixed
     {
-        return Label::with('user')->where('name', 'like', '%' . $search . '%')->get();
+        return Label::with('user')
+            ->where('name', 'like', '%'.$search.'%')
+            ->orWhere('email', 'like', '%'.$search.'%')
+            ->orWhere('id', 'like', '%'.$search.'%')
+            ->get();
     }
 }

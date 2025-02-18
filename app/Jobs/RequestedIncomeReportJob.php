@@ -25,19 +25,19 @@ class RequestedIncomeReportJob implements ShouldQueue
     public $end_date;
     public $user_id;
     public $report_type;
-    public $data;
+    public $ids;
     public $earnings;
     protected $period;
     protected $name;
     protected $report;
 
-    public function __construct($start_date, $end_date, $user_id, $report_type, $data)
+    public function __construct($start_date, $end_date, $user_id, $report_type, $ids)
     {
         $this->start_date = $start_date;
         $this->end_date = $end_date;
         $this->user_id = $user_id;
         $this->report_type = $report_type;
-        $this->data = $data;
+        $this->ids = $ids;
     }
 
     public function handle(): void

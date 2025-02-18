@@ -26,17 +26,21 @@ class Report extends Model implements HasMedia
         'user_id',
         'status',
         'parent_id',
-        'file_path'
+        'file_path',
+        'report_type',
+        'report_ids'
     ];
 
     protected array $filterable = [
         'period',
         'name',
+        'report_type'
     ];
 
     protected array $orderable = [
         'period',
-        'name'
+        'name',
+        'report_type'
     ];
 
     protected $casts = [
@@ -44,6 +48,7 @@ class Report extends Model implements HasMedia
         'monthly_amount' => 'array',
         'is_auto_report' => 'boolean',
         'status' => 'boolean',
+        'report_ids' => 'array'
     ];
 
     protected $appends = ['files'];

@@ -56,13 +56,18 @@ class ReportController extends Controller
             $isAutoReport = $request->slug === 'auto-reports';
         }
 
-        $query = Report::with('child')
+        $query = Report::with(['child' => function ($query) {
+                $query->select('id', 'parent_id', 'name', 'amount', 'report_type', 'report_ids', 'status', 'created_at', 'period', 'monthly_amount');
+            }])
+            ->select('id', 'name', 'amount', 'report_type', 'report_ids', 'status', 'created_at', 'period', 'monthly_amount', 'parent_id')
             ->whereNull('parent_id')
             ->where('is_auto_report', $isAutoReport)
             ->where('user_id', Auth::id())
             ->advancedFilter();
-        //dd($query);
+
         $reports = ReportResource::collection($query)->resource;
+
+        //dd($reports);
         $artists = Artist::with('platforms')->get();
         $labels = Label::all();
         $songs = Song::all();
