@@ -438,17 +438,25 @@ class UserController extends Controller
             'labels' => 'required|array',
         ]);
 
-        $assignedLabels = Label::whereIn('id', $request->labels)
-            ->get()
-            ?->each(function ($label) use ($user) {
+        $labels = Label::whereIn('id', $request->labels)->get();
+        $alreadyAssignedLabels = $labels->where('created_by', $user->id);
+        $labelsToAssign = $labels->whereNotIn('id', $alreadyAssignedLabels->pluck('id'));
+
+        if ($labelsToAssign->isNotEmpty()) {
+            $labelsToAssign->each(function ($label) use ($user) {
                 $label->update(['created_by' => $user->id]);
             });
+        }
 
-        $assignedLabels->loadMissing('user');
+        $allLabels = $alreadyAssignedLabels->merge($labelsToAssign);
+        $allLabels->loadMissing('user');
+
         return response()->json([
             "success" => true,
-            "labels" => $assignedLabels,
-            "message" => 'Şirketler başarıyla atanmıştır.'
+            "labels" => $allLabels,
+            "message" => $labelsToAssign->isEmpty()
+                ? 'Seçilen şirketler zaten bu kullanıcıya atanmış.'
+                : 'Şirketler başarıyla atanmıştır.'
         ]);
     }
 

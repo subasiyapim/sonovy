@@ -41,6 +41,8 @@ class UserResource extends JsonResource
             'city_id' => $this->city_id,
             'language_id' => $this->language_id,
             'district_id' => $this->district_id,
+            'address' => $this->address,
+            'phone' => $this->phone,
             'status_text' => $this->status->title(),
             'created_at' => Carbon::parse($this->created_at)->locale(App::currentLocale())->translatedFormat('d F Y H:i'),
             'children' => UserResource::collection($this->whenLoaded('children')),
