@@ -30,7 +30,8 @@ class AnalyseService
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             $countries = ['Turkey', 'United states', 'United kingdom', 'Portugal', 'Spain'];
 
-            $countryEarnings = $this->data->groupBy('country')->map(function ($countryData, $country) use ($countries) {
+            // Önce tüm ülkelerin verilerini topla
+            $allCountries = $this->data->groupBy('country')->map(function ($countryData, $country) {
                 $totalEarnings = $countryData->sum('earning');
                 $totalQuantity = $countryData->sum('quantity');
                 $earnings = $countryData->groupBy('release_name')->map(function ($releaseData) use ($totalEarnings) {
@@ -53,6 +54,7 @@ class AnalyseService
                 });
 
                 return [
+                    'country' => $country,
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
                     'total_earning' => $totalEarnings,
@@ -61,65 +63,82 @@ class AnalyseService
                 ];
             });
 
-            $sortedEarnings = $countryEarnings->sortDesc();
+            // Quantity'ye göre sırala
+            $sortedCountries = $allCountries->sortByDesc('total_quantity');
 
-            $topCountries = $sortedEarnings->only($countries);
-            $otherEarnings = $sortedEarnings->except($countries)->sum('total_earning');
+            // Belirtilen ülkeleri quantity sırasına göre al
+            $topCountries = collect();
+            foreach ($sortedCountries as $data) {
+                if (in_array($data['country'], $countries)) {
+                    $topCountries[$data['country']] = $data;
+                }
+            }
+
+            // Diğer ülkeleri hesapla
+            $otherCountries = $sortedCountries->filter(function ($data) use ($countries) {
+                return !in_array($data['country'], $countries);
+            });
 
             $topCountries['Others'] = [
-                'total_earning' => $otherEarnings,
-                'total_quantity' => $sortedEarnings->except($countries)->sum('total_quantity'),
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
+                'total_earning' => $otherCountries->sum('total_earning'),
+                'total_quantity' => $otherCountries->sum('total_quantity'),
                 'releases' => [],
             ];
 
-            $releases = $this->data->groupBy('release_name')->map(function ($releaseData) use ($countries) {
-                $countryData = [];
-                $otherEarnings = 0;
-                $otherQuantity = 0;
-                $firstItem = $releaseData->first();
-                $product = $firstItem->product ?? null;
+            $releases = $this->data->groupBy('release_name')
+                ->map(function ($releaseData) use ($countries) {
+                    $countryData = [];
+                    $otherEarnings = 0;
+                    $otherQuantity = 0;
+                    $firstItem = $releaseData->first();
+                    $product = $firstItem->product ?? null;
 
-                foreach ($releaseData->groupBy('country') as $country => $data) {
-                    $countryEarnings = $data->sum('earning');
-                    $totalEarnings = $releaseData->sum('earning');
-                    $percentage = $totalEarnings > 0 ? ($countryEarnings / $totalEarnings) * 100 : 0;
-                    $quantity = $data->sum('quantity');
+                    foreach ($releaseData->groupBy('country') as $country => $data) {
+                        $countryEarnings = $data->sum('earning');
+                        $totalEarnings = $releaseData->sum('earning');
+                        $percentage = $totalEarnings > 0 ? ($countryEarnings / $totalEarnings) * 100 : 0;
+                        $quantity = $data->sum('quantity');
 
-                    if (in_array($country, $countries)) {
-                        $countryData[strtolower($country)] = [
-                            'earning' => Number::currency($countryEarnings, 'USD', app()->getLocale()),
-                            'percentage' => round($percentage, 2),
-                            'quantity' => $quantity,
-                        ];
-                    } else {
-                        $otherEarnings += $countryEarnings;
-                        $otherQuantity += $quantity;
+                        if (in_array($country, $countries)) {
+                            $countryData[strtolower($country)] = [
+                                'earning' => Number::currency($countryEarnings, 'USD', app()->getLocale()),
+                                'percentage' => round($percentage, 2),
+                                'quantity' => $quantity,
+                            ];
+                        } else {
+                            $otherEarnings += $countryEarnings;
+                            $otherQuantity += $quantity;
+                        }
                     }
-                }
 
-                $countryData['others'] = [
-                    'earning' => Number::currency($otherEarnings, 'USD', app()->getLocale()),
-                    'percentage' => $totalEarnings > 0 ? round(($otherEarnings / $totalEarnings) * 100, 2) : 0,
-                    'quantity' => $otherQuantity,
-                ];
+                    $countryData['others'] = [
+                        'earning' => Number::currency($otherEarnings, 'USD', app()->getLocale()),
+                        'percentage' => $totalEarnings > 0 ? round(($otherEarnings / $totalEarnings) * 100, 2) : 0,
+                        'quantity' => $otherQuantity,
+                    ];
 
-                return [
-                    'start_date' => Cache::get('start_date'),
-                    'end_date' => Cache::get('end_date'),
-                    'release_name' => $firstItem->release_name,
-                    'upc_code' => $firstItem->upc_code,
-                    'total_quantity' => $releaseData->sum('quantity'),
-                    'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
-                    'countries' => $countryData,
-                    'product' => $product ? [
-                        'id' => $product->id,
-                        'image' => $product->image
-                    ] : null
-                ];
-            })->values()->toArray();
+                    return [
+                        'start_date' => Cache::get('start_date'),
+                        'end_date' => Cache::get('end_date'),
+                        'release_name' => $firstItem->release_name,
+                        'upc_code' => $firstItem->upc_code,
+                        'total_quantity' => $releaseData->sum('quantity'),
+                        'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
+                        'countries' => $countryData,
+                        'product' => $product ? [
+                            'id' => $product->id,
+                            'image' => $product->image
+                        ] : null
+                    ];
+                })
+                ->sortByDesc('total_quantity')
+                ->values()
+                ->toArray();
 
             return [
-                'countries' => array_merge($countries, ['Others']),
+                'countries' => array_merge($topCountries->keys()->toArray(), ['Others']),
                 'releases' => $releases,
             ];
         });
@@ -131,92 +150,121 @@ class AnalyseService
         return Cache::remember($cacheKey, self::CACHE_DURATION, function () {
             $platforms = ['Spotify', 'Facebook', 'Youtube', 'Apple Music', 'Tiktok'];
 
-            $platformEarnings = $this->data->groupBy('platform')->map(function ($platformData, $platform) use (
-                $platforms
-            ) {
-                $totalEarnings = $platformData->sum('earning');
-                $totalQuantity = $platformData->sum('quantity');
-                $earnings = $platformData->groupBy('release_name')->map(function ($releaseData) use ($totalEarnings) {
-                    $releaseEarnings = $releaseData->sum('earning');
-                    $percentage = $totalEarnings > 0 ? ($releaseEarnings / $totalEarnings) * 100 : 0;
+            // Önce tüm platformların verilerini topla
+            $allPlatforms = $this->data->groupBy('platform')
+                ->map(function ($platformData, $platform) {
+                    $totalEarnings = $platformData->sum('earning');
+                    $totalQuantity = $platformData->sum('quantity');
+                    $earnings = $platformData->groupBy('release_name')
+                        ->map(function ($releaseData) use ($totalEarnings) {
+                            $releaseEarnings = $releaseData->sum('earning');
+                            $percentage = $totalEarnings > 0 ? ($releaseEarnings / $totalEarnings) * 100 : 0;
+
+                            return [
+                                'release_name' => $releaseData->first()->release_name,
+                                'total_quantity' => $releaseData->sum('quantity'),
+                                'total_earning' => Number::currency($releaseEarnings, 'USD', app()->getLocale()),
+                                'percentage' => round($percentage, 2),
+                                'quantity' => $releaseData->sum('quantity'),
+                            ];
+                        })
+                        ->sortByDesc('quantity')
+                        ->values()
+                        ->toArray();
 
                     return [
-                        'release_name' => $releaseData->first()->release_name,
-                        'total_quantity' => $releaseData->sum('quantity'),
-                        'total_earning' => Number::currency($releaseEarnings, 'USD', app()->getLocale()),
-                        'percentage' => round($percentage, 2),
-                        'quantity' => $releaseData->sum('quantity'),
+                        'platform' => $platform,
+                        'start_date' => Cache::get('start_date'),
+                        'end_date' => Cache::get('end_date'),
+                        'total_earning' => $totalEarnings,
+                        'total_quantity' => $totalQuantity,
+                        'releases' => $earnings,
                     ];
                 });
 
-                return [
-                    'total_earning' => $totalEarnings,
-                    'total_quantity' => $totalQuantity,
-                    'releases' => $earnings->toArray(),
-                ];
+            // Tüm platformları streams (quantity) değerine göre sırala
+            $sortedPlatforms = $allPlatforms->sortByDesc(function ($data) {
+                return $data['total_quantity'];
             });
 
-            $sortedEarnings = $platformEarnings->sortDesc();
+            // Sıralanmış platformlardan belirtilen platformları al
+            $topPlatforms = collect();
+            foreach ($sortedPlatforms as $data) {
+                if (in_array($data['platform'], $platforms)) {
+                    $topPlatforms[$data['platform']] = $data;
+                }
+            }
 
-            $topPlatforms = $sortedEarnings->only($platforms);
-            $otherEarnings = $sortedEarnings->except($platforms)->sum('total_earning');
+            // Diğer platformları hesapla
+            $otherPlatforms = $sortedPlatforms->filter(function ($data) use ($platforms) {
+                return !in_array($data['platform'], $platforms);
+            });
 
-            $topPlatforms['Other'] = [
-                'total_earning' => $otherEarnings,
-                'total_quantity' => $sortedEarnings->except($platforms)->sum('total_quantity'),
+            // Others'ı ekle
+            $topPlatforms['Others'] = [
+                'platform' => 'Others',
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
+                'total_earning' => $otherPlatforms->sum('total_earning'),
+                'total_quantity' => $otherPlatforms->sum('total_quantity'),
                 'releases' => [],
             ];
 
-            $releases = $this->data->groupBy('release_name')->map(function ($releaseData) use ($platforms) {
-                $platformData = [];
-                $otherEarnings = 0;
-                $otherQuantity = 0;
+            // Release'leri de streams'e göre sırala
+            $releases = $this->data->groupBy('release_name')
+                ->map(function ($releaseData) use ($platforms) {
+                    $platformData = [];
+                    $otherEarnings = 0;
+                    $otherQuantity = 0;
+                    $firstItem = $releaseData->first();
+                    $product = $firstItem->product ?? null;
 
-                foreach ($releaseData->groupBy('platform') as $platform => $data) {
-                    $platformEarnings = $data->sum('earning');
-                    $totalEarnings = $releaseData->sum('earning');
-                    $percentage = $totalEarnings > 0 ? ($platformEarnings / $totalEarnings) * 100 : 0;
-                    $quantity = $data->sum('quantity');
+                    // Platform verilerini topla
+                    foreach ($releaseData->groupBy('platform') as $platform => $data) {
+                        $platformEarnings = $data->sum('earning');
+                        $totalEarnings = $releaseData->sum('earning');
+                        $percentage = $totalEarnings > 0 ? ($platformEarnings / $totalEarnings) * 100 : 0;
+                        $quantity = $data->sum('quantity');
 
-                    if (in_array($platform, $platforms)) {
-                        $platformData[strtolower($platform)] = [
-                            'earning' => Number::currency($platformEarnings, 'USD', app()->getLocale()),
-                            'percentage' => round($percentage, 2),
-                            'quantity' => $quantity,
-                        ];
-                    } else {
-                        $otherEarnings += $platformEarnings;
-                        $otherQuantity += $quantity;
+                        if (in_array($platform, $platforms)) {
+                            $platformData[strtolower($platform)] = [
+                                'earning' => Number::currency($platformEarnings, 'USD', app()->getLocale()),
+                                'percentage' => round($percentage, 2),
+                                'quantity' => $quantity,
+                            ];
+                        } else {
+                            $otherEarnings += $platformEarnings;
+                            $otherQuantity += $quantity;
+                        }
                     }
-                }
 
-                $platformData['others'] = [
-                    'earning' => Number::currency($otherEarnings, 'USD', app()->getLocale()),
-                    'percentage' => $totalEarnings > 0 ? round(($otherEarnings / $totalEarnings) * 100, 2) : 0,
-                    'quantity' => $otherQuantity,
-                ];
+                    // Others'ı ekle
+                    $platformData['others'] = [
+                        'earning' => Number::currency($otherEarnings, 'USD', app()->getLocale()),
+                        'percentage' => $totalEarnings > 0 ? round(($otherEarnings / $totalEarnings) * 100, 2) : 0,
+                        'quantity' => $otherQuantity,
+                    ];
 
-                $firstItem = $releaseData->first();
-                $product = $firstItem->product ?? null;
-
-                return [
-                    'start_date' => Cache::get('start_date'),
-                    'end_date' => Cache::get('end_date'),
-                    'release_name' => $firstItem->release_name,
-                    'total_quantity' => $releaseData->sum('quantity'),
-                    'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
-                    'platforms' => $platformData,
-
-                    'product' => $product ? [
-                        'id' => $product->id,
-                        'upc_code' => $product->upc_code,
-                        'image' => $product->image
-                    ] : null
-                ];
-            })->values()->toArray();
+                    return [
+                        'start_date' => Cache::get('start_date'),
+                        'end_date' => Cache::get('end_date'),
+                        'release_name' => $firstItem->release_name,
+                        'total_quantity' => $releaseData->sum('quantity'),
+                        'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
+                        'platforms' => $platformData,
+                        'product' => $product ? [
+                            'id' => $product->id,
+                            'upc_code' => $product->upc_code,
+                            'image' => $product->image
+                        ] : null
+                    ];
+                })
+                ->sortByDesc('total_quantity')
+                ->values()
+                ->toArray();
 
             return [
-                'platforms' => array_merge($platforms, ['Others']),
+                'platforms' => array_values($topPlatforms->keys()->toArray()),
                 'releases' => $releases,
             ];
         });
@@ -233,8 +281,8 @@ class AnalyseService
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'artist_id' => $artistData->first()->artist_id,
-                    'artist_name' => $artistData->first()->artist_name,
+                    'artist_id' => $artistData->first()->artist->id,
+                    'artist_name' => $artistData->first()->artist->name,
                     'earning' => Number::currency($artistEarnings, 'USD', app()->getLocale()),
                     'streams' => $artistData->sum('quantity'),
                     'percentage' => round($percentage, 2),
@@ -340,8 +388,8 @@ class AnalyseService
                 return [
                     'start_date' => Cache::get('start_date'),
                     'end_date' => Cache::get('end_date'),
-                    'label_id' => $firstItem->label_id,
-                    'label_name' => $firstItem->label_name,
+                    'label_id' => $firstItem->label->id ?? $firstItem->label_id,
+                    'label_name' => $firstItem->label->name ?? $firstItem->label_name,
                     'earning' => Number::currency($labelEarnings, 'USD', app()->getLocale()),
                     'percentage' => round($percentage, 2),
                 ];

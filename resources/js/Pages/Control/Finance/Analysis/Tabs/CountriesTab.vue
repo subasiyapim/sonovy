@@ -48,7 +48,6 @@ const sortedReleases = computed(() => {
         let totalEarning = 0;
         let totalQuantity = 0;
         let totalAllQuantity = 0;
-        let totalPercentage = 0;
 
         // Tüm ülkeler için toplam hesapla
         Object.keys(album.countries).forEach(country => {
@@ -79,13 +78,13 @@ const sortedReleases = computed(() => {
             }
         });
 
-        // Ülkeleri yüzdeye göre sırala
+        // Ülkeleri quantity'ye göre sırala
         const sortedCountries = {};
         Object.entries(visibleCountries)
             .sort((a, b) => {
-                const percentageA = parseFloat(a[1].percentage ?? 0);
-                const percentageB = parseFloat(b[1].percentage ?? 0);
-                return percentageB - percentageA;
+                const quantityA = parseInt(a[1].quantity ?? 0);
+                const quantityB = parseInt(b[1].quantity ?? 0);
+                return quantityB - quantityA;
             })
             .forEach(([country, data]) => {
                 sortedCountries[country] = data;
@@ -96,18 +95,16 @@ const sortedReleases = computed(() => {
             countries: sortedCountries,
             total_earning: `$${totalEarning.toFixed(2)}`,
             total_quantity: totalQuantity.toLocaleString(),
-            total_all_quantity: totalAllQuantity,
-            totalPercentage
+            total_all_quantity: totalAllQuantity
         };
-    }).sort((a, b) => (b.total_all_quantity || 0) - (a.total_all_quantity || 0));
+    }).sort((a, b) => b.total_all_quantity - a.total_all_quantity);
 });
 
 // Pagination için computed property
 const paginatedReleases = computed(() => {
-
     const startIndex = (currentPage.value - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return sortedReleases.value.sort((a,b) => parseInt(b.total_earning.substring(1)) - parseInt(a.total_earning.substring(1))).slice(startIndex, endIndex);
+    return sortedReleases.value.slice(startIndex, endIndex);
 });
 
 // Toplam sayfa sayısı
