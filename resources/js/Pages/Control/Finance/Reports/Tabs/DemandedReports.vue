@@ -64,11 +64,11 @@ const getBody = computed(() => {
                 {{ scope.row.name }}
             </p>
 
-            <template #content>
+            <template v-if="scope.row.tooltipData" #content>
                 <div class="flex items-center gap-0.5">
-                    <span v-for="d in scope.row.tooltipData?.items">
+                    <p v-for="d in scope.row.tooltipData">
                         {{d.name}}
-                    </span>
+                    </p>
                 </div>
             </template>
         </tippy>
