@@ -72,6 +72,7 @@
         </AppTableColumn>
         <AppTableColumn label="Aksiyon" align="right">
             <template #default="scope">
+
                 <IconButton @click="deleteRow(scope.row)">
                 <TrashIcon color="var(--sub-600)"/>
                 </IconButton>

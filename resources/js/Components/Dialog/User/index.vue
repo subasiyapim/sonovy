@@ -15,21 +15,7 @@
                    :label="__('control.user.fields.name')"
                    type="text"
                    :placeholder="__('control.user.fields.name_placeholder')"/>
-        <FormElement @change="onCountryChoosen" label-width="190px" :required="true" v-model="form.country_id"
-                   :error="form.errors.country_id" type="select"
-                   :label="__('control.user.fields.country_id')"
-                   :placeholder="__('control.user.fields.country_id_placeholder')" :config="countryConfig">
-            <template #option="scope">
-                <span>{{ scope.data.iconKey }}</span>
-                <span class="paragraph-sm c-strong-950">{{ scope.data.label }}</span>
-            </template>
-            <template #model="scope">
-                <div v-if="scope.data" class="flex items-center gap-2 paragraph-sm c-strong-950">
-                    <span>{{ countryConfig.data.find((el) => el.value == scope.data)?.iconKey }}</span>
-                    <span>{{ countryConfig.data.find((el) => el.value == scope.data)?.label }}</span>
-                </div>
-            </template>
-        </FormElement>
+
 
         <FormElement label-width="190px"
                    :required="false"
@@ -56,6 +42,21 @@
             </template>
         </FormElement>
 
+        <FormElement @change="onCountryChoosen" label-width="190px" :required="true" v-model="form.country_id"
+                   :error="form.errors.country_id" type="select"
+                   :label="__('control.user.fields.country_id')"
+                   :placeholder="__('control.user.fields.country_id_placeholder')" :config="countryConfig">
+            <template #option="scope">
+                <span>{{ scope.data.iconKey }}</span>
+                <span class="paragraph-sm c-strong-950">{{ scope.data.label }}</span>
+            </template>
+            <template #model="scope">
+                <div v-if="scope.data" class="flex items-center gap-2 paragraph-sm c-strong-950">
+                    <span>{{ countryConfig.data.find((el) => el.value == scope.data)?.iconKey }}</span>
+                    <span>{{ countryConfig.data.find((el) => el.value == scope.data)?.label }}</span>
+                </div>
+            </template>
+        </FormElement>
         <div class="flex items-center gap-2">
 
             <FormElement v-if="form.country_id" type="custom" :error="form.errors.city_id || form.errors.district_id" label="İl İlçe" label-width="190px" class="w-full">
@@ -330,23 +331,28 @@ const checkIfDisabled = computed(() => {
 
 const onCountryChoosen = async (e) => {
 
+    nextTick(() => {
+        cityConfig.value.data = [];
+        districtConfig.value.data = [];
+        districtSelect.value.appendOptions([]);
+    })
     cityLoading.value = true;
     let response = await crudStore.post(route('control.findall.cities'),{
         country_id:e.value
     })
 
-
    nextTick(() => {
-    citySelect.value.appendOptions(response);
-     cityConfig.value.data = response;
-
-
-     cityLoading.value = false;
+        cityConfig.value.data = response;
+        citySelect.value.appendOptions(response);
+        cityLoading.value = false;
    })
 
 }
 const onCityChoosen = async (e) => {
+    nextTick(() => {
 
+        districtConfig.value.data = [];
+    })
     districtLoading.value = true;
     let districtResponse = await crudStore.post(route('control.findall.districts'),{
         city_id:e.id
@@ -356,8 +362,6 @@ const onCityChoosen = async (e) => {
             districtConfig.value.data = districtResponse;
             districtSelect.value.appendOptions(districtResponse);
             districtLoading.value = false;
-            console.log("DSADASD",districtResponse);
-
         })
     }
 
@@ -372,7 +376,6 @@ onMounted(() => {
         }
         form['city_id'] = props.user.city_id;
         if(props.user.city_id){
-            console.log("PROPS:USsER CİTY",props.user.city_id);
 
             onCityChoosen({id:props.user.city_id})
         }
