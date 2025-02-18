@@ -91,19 +91,23 @@ class StatisticController extends Controller
                 return $item->sum('quantity');
             })
             ->mapWithKeys(function ($value, $key) {
-                return [Carbon::parse($key)->format('Y-m') => $value];
+                $date = Carbon::parse($key);
+                return [$date->format('Y-m') => $value];
             })
-            ->sortKeys(false)
+            ->sortKeys()
             ->mapWithKeys(function ($value, $key) {
                 $date = Carbon::createFromFormat('Y-m', $key);
                 $date->setLocale(app()->getLocale());
-                return [$date->translatedFormat('M y') => $value];
+                return [$key => $value];
             });
 
         $average = round($monthlyStats->avg(), 2);
         $total = $monthlyStats->sum();
-        $monthlyStats = $monthlyStats->sortKeys(false);
-        $labels = $monthlyStats->keys()->toArray();
+        $labels = $monthlyStats->keys()->map(function ($key) {
+            $date = Carbon::createFromFormat('Y-m', $key);
+            $date->setLocale(app()->getLocale());
+            return $date->translatedFormat('M y');
+        })->toArray();
         $series = $monthlyStats->values()->toArray();
 
         return [
