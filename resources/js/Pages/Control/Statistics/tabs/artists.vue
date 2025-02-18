@@ -26,7 +26,7 @@ const data = computed({
 
 
 
-     <AppTableColumn label="tür" width="40">
+     <AppTableColumn label="No" width="40">
       <template #default="scope">
         #{{scope.index+1}}
       </template>

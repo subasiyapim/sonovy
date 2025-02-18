@@ -71,12 +71,12 @@ const pauseMusic = (song) => {
 <template>
   <AppTable v-model="songs" :isClient="true" :hasSearch="false" :showAddButton="false">
 
-    <AppTableColumn label="tür" width="40">
+    <AppTableColumn label="No" width="40">
       <template #default="scope">
         #{{scope.index+1}}
       </template>
     </AppTableColumn>
-    <AppTableColumn label="#">
+    <AppTableColumn label="Tür">
       <template #default="scope">
         <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 

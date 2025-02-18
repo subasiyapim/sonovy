@@ -13,7 +13,7 @@
                 >
                 </div>
                 <a :href="route('control.catalog.labels.show',scope.row.id)"
-                class="c-sub-600 table-name-text">{{ scope.row.name }}</a>
+                class="paragraph-xs c-blue-500">{{ scope.row.name }}</a>
 
 
             </div>

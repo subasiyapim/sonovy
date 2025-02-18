@@ -22,7 +22,7 @@
             </div>
             <div>
               <a :href="route('control.catalog.artists.show',scope.row.id)"
-                 class="font-poppins table-name-text c-sub-600">{{ scope.row.name }}</a>
+                 class="paragraph-xs c-blue-500">{{ scope.row.name }}</a>
               <div class="flex flex-row gap-x-2 items-center" v-if="scope.row.platforms">
 
                 <template v-for="platform in scope.row.platforms" :key="platform.id">

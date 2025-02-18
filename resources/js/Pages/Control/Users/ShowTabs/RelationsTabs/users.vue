@@ -12,7 +12,7 @@
             <NestedTable v-model="scope.row.children"></NestedTable>
         </template>
 
-        <AppTableColumn label="#" sortable="id">
+        <AppTableColumn label="No" sortable="id">
             <template #default="scope">
                     {{scope.row.id}}
             </template>

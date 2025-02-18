@@ -43,7 +43,7 @@
       <AppTableColumn :label="'Parça Adı'" sortable="name">
         <template #default="scope">
           <div class="flex flex-col items-start">
-            <a :href="route('control.catalog.songs.show',scope.row.id)" class="table-name-text">
+            <a :href="route('control.catalog.songs.show',scope.row.id)" class="paragraph-xs c-blue-500">
               {{ scope.row.name }} ({{scope.row.version}})
             </a>
             <p class="paragraph-xs c-sub-600">ISRC: {{ scope.row.isrc }}</p>

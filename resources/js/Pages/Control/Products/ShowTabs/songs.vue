@@ -92,7 +92,7 @@ const pauseMusic = (song) => {
 </script>
 <template>
   <AppTable :hasSelect="true" v-model="product.songs" :isClient="true" :hasSearch="false" :showAddButton="false">
-    <AppTableColumn label="#" sortable="id">
+    <AppTableColumn label="No" sortable="id">
       <template #default="scope">
         <p class="table-name-text">
           {{ scope.row.id }}

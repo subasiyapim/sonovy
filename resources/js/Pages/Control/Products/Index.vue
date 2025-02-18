@@ -141,7 +141,7 @@
         </template>
       </AppTableColumn>
 
-      <AppTableColumn label="Yayın Bilgisi" width="300">
+      <AppTableColumn label="Yayın Bilgisi" width="240">
         <template #default="scope">
           <div class="flex gap-x-2 items-start">
             <div class="w-8 h-8 rounded overflow-hidden">
@@ -195,7 +195,7 @@
           <span class="paragraph-xs c-sub-600">{{ scope.row.songs?.length }} Parça</span>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="UPC/Katalog" width="240">
+      <AppTableColumn label="UPC/Katalog" width="180">
         <template #default="scope">
           <div class="flex flex-col justify-start ">
             <span class="paragraph-xs c-sub-600">UPC:{{ scope.row.upc_code ?? 'Boş' }}</span>
