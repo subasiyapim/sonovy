@@ -59,16 +59,19 @@ const getBody = computed(() => {
     </AppTableColumn>
     <AppTableColumn :label="__('control.finance.payments.demanded_table.column_2')" sortable="name">
       <template #default="scope">
-     <p class="paragraph-xs c-neutral-500">
-                    {{ scope.row.name }}
-                </p>
+        <tippy :allowHtml="true" :sticky="true" :interactive="true">
+            <p class="paragraph-xs c-neutral-500">
+                {{ scope.row.name }}
+            </p>
 
-             <!-- <tippy>
-
-                <template #content>
-                    dneeme
-                </template>
-            </tippy> -->
+            <template #content>
+                <div class="flex items-center gap-0.5">
+                    <span v-for="d in scope.row.tooltipData?.items">
+                        {{d.name}}
+                    </span>
+                </div>
+            </template>
+        </tippy>
 
       </template>
     </AppTableColumn>
