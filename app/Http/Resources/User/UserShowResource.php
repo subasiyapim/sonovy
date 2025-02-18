@@ -162,6 +162,8 @@ class UserShowResource extends JsonResource
                 $song->participants->load('user');
                 $participants = array_merge($participants, $song->participants->map(function ($participant) {
                     return [
+                        'id' => $participant->user->id,
+                        'roles' => $participant->user->roles,
                         'name' => $participant->user->name,
                         'email' => $participant->user->email,
                         'branch_names' => $participant->branch_names,

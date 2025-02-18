@@ -140,7 +140,7 @@ class UserController extends Controller
 
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
         $user->refresh();
@@ -230,7 +230,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+".$country->phone_code.$user->phone;
+            $user->phone = "+" . $country->phone_code . $user->phone;
         }
 
         return inertia(
@@ -285,11 +285,14 @@ class UserController extends Controller
         $user->children()->update(['parent_id' => null]);
 
         $user->delete();
+        return response()->json([
+            'message' => __('control.notification_deleted', ['model' => __('control.user.title_singular')]),
+        ], Response::HTTP_OK);
 
-        return back()
-            ->with([
-                'notification' => __('control.notification_deleted', ['model' => __('control.user.title_singular')])
-            ]);
+        // return back()
+        //     ->with([
+        //         'notification' => __('control.notification_deleted', ['model' => __('control.user.title_singular')])
+        //     ]);
     }
 
     public function search(Request $request)
@@ -341,7 +344,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 

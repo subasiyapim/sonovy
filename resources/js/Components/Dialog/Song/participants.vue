@@ -33,7 +33,7 @@
     </div>
     <div class="flex p-5 border-t border-soft-200 gap-4">
       <RegularButton @click="isDialogOn = false" class="flex-1">
-       Katılımcıları Düzenle
+       Kapat
       </RegularButton>
     </div>
   </BaseDialog>

@@ -866,7 +866,7 @@ return [
             'is_verified' => 'Doğrulandı',
             'status_pending_approval' => 'Onay Bekliyor',
             'status_active' => 'Aktif',
-            'status_passive' => 'Pasif',
+            'status_passive' => 'BAN',
         ],
         'competency' => [
             'title' => 'Yetkiler',
@@ -932,7 +932,7 @@ return [
                 'placeholder' => 'Örn: 0532 123 45 67',
                 'validation' => 'Telefon numarası geçerli değil'
             ],
-            'status_passive' => 'Pasif',
+            'status_passive' => 'BAN',
             'last_login_at' => 'Son  ',
             'created_at' => 'Kayıt tarihi',
             'websites' => [

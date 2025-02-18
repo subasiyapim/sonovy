@@ -26,7 +26,11 @@ const data = computed({
 
 
 
-
+     <AppTableColumn label="tür" width="40">
+      <template #default="scope">
+        #{{scope.index+1}}
+      </template>
+    </AppTableColumn>
       <AppTableColumn :label="__('control.artist.fields.name')" align="left">
         <template #default="scope">
           <div class="flex justify-start items-center gap-2 w-full">

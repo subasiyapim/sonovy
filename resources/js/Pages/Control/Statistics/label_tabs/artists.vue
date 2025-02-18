@@ -25,7 +25,11 @@ const data = computed({
   <AppTable :hasSelect="false" v-model="data" :isClient="true" :hasSearch="false" :showAddButton="false">
 
 
-
+    <AppTableColumn label="tür" width="40">
+      <template #default="scope">
+        #{{scope.index+1}}
+      </template>
+    </AppTableColumn>
 
       <AppTableColumn :label="__('control.artist.fields.name')" align="left">
         <template #default="scope">

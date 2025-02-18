@@ -33,7 +33,7 @@
             </div>
              <div v-else class=" px-2 py-1 rounded-full flex items-center gap-2 bg-error-500">
                 <WarningIcon style="width:12px;" color="#fff" />
-                <p class="label-xs text-white">  {{ __('control.user.passive') }}</p>
+                <p class="label-xs text-white">  {{ __('control.user.status_enum.status_passive') }}</p>
             </div>
         </div>
         <span class="c-neutral-400 paragraph-xs" v-text="'#'+user.id"/>
@@ -161,8 +161,14 @@ const currentTab = ref(params.get('slug') ?? 'profile')
 const onArtistProcessDone = () => {
   location.reload();
 }
-const remove = () => {
-
+const remove = async () => {
+    try {
+        const response = await crudStore.del(route('control.user-management.users.destroy',props.user.id));
+        toast.success(response.message);
+        router.visit(route('control.user-management.users.index'));
+    } catch (error) {
+          toast.error("işlem hatalı");
+    }
 }
 
 const productStatus = ref(props.user.status);

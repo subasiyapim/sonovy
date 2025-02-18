@@ -26,7 +26,11 @@ const data = computed({
 
 
 
-
+    <AppTableColumn label="tür" width="40">
+      <template #default="scope">
+        #{{scope.index+1}}
+      </template>
+    </AppTableColumn>
     <AppTableColumn label="Ülke" >
       <template #default="scope">
         <div class="flex items-center gap-3">
