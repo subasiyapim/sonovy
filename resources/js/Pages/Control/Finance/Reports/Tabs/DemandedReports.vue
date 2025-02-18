@@ -66,7 +66,7 @@ const getBody = computed(() => {
 
             <template #content>
                 <div class="flex items-center gap-0.5 flex-wrap">
-                    <span class="whitespace-nowrap" v-for="d in scope.row.tooltipData?.items">
+                    <span class="whitespace-nowrap" v-for="d in scope.row.tooltipData">
                         {{d.name}}
                     </span>
                 </div>
