@@ -28,7 +28,8 @@ const data = computed({
 
     <AppTableColumn label="No" width="40">
       <template #default="scope">
-        #{{scope.index+1}}
+              <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
+
       </template>
     </AppTableColumn>
     <AppTableColumn label="Ülke" >
@@ -36,7 +37,7 @@ const data = computed({
         <div class="flex items-center gap-3">
 
            <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200">{{scope.row.emoji}}</div>
-            <p class="label-sm c-strong-950"> {{scope.row.country}}</p>
+            <p class="paragraph-xs c-strong-950"> {{scope.row.country}}</p>
         </div>
 
       </template>
@@ -44,12 +45,12 @@ const data = computed({
 
     <AppTableColumn label="Dinlenme Sayısı">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity}}</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 paragraph-xs c-strong-950">{{scope.row.quantity}}</span>
       </template>
     </AppTableColumn>
     <AppTableColumn label="% Stream">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity_percentage}}%</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 paragraph-xs c-strong-950">{{scope.row.quantity_percentage}}%</span>
       </template>
     </AppTableColumn>
 

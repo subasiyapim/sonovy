@@ -28,7 +28,7 @@ const data = computed({
 
     <AppTableColumn label="No" width="40">
       <template #default="scope">
-        #{{scope.index+1}}
+           <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
       </template>
     </AppTableColumn>
       <AppTableColumn :label="__('control.label.title_singular')" align="left" sortable="name">
@@ -41,7 +41,7 @@ const data = computed({
               >
             </div>
             <a :href="route('control.statistics.label',scope.row.label_id)"
-               class="c-sub-600 table-name-text">{{ scope.row.label_name }}</a>
+               class="paragraph-xs c-blue-500">{{ scope.row.label_name }}</a>
 
 
           </div>
@@ -49,7 +49,7 @@ const data = computed({
       </AppTableColumn>
     <AppTableColumn label="Toplam Parça Sayısı">
       <template #default="scope">
-               <span class="paragraph-xs c-sub-600">{{scope.row.song_count}} Parça</span>
+               <span class="paragraph-xs c-strong-950">{{scope.row.song_count}} Parça</span>
 
 
 
@@ -57,12 +57,12 @@ const data = computed({
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Sayısı">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity}}</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-strong-950">{{scope.row.quantity}}</span>
       </template>
     </AppTableColumn>
     <AppTableColumn label="% Stream">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity_percentage}}%</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-strong-950">{{scope.row.quantity_percentage}}%</span>
       </template>
     </AppTableColumn>
 

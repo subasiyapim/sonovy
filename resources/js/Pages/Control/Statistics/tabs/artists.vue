@@ -28,7 +28,7 @@ const data = computed({
 
      <AppTableColumn label="No" width="40">
       <template #default="scope">
-        #{{scope.index+1}}
+          <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
       </template>
     </AppTableColumn>
       <AppTableColumn :label="__('control.artist.fields.name')" align="left">
@@ -42,7 +42,7 @@ const data = computed({
             <div>
 
               <a :href="route('control.statistics.artist',scope.row.artist_id)"
-                 class="font-poppins table-name-text c-sub-600">{{ scope.row.artist_name }}</a>
+                 class="paragraph-xs c-blue-500">{{ scope.row.artist_name }}</a>
 
               <div class="flex flex-row gap-x-2 items-center" v-if="scope.row.platforms">
 
@@ -74,7 +74,7 @@ const data = computed({
       </AppTableColumn>
     <AppTableColumn label="Toplam Parça Sayısı">
       <template #default="scope">
-        <span class="paragraph-xs c-sub-600">{{scope.row.song_count}} Parça</span>
+        <span class="paragraph-xs c-strong-950">{{scope.row.song_count}} Parça</span>
 
 
       </template>

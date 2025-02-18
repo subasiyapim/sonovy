@@ -57,7 +57,7 @@
             <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
               <PlayCircleFillIcon color="var(--dark-green-500)"/>
             </div>
-            <p class="label-sm c-strong-950">
+            <p class="paragraph-xs c-strong-950">
               {{ scope.row.duration ?? '2.35' }}
             </p>
           </div>
@@ -65,7 +65,7 @@
             <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
               <PlayCircleFillIcon color="var(--dark-green-500)"/>
             </div>
-            <p class="label-sm c-strong-950">
+            <p class="paragraph-xs c-strong-950">
                 {{ __('control.song.pause') }}
             </p>
           </div>
@@ -83,7 +83,7 @@
       </AppTableColumn>
       <AppTableColumn :label="'Katılımcı'" sortable="name">
         <template #default="scope">
-          <div class="border border-soft-200 rounded c-strong-950 label-sm px-3 py-1">
+          <div class="border border-soft-200 rounded paragraph-xs c-strong-950 px-3 py-1">
             {{ scope.row.participants.length }} {{ __('control.song.participant') }}
           </div>
         </template>

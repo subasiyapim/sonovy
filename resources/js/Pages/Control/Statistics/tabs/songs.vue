@@ -73,7 +73,7 @@ const pauseMusic = (song) => {
 
     <AppTableColumn label="No" width="40">
       <template #default="scope">
-        #{{scope.index+1}}
+       <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
       </template>
     </AppTableColumn>
     <AppTableColumn label="Tür">
@@ -113,8 +113,8 @@ const pauseMusic = (song) => {
       <template #default="scope">
         <div class="flex items-center gap-3">
           <div>
-            <a :href="route('control.statistics.song',scope.row.song_id)" class="label-sm c-solid-950"> {{ scope.row.name }} ({{ scope.row.version }})</a>
-            <p class="paragraph-xs c-sub-600"> ISRC:{{ scope.row.isrc_code }} </p>
+            <a :href="route('control.statistics.song',scope.row.song_id)" class="paragraph-xs c-blue-500"> {{ scope.row.name }} ({{ scope.row.version }})</a>
+            <p class="paragraph-xs c-strong-950"> ISRC:{{ scope.row.isrc_code }} </p>
           </div>
         </div>
       </template>
@@ -127,26 +127,26 @@ const pauseMusic = (song) => {
           <img :alt="scope.row.artist_name"
                :src="scope.row.artist_image ? scope.row.artist_image.thumb : defaultStore.profileImage(scope.row.artist_name)"
                class="w-8 h-8 border-2 border-white rounded-full shrink-0">
-          <p class="label-sm c-sub-600 truncate">{{ scope.row.artist_name }}</p>
+          <p class="paragraph-xs c-strong-950 truncate">{{ scope.row.artist_name }}</p>
         </a>
       </template>
     </AppTableColumn>
 
     <AppTableColumn label="Plak Şirketi">
       <template #default="scope">
-        <p class="paragraph-xs c-sub-600">{{ scope.row.label_name }}</p>
+        <p class="paragraph-xs c-strong-950">{{ scope.row.label_name }}</p>
 
       </template>
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Sayısı">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{ scope.row.quantity }}</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 paragraph-xs c-strong-950">{{ scope.row.quantity }}</span>
       </template>
     </AppTableColumn>
     <AppTableColumn label="% Stream">
       <template #default="scope">
         <span
-            class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{
+            class="border border-soft-200 rounded px-2 py-0.5 paragraph-xs c-strong-950">{{
             scope.row.quantity_percentage
           }}%</span>
       </template>

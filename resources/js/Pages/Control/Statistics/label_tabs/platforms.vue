@@ -28,7 +28,8 @@ const data = computed({
 
     <AppTableColumn label="No" width="40">
       <template #default="scope">
-        #{{scope.index+1}}
+                  <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
+
       </template>
     </AppTableColumn>
     <AppTableColumn label="Platform" >

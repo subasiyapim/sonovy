@@ -72,7 +72,8 @@ const pauseMusic = (song) => {
   <AppTable v-model="songs" :isClient="true" :hasSearch="false" :showAddButton="false">
     <AppTableColumn label="No" width="40">
       <template #default="scope">
-        #{{scope.index+1}}
+                <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
+
       </template>
     </AppTableColumn>
     <AppTableColumn label="tür" >
@@ -111,7 +112,7 @@ const pauseMusic = (song) => {
       <template #default="scope">
         <div class="flex items-center gap-3">
           <div>
-            <p class="label-sm c-solid-950"> {{ scope.row.song_name }} ({{ scope.row.version }})</p>
+            <p class="paragraph-xs c-strong-950"> {{ scope.row.song_name }} ({{ scope.row.version }})</p>
             <p class="paragraph-xs c-sub-600"> ISRC:{{ scope.row.isrc_code }} </p>
           </div>
         </div>
@@ -121,19 +122,19 @@ const pauseMusic = (song) => {
 
     <AppTableColumn label="Plak Şirketi">
       <template #default="scope">
-        <p class="paragraph-xs c-sub-600">{{ scope.row.label_name }}</p>
+        <p class="paragraph-xs c-strong-950">{{ scope.row.label_name }}</p>
 
       </template>
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Sayısı">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{ scope.row.quantity }}</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 paragraph-xs c-strong-950">{{ scope.row.quantity }}</span>
       </template>
     </AppTableColumn>
     <AppTableColumn label="% Stream">
       <template #default="scope">
         <span
-            class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{
+            class="border border-soft-200 rounded px-2 py-0.5 paragraph-xs c-strong-950">{{
             scope.row.quantity_percentage
           }}%</span>
       </template>

@@ -55,7 +55,7 @@
 
       <AppTableColumn :label="__('control.artist.fields.tracks_count')">
         <template #default="scope">
-            <p class="paragraph-xs c-sub-600">  {{ scope.row.tracks_count }}</p>
+            <p class="paragraph-xs c-strong-950">  {{ scope.row.tracks_count }}</p>
         </template>
       </AppTableColumn>
 
@@ -65,7 +65,7 @@
           <BasicBadge class="mx-1" v-for="(genre, index) in scope.row.genres" :key="index">
             {{ genre }}
           </BasicBadge>
-          <span v-if="scope.row.genres_count > 0">+{{ scope.row.genres_count }}</span>
+          <span class="paragraph-xs c-strong-950" v-if="scope.row.genres_count > 0">+{{ scope.row.genres_count }}</span>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="__('control.general.actions')" align="right">

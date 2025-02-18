@@ -27,7 +27,8 @@ const data = computed({
 
     <AppTableColumn label="No" width="40">
       <template #default="scope">
-        #{{scope.index+1}}
+                <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
+
       </template>
     </AppTableColumn>
 
@@ -42,7 +43,7 @@ const data = computed({
             <div>
 
               <a :href="route('control.statistics.artist',scope.row.artist_id)"
-                 class="font-poppins table-name-text c-sub-600">{{ scope.row.artist_name }}</a>
+                 class="paragraph-xs c-strong-950">{{ scope.row.artist_name }}</a>
 
               <div class="flex flex-row gap-x-2 items-center" v-if="scope.row.platforms">
 
@@ -52,7 +53,7 @@ const data = computed({
                     <a
                         :href="platform.url"
                         target="_blank"
-                        class="flex items-center gap-2 paragraph-xs c-sub-600">
+                        class="flex items-center gap-2 paragraph-xs c-strong-950">
                         <SpotifyIcon/>
                         {{ platform?.url?.split("/").pop() }}
                     </a>
@@ -61,7 +62,7 @@ const data = computed({
                   <a v-if="platform.id == 4"
                      :href="platform.url"
                      target="_blank"
-                     class="flex items-center ms-3 gap-2 paragraph-xs c-sub-600">
+                     class="flex items-center ms-3 gap-2 paragraph-xs c-strong-950">
                     <AppleMusicIcon/>
                     {{ platform?.url?.split("/").pop().split("?")[0] }}
                   </a>
@@ -74,19 +75,19 @@ const data = computed({
       </AppTableColumn>
     <AppTableColumn label="Toplam Parça Sayısı">
       <template #default="scope">
-        <span class="paragraph-xs c-sub-600">{{scope.row.song_count}} Parça</span>
+        <span class="paragraph-xs c-strong-950">{{scope.row.song_count}} Parça</span>
 
 
       </template>
     </AppTableColumn>
     <AppTableColumn label="Dinlenme Sayısı">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity}}</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 paragraph-xs c-strong-950">{{scope.row.quantity}}</span>
       </template>
     </AppTableColumn>
     <AppTableColumn label="% Stream">
       <template #default="scope">
-        <span class="border border-soft-200 rounded px-2 py-0.5 label-xs c-sub-600">{{scope.row.quantity_percentage}}%</span>
+        <span class="border border-soft-200 rounded px-2 py-0.5 paragraph-xs c-strong-950">{{scope.row.quantity_percentage}}%</span>
       </template>
     </AppTableColumn>
 
