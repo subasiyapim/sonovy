@@ -128,13 +128,27 @@ const props = defineProps({
   }
 })
 
+// Platform değişikliğini izle
+watch(() => props.platformSalesCount, (newValue) => {
+  if (newValue && newValue["Music Release"]) {
+    series.value[0].data = Object.values(newValue["Music Release"]);
+    chartOptions.value.xaxis.categories = Object.keys(newValue["Music Release"]);
+  }
+}, { deep: true });
+
 const series = ref([
   {
     name: 'Sales',
-    data: ref(Object.values(props.platformSalesCount["Music Release"] ?? {}))
+    data: []
   },
 ]);
 
+onMounted(() => {
+  if (props.platformSalesCount && props.platformSalesCount["Music Release"]) {
+    series.value[0].data = Object.values(props.platformSalesCount["Music Release"]);
+    chartOptions.value.xaxis.categories = Object.keys(props.platformSalesCount["Music Release"]);
+  }
+});
 
 const chartOptions = ref({
   chart: {
@@ -152,7 +166,7 @@ const chartOptions = ref({
     width: 2,
   },
   xaxis: {
-    categories: Object.keys(props.platformSalesCount["Music Release"] ?? {}),
+    categories: [],
     labels: {
       show: true,
       style: {
@@ -160,9 +174,7 @@ const chartOptions = ref({
         cssClass: 'subheading-2xs c-soft-400',
       },
       formatter: function(value) {
-
-
-       return moment(value, 'YYYY-MM').format('MMM YYYY').toUpperCase();
+        return moment(value, 'YYYY-MM').format('MMM YYYY').toUpperCase();
       }
     },
     axisBorder: {
@@ -179,8 +191,6 @@ const chartOptions = ref({
     labels: {
       show: true,
       formatter: function(value) {
-        console.log("VALUEE",value);
-
         return Math.round(value).toLocaleString();
       }
     },
@@ -192,18 +202,17 @@ const chartOptions = ref({
   },
   tooltip: {
     enabled: true,
-
     x: {
       formatter: function(value) {
-        return "Satış:"+value;
-
+        return moment(value, 'YYYY-MM').format('MMMM YYYY');
       }
     }
   },
 });
+
 let params = new URLSearchParams(window.location.search)
 
-const loading = ref();
+const loading = ref(false);
 const crudStore = useCrudStore();
 const period = ref('weekly');
 const platform_id = ref(params.get('platform') ?? 2);
@@ -211,10 +220,9 @@ const type = ref('audio_streams');
 
 const onPlatformChange = (e) => {
   platform_id.value = e.target.value;
-
   router.visit(route(route().current()), {
     replace: true,
-    preserveState: true,
+    preserveState: false, // State'i koruma, yeni veriyi al
     preserveScroll: true,
     data: { ...route().params, platform: platform_id.value },
   });
@@ -222,9 +230,7 @@ const onPlatformChange = (e) => {
 
 const onChangeType = (e) => {
   type.value = e;
-//   getData();
 }
-
 
 const totalSales = ref(0);
 const percentage = ref(0);

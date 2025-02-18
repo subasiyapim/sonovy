@@ -12,6 +12,7 @@ use App\Models\Song;
 use App\Models\System\Country;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +42,7 @@ class StatisticController extends Controller
         $platformStats = $this->getPlatformStatistics($earnings);
 
         //Platform bazlı satış sayıları
-        $platformSalesCount = $this->getPlatformSalesCount($earnings);
+        $platformSalesCount = $this->getPlatformSalesCount($earnings, $request->input('platform'));
 
         //En iyiler
 
@@ -217,27 +218,42 @@ class StatisticController extends Controller
 
     private function getPlatformSalesCount(
         $earnings,
-        $platform = 'Spotify',
+        $platform = 2,
         Product $product = null,
         Artist $artist = null,
         Label $label = null,
         Song $song = null,
     ) {
-        return collect($earnings)
-            ->when($product, function ($query, $product) {
+        $platformModel = Platform::find($platform);
+
+        $filteredEarnings = collect($earnings)
+            ->when($product, function ($query) use ($product) {
                 return $query->where('upc_code', $product->upc_code);
             })
-            ->when($artist, function ($query, $artist) {
+            ->when($artist, function ($query) use ($artist) {
                 return $query->where('artist_id', $artist->id);
             })
-            ->when($label, function ($query, $label) {
+            ->when($label, function ($query) use ($label) {
                 return $query->where('label_id', $label->id);
             })
-            ->when($song, function ($query, $song) {
+            ->when($song, function ($query) use ($song) {
                 return $query->where('song_id', $song->id);
             })
-            ->where('sales_type', '!=', 'Platform Promotion')
-            ->where('platform', $platform)
+            ->where('sales_type', '!=', 'Platform Promotion');
+
+        // Platform filtresini platform_id ile uygula
+        if ($platformModel) {
+            $filteredEarnings = $filteredEarnings->filter(function ($earning) use ($platformModel) {
+                return $earning->platform_id == $platformModel->id;
+            });
+        }
+
+        // Debug için veri kontrolü
+        Log::info('Platform ID: ' . $platform);
+        Log::info('Filtered Earnings Count: ' . $filteredEarnings->count());
+        Log::info('Sample Data:', $filteredEarnings->take(3)->toArray());
+
+        $groupedData = $filteredEarnings
             ->groupBy(['release_type', 'sales_date'])
             ->map(function ($releaseTypeGroup) {
                 return $releaseTypeGroup->map(function ($dateGroup) {
@@ -246,9 +262,15 @@ class StatisticController extends Controller
             })
             ->map(function ($releaseTypeData) {
                 return $releaseTypeData->mapWithKeys(function ($value, $key) {
-                    return [Carbon::parse($key)->format('Y-m') => $value];
-                })->sortKeys(false);
-            })->sortKeys(false);
+                    $date = Carbon::parse($key);
+                    return [$date->format('Y-m') => $value];
+                })->sortKeys();
+            });
+
+        // Debug için son veriyi kontrol et
+        \Log::info('Grouped Data:', $groupedData->toArray());
+
+        return $groupedData;
     }
 
     private function getTabData($tab, $earnings)
