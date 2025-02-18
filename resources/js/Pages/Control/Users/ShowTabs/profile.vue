@@ -5,6 +5,9 @@ import {IconButton} from '@/Components/Buttons';
 import {AppActivity} from '@/Components/Widgets';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {usePage} from '@inertiajs/vue3';
+import {AppSwitchComponent} from '@/Components/Form';
+import {toast} from 'vue3-toastify';
+
 import {Howl} from "howler";
 import {
   DocumentIcon,
@@ -12,13 +15,34 @@ import {
   EditIcon
 } from '@/Components/Icons'
 import {useDefaultStore} from "@/Stores/default";
+import {useCrudStore} from "@/Stores/useCrudStore";
 
 const defaultStore = useDefaultStore();
+const crudStore = useCrudStore();
 
 const props = defineProps({
   user: {},
 });
 
+const isEmailVerified = ref(props.user.email_verified_at != null);
+const isPhoneVerified = ref(props.user.is_verified == 1);
+
+const onChangeEmailVerification = async (e) => {
+ try {
+    const response = await crudStore.post(route('control.user-management.users.toggle-email-verification',props.user.id));
+    toast.success(response.message);
+ } catch (error) {
+    toast.success("İşlem Başarısız");
+ }
+}
+const onChangePhoneVerification = async (ee) => {
+    try {
+        const response = await crudStore.post(route('control.user-management.users.toggle-phone-verification',props.user.id));
+        toast.success(response.message);
+    } catch (error) {
+        toast.success("İşlem Başarısız");
+    }
+}
 const activities = reactive([
     {
         "title":"Curabitur quam sem lobortis imperdiet sagittis ut. Interdum.",
@@ -174,6 +198,27 @@ const activities = reactive([
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="'Şirket Tel'"/>
                   <span class="user-sm c-strong-950" v-text="'-'"/>
+                </div>
+              </div>
+              <div class="flex gap-3.5 items-center">
+                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                  <DocumentIcon color="var(--sub-600)"/>
+                </div>
+                <div class="h-12 flex flex-col gap-2">
+                    <p class="paragraph-xs c-sub-600" v-text="'Email Onayı'"/>
+                    <AppSwitchComponent @change="onChangeEmailVerification" v-model="isEmailVerified"/>
+
+                </div>
+              </div>
+              <div class="flex gap-3.5 items-center">
+                <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
+                  <DocumentIcon color="var(--sub-600)"/>
+                </div>
+                <div class="h-12 flex flex-col gap-2">
+                    <p class="paragraph-xs c-sub-600" v-text="'Telefon Onayı'"/>
+                    <AppSwitchComponent @change="onChangePhoneVerification" v-model="isPhoneVerified"/>
+
+
                 </div>
               </div>
 

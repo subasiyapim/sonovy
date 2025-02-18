@@ -133,6 +133,14 @@ Route::group(
                 'users/{user}/toggle-status',
                 [UserController::class, 'toggleStatus']
             )->name('users.toggle-status');
+            Route::post(
+                'users/{user}/toggle-email-verification',
+                [UserController::class, 'toggleEmailVerification']
+            )->name('users.toggle-email-verification');
+            Route::post(
+                'users/{user}/toggle-phone-verification',
+                [UserController::class, 'togglePhoneVerification']
+            )->name('users.toggle-phone-verification');
             Route::post('users/switch-to-user', [UserController::class, 'switchToUser'])->name('users.switch-to-user');
             Route::post('users/switch-back-to-admin', [UserController::class, 'switchBackToAdmin'])
                 ->name('users.switch-back-to-admin');

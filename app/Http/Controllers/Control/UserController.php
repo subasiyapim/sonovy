@@ -278,7 +278,9 @@ class UserController extends Controller
             //validation error
             $validator = Validator::make([], []);
             $validator->errors()->add('notification', 'Admin kullanıcısı silinemez.');
-            return back()->withErrors($validator);
+            return response()->json([
+                'message' => 'Admin kullanıcısı silinemez.'
+            ], 403);
         }
 
         //Eğer alt kullanıcıları varsa tüm alt kullanıcıların parent_id değeri null yapılır
@@ -353,6 +355,30 @@ class UserController extends Controller
                 'notification' => __('control.notification_updated', ['model' => __('control.user.title_singular')])
             ]);
     }
+    public function toggleEmailVerification(Request $request, User $user)
+    {
+
+        if ($user->email_verified_at) {
+            $user->email_verified_at = null;
+        } else {
+            $user->email_verified_at = now()->format('d-m-Y H:i');
+        }
+        $user->save();
+
+        return response()->json(["message" => "işlem başarılı"], Response::HTTP_OK);
+    }
+    public function togglePhoneVerification(Request $request, User $user)
+    {
+        if ($user->is_verified) {
+            $user->is_verified = 0;
+        } else {
+
+            $user->is_verified = 1;
+        }
+        $user->save();
+
+        return response()->json(["message" => "işlem başarılı"], Response::HTTP_OK);
+    }
 
     public function switchToUser(Request $request)
     {
@@ -414,6 +440,8 @@ class UserController extends Controller
             ?->each(function ($label) use ($user) {
                 $label->update(['created_by' => $user->id]);
             });
+
+        $assignedLabels->loadMissing('user');
         return response()->json([
             "success" => true,
             "labels" => $assignedLabels,

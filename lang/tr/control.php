@@ -59,7 +59,7 @@ return [
         'confirm_delete_multiple' => 'Seçilen öğeleri silmek istediğinizden emin misiniz?',
         'add' => 'Ekle',
         'next' => 'İlerle',
-        'actions' => 'Aksyonlar',
+        'actions' => 'İşlemler',
         'previous' => 'Geri',
         'upload_input_placeholder' => '<b class="dark:text-white"> Yüklemek için tıklayın</b> veya bu bölgeye sürükleyin <br>',
         'optional' => 'Opsiyonel',
@@ -191,8 +191,8 @@ return [
         'about' => 'Sanatçı Hakkında',
     ],
     'label' => [
-        'detach_label' => "Plak Şirketini Atama",
-        'go_to_detail' => "Detayına Git",
+        'detach_label' => "Plak Şirketini Kullanıcıdan Kaldır",
+        'go_to_detail' => "Plak Şirketi Detayına Git",
         'song_name' => 'Parça Adı',
         'album_name' => 'Albüm Adı',
         'header' => "Tüm Plak Şirketleri",
@@ -205,6 +205,7 @@ return [
         'album_notfound' => 'Henüz ekli bir albüm bulunmamaktadır.',
         'commission_rate_description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi aspernatur error est exercitationem expedita fuga hic in, ipsam molestiae nobis provident quo ullam unde! Amet, odio omnis? Debitis placeat, quia!',
         'fields' => [
+
             'name' => 'Plak şirketinin adı',
             'name_placeholder' => 'Örn; Island Records',
             'image' => "Logo",
@@ -216,6 +217,8 @@ return [
             'email' => 'Email',
             'phone' => 'Telefon',
             'web' => 'Web sitesi',
+            'product_count' => "Yayın Sayısı",
+            'song_count' => "Şarkı Sayısı",
             'added_by' => "Ekleyen",
             'commission_rate' => 'Hakediş Oranı',
             'status' => "Durum",

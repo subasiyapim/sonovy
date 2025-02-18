@@ -213,22 +213,11 @@
                     </div>
                 </template>
             </AppTableColumn>
-            <AppTableColumn label="Tür">
+            <AppTableColumn label="Tarz">
                 <template #default="scope">
                     <span class="paragraph-xs c-sub-600">
 
-                     <template v-if="scope.row.type == 1">
-                        {{ __('control.song.audio') }}
-                    </template>
-                    <template v-if="scope.row.type == 2">
-                        {{ __('control.song.music_video') }}
-                    </template>
-                    <template v-if="scope.row.type == 3">
-                        {{ __('control.song.ringtone') }}
-                    </template>
-                    <template v-if="scope.row.type == 4">
-                        {{ __('control.song.apple_video') }}
-                    </template>
+                        {{scope.row.genre?.name}}
                     </span>
 
                 </template>

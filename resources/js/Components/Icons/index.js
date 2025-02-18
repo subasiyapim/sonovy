@@ -13,6 +13,7 @@ import More2LineIcon from './More2LineIcon.vue';
 import Building2LineIcon from './Building2LineIcon.vue';
 import Table2Icon from './Table2Icon.vue';
 import WorldIcon from './WorldIcon.vue';
+import FileCloseLineIcon from './FileCloseLineIcon.vue';
 import PhoneIcon from './PhoneIcon.vue';
 import MessageIcon from './MessageIcon.vue';
 import PdfIcon from './PdfIcon.vue';
@@ -128,6 +129,7 @@ export {
     StarFilledIcon,
     SearchIcon,
     RetractedIcon,
+    FileCloseLineIcon,
     WarningIcon,
     NotificationIcon,
     StarIcon,

@@ -54,12 +54,12 @@
         </div>
         <div v-else class="h-full flex-1">
 
-            <div v-if="labels.length <= 0">
+            <div v-if="labels.length <= 0" class="paragraph-sm c-strong-950">
                 <template v-if="!queryTerm">
-                    Kullanıcı Aramak için bilgi giriniz.
+                    Plak şirketi aramak için bilgi giriniz.
                 </template>
                 <template v-else>
-                    kullanıcı bulunamadı
+                    Plak şirketi bulunamadı
                 </template>
 
             </div>
@@ -72,6 +72,9 @@
         </RegularButton>
         <PrimaryButton :loading="submitting" @click="submit" class="flex-1" :disabled="choosenLabels.length<=0">
             Seçilenleri Ata
+            <template #suffix>
+                <CheckIcon color="var(--dark-green-500)" />
+            </template>
         </PrimaryButton>
     </div>
   </BaseDialog>

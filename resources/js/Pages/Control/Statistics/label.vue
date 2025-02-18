@@ -442,28 +442,28 @@ const onDateChoosen = async (e) => {
 
 const tabs = ref([
   {
-    title: "Şarkılar",
+    title: "En İyi Şarkılar",
     slug: "songs",
     component: SongsTab,
   },
   {
-    title: "Albümler",
+    title: "En İyi Albümler",
     slug: "products",
     component: ProductsTab,
   },
   {
-    title: "Sanatçılar",
+    title: "En İyi Sanatçılar",
     slug: "artists",
     component: ArtistsTab,
   },
 
   {
-    title: "Platformlar",
+    title: "En İyi Platformlar",
     slug: "platforms",
     component: PlatformsTab,
   },
   {
-    title: "Ülkeler",
+    title: "En İyi Ülkeler",
     slug: "countries",
     component: CountriesTab,
   }

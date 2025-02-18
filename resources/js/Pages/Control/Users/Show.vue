@@ -90,7 +90,6 @@ import {UserModal} from '@/Components/Dialog';
 import {useUiStore} from '@/Stores/useUiStore';
 import { Link } from '@inertiajs/vue3'
 import {
-  DocumentIcon,
   EditIcon,
   Icon,
   LinkIcon,
@@ -167,7 +166,8 @@ const remove = async () => {
         toast.success(response.message);
         router.visit(route('control.user-management.users.index'));
     } catch (error) {
-          toast.error("işlem hatalı");
+          toast.error(error.response?.data?.message ?? "işlem hatalı");
+
     }
 }
 

@@ -24,6 +24,7 @@
         <AppTableColumn :label="__('control.label.fields.added_by')" sortable="name" width="140">
         <template #default="scope">
           <div class="flex items-center gap-4">
+
              <a v-if="scope.row.user" :href="route('control.user-management.users.show',scope.row.user?.id)" class="paragraph-xs c-strong-950 hover:underline">
                 {{ scope.row.user?.name }}
              </a>

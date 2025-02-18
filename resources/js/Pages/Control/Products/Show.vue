@@ -55,7 +55,7 @@
             </div>
 
             <button @click="showAllArtists = !showAllArtists" class="c-neutral-500 label-xs hover:underline" v-if="props.product.main_artists.length > 2">
-              <template v-if="!showAllArtists">  +5 Sanatçı Daha </template>
+              <template v-if="!showAllArtists">  +{{props.product.main_artists.length - 2}} Sanatçı Daha </template>
               <template v-else>  Daha az göster </template>
             </button>
         </div>

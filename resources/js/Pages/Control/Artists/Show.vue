@@ -269,7 +269,7 @@
     </div>
     <div v-else-if="activeTab == 'songs'" class="px-6">
         <AppTable v-model="tab.songs"  :isClient="true" :hasSearch="false" :showAddButton="false">
-       <AppTableColumn label="Tür" sortable="type" width="80">
+            <AppTableColumn label="Tür" sortable="type">
                 <template #default="scope">
                 <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 
@@ -299,7 +299,7 @@
                 </div>
                 </template>
             </AppTableColumn>
-            <AppTableColumn label="Şarkı Bilgisi">
+            <AppTableColumn label="Şarkı Bilgisi" width="180">
                 <template #default="scope">
                    <a :href="route('control.catalog.songs.show',scope.row.id)" class="paragraph-xs c-blue-500"> {{scope.row.name}}</a>
                 </template>

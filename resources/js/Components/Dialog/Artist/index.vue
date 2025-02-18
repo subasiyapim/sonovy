@@ -260,7 +260,6 @@ const onSubmit = (e) => {
             isDialogOn.value = false;
           },
           onError: (e) => {
-            console.log("HATAAA", e);
           }
         });
         return;

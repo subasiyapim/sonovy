@@ -62,6 +62,8 @@ class UserShowResource extends JsonResource
             'status' => $this->status->value,
             'email' => $this->email,
             'last_login' => $this->last_login,
+            'email_verified_at' => $this->email_verified_at,
+            'is_verified' => $this->is_verified,
             'tab' => $this->getTabContent()
         ];
     }

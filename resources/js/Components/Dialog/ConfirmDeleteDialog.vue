@@ -8,8 +8,8 @@
             </div>
 
             <div class="flex-1">
-                <p>{{title}}</p>
-                <p>{{description}}</p>
+                <p class="label-medium c-strong-950 !text-start">{{title}}</p>
+                <p class="c-sub-600 paragraph-sm !text-start">{{description}}</p>
             </div>
         </div>
         <hr class="my-4">

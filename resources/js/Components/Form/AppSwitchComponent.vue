@@ -31,6 +31,7 @@ export default {
   setup(props, { emit }) {
     const toggle = () => {
       emit("update:modelValue", !props.modelValue);
+      emit("change", !props.modelValue);
     };
     return { toggle };
   },

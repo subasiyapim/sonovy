@@ -251,7 +251,7 @@ const changePage = (page) => {
                             <span class="paragraph-xs c-sub-600">{{album.total_earning ?? 0}}</span>
                         </td>
                         <td class="ps-3">
-                            <span class="paragraph-xs c-sub-600">{{album.total_quantity ?? 0}}</span>
+                            <span class="paragraph-xs c-sub-600">{{album.total_quantity ?? 0}} streams</span>
                         </td>
                     </tr>
                 </tbody>

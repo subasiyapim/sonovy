@@ -61,6 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'last_login_at',
         'flags',
         'status',
+        'phone_verified_at',
     ];
 
     protected array $filterable = [
@@ -293,6 +294,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $date->format('d-m-Y H:i');
     }
-
-
 }

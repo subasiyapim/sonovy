@@ -28,6 +28,11 @@ class LabelController extends Controller
         abort_if(Gate::denies('artist_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $labels = Label::with('country', 'products', 'user')
+            ->withCount('products') // Count associated products
+            ->withCount(['products as song_count' => function ($query) {
+                $query->join('product_song', 'products.id', '=', 'product_song.product_id')
+                    ->join('songs', 'product_song.song_id', '=', 'songs.id');
+            }]) // Count associated songs through products
             ->when(request('status') == 1, function ($query) {
                 $query->whereDoesntHave('products');
             })
@@ -40,6 +45,7 @@ class LabelController extends Controller
                 }
             })
             ->advancedFilter();
+
 
         $countries = getDataFromInputFormat(\App\Models\System\Country::all(), 'id', 'name', 'emoji');
         $countryCodes = CountryServices::getCountryPhoneCodes();
@@ -119,7 +125,7 @@ class LabelController extends Controller
         $countryCodes = CountryServices::getCountryPhoneCodes();
         $tab = [];
         if ($request->slug == "products") {
-            $products = Product::with('artists', 'mainArtists', 'label', 'songs', 'downloadPlatforms')
+            $products = Product::with('artists', 'genre', 'mainArtists', 'label', 'songs', 'downloadPlatforms')
                 ->where('label_id', '=', $label->id)
                 ->when($request->input('status'), function ($query) use ($request) {
                     $query->where('status', $request->input('status'));
