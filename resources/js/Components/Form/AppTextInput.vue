@@ -20,7 +20,7 @@
                 </div>
         </div>
 
-        <input  v-model="element" @input="onInput" @change="onChange" :disabled="disabled" v-debounce="400" ref="inputEl" class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent paragraph-sm c-strong-950  disabledBg " :type="type" :placeholder="placeholder">
+        <input  v-model="element" @input="onInput" @change="onChange" :disabled="disabled" v-debounce="400" ref="inputEl"  class="border-none focus:outline-none focus:border-none  focus:border-transparent focus:ring-0 h-full w-full bg-transparent paragraph-sm c-strong-950  disabledBg " :type="type" :placeholder="placeholder" :name="getName">
         <IconButton v-if="type == 'password'" @click="onEyeClicked">
            <EyeOnIcon  v-if="isPasswordHidden" color="var(--sub-600)" />
            <EyeOffIcon v-else color="var(--sub-600)" />
@@ -103,6 +103,10 @@
 
         emits('update:modelValue',`${phoneCode.value} ${element.value}` )
     }
+
+    const getName = computed(() => {
+        return 'input_' + Math.random().toString(36).substring(7);
+    })
 
 </script>
 
