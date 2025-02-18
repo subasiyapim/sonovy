@@ -31,7 +31,7 @@
         <MenuItem title="Dashboard" wrapper="dashboard" :path="route('control.dashboard')" :icon="DashboardIcon">
 
         </MenuItem>
-        <MenuItem title="Katalog" wrapper="catalog" :icon="DashboardIcon">
+        <MenuItem title="Katalog" wrapper="catalog" :icon="CatalogIcon">
           <template #sub>
             <sub-menu-item :path="'control.catalog.products.index'">{{ __('control.catalog.products') }}</sub-menu-item>
             <sub-menu-item :path="'control.catalog.songs.index'">{{ __('control.catalog.songs') }}</sub-menu-item>
@@ -41,7 +41,6 @@
           </template>
         </MenuItem>
 
-        <MenuItem title="Teklif Yönetimi"  :icon="TeklifManagementIcon"/>
         <MenuItem :path="route('control.statistics.index')" wrapper="statistics" title="İstatistikler" :icon="StatisticsIcon"/>
         <MenuItem title="Finans" wrapper="finance" :icon="WalletIcon">
           <template #sub>
@@ -50,8 +49,10 @@
             <sub-menu-item :path="'control.finance.analysis.index'">{{ __('control.finance.analysis.header') }}</sub-menu-item>
           </template>
         </MenuItem>
-        <MenuItem title="İcra" :icon="IcraIcon"/>
-        <MenuItem title="Kazan Yönetimi" :icon="EarningManagementIcon"/>
+         <MenuItem title="Publishing" :icon="IcraIcon"/>
+         <MenuItem title="Telif Yönetimi"  :icon="TeklifManagementIcon"/>
+
+
         <MenuItem title="Bildirimler" :icon="NotificationIcon"/>
         <div class="mt-4 p-2">
           <p class="subheading-xs c-soft-400"> {{ __('control.other') }}</p>
@@ -104,6 +105,7 @@ import {
   IcraIcon,
   EarningManagementIcon,
   NotificationIcon,
+  CatalogIcon,
   PersonSettingsIcon,
   CmsIcon,
   SettingsIcon,

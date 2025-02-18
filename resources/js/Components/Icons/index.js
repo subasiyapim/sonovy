@@ -1,5 +1,5 @@
 import AddIcon from './Add.vue';
-import DashboardIcon from './Dashboard.vue';
+import DashboardIcon from './DashboardIcon.vue';
 import ChevronRightIcon from './ChevronRight.vue';
 import ChevronLeftIcon from './ChevronLeftIcon.vue';
 import ChevronDownIcon from './ChevronDownIcon.vue';
@@ -100,6 +100,7 @@ import MusicVideoIcon from './MusicVideoIcon.vue';
 import RingtoneIcon from './RingtoneIcon.vue';
 import AudioIcon from './AudioIcon.vue';
 import DownloadIcon from './DownloadIcon.vue';
+import CatalogIcon from './CatalogIcon.vue';
 import ExitIcon from './ExitIcon.vue';
 import BankLineIcon from './BankLineIcon.vue';
 import SpeedUpIcon from './SpeedUpIcon.vue';
@@ -125,6 +126,7 @@ export {
     ArrowLeftIcon,
     ISRCStarsIcon,
     FileChartLineIcon,
+    CatalogIcon,
     PdfIcon,
     StarFilledIcon,
     SearchIcon,
