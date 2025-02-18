@@ -79,6 +79,7 @@ class PermissionRoleSeeder extends Seeder
                     'report_edit',
                     'report_delete',
                     'report_show',
+                    'payment_list',
                 ])->get(['id']));
 
     }
