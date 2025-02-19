@@ -13,9 +13,10 @@ return new class extends Migration {
     {
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\System\Country::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Country::class)->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->string('city_code')->nullable();
+            $table->string('state_code')->nullable();
+            $table->string('type')->nullable();
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->timestamps();

@@ -549,13 +549,6 @@ class EarningService
 
         DB::beginTransaction();
         try {
-            // CSV dosyasını oku
-            $csvPath = public_path('assets/sample-earnings-tr.csv');
-            $csvFile = fopen($csvPath, 'r');
-
-            // Header'ı atla
-            fgetcsv($csvFile, 0, ';', '"', '\\');
-
             // Mevcut ürünleri ve şarkıları al
             $products = Product::with(['songs', 'artists', 'label', 'downloadPlatforms'])
                 ->whereHas('songs')
@@ -573,70 +566,87 @@ class EarningService
                 throw new \Exception('Demo kazanç oluşturmak için uygun ürün bulunamadı.');
             }
 
-            // CSV'den verileri oku
-            while (($row = fgetcsv($csvFile, 0, ';')) !== false) {
-                try {
-                    $randomProduct = $products->random();
-                    $randomSong = $songs->random();
+            // Son 48 ay için tarih aralığı oluştur
+            $endDate = now();
+            $startDate = now()->subMonths(48);
 
-                    $sales_date = Carbon::parse($faker->dateTimeBetween('-1 year', now()));
+            // Her ay için kayıt oluştur
+            for ($date = $startDate->copy(); $date->lte($endDate); $date->addMonth()) {
+                // Her ay için rastgele 1-300 arası kayıt sayısı belirle
+                $recordsForMonth = rand(1, 300);
 
-                    $data[] = [
-                        'user_id' => $userId,
-                        'report_date' => Carbon::parse($faker->dateTimeBetween($sales_date, now()))->format('Y-m-d'),
-                        'reporting_month' => $sales_date->format('Y/m/01'),
-                        'sales_date' => $sales_date->format('Y-m-d'),
-                        'sales_month' => $sales_date->format('Y/m/01'),
-                        'platform' => $row[2] ?? '',
-                        'platform_id' => Platform::where('name', $row[2])->first()?->id,
-                        'country' => $row[3] ?? '',
-                        'region' => $faker->randomElement([
-                            'Europe', 'North America', 'South America', 'Asia', 'Africa', 'Oceania'
-                        ]),
-                        'country_id' => Country::where('name', $row[3])->first()?->id,
-                        'label_name' => $row[4] ?? '',
-                        'label_id' => $randomProduct->label->id,
-                        'artist_name' => $row[5] ?? '',
-                        'artist_id' => $randomProduct->artists->random()->id,
-                        'release_name' => $row[6] ?? '',
-                        'song_name' => $row[7] ?? '',
-                        'song_id' => $randomSong->id,
-                        'upc_code' => $randomProduct->upc_code,
-                        'isrc_code' => $randomSong->isrc,
-                        'catalog_number' => $row[10] ?? '',
-                        'streaming_type' => $row[11] ?? '',
-                        'streaming_subscription_type' => $row[11] ?? '',
-                        'release_type' => $row[12] ?? '',
-                        'sales_type' => $row[13] ?? '',
-                        'quantity' => intval($row[14] ?? 0),
-                        'currency' => $row[15] ?? 'EUR',
-                        'client_payment_currency' => $row[15] ?? 'EUR',
-                        'unit_price' => str_replace(',', '.', $row[16] ?? 0),
-                        'mechanical_fee' => str_replace(',', '.', $row[17] ?? 0),
-                        'gross_revenue' => str_replace(',', '.', $row[18] ?? 0),
-                        'client_share_rate' => str_replace(',', '.', $row[19] ?? 0),
-                        'earning' => str_replace(',', '.', $row[20] ?? 0),
-                    ];
+                for ($i = 0; $i < $recordsForMonth; $i++) {
+                    try {
+                        $randomProduct = $products->random();
+                        $randomSong = $songs->random();
 
-                    $totalProcessed++;
-                } catch (\Exception $e) {
-                    $errors++;
-                    Log::warning('Demo kazanç kaydı oluşturma hatası', [
-                        'error' => $e->getMessage(),
-                        'row' => $row
-                    ]);
-                    continue;
+                        // O ay içinde rastgele bir gün seç
+                        $sales_date = Carbon::create(
+                            $date->year,
+                            $date->month,
+                            rand(1, $date->daysInMonth)
+                        );
+
+                        // Rastgele platform seç
+                        $platform = $faker->randomElement(self::PLATFORMS);
+                        $platformModel = Platform::where('name', $platform)->first();
+
+                        // Rastgele ülke seç
+                        $country = (new Country())->newQuery()->inRandomOrder()->first();
+
+                        $data[] = [
+                            'user_id' => 1, // Sabit olarak 1 numaralı kullanıcı
+                            'report_date' => Carbon::parse($faker->dateTimeBetween($sales_date, now()))->format('Y-m-d'),
+                            'reporting_month' => $sales_date->format('Y/m/01'),
+                            'sales_date' => $sales_date->format('Y-m-d'),
+                            'sales_month' => $sales_date->format('Y/m/01'),
+                            'platform' => $platform,
+                            'platform_id' => $platformModel?->id,
+                            'country' => $country?->name,
+                            'region' => $country?->region,
+                            'country_id' => $country?->id,
+                            'label_name' => $randomProduct->label->name,
+                            'label_id' => $randomProduct->label->id,
+                            'artist_name' => $randomProduct->artists->random()->name,
+                            'artist_id' => $randomProduct->artists->random()->id,
+                            'release_name' => $randomProduct->album_name,
+                            'song_name' => $randomSong->name,
+                            'song_id' => $randomSong->id,
+                            'upc_code' => $randomProduct->upc_code,
+                            'isrc_code' => $randomSong->isrc,
+                            'catalog_number' => $faker->bothify('CAT-####-???'),
+                            'streaming_type' => $faker->randomElement(self::STREAMING_TYPES),
+                            'streaming_subscription_type' => $faker->randomElement(self::STREAMING_TYPES),
+                            'release_type' => $faker->randomElement(self::RELEASE_TYPES),
+                            'sales_type' => $faker->randomElement(self::SALES_TYPES),
+                            'quantity' => $faker->numberBetween(1, 10000),
+                            'currency' => 'EUR',
+                            'client_payment_currency' => 'EUR',
+                            'unit_price' => $faker->randomFloat(4, 0.0001, 0.01),
+                            'mechanical_fee' => $faker->randomFloat(4, 0, 0.001),
+                            'gross_revenue' => $faker->randomFloat(4, 0.01, 1),
+                            'client_share_rate' => $faker->randomFloat(2, 0.5, 0.8),
+                            'earning' => $faker->randomFloat(4, 0.001, 0.5),
+                        ];
+
+                        $totalProcessed++;
+                    } catch (\Exception $e) {
+                        $errors++;
+                        Log::warning('Demo kazanç kaydı oluşturma hatası', [
+                            'error' => $e->getMessage(),
+                            'month' => $date->format('Y-m')
+                        ]);
+                        continue;
+                    }
                 }
             }
-
-            fclose($csvFile);
 
             if (empty($data)) {
                 throw new \Exception('Demo kazanç verileri oluşturulamadı.');
             }
 
             $file = EarningReportFile::create([
-                'user_id' => $userId,
+                'user_id' => 1,
                 'name' => 'Demo Earning Report '.Carbon::now()->format('Y-m-d'),
             ]);
 
@@ -658,7 +668,11 @@ class EarningService
                 'total_records' => count($data),
                 'total_processed' => $totalProcessed,
                 'errors' => $errors,
-                'export_status' => $exportResult
+                'export_status' => $exportResult,
+                'date_range' => [
+                    'start' => $startDate->format('Y-m-d'),
+                    'end' => $endDate->format('Y-m-d')
+                ]
             ]);
 
             return $exportResult;
