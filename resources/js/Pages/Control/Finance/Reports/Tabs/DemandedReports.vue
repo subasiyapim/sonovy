@@ -59,7 +59,7 @@ const getBody = computed(() => {
     </AppTableColumn>
     <AppTableColumn :label="__('control.finance.payments.demanded_table.column_2')" sortable="name">
       <template #default="scope">
-        <tippy :allowHtml="true" :sticky="true" :interactive="true">
+        <tippy :allowHtml="true" :appendTo="getBody" :sticky="true" :interactive="true">
             <p class="paragraph-xs c-neutral-500">
                 {{ scope.row.name }}
             </p>
