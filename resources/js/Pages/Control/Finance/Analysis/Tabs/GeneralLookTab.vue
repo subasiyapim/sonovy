@@ -517,7 +517,7 @@ const onMouseLeave = (spotifySlug) => {
       <hr>
       <div class="flex gap-3">
 
-        <div class="flex  gap-5 flex-1">
+        <div class="flex  flex-1" :class="Object.keys(monthlyData).length > 16 ? 'gap-0.5' : ' gap-5'">
             <div class="flex h-72 flex-col justify-between gap-5">
                 <span v-for="val in props.data.monthly_net_earnings?.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
             </div>
@@ -529,8 +529,8 @@ const onMouseLeave = (spotifySlug) => {
               <tippy :allowHtml="true" :class="Object.keys(monthlyData).length < 6 ? 'w-1/2' : Object.keys(monthlyData).length == 6 ? 'w-3/4' : 'w-full'" :interactiveBorder="30" theme="light" followCursor :sticky="true"
                      :interactive="false">
                 <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
-                  <div class="bg-weak-50 flex items-end justify-center flex-1 min-w-10">
-                    <span class="c-sub-600 label-sm !text-[10px] ">
+                  <div class="bg-weak-50 flex items-end justify-center flex-1" :class="Object.keys(monthlyData).length > 16 ? '' : 'min-w-10'">
+                    <span class="c-sub-600 label-sm !text-[10px] " v-if="Object.keys(monthlyData).length < 16">
                       {{ monthlyData[key]?.total ?? 0 }}
                     </span>
                   </div>
@@ -580,7 +580,7 @@ const onMouseLeave = (spotifySlug) => {
                   </div>
                 </template>
               </tippy>
-              <span class="paragraph-xs c-sub-600 !text-center">{{ key }}</span>
+              <span class="paragraph-xs c-sub-600 !text-center">{{  Object.keys(monthlyData).length > 16 ? key.substring(0,1) : key  }}</span>
             </div>
           </template>
           <div v-else class="w-full flex justify-center items-center">
@@ -616,10 +616,10 @@ const onMouseLeave = (spotifySlug) => {
       </div>
       <hr>
       <div class="flex gap-3">
-        <div class="flex flex-col gap-5">
+        <div class="flex flex-col gap-5 " >
                 <span v-for="val in props.data.spotify_discovery_mode_earnings?.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
         </div>
-        <div class="flex gap-4 flex-1">
+        <div class="flex flex-1" :class="Object.keys(spotifyDiscoveryData).length > 16 ? 'gap-0.5' : 'gap-5'">
           <template v-if="Object.keys(spotifyDiscoveryData).length > 0">
             <div v-for="key in Object.keys(spotifyDiscoveryData)"
                  :key="key"
@@ -627,8 +627,8 @@ const onMouseLeave = (spotifySlug) => {
               <tippy :allowHtml="true" :class="Object.keys(spotifyDiscoveryData).length < 6 ? 'w-1/2' : Object.keys(spotifyDiscoveryData).length == 6 ? 'w-3/4' : 'w-full'" :interactiveBorder="30" theme="light" followCursor :sticky="true"
                      :interactive="false">
                 <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
-                  <div class="bg-weak-50 flex items-end justify-center flex-1 h-10 min-w-10">
-                    <span class="c-sub-600 label-sm !text-[10px]">
+                  <div class="bg-weak-50 flex items-end justify-center flex-1 h-10" :class="Object.keys(spotifyDiscoveryData).length > 16 ? '' : 'min-w-10'">
+                    <span class="c-sub-600 label-sm !text-[10px]" v-if="Object.keys(spotifyDiscoveryData).length < 16">
 
                         <template v-if="clickedbars.length > 0">
                             <template v-if="clickedbars.length == 2">
@@ -686,7 +686,7 @@ const onMouseLeave = (spotifySlug) => {
                   </div>
                 </template>
               </tippy>
-              <span class="paragraph-xs c-sub-600 !text-center">{{ key }}</span>
+              <span class="paragraph-xs c-sub-600 !text-center">{{  Object.keys(spotifyDiscoveryData).length > 16 ? key.substring(0,1) : key  }}</span>
             </div>
           </template>
           <div v-else class="w-full flex justify-center items-center">

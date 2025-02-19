@@ -15,6 +15,8 @@ class CountrySeeder extends Seeder
      */
     public function run(): void
     {
+        ini_set('memory_limit', '512M'); // Increase if needed
+        ini_set('max_execution_time', 300000);
         $filePath = public_path('assets/countries-states-cities.json');
         dump('Dosya boyutu: ' . round(filesize($filePath) / 1024 / 1024, 2) . ' MB');
 
@@ -23,6 +25,7 @@ class CountrySeeder extends Seeder
 
         $countries = json_decode($data, true);
 
+        dump($countries);
         if (json_last_error() !== JSON_ERROR_NONE) {
             dump('JSON decode hatası: ' . json_last_error_msg());
             return;
