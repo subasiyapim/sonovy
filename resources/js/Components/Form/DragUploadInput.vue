@@ -2,7 +2,7 @@
   <div class="image-upload" >
     <!-- Drag-and-Drop Area -->
 
-    <div v-if="images.length" class="image-preview mb-3">
+    <div v-if="showImage && images.length" class="image-preview mb-3">
 
       <div class="preview-grid">
         <div v-for="(image, index) in images" :key="index" class="preview-item">
@@ -90,28 +90,30 @@ const handleFileInput = (event) => {
   const files = Array.from(event.target.files);
   handleFiles(files);
 };
-
+const showImage = ref(true);
 const handleFiles = (files) => {
+    showImage.value = false;
   files.forEach((file) => {
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
         images.push({ file, url: e.target.result });
-         simulateUpload();
+         simulateUpload(file);
       };
       reader.readAsDataURL(file);
 
-      emits('change',file)
+
     }
   });
 };
 
-const simulateUpload = () => {
+const simulateUpload = (file) => {
   const interval = setInterval(() => {
     if (imageProgress.value < 100) {
       imageProgress.value += 10;
     } else {
       clearInterval(interval);
+      emits('change',file)
       imageProgress.value = null; // Hide progress bar when complete
     }
   }, 300); // Simulates upload every 300ms
@@ -129,6 +131,10 @@ onBeforeMount(() => {
     }
 
 });
+
+defineExpose({
+    showImage
+})
 </script>
 
 <style scoped>

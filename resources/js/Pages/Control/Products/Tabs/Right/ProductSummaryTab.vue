@@ -1,8 +1,9 @@
 <template>
 
 
-  <DragUploadInput @onImageDelete="onImageDelete" @change="onChange" :image="product.image?.small" label="Albüm Kapağı"
+  <DragUploadInput ref="imageUploadFile" @onImageDelete="onImageDelete" @change="onChange" :image="product.image?.small" label="Albüm Kapağı"
                    note="JPEG, PNG"></DragUploadInput>
+
   <div class="flex gap-3.5 items-center">
     <div class="w-10 h-10 rounded-full border border-soft-200 flex items-center justify-center">
       <BroadcastTitleIcon color="var(--sub-600)"/>
@@ -79,7 +80,10 @@
 </template>
 
 <script setup>
+import {ref} from 'vue';
 import {DragUploadInput} from '@/Components/Form';
+import {toast} from 'vue3-toastify';
+
 import {
   AddIcon,
   BroadcastTitleIcon,
@@ -96,20 +100,28 @@ const props = defineProps({
   product: {},
 })
 
+const imageUploadFile = ref()
 const crudStore = useCrudStore();
 
-const onChange = (e) => {
+
+
+const onChange = async (e) => {
 
   if (e) {
-    const response = crudStore.formData(route('control.image.upload', {
-      model: "Product",
-      id: props.product.id
-    }), {
-      "file": e
-    });
-    if (response) {
-      console.log(response);
-    }
+  try {
+        const response = await crudStore.formData(route('control.image.upload', {
+            model: "Product",
+            id: props.product.id
+        }), {
+            "file": e
+        });
+        imageUploadFile.value.showImage = true;
+  } catch (error) {
+    toast.error(error.response?.data?.errors?.file);
+
+  }
+
+
   }
 }
 
