@@ -353,11 +353,11 @@ const formattedDates = computed(() => {
     if (!choosenDates.value) {
         const startDate = moment().format('MMMM YYYY');
         const endDate = moment().subtract(1, 'year').format('MMMM YYYY');
-        return `${startDate} - ${endDate}`;
+        return `${endDate} - ${startDate}`;
     } else if (choosenDates.value.length === 2) {
         const startDate = moment(choosenDates.value[0]).format('MMMM YYYY');
         const endDate = moment(choosenDates.value[1]).format('MMMM YYYY');
-        return `${startDate} - ${endDate}`;
+        return `${endDate} - ${startDate}`;
     }
     return '';
 });
