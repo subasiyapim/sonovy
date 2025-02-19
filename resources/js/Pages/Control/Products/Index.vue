@@ -102,10 +102,10 @@
           <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 
             <tippy :interactive="true" theme="dark" :appendTo="getBody">
-                    <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
-                   <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
-                    <MusicVideoIcon v-if="scope.row.type == 4" color="var(--sub-600)"/>
-                    <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
+                <AudioIcon v-if="scope.row.type == 1" color="var(--sub-600)"/>
+                <MusicVideoIcon v-if="scope.row.type == 2" color="var(--sub-600)"/>
+                <MusicVideoIcon v-if="scope.row.type == 4" color="var(--sub-600)"/>
+                <RingtoneIcon v-if="scope.row.type == 3" color="var(--sub-600)"/>
 
                 <template #content>
                     <p v-if="scope.row.type == 1">
@@ -134,7 +134,7 @@
           <div class="whitespace-nowrap border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2">
             <component :is="statusData.find((e) => e.value == scope.row.status)?.icon"
                        :color="statusData.find((e) => e.value == scope.row.status)?.color"></component>
-            <p class="subheading-xs c-sub-600">
+            <p class="paragraph-xs c-strong-950">
               {{ statusData.find((e) => e.value == scope.row.status)?.label }}
             </p>
           </div>
@@ -176,7 +176,7 @@
       <AppTableColumn label="Plak Şirketi">
         <template #default="scope">
 
-          <span class="paragraph-xs c-sub-600">{{ scope.row.label?.name }}</span>
+          <span class="paragraph-xs c-strong-950">{{ scope.row.label?.name }}</span>
 
         </template>
       </AppTableColumn>
@@ -184,7 +184,7 @@
       <AppTableColumn label="Yayın Tarih">
         <template #default="scope">
           <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
-            <p class="paragraph-xs c-sub-600 whitespace-nowrap">
+            <p class="paragraph-xs c-strong-950 whitespace-nowrap">
               {{ scope.row.physical_release_date }}
             </p>
           </div>
@@ -192,21 +192,21 @@
       </AppTableColumn>
       <AppTableColumn label="Parçalar">
         <template #default="scope">
-          <span class="paragraph-xs c-sub-600">{{ scope.row.songs?.length }} Parça</span>
+          <span class="paragraph-xs c-strong-950">{{ scope.row.songs?.length }} Parça</span>
         </template>
       </AppTableColumn>
       <AppTableColumn label="UPC/Katalog" width="180">
         <template #default="scope">
           <div class="flex flex-col justify-start ">
-            <span class="paragraph-xs c-sub-600">UPC:{{ scope.row.upc_code ?? 'Boş' }}</span>
-            <span class="paragraph-xs c-sub-600">Katalog Numarası: {{ scope.row.catalog_number ?? 'Boş' }}</span>
+            <span class="paragraph-xs c-strong-950">UPC:{{ scope.row.upc_code ?? 'Boş' }}</span>
+            <span class="paragraph-xs c-strong-950">Katalog Numarası: {{ scope.row.catalog_number ?? 'Boş' }}</span>
 
           </div>
         </template>
       </AppTableColumn>
       <AppTableColumn label="Mağazalar">
         <template #default="scope">
-          <div class="flex flex-col items-start paragraph-xs c-sub-600">
+          <div class="flex flex-col items-start paragraph-xs c-strong-950">
             <p>
 
               {{ scope.row.selected_count ?? 0 }} Bölge

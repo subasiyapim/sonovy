@@ -240,7 +240,7 @@ const openEditDialog = (song) => {
   choosenSong.value = song
 
 
-    if(song.main_artists.length == 0){
+    if(song.main_artists?.length == 0){
         if(props.product.main_artists.length > 0){
 
 

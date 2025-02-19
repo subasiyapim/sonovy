@@ -5,6 +5,7 @@
       <img width="24" height="24" src="@/assets/images/mp3_active.png"/>
     </template>
     <SectionHeader :title="__('control.song.dialog.header_1')"/>
+
     <div class="p-5 flex flex-col gap-6">
       <FormElement label-width="190px"
                    :required="true"
@@ -493,9 +494,10 @@ const lyricsConfig = computed(() => {
 const calcMax = computed(() => {
     if(props.song.duration){
        const splitted = props.song.duration?.split(":");
-       if(splitted.length > 2){
+       if(splitted.length >= 2){
         return parseInt(splitted[0]) * 60 + parseInt(splitted[1]);
        }
+
     }
     return 0;
 })

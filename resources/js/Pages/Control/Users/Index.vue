@@ -23,7 +23,7 @@
                 </div>
                 <div class="flex flex-col items-start ">
                     <a :href="route('control.user-management.users.show',scope.row.id)"
-                        class="font-poppins table-name-text c-sub-600 mb-0.5">{{ scope.row.name }}</a>
+                        class="paragraph-xs c-blue-500 mb-0.5">{{ scope.row.name }}</a>
                     <span class="c-sub-600 paragraph-xs mb-2">{{scope.row.email}}</span>
 
                     <button class="c-blue-500 label-xs" @click="usersTable.toggleShowSub(scope.index)" v-if="scope.row?.children?.length>0">
@@ -41,7 +41,7 @@
             <template #default="scope">
                 <template v-for="role in scope.row.roles">
                     <div class="px-3 py-1 rounded-full" :class="role.code == 'super_admin' ? 'bg-[#CAC0FF]' : (role.code == 'admin' ? 'bg-[#D8E5ED]' : 'bg-[#C0D5FF]')">
-                    <p class="label-xs" :class="role.code == 'super_admin' ? 'text-[#351A75]' : (role.code == 'admin' ? 'text-[#060E2F]' : 'text-[#122368]')">  {{role.name}}</p>
+                    <p class="paragraph-xs" :class="role.code == 'super_admin' ? 'text-[#351A75]' : (role.code == 'admin' ? 'text-[#060E2F]' : 'text-[#122368]')">  {{role.name}}</p>
                     </div>
                 </template>
             </template>
@@ -51,22 +51,22 @@
             <template #default="scope">
 
                 <div class="flex items-center gap-1 label-sm">
-                    <span class="c-soft-400">%{{scope.row.commission_rate}}/</span>
-                    <span class="c-strong-950">%{{scope.row.real_commission_rate}}</span>
+                    <span class="paragraph-xs c-soft-400">%{{scope.row.commission_rate}}/</span>
+                    <span class="paragraph-xs c-strong-950">%{{scope.row.real_commission_rate}}</span>
 
                 </div>
             </template>
         </AppTableColumn>
         <AppTableColumn label="Kayıt Tarihi" sortable="type">
             <template #default="scope">
-            <span class="label-sm c-strong-950"> {{scope.row.created_at}}</span>
+            <span class="paragraph-xs c-strong-950"> {{scope.row.created_at}}</span>
             </template>
         </AppTableColumn>
         <AppTableColumn label="Durum" sortable="type" width="80">
             <template #default="scope">
                 <div class="flex items-center gap-2  rounded-lg px-3 py-1" :class="scope.row.status == 0 ? 'bg-red-500 ' :' border border-soft-200'">
-                    <span class="label-xs " :class="scope.row.status == 0 ? 'text-white' :'c-strong-950'">•</span>
-                    <span class="label-xs " :class="scope.row.status == 0 ? 'text-white' :'c-sub-600'">{{scope.row.status_text}}</span>
+                    <span class="paragraph-xs " :class="scope.row.status == 0 ? 'text-white' :'c-strong-950'">•</span>
+                    <span class="paragraph-xs " :class="scope.row.status == 0 ? 'text-white' :'c-sub-600'">{{scope.row.status_text}}</span>
                 </div>
             </template>
         </AppTableColumn>
