@@ -10,11 +10,11 @@
         <template #tool>
           <div class="w-28 max-w-xs mx-auto">
 
-            <select id="options" name="options"
+            <select @change="onTotalProductCountChange" id="options" name="options"
                     class="block w-full pl-3 pr-10  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
-              <option>Haftalık</option>
-              <option>Aylık</option>
-              <option>Yıllık</option>
+              <option value="week" :selected="route().params.period == 'week'">Haftalık</option>
+              <option value="month" :selected="route().params.period == 'month'">Aylık</option>
+              <option value="year" :selected="route().params.period == 'year'">Yıllık</option>
             </select>
           </div>
         </template>
@@ -35,15 +35,7 @@
 
         </template>
         <template #tool>
-          <div class="w-28 max-w-xs mx-auto">
 
-            <select id="options" name="options"
-                    class="block w-full pl-3 pr-10  paragraph-xs border border-soft-200 focus:outline-none  radius-8">
-              <option>Haftalık</option>
-              <option>Aylık</option>
-              <option>Yıllık</option>
-            </select>
-          </div>
         </template>
         <template #body>
           <hr class="my-3">
@@ -99,6 +91,7 @@
               v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
       <AppTableColumn label="Tür" sortable="type">
         <template #default="scope">
+
           <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 
             <tippy :interactive="true" theme="dark" :appendTo="getBody">
@@ -249,6 +242,8 @@
 </template>
 
 <script setup>
+import {router} from '@inertiajs/vue3';
+
 import {ref,computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AppTable from '@/Components/Table/AppTable.vue';
@@ -318,6 +313,18 @@ const data = ref([
     name: "ikinci"
   },
 ])
+
+const onTotalProductCountChange = (e) => {
+    console.log("EE",e.target.value);
+
+    router.visit(route(route().current()), {
+        replace: true,
+        preserveScroll: true,
+        data: { ...route().params, period: e.target.value },
+    });
+}
+
+
 const isCreateProductDialogOn = ref(false);
 const openCreateProductDialog = () => {
   isCreateProductDialogOn.value = true;

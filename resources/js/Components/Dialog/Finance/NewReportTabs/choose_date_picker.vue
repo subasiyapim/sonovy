@@ -2,6 +2,8 @@
 import { ref, computed, watch } from 'vue';
 import moment from 'moment';
 import 'moment/dist/locale/tr';
+import { usePage} from '@inertiajs/vue3';
+
 moment.locale('tr');
 
 const vueDatePicker = ref();
@@ -32,29 +34,36 @@ const getFormatedDate = computed(() => {
 // Define reactive variables for min and max selectable dates
 const minDate = ref(null);
 const maxDate = ref(null);
+console.log("AUTH",usePage().props.auth.roles);
 
 const onModelChange = (newVal) =>{
 
 
+    const isAdmin = usePage().props.auth.roles.find((e) => e.code == "admin");
 
-     if (newVal && Array.isArray(newVal)) {
-      if (newVal.length === 2) {
-        // If both start and end dates are selected, reset min/max limits
-        minDate.value = null;
-        maxDate.value = null;
-      } else if (newVal.length === 1) {
+    console.log("IS AMDİ",isAdmin);
 
-        const firstDate = moment(newVal[0]);
+    if(!isAdmin){
+          if (newVal && Array.isArray(newVal)) {
+            if (newVal.length === 2) {
+                // If both start and end dates are selected, reset min/max limits
+                minDate.value = null;
+                maxDate.value = null;
+            } else if (newVal.length === 1) {
 
-        // Set the min and max range dynamically
-        minDate.value = firstDate.clone().subtract(2, 'months').toDate();
-        maxDate.value = firstDate.clone().add(2, 'months').toDate();
-      }
-    } else {
-      // Reset min/max dates if no date is selected
-      minDate.value = null;
-      maxDate.value = null;
+                const firstDate = moment(newVal[0]);
+
+                // Set the min and max range dynamically
+                minDate.value = firstDate.clone().toDate();
+                maxDate.value = firstDate.clone().add(2, 'months').toDate();
+            }
+            } else {
+            // Reset min/max dates if no date is selected
+            minDate.value = null;
+            maxDate.value = null;
+            }
     }
+
 
 }
 const setDateRange = (type) => {

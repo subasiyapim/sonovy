@@ -87,7 +87,7 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'status' => ['nullable', Rule::enum(ProductStatusEnum::class)],
             'type' => ['nullable', Rule::enum(ProductTypeEnum::class)],
-            'period' => ['nullable', 'in:[day,week,month,year]'],
+            'period' => ['nullable', 'in:year,week,month'],
         ]);
 
         if ($validator->fails()) {
@@ -116,8 +116,8 @@ class ProductController extends Controller
 
 
         $statistics = [
-            'product_count' => $this->getProductsTotal($validated['period'] ?? 'month'),
-            'products' => $this->getProductsGroupedByPeriod($validated['period'] ?? 'month'),
+            'product_count' => $this->getProductsTotal($validated['period'] ?? 'week'),
+            'products' => $this->getProductsGroupedByPeriod($validated['period'] ?? 'week'),
             'labels' => $this->getTopLabelsByProductCount(),
             'artists' => $this->getArtistsAddedLastMonth(),
 
