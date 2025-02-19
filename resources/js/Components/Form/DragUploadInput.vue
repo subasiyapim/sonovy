@@ -133,7 +133,8 @@ onBeforeMount(() => {
 });
 
 defineExpose({
-    showImage
+    showImage,
+    removeImage
 })
 </script>
 

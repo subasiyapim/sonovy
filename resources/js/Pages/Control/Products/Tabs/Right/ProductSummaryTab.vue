@@ -118,6 +118,7 @@ const onChange = async (e) => {
         imageUploadFile.value.showImage = true;
   } catch (error) {
     toast.error(error.response?.data?.errors?.file);
+    imageUploadFile.value.removeImage();
 
   }
 
