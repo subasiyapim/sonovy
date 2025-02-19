@@ -23,24 +23,24 @@
             <div>
               <a :href="route('control.catalog.artists.show',scope.row.id)"
                  class="paragraph-xs c-blue-500">{{ scope.row.name }}</a>
-              <div class="flex flex-row gap-x-2 items-center" v-if="scope.row.platforms">
+              <div class="flex flex-col gap-y-0.5 items-start mt-1" v-if="scope.row.platforms">
 
                 <template v-for="platform in scope.row.platforms" :key="platform.id">
 
-                  <div class="flex items-center" v-if="platform.id == 2">
+
                     <a
+                        v-if="platform.id == 2"
                         :href="platform.url"
                         target="_blank"
-                        class="flex items-center gap-2 paragraph-xs c-sub-600">
+                        class="flex items-center gap-0.5 paragraph-xs c-sub-600">
                         <SpotifyIcon/>
                         {{ platform?.url?.split("/").pop() }}
                     </a>
-                    <span class="paragraph-xs c-sub-600 ms-3">·</span>
-                  </div>
+
                   <a v-if="platform.id == 4"
                      :href="platform.url"
                      target="_blank"
-                     class="flex items-center ms-3 gap-2 paragraph-xs c-sub-600">
+                     class="flex items-center gap-0.5 mt-0.5 paragraph-xs c-sub-600">
                     <AppleMusicIcon/>
                     {{ platform?.url?.split("/").pop().split("?")[0] }}
                   </a>

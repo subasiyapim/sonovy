@@ -189,10 +189,11 @@ class ArtistController extends Controller
 
             $tab['songs'] = $songs;
         }
+        $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'image');
 
         $artist->loadMissing('artistBranches', 'platforms', 'country', 'products.songs');
 
-        return inertia('Control/Artists/Show', compact('artist', 'countries', 'countryCodes', 'tab'));
+        return inertia('Control/Artists/Show', compact('artist', 'countries', 'countryCodes', 'tab', 'platforms'));
     }
 
     /**
