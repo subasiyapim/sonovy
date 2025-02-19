@@ -47,6 +47,13 @@ class MediaController extends Controller
             'file' => 'required|file|mimes:jpeg,png,jpg|max:4086|dimensions:min_width=100,min_height=100|dimensions:max_width=3000,max_height=3000|dimensions:ratio=1/1',
         ]);
 
+        //validation messages
+        $validator->setAttributeNames(
+            [
+                'file' => 'Resim',
+                
+            ]
+        );
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
