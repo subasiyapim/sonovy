@@ -18,7 +18,7 @@
 
         </div>
 
-        <div v-for="label in labels" class="flex items-center  justify-between cursor-pointer p-2 rounded-xl" :class="choosenLabels?.find((e) => e.id == label.id) ? 'bg-white-600' : ''" @click="onChoosenItem(label)">
+        <div v-for="label in labels.filter((e) => !assignedLabels.includes(e.id))" class="flex items-center  justify-between cursor-pointer p-2 rounded-xl" :class="choosenLabels?.find((e) => e.id == label.id) ? 'bg-white-600' : ''" @click="onChoosenItem(label)">
 
             <div class="flex items-center gap-2 flex-1">
                 <button class="appCheckBox" :class="choosenLabels?.find((e) => e.id == label.id) ? 'checked' : ''">
@@ -98,6 +98,9 @@ const props = defineProps({
     },
     user_id:{
 
+    },
+    assignedLabels:{
+        default:[],
     }
 })
 const defaultStore = useDefaultStore();

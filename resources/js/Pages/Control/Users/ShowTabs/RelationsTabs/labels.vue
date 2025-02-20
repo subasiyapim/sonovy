@@ -70,7 +70,7 @@
         </div>
       </template>
     </AppTable>
-    <AssignUserLabelModal @done="onDone" v-if="isAssignModalOn" v-model="isAssignModalOn" :user_id="usePage().props.user.id" ></AssignUserLabelModal>
+    <AssignUserLabelModal :assignedLabels="tableData.map((e) => e.id)" @done="onDone" v-if="isAssignModalOn" v-model="isAssignModalOn" :user_id="usePage().props.user.id" ></AssignUserLabelModal>
 
 </template>
 
