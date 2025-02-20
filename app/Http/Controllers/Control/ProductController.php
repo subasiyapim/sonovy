@@ -680,7 +680,7 @@ class ProductController extends Controller
                     'pre_order_date' => isset($platform['pre_order_date']) ? Carbon::parse($platform['pre_order_date'])->format('Y-m-d') : null,
                     'publish_date' => isset($platform['publish_date']) ? Carbon::parse($platform['publish_date'])->format('Y-m-d') : null,
                     'date' => isset($platform['date']) ? Carbon::parse($platform['date'])->format('Y-m-d') : null,
-                    'time' => isset($platform['time']) ? $platform['time']['hours'] . ':' . $platform['time']['minutes'] : null,
+                    'time' => isset($platform['time']) ? $platform['time']['hours'].':'.$platform['time']['minutes'] : null,
                     'hashtags' => isset($platform['hashtags']) ? json_encode($platform['hashtags']) : null,
                     // Ensure it's a valid JSON
                     'description' => isset($platform['description']) ? $platform['description'] : null,
@@ -739,33 +739,94 @@ class ProductController extends Controller
             'day' => 24 * 60,
             'week' => 7 * 24 * 60,
             'year' => 365 * 24 * 60,
+            'month' => 30 * 24 * 60,
             default => 12 * 60,
         };
 
         return Cache::remember($cacheKey, $cacheTime, function () use ($period) {
+            Carbon::setLocale('tr');
+
             $startDate = match ($period) {
-                'day' => Carbon::now()->subDays(6),
-                'week' => Carbon::now()->subWeeks(4),
-                'year' => Carbon::now()->subYears(1),
-                default => Carbon::now()->subMonths(12),
+                'day' => Carbon::now()->startOfDay()->subDays(6),
+                'week' => Carbon::now()->startOfWeek()->subWeeks(4),
+                'year' => Carbon::now()->startOfMonth()->subYears(6),
+                'month' => Carbon::now()->startOfMonth()->subMonths(6),
+                default => Carbon::now()->startOfMonth()->subMonths(6),
             };
 
+            $endDate = Carbon::now();
+
+            $total = Product::where('created_at', '>=', $startDate)->count();
+
             $products = Product::where('created_at', '>=', $startDate)
-                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as period, COUNT(*) as count")
-                ->groupBy('period')
+                ->selectRaw("DATE(created_at) as date, COUNT(*) as count")
+                ->groupBy('date')
                 ->get();
 
-            $totalCount = $products->sum('count');
+            $dates = [];
+            $current = clone $startDate;
 
-            $result = $products->map(function ($item) {
+            while ($current <= $endDate) {
+                $key = $current->format('Y-m-d');
+                $dates[$key] = 0;
+
+                foreach ($products as $product) {
+                    if ($product->date == $key) {
+                        $dates[$key] = $product->count;
+                        break;
+                    }
+                }
+
+                $current->addDay();
+            }
+
+            $groupedData = [];
+            foreach ($dates as $date => $count) {
+                $carbonDate = Carbon::parse($date);
+
+                $key = match ($period) {
+                    'day' => $date,
+                    'week' => $carbonDate->startOfWeek()->format('Y-m-d'),
+                    'year' => $carbonDate->format('Y'),
+                    'month' => $carbonDate->format('Y-m'),
+                    default => $carbonDate->format('Y-m'),
+                };
+
+                if (!isset($groupedData[$key])) {
+                    $groupedData[$key] = 0;
+                }
+                $groupedData[$key] += $count;
+            }
+
+            $result = collect($groupedData)->map(function ($count, $date) use ($period) {
+                $carbonDate = match ($period) {
+                    'year' => Carbon::createFromFormat('Y', $date),
+                    'month' => Carbon::createFromFormat('Y-m', $date),
+                    default => Carbon::createFromFormat('Y-m-d', $date),
+                };
+
+                $label = match ($period) {
+                    'day' => ucfirst($carbonDate->translatedFormat('D')),
+                    'week' => $carbonDate->weekOfYear.'. Hafta',
+                    'year' => $carbonDate->format('Y'),
+                    'month' => ucfirst($carbonDate->translatedFormat('F Y')),
+                    default => ucfirst($carbonDate->translatedFormat('F Y')),
+                };
+
                 return [
-                    'label' => $item->period,
-                    'value' => $item->count,
+                    'label' => $label,
+                    'value' => $count,
+                    'date' => $date,
                 ];
-            });
+            })
+                ->sortBy('date')
+                ->values()
+                ->map(function ($item) {
+                    return Arr::except($item, ['date']);
+                });
 
             return [
-                'total' => $totalCount,
+                'total' => $total,
                 'data' => $result->toArray(),
             ];
         });
