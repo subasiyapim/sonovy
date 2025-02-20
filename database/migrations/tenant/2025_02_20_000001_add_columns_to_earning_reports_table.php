@@ -19,7 +19,6 @@ return new class extends Migration {
     {
         Schema::table('earning_reports', function (Blueprint $table) {
             $table->dropColumn([
-                'period',
                 'report_type',
                 'file_size',
                 'processed_at',
