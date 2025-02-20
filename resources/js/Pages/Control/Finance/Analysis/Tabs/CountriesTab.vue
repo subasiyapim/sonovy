@@ -133,8 +133,12 @@ onMounted(() => {
 });
 
 const updateVisibility = (country) => {
+
+
     const key = country.toLowerCase().replace(/\s+/g, '-');
     showPlatforms.value[key] = !showPlatforms.value[key];
+    console.log(showPlatforms.value[key]);
+
 };
 
 const changePage = (page) => {
@@ -165,9 +169,7 @@ const changePage = (page) => {
                          :class="'bg-'+country.toLowerCase().replace(/\s+/g, '-')">
                     </div>
                     <span class="paragraph-xs c-strong-950">{{country}}</span>
-                    <AppSwitchComponent
-                        v-model="showPlatforms[country.toLowerCase().replace(/\s+/g, '-')]"
-                        @change="() => updateVisibility(country)" />
+                    <AppSwitchComponent v-model="showPlatforms[country.toLowerCase().replace(/\s+/g, '-')]"/>
                 </div>
             </div>
             <hr>

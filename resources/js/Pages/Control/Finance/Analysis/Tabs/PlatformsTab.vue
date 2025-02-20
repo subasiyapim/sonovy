@@ -154,10 +154,7 @@ watch(paginatedReleases, (newValue) => {
     console.log('paginatedReleases değişti:', newValue);
 }, { deep: true });
 
-const updateVisibility = (platform) => {
-    const key = platform.toLowerCase().replace(/\s+/g, '-');
-    showPlatforms.value[key] = !showPlatforms.value[key];
-};
+
 
 const changePage = (page) => {
     currentPage.value = page;
@@ -197,9 +194,7 @@ const changePage = (page) => {
                         'bg-others': platform.toLowerCase() === 'others'
                     }"></div>
                     <span class="paragraph-xs c-strong-950">{{platform}}</span>
-                    <AppSwitchComponent
-                        v-model="showPlatforms[platform.toLowerCase().replace(/\s+/g, '-')]"
-                        @change="() => updateVisibility(platform)" />
+                    <AppSwitchComponent  v-model="showPlatforms[platform.toLowerCase().replace(/\s+/g, '-')]"  />
                 </div>
             </div>
             <hr>
