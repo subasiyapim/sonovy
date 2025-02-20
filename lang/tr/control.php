@@ -593,6 +593,12 @@ return [
         'country_wise_earnings' => 'Ülkeye Göre Gelir',
         'transaction_history' => 'İşlem Tarihçesi',
         'add_new' => 'Yeni İşlem Ekle',
+        'imports' => [
+            'header' => 'İçe Aktarılan Raporlar',
+        ],
+        'participants' => [
+            'header' => 'Katılımcı Raporları'
+        ],
         'analysis' => [
             'header' => "Finansal Analiz",
             'artists_earnings' => 'Sanatçıya Göre Gelir',

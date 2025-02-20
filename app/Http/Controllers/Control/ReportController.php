@@ -64,12 +64,32 @@ class ReportController extends Controller
 
         $query = Report::with([
             'child' => function ($query) {
-                $query->select('id', 'parent_id', 'name', 'amount', 'report_type', 'report_ids', 'status', 'created_at',
-                    'period', 'monthly_amount');
+                $query->select(
+                    'id',
+                    'parent_id',
+                    'name',
+                    'amount',
+                    'report_type',
+                    'report_ids',
+                    'status',
+                    'created_at',
+                    'period',
+                    'monthly_amount'
+                );
             }
         ])
-            ->select('id', 'name', 'amount', 'report_type', 'report_ids', 'status', 'created_at', 'period',
-                'monthly_amount', 'parent_id')
+            ->select(
+                'id',
+                'name',
+                'amount',
+                'report_type',
+                'report_ids',
+                'status',
+                'created_at',
+                'period',
+                'monthly_amount',
+                'parent_id'
+            )
             ->whereNull('parent_id')
             ->where('is_auto_report', $isAutoReport)
             ->where('user_id', Auth::id())
@@ -102,13 +122,23 @@ class ReportController extends Controller
         );
     }
 
+    function listImports(Request $request)
+    {
+
+        return inertia(
+            'Control/Finance/Imports/index',
+
+        );
+    }
     /**
      * Store a newly created resource in storage.
      */
     public function store(ReportStoreRequest $request): JsonResponse|RedirectResponse
     {
-        $start_date = Carbon::createFromFormat('m-Y',
-            $request->validated()['start_date'])->startOfMonth()->format('Y-m-d');
+        $start_date = Carbon::createFromFormat(
+            'm-Y',
+            $request->validated()['start_date']
+        )->startOfMonth()->format('Y-m-d');
         $end_date = Carbon::createFromFormat('m-Y', $request->validated()['end_date'])->endOfMonth()->format('Y-m-d');
         $report_type = $request->validated()['report_type'];
         $ids = $request->validated()['ids'];
@@ -144,7 +174,7 @@ class ReportController extends Controller
             return $this->handleMultipleReports($report);
         }
 
-        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
+        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
         if ($media) {
             return $this->streamMediaFile($media);
         }
@@ -173,16 +203,16 @@ class ReportController extends Controller
     private function getZipFilePath(Report $report): string
     {
         return storage_path(
-            'app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.
-            $report->user_id.'/'.Str::slug($report->period).'-'.Str::slug($report->name).'.zip'
+            'app/public/tenant_' . tenant('domain') . '_income_reports/multiple_reports/' .
+                $report->user_id . '/' . Str::slug($report->period) . '-' . Str::slug($report->name) . '.zip'
         );
     }
 
     private function getReportFiles(Report $report): array
     {
         return Storage::disk('public')->allFiles(
-            'tenant_'.tenant('domain').'_income_reports/multiple_reports/'.
-            $report->user_id.'/'.Str::slug($report->period).'/'.$report->id
+            'tenant_' . tenant('domain') . '_income_reports/multiple_reports/' .
+                $report->user_id . '/' . Str::slug($report->period) . '/' . $report->id
         );
     }
 
@@ -208,12 +238,12 @@ class ReportController extends Controller
             DB::beginTransaction();
 
             // Önce medya dosyalarını sil
-            $report->clearMediaCollection('tenant_'.tenant('domain').'_income_reports');
+            $report->clearMediaCollection('tenant_' . tenant('domain') . '_income_reports');
 
             // Child raporları bul ve medya dosyalarını sil
             $childReports = $report->child()->get();
             foreach ($childReports as $childReport) {
-                $childReport->clearMediaCollection('tenant_'.tenant('domain').'_income_reports');
+                $childReport->clearMediaCollection('tenant_' . tenant('domain') . '_income_reports');
                 $childReport->delete();
             }
 
@@ -225,7 +255,7 @@ class ReportController extends Controller
             return redirect()->back()->with('success', 'Rapor ve ilişkili tüm veriler başarıyla silindi.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Rapor silinirken bir hata oluştu: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Rapor silinirken bir hata oluştu: ' . $e->getMessage());
         }
     }
 
@@ -263,7 +293,6 @@ class ReportController extends Controller
             return response()->json([
                 'message' => 'Rapor başarıyla yüklendi ve işleme alındı.'
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -353,12 +382,12 @@ class ReportController extends Controller
             ->get();
 
         $zip = new ZipArchive;
-        $fileName = 'reports-'.now()->format('Y-m-d-H-i-s').'.zip';
-        $zipPath = storage_path('app/temp/'.$fileName);
+        $fileName = 'reports-' . now()->format('Y-m-d-H-i-s') . '.zip';
+        $zipPath = storage_path('app/temp/' . $fileName);
 
         if ($zip->open($zipPath, ZipArchive::CREATE) === true) {
             foreach ($reports as $report) {
-                $reportName = Str::slug($report->period).'-'.Str::slug($report->name).'.xlsx';
+                $reportName = Str::slug($report->period) . '-' . Str::slug($report->name) . '.xlsx';
                 // Excel dosyasını oluştur ve zip'e ekle
                 // Bu kısım Excel export işlemini içerecek
             }

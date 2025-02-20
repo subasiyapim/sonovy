@@ -10,6 +10,7 @@ import CalendarIcon from './CalendarIcon.vue';
 import TableOrderIcon from './TableOrderIcon.vue';
 import OthersIcon from './OthersIcon.vue';
 import More2LineIcon from './More2LineIcon.vue';
+import UploadIcon from './UploadIcon.vue';
 import Building2LineIcon from './Building2LineIcon.vue';
 import Table2Icon from './Table2Icon.vue';
 import WorldIcon from './WorldIcon.vue';
@@ -201,6 +202,7 @@ export {
     LinkIcon,
     Table2Icon,
     StackOverflowIcon,
+    UploadIcon,
     PercantageIcon,
     PhoneIcon,
     LabelEmailIcon,
