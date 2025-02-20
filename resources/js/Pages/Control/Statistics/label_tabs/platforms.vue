@@ -28,15 +28,17 @@ const data = computed({
 
     <AppTableColumn label="No" width="40">
       <template #default="scope">
-                  <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
+                       <p class="paragraph-xs c-strong-950"> #{{ Object.keys(data).findIndex((e) => e == scope.index)+1 }}</p>
+
 
       </template>
     </AppTableColumn>
     <AppTableColumn label="Platform" >
       <template #default="scope">
         <div class="flex items-center gap-3">
-           <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200"> <Icon :icon="scope.row.platform_image" /></div>
-            <p class="label-sm c-strong-950"> {{scope.row.platform_name}}</p>
+           <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200"> <Icon :icon="scope.row.icon" /></div>
+            <p class="paragraph-xs c-strong-950"> {{scope.row.platform_name}}</p>
+
         </div>
 
       </template>

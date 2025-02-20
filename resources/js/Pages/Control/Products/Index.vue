@@ -148,7 +148,7 @@
             </div>
             <div class="flex flex-col flex-1 items-start justisy-start">
               <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
-                {{ scope.row.album_name }} ({{scope.row.version}})
+                {{ scope.row.album_name }} <template v-if="scope.row.version">({{scope.row.version}})</template>
               </a>
 
               <div class=" paragraph-xs c-strong-950 ">

@@ -44,7 +44,7 @@
         <template #default="scope">
           <div class="flex flex-col items-start">
             <a :href="route('control.catalog.songs.show',scope.row.id)" class="paragraph-xs c-blue-500">
-              {{ scope.row.name }} ({{scope.row.version}})
+              {{ scope.row.name }} <template v-if="scope.row.version">({{scope.row.version}})</template>
             </a>
             <p class="paragraph-xs c-sub-600">ISRC: {{ scope.row.isrc }}</p>
           </div>
