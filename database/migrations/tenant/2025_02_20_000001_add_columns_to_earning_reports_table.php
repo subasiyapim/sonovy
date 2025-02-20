@@ -8,10 +8,21 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('earning_reports', function (Blueprint $table) {
-            $table->string('period')->nullable()->after('name');
-            $table->string('report_type')->nullable()->after('period');
-            $table->decimal('file_size', 8, 2)->nullable()->after('report_type');
-            $table->timestamp('processed_at')->nullable()->after('status');
+
+            if (!Schema::hasColumn('earning_reports', 'report_type')) {
+                $table->string('report_type')->nullable()->after('period');
+            }
+            if (!Schema::hasColumn('earning_reports', 'file_size')) {
+                $table->decimal('file_size', 8, 2)->nullable()->after('report_type');
+            }
+
+            if (!Schema::hasColumn('earning_reports', 'processed_at')) {
+                $table->timestamp('processed_at')->nullable()->after('status');
+            }
+            if (!Schema::hasColumn('earning_reports', 'period')) {
+                $table->string('period')->nullable()->after('name');
+
+            }
         });
     }
 
@@ -22,6 +33,7 @@ return new class extends Migration {
                 'report_type',
                 'file_size',
                 'processed_at',
+                'period',
             ]);
         });
     }
