@@ -12,12 +12,6 @@ return new class extends Migration {
             $table->string('report_type')->nullable()->after('period');
             $table->decimal('file_size', 8, 2)->nullable()->after('report_type');
             $table->timestamp('processed_at')->nullable()->after('status');
-
-            // Yeni kolonlar
-            $table->decimal('gross_revenue', 20, 15)->nullable()->after('unit_price');
-            $table->decimal('client_share_rate', 5, 2)->nullable()->after('gross_revenue');
-            $table->decimal('mechanical_fee', 20, 15)->nullable()->after('unit_price');
-            $table->string('region')->nullable()->after('country');
         });
     }
 
@@ -29,11 +23,6 @@ return new class extends Migration {
                 'report_type',
                 'file_size',
                 'processed_at',
-                'streaming_subscription_type',
-                'gross_revenue',
-                'client_share_rate',
-                'mechanical_fee',
-                'region'
             ]);
         });
     }
