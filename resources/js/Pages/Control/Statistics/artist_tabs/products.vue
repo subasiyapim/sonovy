@@ -83,6 +83,7 @@ const data = computed({
             <div>
                 <a :href="route('control.statistics.product',scope.row.album_id)" class="paragraph-xs c-blue-500"> {{scope.row.album_name}}</a>
                 <p class="paragraph-xs c-sub-600"> {{scope.row.upc_code}}</p>
+
             </div>
         </div>
 

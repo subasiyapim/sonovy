@@ -72,7 +72,8 @@ const pauseMusic = (song) => {
   <AppTable v-model="songs" :isClient="true" :hasSearch="false" :showAddButton="false">
     <AppTableColumn label="No" width="40">
       <template #default="scope">
-                <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
+                    <p class="paragraph-xs c-strong-950"> #{{ Object.keys(songs).findIndex((e) => e == scope.index)+1 }}</p>
+
 
       </template>
     </AppTableColumn>
