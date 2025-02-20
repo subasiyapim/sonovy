@@ -113,7 +113,7 @@ const pauseMusic = (song) => {
       <template #default="scope">
         <div class="flex items-center gap-3">
           <div>
-            <a :href="route('control.statistics.song',scope.row.song_id)" class="paragraph-xs c-blue-500"> {{ scope.row.name }} ({{ scope.row.version }})</a>
+            <a :href="route('control.statistics.song',scope.row.song_id)" class="paragraph-xs c-blue-500"> {{ scope.row.name }} <template v-if="scope.row.version">({{scope.row.version}})</template></a>
             <p class="paragraph-xs c-strong-950"> ISRC:{{ scope.row.isrc_code }} </p>
           </div>
         </div>

@@ -113,7 +113,7 @@ const pauseMusic = (song) => {
       <template #default="scope">
         <div class="flex items-center gap-3">
           <div>
-            <p class="paragraph-xs c-strong-950"> {{ scope.row.song_name }} ({{ scope.row.version }})</p>
+            <p class="paragraph-xs c-strong-950"> {{ scope.row.song_name }} <template v-if="scope.row.version">({{scope.row.version}})</template></p>
             <p class="paragraph-xs c-sub-600"> ISRC:{{ scope.row.isrc_code }} </p>
           </div>
         </div>
