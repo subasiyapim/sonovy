@@ -13,6 +13,7 @@
         </span>
         <span class="label-xs c-soft-400">•</span>
         <span class="label-xs c-soft-400">{{ song.name }}</span>
+             <template v-if="song.version"><p class="label-xs c-soft-400"> ({{song.version}})</p></template>
     </template>
     <div class="bg-dark-green-800  p-5 flex  relative">
       <div
@@ -26,7 +27,12 @@
           <CheckFilledIcon color="var(--dark-green-800)"/>
           <p class="label-xs c-strong-950" v-text="song.product_status"/>
         </div>
-        <h1 style="line-height:72px;" class="text-5xl text-white font-semibold" v-text="song.name"/>
+        <h1 style="line-height:72px;" class="flex items-center text-5xl text-white font-semibold">
+                {{song.name}}
+             <template v-if="song.version"><p > ({{song.version}})</p></template>
+
+        </h1>
+
 
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 bg-blue-300 rounded-full overflow-hidden me-3">
