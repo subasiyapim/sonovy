@@ -249,8 +249,8 @@ class StatisticController extends Controller
         }
 
         // Debug için veri kontrolü
-        Log::info('Platform ID: ' . $platform);
-        Log::info('Filtered Earnings Count: ' . $filteredEarnings->count());
+        Log::info('Platform ID: '.$platform);
+        Log::info('Filtered Earnings Count: '.$filteredEarnings->count());
         Log::info('Sample Data:', $filteredEarnings->take(3)->toArray());
 
         $groupedData = $filteredEarnings
@@ -532,6 +532,7 @@ class StatisticController extends Controller
         return $earnings->groupBy('upc_code')
             ->map(function ($group) use ($totalQuantity) {
                 return [
+                    'album_image' => $group->first()->product->image,
                     'album_type' => $group->first()->product->type,
                     'album_id' => $group->first()->id,
                     'upc_code' => $group->first()->upc_code,
@@ -613,7 +614,7 @@ class StatisticController extends Controller
 
     public function artist(Artist $artist, Request $request): \Inertia\Response
     {
-        $artist->loadMissing('platforms', 'songs', 'earnings');
+        $artist->loadMissing('platforms', 'songs', 'earnings', 'products');
 
         [$startDate, $endDate] = $this->getDateRange($request);
         $platform = $request->input('platform') ?? 'Spotify';
