@@ -97,12 +97,29 @@ Route::group(
             Route::apiResource('payments', PaymentController::class)
                 ->only(['index', 'store'])->names('payments');
 
-            Route::get('reports/create-demo-earnings', [ReportController::class, 'createDemoEarnings'])
-                ->name('reports.create-demo-earnings');
-            Route::get('reports/download/{report}', [ReportController::class, 'download'])
-                ->name('reports.download');
-            Route::apiResource('reports', ReportController::class)->names('reports');
+            Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
+                Route::get('/', [ReportController::class, 'index'])->name('index');
+                Route::post('/upload-file', [ReportController::class, 'uploadFile'])->name('uploadFile');
+                Route::get('/download/{report}', [ReportController::class, 'download'])->name('download');
+                Route::delete('/{report}', [ReportController::class, 'destroy'])->name('destroy');
+                Route::get('/{report}', [ReportController::class, 'show'])->name('show');
 
+                // Yeni rotalar
+                Route::get('/filter/by-platform/{platform}', [ReportController::class, 'filterByPlatform'])
+                    ->name('filter.platform');
+                Route::get('/filter/by-period/{period}', [ReportController::class, 'filterByPeriod'])
+                    ->name('filter.period');
+                Route::get('/filter/by-type/{type}', [ReportController::class, 'filterByType'])
+                    ->name('filter.type');
+                Route::get('/filter/by-status/{status}', [ReportController::class, 'filterByStatus'])
+                    ->name('filter.status');
+                Route::post('/bulk-download', [ReportController::class, 'bulkDownload'])
+                    ->name('bulk.download');
+                Route::post('/bulk-delete', [ReportController::class, 'bulkDelete'])
+                    ->name('bulk.delete');
+                Route::get('/export/summary', [ReportController::class, 'exportSummary'])
+                    ->name('export.summary');
+            });
 
             Route::get('analysis', [FinanceAnalysisController::class, 'index'])
                 ->name('analysis.index');
@@ -185,8 +202,8 @@ Route::group(
         Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
 
-        require __DIR__ . '/control/modules/search.php';
-        require __DIR__ . '/control/modules/last.php';
-        require __DIR__ . '/control/modules/find.php';
+        require __DIR__.'/control/modules/search.php';
+        require __DIR__.'/control/modules/last.php';
+        require __DIR__.'/control/modules/find.php';
     }
 );

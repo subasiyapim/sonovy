@@ -2,12 +2,13 @@
 
 namespace App\Imports;
 
+use App\Enums\EarningReportStatusEnum;
 use App\Models\Artist;
 use App\Models\System\Country;
 use App\Models\EarningReport;
-use App\Models\EarningReportFile;
 use App\Models\Platform;
 use App\Models\Song;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -24,34 +25,65 @@ class EarningImport implements ToModel, WithValidation, SkipsEmptyRows, WithHead
 
     public $timeout = 0;
 
+    protected $columnMappings = [
+        // İngilizce format
+        'reporting_month' => 'rapor_ayi',
+        'sales_month' => 'satis_ayi',
+        'platform' => 'platform',
+        'country_region' => 'ulke',
+        'label_name' => 'label_adi',
+        'artist_name' => 'sanatci_adi',
+        'release_title' => 'album_adi',
+        'track_title' => 'parca_adi',
+        'upc' => 'upc',
+        'isrc' => 'isrc',
+        'release_catalog_nb' => 'album_katalog_numarasi',
+        'release_type' => 'album_tipi',
+        'sales_type' => 'satis_tipi',
+        'quantity' => 'miktar',
+        'client_payment_currency' => 'musteri_odeme_para_birimi',
+        'unit_price' => 'unite_fiyati',
+        'mechanical_fee' => 'mechanical_fee',
+        'gross_revenue' => 'brut_gelir',
+        'client_share_rate' => 'musteri_pay_orani',
+        'net_revenue' => 'net_gelir',
+        'streaming_subscription_type' => 'streaming_abonman_tipi',
+    ];
+
     public function model(array $row)
     {
         Log::info('Row data: ', $row);
+
+        // Kolon isimlerini normalize et
+        $data = $this->normalizeColumns($row);
 
         $song = Song::with([
             'products' => function ($query) {
                 $query->with(['label.user', 'artists']);
             }
         ])
-            ->where('isrc', $row['isrc'])
+            ->where('isrc', $data['isrc'])
             ->first();
 
         if ($song) {
             Log::info('Song found: ', ['song_id' => $song->id]);
 
-            $file_id = EarningReportFile::latest()->first()?->id;
-
             $platform = Platform::firstOrCreate(
-                ['name' => $row['platform']],
+                ['name' => $data['platform']],
                 [
-                    'visible_name' => $row['platform'],
-                    'code' => Str::slug($row['platform'].'-'.rand(1000, 9999)),
+                    'visible_name' => $data['platform'],
+                    'code' => Str::slug($data['platform'].'-'.rand(1000, 9999)),
                     'type' => 1,
                     'status' => 1
                 ]
             );
 
-            $country_id = Country::where('name', $row['ulke'])->value('id');
+            // Ülke/Bölge ayrıştırma
+            $countryParts = explode('/', $data['ulke']);
+            $country = trim($countryParts[0]);
+            $region = isset($countryParts[1]) ? trim($countryParts[1]) : null;
+
+            $country_id = Country::where('name', $country)->value('id');
             Log::info('Country ID: ', ['country_id' => $country_id]);
 
             $product = $song->products->first();
@@ -63,62 +95,100 @@ class EarningImport implements ToModel, WithValidation, SkipsEmptyRows, WithHead
             Log::info('Artist ID: ', ['artist_id' => $artist_id]);
             Log::info('Label ID: ', ['label_id' => $label_id]);
 
+            // Dosya boyutunu hesapla
+            $fileSize = round(filesize(request()->file('file')->getRealPath()) / 1024 / 1024, 2);
+
+            // Dönem bilgisini oluştur
+            $reportDate = \Carbon\Carbon::parse($data['rapor_ayi']);
+            $period = $reportDate->format('Y - ') . ucfirst($reportDate->translatedFormat('F'));
+
+            // Sayısal değerleri temizle
+            $netRevenue = str_replace([',', ' '], ['.', ''], $data['net_gelir']);
+            $unitPrice = isset($data['unite_fiyati']) ? str_replace([',', ' '], ['.', ''], $data['unite_fiyati']) : null;
+            $mechanicalFee = isset($data['mechanical_fee']) ? str_replace([',', ' '], ['.', ''], $data['mechanical_fee']) : null;
+            $grossRevenue = isset($data['brut_gelir']) ? str_replace([',', ' '], ['.', ''], $data['brut_gelir']) : null;
+            $clientShareRate = isset($data['musteri_pay_orani']) ? str_replace([',', ' '], ['.', ''], $data['musteri_pay_orani']) : null;
+
             return EarningReport::updateOrCreate(
                 [
-                    'report_date' => $row['rapor_ayi'],
-                    'sales_date' => $row['satis_ayi'],
-                    'platform' => $row['platform'],
-                    'isrc_code' => $row['isrc'],
-                    'net_revenue' => str_replace(',', '.', $row['net_gelir']),
+                    'report_date' => $data['rapor_ayi'],
+                    'sales_date' => $data['satis_ayi'],
+                    'platform' => $data['platform'],
+                    'isrc_code' => $data['isrc'],
+                    'net_revenue' => $netRevenue,
                 ],
                 [
+                    'user_id' => Auth::id(),
+                    'status' => EarningReportStatusEnum::PENDING->value,
                     'platform_id' => $platform->id,
                     'country_id' => $country_id,
+                    'country' => $country,
+                    'region' => $region,
                     'label_id' => $label_id,
                     'artist_id' => $artist_id,
                     'song_id' => $song->id,
-                    'earning_report_file_id' => $file_id,
-                    'country' => $row['ulke'],
-                    'label_name' => $row['label_adi'],
-                    'artist_name' => $row['sanatci_adi'],
-                    'release_name' => $row['album_adi'],
-                    'song_name' => $row['parca_adi'],
-                    'upc_code' => $row['upc'],
-                    'catalog_number' => $row['album_katalog_numarasi'],
-                    'release_type' => $row['album_tipi'],
-                    'sales_type' => $row['satis_tipi'],
-                    'quantity' => $row['miktar'],
-                    'currency' => $row['musteri_odeme_para_birimi'],
-                    'unit_price' => isset($row['unite_fiyati']) ? str_replace(',', '.', $row['unite_fiyati']) : null,
+                    'label_name' => $data['label_adi'],
+                    'artist_name' => $data['sanatci_adi'],
+                    'release_name' => $data['album_adi'],
+                    'song_name' => $data['parca_adi'],
+                    'upc_code' => $data['upc'],
+                    'catalog_number' => $data['album_katalog_numarasi'],
+                    'streaming_subscription_type' => $data['streaming_abonman_tipi'] ?? null,
+                    'release_type' => $data['album_tipi'],
+                    'sales_type' => $data['satis_tipi'],
+                    'quantity' => $data['miktar'],
+                    'currency' => $data['musteri_odeme_para_birimi'],
+                    'unit_price' => $unitPrice,
+                    'mechanical_fee' => $mechanicalFee,
+                    'gross_revenue' => $grossRevenue,
+                    'client_share_rate' => $clientShareRate,
+                    'period' => $period,
+                    'report_type' => 'Rapor Aylık Bülteni',
+                    'file_size' => $fileSize,
+                    'processed_at' => now(),
                 ]
             );
         }
 
-        Log::warning('Song not found for ISRC: '.$row['isrc']);
+        Log::warning('Song not found for ISRC: '.$data['isrc']);
         return null;
+    }
+
+    protected function normalizeColumns(array $row): array
+    {
+        $normalized = [];
+        foreach ($row as $key => $value) {
+            $normalizedKey = Str::slug($key, '_');
+            $mappedKey = $this->columnMappings[$normalizedKey] ?? $normalizedKey;
+            $normalized[$mappedKey] = $value;
+        }
+        return $normalized;
     }
 
     public function rules(): array
     {
         return [
-            'rapor_ayi' => 'required|date',
-            'satis_ayi' => 'required|date',
-            'platform' => 'required|string',
-            'ulke' => 'required|string',
-            'label_adi' => 'required|string',
-            'sanatci_adi' => 'required|string',
-            'album_adi' => 'required|string',
-            'parca_adi' => 'required|string',
-            'upc' => 'nullable',
-            'isrc' => 'required|string',
-            'album_katalog_numarasi' => 'nullable',
-            'streaming_abonman_tipi' => 'nullable',
-            'album_tipi' => 'required|string',
-            'satis_tipi' => 'required|string',
-            'miktar' => 'required|integer',
-            'musteri_odeme_para_birimi' => 'required|string',
-            'unite_fiyati' => 'nullable|numeric',
-            'net_gelir' => 'required',
+            '*.reporting_month' => 'required|string',
+            '*.sales_month' => 'required|string',
+            '*.platform' => 'required|string',
+            '*.country_region' => 'required|string',
+            '*.label_name' => 'required|string',
+            '*.artist_name' => 'required|string',
+            '*.release_title' => 'required|string',
+            '*.track_title' => 'required|string',
+            '*.upc' => 'nullable|string',
+            '*.isrc' => 'required|string',
+            '*.release_catalog_nb' => 'nullable|string',
+            '*.streaming_subscription_type' => 'nullable|string',
+            '*.release_type' => 'required|string',
+            '*.sales_type' => 'required|string',
+            '*.quantity' => 'required|integer',
+            '*.client_payment_currency' => 'required|string',
+            '*.unit_price' => 'nullable|string',
+            '*.mechanical_fee' => 'nullable|string',
+            '*.gross_revenue' => 'nullable|string',
+            '*.client_share_rate' => 'nullable|string',
+            '*.net_revenue' => 'required|string',
         ];
     }
 

@@ -19,10 +19,13 @@ class EarningReport extends Model
     protected $table = 'earning_reports';
 
     protected $fillable = [
-        'earning_report_file_id',
         'user_id',
         'name',
+        'period',
+        'report_type',
+        'file_size',
         'status',
+        'processed_at',
         'report_date',
         'reporting_month',
         'sales_date',

@@ -16,6 +16,7 @@ use App\Models\Report;
 use App\Models\System\Country;
 use App\Services\CountryServices;
 use App\Services\EarningService;
+use App\Models\EarningReport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,6 +32,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipArchive;
 use App\Jobs\CreateDemoEarningsJob;
+use App\Models\EarningReportFile;
+use App\Jobs\ProcessEarningReportJob;
+use App\Imports\EarningImport;
+use App\Jobs\EarningJob;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -56,10 +62,14 @@ class ReportController extends Controller
             $isAutoReport = $request->slug === 'auto-reports';
         }
 
-        $query = Report::with(['child' => function ($query) {
-                $query->select('id', 'parent_id', 'name', 'amount', 'report_type', 'report_ids', 'status', 'created_at', 'period', 'monthly_amount');
-            }])
-            ->select('id', 'name', 'amount', 'report_type', 'report_ids', 'status', 'created_at', 'period', 'monthly_amount', 'parent_id')
+        $query = Report::with([
+            'child' => function ($query) {
+                $query->select('id', 'parent_id', 'name', 'amount', 'report_type', 'report_ids', 'status', 'created_at',
+                    'period', 'monthly_amount');
+            }
+        ])
+            ->select('id', 'name', 'amount', 'report_type', 'report_ids', 'status', 'created_at', 'period',
+                'monthly_amount', 'parent_id')
             ->whereNull('parent_id')
             ->where('is_auto_report', $isAutoReport)
             ->where('user_id', Auth::id())
@@ -228,17 +238,208 @@ class ReportController extends Controller
         ]);
     }
 
-    public function createDemoEarnings()
+    public function uploadFile(Request $request)
     {
+        abort_if(Gate::denies('report_upload'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls'],
+            'platform_id' => ['required', 'integer', 'exists:platforms,id'],
+            'name' => ['required', 'string'],
+            'report_date' => ['required', 'date'],
+        ]);
+
         try {
-            CreateDemoEarningsJob::dispatch();
+            DB::beginTransaction();
+
+            // Excel dosyasını import et ve raporları oluştur
+            // EarningImport sınıfı doğrudan EarningReport kayıtlarını oluşturacak
+            Excel::import(new EarningImport(), $request->file('file'));
+
+            // Kazanç hesaplama işini kuyruğa ekle
+            EarningJob::dispatch();
+
+            DB::commit();
+
             return response()->json([
-                'message' => 'Demo kazançları oluşturma işlemi başlatıldı. Bu işlem arka planda devam edecek.'
+                'message' => 'Rapor başarıyla yüklendi ve işleme alındı.'
             ]);
+
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
-                'error' => 'Demo kazançları oluşturulurken bir hata oluştu: '.$e->getMessage()
+                'message' => 'Rapor yüklenirken bir hata oluştu: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Filter reports by platform
+     */
+    public function filterByPlatform(Platform $platform)
+    {
+        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $reports = EarningReport::where('platform_id', $platform->id)
+            ->where('user_id', Auth::id())
+            ->advancedFilter();
+
+        return response()->json([
+            'reports' => ReportResource::collection($reports)
+        ]);
+    }
+
+    /**
+     * Filter reports by period
+     */
+    public function filterByPeriod(string $period)
+    {
+        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $reports = EarningReport::where('period', $period)
+            ->where('user_id', Auth::id())
+            ->advancedFilter();
+
+        return response()->json([
+            'reports' => ReportResource::collection($reports)
+        ]);
+    }
+
+    /**
+     * Filter reports by type
+     */
+    public function filterByType(string $type)
+    {
+        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $reports = EarningReport::where('report_type', $type)
+            ->where('user_id', Auth::id())
+            ->advancedFilter();
+
+        return response()->json([
+            'reports' => ReportResource::collection($reports)
+        ]);
+    }
+
+    /**
+     * Filter reports by status
+     */
+    public function filterByStatus(string $status)
+    {
+        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $reports = EarningReport::where('status', $status)
+            ->where('user_id', Auth::id())
+            ->advancedFilter();
+
+        return response()->json([
+            'reports' => ReportResource::collection($reports)
+        ]);
+    }
+
+    /**
+     * Download multiple reports as zip
+     */
+    public function bulkDownload(Request $request): BinaryFileResponse
+    {
+        abort_if(Gate::denies('report_download'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $request->validate([
+            'report_ids' => ['required', 'array'],
+            'report_ids.*' => ['exists:earning_reports,id']
+        ]);
+
+        $reports = EarningReport::whereIn('id', $request->report_ids)
+            ->where('user_id', Auth::id())
+            ->get();
+
+        $zip = new ZipArchive;
+        $fileName = 'reports-'.now()->format('Y-m-d-H-i-s').'.zip';
+        $zipPath = storage_path('app/temp/'.$fileName);
+
+        if ($zip->open($zipPath, ZipArchive::CREATE) === true) {
+            foreach ($reports as $report) {
+                $reportName = Str::slug($report->period).'-'.Str::slug($report->name).'.xlsx';
+                // Excel dosyasını oluştur ve zip'e ekle
+                // Bu kısım Excel export işlemini içerecek
+            }
+            $zip->close();
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend();
+    }
+
+    /**
+     * Delete multiple reports
+     */
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        abort_if(Gate::denies('report_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $request->validate([
+            'report_ids' => ['required', 'array'],
+            'report_ids.*' => ['exists:earning_reports,id']
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $reports = EarningReport::whereIn('id', $request->report_ids)
+                ->where('user_id', Auth::id())
+                ->get();
+
+            foreach ($reports as $report) {
+                $report->delete();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Seçili raporlar başarıyla silindi.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Raporlar silinirken bir hata oluştu: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Export reports summary
+     */
+    public function exportSummary(Request $request)
+    {
+        abort_if(Gate::denies('report_export'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $request->validate([
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+            'platform_id' => ['nullable', 'exists:platforms,id'],
+            'type' => ['nullable', 'string']
+        ]);
+
+        $query = EarningReport::query()
+            ->where('user_id', Auth::id());
+
+        if ($request->filled('start_date')) {
+            $query->where('report_date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->where('report_date', '<=', $request->end_date);
+        }
+
+        if ($request->filled('platform_id')) {
+            $query->where('platform_id', $request->platform_id);
+        }
+
+        if ($request->filled('type')) {
+            $query->where('report_type', $request->type);
+        }
+
+        $reports = $query->get();
+
+        // Excel export işlemi burada yapılacak
+        // return Excel::download(new ReportsExport($reports), 'reports-summary.xlsx');
     }
 }
