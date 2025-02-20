@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup>
 
 import {ref, onMounted, onUnmounted} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
