@@ -179,6 +179,7 @@
             <div class="loading-spinner"></div>
         </div>
         <div v-else>
+
             <component :is="tabs.find((e) => e.slug == currentTab)?.component"
                     :tableData="tab" />
         </div>

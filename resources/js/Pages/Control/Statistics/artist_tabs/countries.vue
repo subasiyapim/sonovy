@@ -28,7 +28,7 @@ const data = computed({
 
     <AppTableColumn label="No" width="40">
       <template #default="scope">
-       <p class="paragraph-xs c-strong-950"> # {{ Object.keys(data).findIndex((e) => e == scope.index) }}
+       <p class="paragraph-xs c-strong-950"> #{{ Object.keys(data).findIndex((e) => e == scope.index) }}
        </p>
       </template>
     </AppTableColumn>

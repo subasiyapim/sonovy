@@ -593,7 +593,7 @@ class StatisticController extends Controller
 
         $platformSalesCount = $this->getPlatformSalesCount($product->earnings, $platform, $product, null, null);
 
-        $slug = $request->input('slug') ?? 'songs';
+        $slug = $request->input('slug') ?? 'platforms';
 
         $tab = $this->getBestData($slug, $product);
 
@@ -698,7 +698,7 @@ class StatisticController extends Controller
         $platformStats = $this->getPlatformStats($song);
         $platformSalesCount = $this->getPlatformSalesCount($song, $platform, null, null, null, $song);
 
-        $slug = $request->input('slug') ?? 'songs';
+        $slug = $request->input('slug') ?? 'platforms';
 
         $tab = $this->getBestData($slug, $song);
         return Inertia::render('Control/Statistics/song', [
