@@ -3,15 +3,29 @@
     <!-- Drag-and-Drop Area -->
 
     <div v-if="showImage && images.length" class="image-preview mb-3">
+        <div class="preview-grid" :class="uploadType == 'image' ? 'flex-col' : 'flex-row border border-soft-200 p-3 rounded-lg' ">
+            <div v-for="(image, index) in images" :key="index" class="preview-item flex-1">
+                <template v-if="uploadType === 'image'">
+                    <img :src="image.url" :alt="'Image Preview ' + (index + 1)" />
+                </template>
+                <template v-else>
+                    <div class="file-preview ">
+                        <PdfIcon v-if="image.type === 'excel'" />
+                        <div class="flex flex-col">
+                            <p class="label-sm">{{ image.file.name }}</p>
+                            <p class="paragraph-xs c-sub-600">{{ (image.file.size / 1024).toFixed(2) }} KB</p>
+                        </div>
+                    </div>
+                </template>
+            </div>
 
-      <div class="preview-grid">
-        <div v-for="(image, index) in images" :key="index" class="preview-item">
-          <img :src="image.url" :alt="'Image Preview ' + (index + 1)" />
-
+            <button @click="removeImage(index)" class="label-xs c-neutral-500 text-center ">
+                <p v-if="uploadType === 'image'"> Seçilen resmi kaldır</p>
+                <TrashIcon v-else color="var(--sub-600)" />
+            </button>
         </div>
-        <button @click="removeImage" class="label-xs c-neutral-500 text-center mx-auto">Yayın Görselini Sil</button>
-      </div>
     </div>
+
     <div
         v-else
         @click="triggerFileInput"
@@ -54,13 +68,16 @@
 
 <script setup>
 import { ref, reactive,onBeforeMount } from 'vue';
-import {CloudIcon} from '@/Components/Icons'
+import {CloudIcon,PdfIcon,TrashIcon} from '@/Components/Icons'
 import {RegularButton} from '@/Components/Buttons'
 const emits = defineEmits(['change','onImageDelete'])
 const props = defineProps({
     label:{},
     note:{},
     image:{},
+    uploadType:{
+        default:'image'
+    }
 })
 const fileInput = ref(null);
 const isDragging = ref(false);
@@ -92,20 +109,32 @@ const handleFileInput = (event) => {
 };
 const showImage = ref(true);
 const handleFiles = (files) => {
-    showImage.value = false;
+  showImage.value = false;
   files.forEach((file) => {
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        images.push({ file, url: e.target.result });
-         simulateUpload(file);
+        images.push({ file, url: e.target.result, type: 'image' });
+        simulateUpload(file);
       };
       reader.readAsDataURL(file);
-
-
+    }
+    else if (file.type === 'application/pdf') {
+      const url = URL.createObjectURL(file);
+      images.push({ file, url, type: 'pdf' });
+      simulateUpload(file);
+    }
+    else if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type === 'application/vnd.ms-excel') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        images.push({ file, url: '', type: 'excel' });
+        simulateUpload(file);
+      };
+      reader.readAsArrayBuffer(file);
     }
   });
 };
+
 
 const simulateUpload = (file) => {
   const interval = setInterval(() => {
@@ -198,5 +227,16 @@ defineExpose({
         height: 100%;
         background: var(--dark-green-500);
         transition: width 0.3s ease;
+    }
+
+    .file-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    }
+
+    .file-preview img {
+    width: 40px;
+    height: 40px;
     }
 </style>

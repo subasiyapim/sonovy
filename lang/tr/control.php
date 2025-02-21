@@ -595,6 +595,11 @@ return [
         'add_new' => 'Yeni İşlem Ekle',
         'imports' => [
             'header' => 'İçe Aktarılan Raporlar',
+            'fields' => [
+                'reports_name' => "Rapor Adı",
+                'platform_id' => "Platform Seçimi",
+                'reports_date' => "Rapor Tarihi",
+            ],
         ],
         'participants' => [
             'header' => 'Katılımcı Raporları'

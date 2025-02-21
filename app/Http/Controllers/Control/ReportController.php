@@ -125,8 +125,10 @@ class ReportController extends Controller
     function listImports(Request $request)
     {
 
+        $platforms = Platform::all();
         return inertia(
             'Control/Finance/Imports/index',
+            compact('platforms')
 
         );
     }

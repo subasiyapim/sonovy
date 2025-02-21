@@ -6,14 +6,21 @@ import {PrimaryButton} from '@/Components/Buttons'
 import {UploadIcon} from '@/Components/Icons'
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
+import {FinanceImportReportModal} from '@/Components/Dialog';
 
+const isImportModalOn = ref(false);
 const data = ref([]);
 </script>
 
 <template>
     <AdminLayout :showGoBack="false" :showDatePicker="false" :title="__('control.finance.imports.header')" parentTitle="Finans">
         <template #toolbar>
-            <PrimaryButton><template #icon> <UploadIcon color="var(--dark-green-500)" /></template>Rapor İçe Aktar</PrimaryButton>
+            <PrimaryButton @click="isImportModalOn = true" >
+                <template #icon>
+                    <UploadIcon color="var(--dark-green-500)" />
+                </template>
+                Rapor İçe Aktar
+            </PrimaryButton>
         </template>
 
 
@@ -74,6 +81,8 @@ const data = ref([]);
                 </template>
             </AppTable>
     </AdminLayout>
+
+    <FinanceImportReportModal v-if="isImportModalOn" v-model="isImportModalOn"></FinanceImportReportModal>
 
 
 </template>

@@ -28,6 +28,9 @@ import FinanceTopListsSongs from './Finance/TopLists/songs.vue'
 import FinanceTopListsArtists from './Finance/TopLists/artists.vue'
 import FinanceTopListsLabels from './Finance/TopLists/labels.vue'
 import FinanceTopListsProducts from './Finance/TopLists/products.vue'
+
+
+import FinanceImportReportModal from './Finance/import.vue'
 export {
     ArtistDialog,
     LabelDialog,
@@ -55,6 +58,7 @@ export {
     FinanceTopListsSongs,
     FinanceTopListsArtists,
     FinanceTopListsLabels,
-    FinanceTopListsProducts
+    FinanceTopListsProducts,
+    FinanceImportReportModal
 
 }
