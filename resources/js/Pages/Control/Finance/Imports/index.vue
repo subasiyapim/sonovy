@@ -3,11 +3,13 @@
 import {ref, onMounted, onUnmounted} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {PrimaryButton} from '@/Components/Buttons'
-import {UploadIcon} from '@/Components/Icons'
+import {UploadIcon,DownloadIcon} from '@/Components/Icons'
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {FinanceImportReportModal} from '@/Components/Dialog';
-
+const props = defineProps({
+    user:{}
+});
 const isImportModalOn = ref(false);
 const data = ref([]);
 </script>
@@ -25,23 +27,30 @@ const data = ref([]);
 
 
 
-        <AppTable  v-model="data"  :isClient="true" :hasSearch="false" :showAddButton="false">
+        <AppTable  v-model="user.earning_reports"  :isClient="true" :hasSearch="false" :showAddButton="false">
                 <AppTableColumn label="Platform">
                     <template #default="scope">
-                          <p class="paragraph-xs c-strong-950"></p>
+                          <p class="paragraph-xs c-strong-950">
+                            {{scope.row.platform}}
+
+                          </p>
                     </template>
                 </AppTableColumn>
 
                 <AppTableColumn label="Rapor Tarihi">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950"></p>
+                        <p class="paragraph-xs c-strong-950">
+                             {{scope.row.report_date}}
+                        </p>
                     </template>
                 </AppTableColumn>
 
 
                 <AppTableColumn label="Rapor Adı">
                     <template #default="scope">
-                         <p class="paragraph-xs c-strong-950"></p>
+                         <p class="paragraph-xs c-strong-950">
+                              {{scope.row.name}}
+                         </p>
                     </template>
                 </AppTableColumn>
 
@@ -52,27 +61,43 @@ const data = ref([]);
                 </AppTableColumn>
                 <AppTableColumn label="Ücret">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950"></p>
+                        <p class="paragraph-xs c-strong-950">
+                            {{scope.row.net_revenue}}
+                            {{scope.row.currency}}
+                        </p>
                     </template>
                 </AppTableColumn>
                 <AppTableColumn label="Boyut">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950"></p>
+                        <p class="paragraph-xs c-strong-950">
+                            {{scope.row.file_size}}
+                        </p>
                     </template>
                 </AppTableColumn>
                 <AppTableColumn label="İşlem Tarihi">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950"></p>
+                        <div class="flex flex-col items-start">
+                            <p class="paragraph-xs c-strong-950">
+                                {{scope.row.created_at.split(" ")[0]}}
+                            </p>
+                            <p class="paragraph-xs c-strong-950">
+                                {{scope.row.created_at.split(" ")[1]}}
+                            </p>
+                        </div>
                     </template>
                 </AppTableColumn>
                 <AppTableColumn label="Durum">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950"></p>
+                        <p class="paragraph-xs c-strong-950">
+                               {{scope.row.status}}
+                        </p>
                     </template>
                 </AppTableColumn>
-                <AppTableColumn label="Aksiyon">
+                <AppTableColumn label="Aksiyon" align="right">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950"></p>
+                        <a :href="route('control.finance.reports.download',scope.row.id)" target="_blank">
+                            <DownloadIcon color="var(--sub-600)" />
+                        </a>
                     </template>
                 </AppTableColumn>
 

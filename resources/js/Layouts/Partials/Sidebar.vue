@@ -47,7 +47,7 @@
             <sub-menu-item :path="'control.finance.payments.index'">{{ __('control.finance.payments.header') }}</sub-menu-item>
             <sub-menu-item :path="'control.finance.reports.index'">{{ __('control.finance.reports.header') }}</sub-menu-item>
             <sub-menu-item :path="'control.finance.analysis.index'">{{ __('control.finance.analysis.header') }}</sub-menu-item>
-            <sub-menu-item :path="'control.finance.imports.list'">{{ __('control.finance.imports.header') }}</sub-menu-item>
+            <sub-menu-item :path="'control.finance.reports.report-files'">{{ __('control.finance.imports.header') }}</sub-menu-item>
             <sub-menu-item :path="'control.finance.imports.list'">{{ __('control.finance.participants.header') }}</sub-menu-item>
           </template>
         </MenuItem>

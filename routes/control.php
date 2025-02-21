@@ -97,7 +97,6 @@ Route::group(
             Route::apiResource('payments', PaymentController::class)
                 ->only(['index', 'store'])->names('payments');
 
-            Route::get('imports', [ReportController::class, 'listImports'])->name('imports.list');
 
             Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
                 Route::get('/', [ReportController::class, 'index'])->name('index');
@@ -207,8 +206,8 @@ Route::group(
         Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
 
-        require __DIR__.'/control/modules/search.php';
-        require __DIR__.'/control/modules/last.php';
-        require __DIR__.'/control/modules/find.php';
+        require __DIR__ . '/control/modules/search.php';
+        require __DIR__ . '/control/modules/last.php';
+        require __DIR__ . '/control/modules/find.php';
     }
 );
