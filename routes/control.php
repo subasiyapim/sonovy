@@ -103,6 +103,7 @@ Route::group(
                 Route::get('/', [ReportController::class, 'index'])->name('index');
                 Route::post('/', [ReportController::class, 'store'])->name('store');
 
+                Route::get('report-files', [ReportController::class, 'reportFiles'])->name('report-files');
                 Route::post('/upload-file', [ReportController::class, 'uploadFile'])->name('uploadFile');
                 Route::get('/download/{report}', [ReportController::class, 'download'])->name('download');
                 Route::delete('/{report}', [ReportController::class, 'destroy'])->name('destroy');

@@ -14,6 +14,7 @@ use App\Models\Song;
 use App\Models\Product;
 use App\Models\Report;
 use App\Models\System\Country;
+use App\Models\User;
 use App\Services\CountryServices;
 use App\Services\EarningService;
 use App\Models\EarningReport;
@@ -132,6 +133,7 @@ class ReportController extends Controller
 
         );
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -176,7 +178,7 @@ class ReportController extends Controller
             return $this->handleMultipleReports($report);
         }
 
-        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
+        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
         if ($media) {
             return $this->streamMediaFile($media);
         }
@@ -205,16 +207,16 @@ class ReportController extends Controller
     private function getZipFilePath(Report $report): string
     {
         return storage_path(
-            'app/public/tenant_' . tenant('domain') . '_income_reports/multiple_reports/' .
-                $report->user_id . '/' . Str::slug($report->period) . '-' . Str::slug($report->name) . '.zip'
+            'app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.
+            $report->user_id.'/'.Str::slug($report->period).'-'.Str::slug($report->name).'.zip'
         );
     }
 
     private function getReportFiles(Report $report): array
     {
         return Storage::disk('public')->allFiles(
-            'tenant_' . tenant('domain') . '_income_reports/multiple_reports/' .
-                $report->user_id . '/' . Str::slug($report->period) . '/' . $report->id
+            'tenant_'.tenant('domain').'_income_reports/multiple_reports/'.
+            $report->user_id.'/'.Str::slug($report->period).'/'.$report->id
         );
     }
 
@@ -240,12 +242,12 @@ class ReportController extends Controller
             DB::beginTransaction();
 
             // Önce medya dosyalarını sil
-            $report->clearMediaCollection('tenant_' . tenant('domain') . '_income_reports');
+            $report->clearMediaCollection('tenant_'.tenant('domain').'_income_reports');
 
             // Child raporları bul ve medya dosyalarını sil
             $childReports = $report->child()->get();
             foreach ($childReports as $childReport) {
-                $childReport->clearMediaCollection('tenant_' . tenant('domain') . '_income_reports');
+                $childReport->clearMediaCollection('tenant_'.tenant('domain').'_income_reports');
                 $childReport->delete();
             }
 
@@ -257,7 +259,7 @@ class ReportController extends Controller
             return redirect()->back()->with('success', 'Rapor ve ilişkili tüm veriler başarıyla silindi.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Rapor silinirken bir hata oluştu: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Rapor silinirken bir hata oluştu: '.$e->getMessage());
         }
     }
 
@@ -304,7 +306,7 @@ class ReportController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'message' => 'Rapor yüklenirken bir hata oluştu: ' . $e->getMessage()
+                'message' => 'Rapor yüklenirken bir hata oluştu: '.$e->getMessage()
             ], 500);
         }
     }
@@ -390,12 +392,12 @@ class ReportController extends Controller
             ->get();
 
         $zip = new ZipArchive;
-        $fileName = 'reports-' . now()->format('Y-m-d-H-i-s') . '.zip';
-        $zipPath = storage_path('app/temp/' . $fileName);
+        $fileName = 'reports-'.now()->format('Y-m-d-H-i-s').'.zip';
+        $zipPath = storage_path('app/temp/'.$fileName);
 
         if ($zip->open($zipPath, ZipArchive::CREATE) === true) {
             foreach ($reports as $report) {
-                $reportName = Str::slug($report->period) . '-' . Str::slug($report->name) . '.xlsx';
+                $reportName = Str::slug($report->period).'-'.Str::slug($report->name).'.xlsx';
                 // Excel dosyasını oluştur ve zip'e ekle
                 // Bu kısım Excel export işlemini içerecek
             }
@@ -436,7 +438,7 @@ class ReportController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'message' => 'Raporlar silinirken bir hata oluştu: ' . $e->getMessage()
+                'message' => 'Raporlar silinirken bir hata oluştu: '.$e->getMessage()
             ], 500);
         }
     }
@@ -478,5 +480,12 @@ class ReportController extends Controller
 
         // Excel export işlemi burada yapılacak
         // return Excel::download(new ReportsExport($reports), 'reports-summary.xlsx');
+    }
+
+    public function reportFiles(User $user)
+    {
+        $user->load('earningReports');
+
+        return inertia('Control/Finance/Imports/index', compact('user'));
     }
 }
