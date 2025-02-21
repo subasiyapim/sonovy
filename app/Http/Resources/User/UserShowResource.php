@@ -169,14 +169,16 @@ class UserShowResource extends JsonResource
                         'name' => $participant->user->name,
                         'email' => $participant->user->email,
                         'branch_names' => $participant->branch_names,
-                        'commission_rate' => $participant->user->commission_rate,
-                        'realization' => 100 - $participant->user->commission_rate,
-                        'status' => $participant->user->status->title()
+                        'commission_rate' => $participant->rate,
+                        'realization' => 100 - $participant->rate,
+                        'status' => $participant->user->status->title(),
+                        'song_name' => $participant->song->name,
+                        'song_id' => $participant->song->id,
+                        'song_isrc' => $participant->song->isrc,
                     ];
                 })->toArray());
             });
         });
-
         return $participants;
     }
 
@@ -202,7 +204,7 @@ class UserShowResource extends JsonResource
     {
         return $this->products->where('status', '!=', ProductStatusEnum::DRAFT->value)
             ->map(function ($product) {
-                $product->load('label', 'songs', 'artists');
+                $product->load('label', 'songs.participants', 'artists');
                 return [
                     'id' => $product->id,
                     'type' => $product->type->value,
@@ -217,6 +219,7 @@ class UserShowResource extends JsonResource
                     'physical_release_date' => Carbon::parse($product->physical_release_date)->format('d.m.Y'),
                     'song_count' => $product->songs->count(),
                     'upc' => $product->upc_code,
+                    'isrc' => $product->isrc_code,
                 ];
             })->toArray();
     }
