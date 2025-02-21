@@ -77,12 +77,12 @@ const data = ref([]);
                 </AppTableColumn>
 
                 <template #empty>
-                    Tarih Detayı Bulunamadı
+                    Henüz veri yok
                 </template>
             </AppTable>
     </AdminLayout>
 
-    <FinanceImportReportModal v-if="isImportModalOn" v-model="isImportModalOn"></FinanceImportReportModal>
+    <FinanceImportReportModal v-if="isImportModalOn" v-model="isImportModalOn" ></FinanceImportReportModal>
 
 
 </template>

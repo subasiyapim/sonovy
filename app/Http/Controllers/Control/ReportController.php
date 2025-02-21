@@ -272,9 +272,15 @@ class ReportController extends Controller
 
     public function uploadFile(Request $request)
     {
-        abort_if(Gate::denies('report_upload'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+
+        ini_set('memory_limit', '512M');
+        ini_set('upload_max_filesize', '200M');
+        ini_set('post_max_size', '200M');
+        ini_set('max_execution_time', '300');
+        // abort_if(Gate::denies('report_upload'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $request->validate([
-            'file' => ['required', 'file', 'mimes:xlsx,xls'],
+            'file' => ['required', 'file'],
             'platform_id' => ['required', 'integer', 'exists:platforms,id'],
             'name' => ['required', 'string'],
             'report_date' => ['required', 'date'],

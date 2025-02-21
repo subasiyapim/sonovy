@@ -124,7 +124,7 @@ const handleFiles = (files) => {
       images.push({ file, url, type: 'pdf' });
       simulateUpload(file);
     }
-    else if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type === 'application/vnd.ms-excel') {
+    else if (file.type == "text/csv" || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type === 'application/vnd.ms-excel') {
       const reader = new FileReader();
       reader.onload = (e) => {
         images.push({ file, url: '', type: 'excel' });
@@ -132,6 +132,8 @@ const handleFiles = (files) => {
       };
       reader.readAsArrayBuffer(file);
     }
+    console.log("TYPEE",file.type);
+
   });
 };
 

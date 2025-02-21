@@ -121,10 +121,11 @@ const onSubmit = async (e) => {
             ...form.value
         })
 
+        toast.success("işlem başarlı");
 
-        emits('done',response.notification.account);
+
         isDialogOn.value = false;
-        adding.value = true;
+        adding.value = false;
 
 
     } catch (error) {
@@ -132,7 +133,7 @@ const onSubmit = async (e) => {
              toast.error(error.response.data.message);
         }
 
-       adding.value = true;
+       adding.value = false;
 
     // error.response
 
