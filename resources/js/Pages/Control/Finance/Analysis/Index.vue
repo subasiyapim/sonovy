@@ -274,8 +274,22 @@ const removeDateFilter = async () => {
 // Tarih işlemleri için yardımcı fonksiyon
 const formatMonthYear = (date) => {
     if (!date) return null;
-    return moment(date).format('M-YYYY');
+
+    const maxMonths = 40;
+    const currentDate = moment();
+    const inputDate = moment(date);
+
+    // Calculate the difference in months
+    const diffInMonths = currentDate.diff(inputDate, 'months');
+
+    // If the difference is more than 40 months, set it to 40 months ago
+    if (diffInMonths > maxMonths) {
+        inputDate.add(diffInMonths - maxMonths, 'months');
+    }
+
+    return inputDate.format('M-YYYY');
 };
+
 
 const onDateChoosen = async (e) => {
     console.log("EEEE",e);
