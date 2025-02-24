@@ -280,7 +280,12 @@ const insertData = (e) => {
   chooseValue(e);
   instance.update();
 }
+const handleScroll = () => {
 
+  if (isOpen.value) {
+    adjustDropdownDirection();
+  }
+};
 // Add event listener for window resize on mounted, and remove on unmounted
 onMounted(() => {
 
@@ -291,6 +296,33 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 })
+
+
+const observer = ref(null);
+
+onMounted(() => {
+  observer.value = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        adjustDropdownDirection();
+      }
+    },
+    { threshold: 1.0 }
+  );
+
+  if (selectContainer.value) {
+    observer.value.observe(selectContainer.value);
+  }
+
+  window.addEventListener("scroll", handleScroll, true);
+});
+
+onBeforeUnmount(() => {
+  if (observer.value && selectContainer.value) {
+    observer.value.unobserve(selectContainer.value);
+  }
+  window.removeEventListener("scroll", handleScroll, true);
+});
 defineExpose({
   insertData,
 })

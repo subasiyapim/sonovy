@@ -482,4 +482,9 @@ class ReportController extends Controller
         $platforms = Platform::all();
         return inertia('Control/Finance/Imports/index', compact('user', 'platforms'));
     }
+
+    public function participantReports(Request $request)
+    {
+        return inertia('Control/Finance/Imports/participants');
+    }
 }

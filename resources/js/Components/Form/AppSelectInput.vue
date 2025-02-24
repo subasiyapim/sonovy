@@ -121,11 +121,16 @@ const open = async () => {
 
   }
     // Attach scroll event listener when dropdown opens
-  if (dropdownWrapper.value) {
-    dropdownWrapper.value.addEventListener("scroll", handleScroll);
-  }
-}
+    window.addEventListener("scroll", handleScroll, true);
 
+
+}
+const handleScroll = () => {
+
+  if (isOpen.value) {
+    adjustDropdownDirection();
+  }
+};
 
 const remoteDatas = ref(null)
 // const getFilteredData = computed(() => {
@@ -181,6 +186,7 @@ const handleClickOutside = (e) => {
   } else {
     if (isOpen.value) {
       isOpen.value = false;
+      window.removeEventListener("scroll", handleScroll, true);
     }
   }
 }
@@ -256,6 +262,34 @@ const insertData = (e) => {
     chooseValue(e);
     instance.update();
 }
+
+
+const observer = ref(null);
+
+onMounted(() => {
+  observer.value = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        adjustDropdownDirection();
+      }
+    },
+    { threshold: 1.0 }
+  );
+
+  if (selectContainer.value) {
+    observer.value.observe(selectContainer.value);
+  }
+
+  window.addEventListener("scroll", handleScroll, true);
+});
+
+onBeforeUnmount(() => {
+  if (observer.value && selectContainer.value) {
+    observer.value.unobserve(selectContainer.value);
+  }
+  window.removeEventListener("scroll", handleScroll, true);
+});
+
 defineExpose({
   insertData,
   appendOptions
