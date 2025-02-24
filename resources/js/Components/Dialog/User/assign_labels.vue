@@ -105,7 +105,7 @@ const props = defineProps({
 })
 const defaultStore = useDefaultStore();
 const crudStore = useCrudStore();
-const loading = ref(false)
+const loading = ref(true)
 const form = useForm({
   id: "",
   name: '',
@@ -171,6 +171,16 @@ const submit = async () => {
     toast(response['message'] ?? 'İşlem Başarılı');
 
 }
+onMounted( async() => {
+
+    labels.value = await crudStore.get(route('control.search.labels'),{
+        search:"*"
+    })
+    console.log("GELDİİİ");
+
+    loading.value = false
+
+});
 </script>
 
 <style scoped>

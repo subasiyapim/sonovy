@@ -200,14 +200,15 @@ class LabelController extends Controller
 
     public function search(Request $request)
     {
-        $request->validate([
-            'search' => 'required|string|max:255'
-        ]);
+
 
 
         $search = $request->input('search');
-
-        $labels = LabelServices::search($search);
+        if ($search == "*") {
+            $labels = Label::with('user')->get();
+        } else {
+            $labels = LabelServices::search($search);
+        }
 
         return response()->json($labels, Response::HTTP_OK);
     }
