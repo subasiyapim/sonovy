@@ -597,6 +597,7 @@ return [
             'header' => 'İçe Aktarılan Raporlar',
             'fields' => [
                 'reports_name' => "Rapor Adı",
+                'report_language' => "Rapor Dili",
                 'platform_id' => "Platform Seçimi",
                 'reports_date' => "Rapor Tarihi",
             ],

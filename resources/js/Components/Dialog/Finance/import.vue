@@ -32,6 +32,7 @@
             </template>
         </FormElement>
         <FormElement label-width="190px" direction="vertical" v-model="form.name" :label="__('control.finance.imports.fields.reports_name')" placeholder="Lütfen giriniz"></FormElement>
+        <FormElement type="radio" label-width="190px" :config="languageRadio" direction="vertical" v-model="form.report_language" :label="__('control.finance.imports.fields.report_language')"></FormElement>
             <div class="flex flex-col mb-4">
                 <span class="label-sm c-strong-950 mb-0">Rapor Tarihi</span>
                 <VueDatePicker hide-input-icon v-model="form.report_date" class="!rounded-sm h-8" auto-apply :enable-time-picker="false" placeholder="Tarih Giriniz">
@@ -96,7 +97,8 @@ const form = ref({
     name:null,
     file:null,
     platform_id:null,
-    report_date:null
+    report_date:null,
+    report_language:'tr'
 });
 
 const platformConfig = computed(() => {
@@ -112,6 +114,22 @@ const onChange = (e) => {
 
     imageUploadFile.value.showImage = true;
 }
+
+const languageRadio = computed(() => {
+  return {
+    optionDirection: 'vertical',
+    options: [
+        {
+            "label" : "Türkçe",
+            "value" : "tr"
+        },
+         {
+            "label" : "İngilizce",
+            "value" : "en"
+        },
+    ]
+  }
+});
 const onSubmit = async (e) => {
     adding.value = true;
     try {
