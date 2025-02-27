@@ -21,6 +21,7 @@ use App\Models\EarningReport;
 use App\Models\EarningReportFile;
 use App\Imports\EarningImport;
 use App\Enums\EarningReportFileStatusEnum;
+use App\Exports\ReportExport;
 use App\Services\MediaServices;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -612,14 +613,72 @@ class ReportController extends Controller
                     'total_earning' => number_format($earning->total_earning, 2, ',', '.').' $',
                     'earning' => number_format($earning->user_earning, 2, ',', '.').' $',
                     'participant_earning' => number_format($earning->service_provider_earning, 2, ',', '.').' $',
-                    'participant_rate' => number_format((1 - $earning->client_share_rate) * 100, 0).'%'
+                    'participant_rate' => number_format((1 - $earning->client_share_rate) * 100, 0).'%',
+                    'platform_id' => $earning->platform_id
                 ];
             });
-
-        //dd($earnings);
 
         return inertia('Control/Finance/Imports/participants', [
             'earnings' => $earnings
         ]);
+    }
+
+    public function exportParticipantReports(Request $request)
+    {
+        $request->validate([
+            'platform_id' => ['required', 'exists:platforms,id'],
+            'user_id' => ['required', 'exists:users,id'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:start_date']
+        ]);
+
+        $query = Earning::query()
+            ->select(
+                'report_date',
+                'sales_date',
+                'platform',
+                'country',
+                'label_name',
+                'artist_name',
+                'release_name',
+                'song_name',
+                'upc_code',
+                'isrc_code',
+                'catalog_number',
+                'release_type',
+                'sales_type',
+                'quantity',
+                'currency',
+                'earning',
+                'client_share_rate'
+            )
+            ->where('user_id', $request->user_id)
+            ->where('platform_id', $request->platform_id);
+
+        if ($request->filled('start_date')) {
+            $query->where('report_date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->where('report_date', '<=', $request->end_date);
+        }
+
+        $earnings = $query->get();
+        $platform = Platform::find($request->platform_id);
+        $user = User::findOrFail($request->user_id);
+
+        // Yeni bir rapor oluştur
+        $report = Report::create([
+            'name' => $user->name . ' - ' . $platform->name . ' Kazanç Raporu',
+            'user_id' => $request->user_id,
+            'period' => Carbon::now()->format('Y-m'),
+            'status' => 0,
+            'report_type' => 'participant_earnings'
+        ]);
+
+        $period = Carbon::now()->format('Y-m-d_H-i-s');
+        $reportExport = new ReportExport($earnings, $period, $report);
+
+        return Excel::download($reportExport, "{$user->name}_{$platform->name}_participant_earnings_{$period}.xlsx");
     }
 }
