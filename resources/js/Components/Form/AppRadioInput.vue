@@ -1,7 +1,7 @@
 <template>
 
 
-    <div class="w-full flex  items-start justify-center radius-8 c-white-500 p-3  gap-3 appRadioInput" :class="config?.optionDirection == 'vertical' ? 'flex-col' : 'flex-row'" >
+    <div class="w-full flex  items-start  radius-8 c-white-500   gap-3 appRadioInput" :class="config?.optionDirection == 'vertical' ? 'flex-col justify-center  px-1' : 'flex-row justify-start px-1'" >
         <div v-for="option in config?.options" @click="onClick(option)" class="cursor-pointer paragraph-sm c-strong-950 flex items-center gap-3" >
             <input type="radio" :checked="element == option.value" class="focus:ring-0">
             {{option.label}}

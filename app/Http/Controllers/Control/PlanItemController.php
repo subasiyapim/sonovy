@@ -21,7 +21,7 @@ class PlanItemController extends Controller
         abort_if(Gate::denies('plan_item_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $planItems = PlanItem::advancedFilter();
 
-        return inertia('Control/Plans/PlanItems/Index', compact('planItems'));
+        return inertia('Control/Management/PlanItems/index', compact('planItems'));
     }
 
 
@@ -56,7 +56,8 @@ class PlanItemController extends Controller
 
         return redirect()->back()->with([
             'notification' => [
-                'type' => 'success', 'message' => 'Plan item updated successfully'
+                'type' => 'success',
+                'message' => 'Plan item updated successfully'
             ]
         ]);
     }
@@ -70,7 +71,8 @@ class PlanItemController extends Controller
 
         return redirect()->back()->with([
             'notification' => [
-                'type' => 'success', 'message' => 'Plan item deleted successfully'
+                'type' => 'success',
+                'message' => 'Plan item deleted successfully'
             ]
         ]);
     }

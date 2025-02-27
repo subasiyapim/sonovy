@@ -36,6 +36,7 @@
             <p >{{ buttonLabel ?? 'Ekle' }}</p>
           </PrimaryButton>
         </div>
+        <slot name="toolbar" />
       </div>
     </div>
   </div>

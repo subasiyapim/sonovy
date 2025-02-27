@@ -1,6 +1,6 @@
 <script setup>
 
-import {ref, onMounted, onUnmounted} from 'vue';
+import {ref, onMounted, onUnmounted,computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {PrimaryButton} from '@/Components/Buttons'
 import {UploadIcon,DownloadIcon} from '@/Components/Icons'
@@ -10,12 +10,18 @@ import {FinanceImportReportModal} from '@/Components/Dialog';
 const props = defineProps({
     earningReports:{}
 });
+const emits = defineEmits(['updated']);
 const isImportModalOn = ref(false);
-const data = ref([]);
+const data = computed({
+    get:() => props.earningReports,
+    set:(vale) => emits('updated'),
+});
+
+// const data = ref([]);
 </script>
 
 <template>
-    <AdminLayout :showGoBack="false" :showDatePicker="false" :title="__('control.finance.imports.header')" parentTitle="Finans">
+    <AdminLayout :showGoBack="false"  :showDatePicker="false" :title="__('control.finance.imports.header')" parentTitle="Finans">
         <template #toolbar>
             <PrimaryButton @click="isImportModalOn = true" >
                 <template #icon>
@@ -26,8 +32,7 @@ const data = ref([]);
         </template>
 
 
-
-        <AppTable  v-model="earningReports"  :isClient="true" :hasSearch="false" :showAddButton="false">
+        <AppTable  v-model="data.data" :isClient="true"  :hasSearch="false" :showAddButton="false">
                 <AppTableColumn label="Platform">
                     <template #default="scope">
                           <p class="paragraph-xs c-strong-950">
@@ -56,7 +61,9 @@ const data = ref([]);
 
                 <AppTableColumn label="Hatalar">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950"></p>
+                        <p class="paragraph-xs c-strong-950">
+                            {{scope.row.errors}}
+                        </p>
                     </template>
                 </AppTableColumn>
                 <AppTableColumn label="Ücret">
