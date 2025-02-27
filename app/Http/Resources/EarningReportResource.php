@@ -19,7 +19,7 @@ class EarningReportResource extends JsonResource
             'platform' => $this->platform,
             'report_date' => $this->report_date,
             'report_name' => $this->reportFile->name,
-            'errors' => $this->errors,
+            'errors' => $this->reportFile->errors,
             'total' => $this->sum('net_revenue'),
             'file_size' => $this->file_size,
             'created_at' => $this->created_at,
