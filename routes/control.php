@@ -111,6 +111,7 @@ Route::group(
                 Route::get('/download/{report}', [ReportController::class, 'download'])->name('download');
                 Route::delete('/{report}', [ReportController::class, 'destroy'])->name('destroy');
                 Route::get('/{report}', [ReportController::class, 'show'])->name('show');
+                Route::get('/export/participant-reports', [ReportController::class, 'exportParticipantReports'])->name('export.participant-reports');
 
                 // Yeni rotalar
                 Route::get('/filter/by-platform/{platform}', [ReportController::class, 'filterByPlatform'])
