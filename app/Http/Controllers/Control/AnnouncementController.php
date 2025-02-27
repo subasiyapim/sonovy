@@ -25,8 +25,7 @@ class  AnnouncementController extends Controller
 
         $announcements = Announcement::advancedFilter();
 
-        return inertia('Control/Announcements/Index', compact('announcements'));
-
+        return inertia('Control/Management/Announcements/index', compact('announcements'));
     }
 
     public function create()
@@ -36,8 +35,10 @@ class  AnnouncementController extends Controller
         $announcement_types = AnnouncementTypeEnum::getKeyTitleArray();
         $announcement_receivers = AnnouncementReceiversEnum::getKeyTitleArray();
 
-        return inertia('Control/Announcements/Create',
-            compact('announcement_types', 'announcement_receivers'));
+        return inertia(
+            'Control/Announcements/Create',
+            compact('announcement_types', 'announcement_receivers')
+        );
     }
 
     public function store(AnnouncementStoreRequest $request): \Illuminate\Http\RedirectResponse
@@ -78,7 +79,6 @@ class  AnnouncementController extends Controller
                 ->where('announcement_id', $announcement->id)
                 ->pluck('user_id')->toArray();
             $selected = User::whereIn('id', $users)->get(['id', 'name', 'email']);
-
         } elseif ($announcement->receivers == AnnouncementReceiversEnum::ALL_BUT->value) {
 
             $users = DB::table('announcement_user')
@@ -87,8 +87,13 @@ class  AnnouncementController extends Controller
             $exceptions = User::whereNotIn('id', $users);
         }
 
-        return inertia('Control/Announcements/Edit', compact('announcement',
-            'announcement_types', 'announcement_receivers', 'selected', 'exceptions'));
+        return inertia('Control/Announcements/Edit', compact(
+            'announcement',
+            'announcement_types',
+            'announcement_receivers',
+            'selected',
+            'exceptions'
+        ));
     }
 
     public function update(AnnouncementUpdateRequest $request, Announcement $announcement)

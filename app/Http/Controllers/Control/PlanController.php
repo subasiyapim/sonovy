@@ -26,7 +26,7 @@ class PlanController extends Controller
 
         $plan_items = PlanItem::all();
 
-        return inertia('Control/Plans/Index', compact('plans', 'plan_items'));
+        return inertia('Control/Management/Plans/index', compact('plans', 'plan_items'));
     }
 
     /**

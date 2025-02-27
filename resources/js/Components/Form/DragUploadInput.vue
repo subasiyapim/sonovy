@@ -50,7 +50,7 @@
       <input
         ref="fileInput"
         type="file"
-        accept="image/*"
+        :accept="accept"
         multiple
         @change="handleFileInput"
         hidden
@@ -77,6 +77,9 @@ const props = defineProps({
     image:{},
     uploadType:{
         default:'image'
+    },
+    accept:{
+        default:'image/*'
     }
 })
 const fileInput = ref(null);
@@ -124,7 +127,7 @@ const handleFiles = (files) => {
       images.push({ file, url, type: 'pdf' });
       simulateUpload(file);
     }
-    else if (file.type == "text/csv" || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type === 'application/vnd.ms-excel') {
+    else if (file.type == "text/csv" || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type === 'application/vnd.ms-excel' || file.type==="application/x-iwork-numbers-sffnumbers") {
       const reader = new FileReader();
       reader.onload = (e) => {
         images.push({ file, url: '', type: 'excel' });

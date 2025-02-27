@@ -62,7 +62,16 @@
         <MenuItem title="Kullanıcı Yönetimi" :icon="PersonSettingsIcon"
                   :path="route('control.user-management.users.index')"/>
         <MenuItem title="CMS" :icon="CmsIcon"/>
-        <MenuItem title="Yönetici Ayarları" :icon="SettingsIcon"/>
+
+        <MenuItem title="Yönetici Ayarları" wrapper="management" :icon="SettingsIcon">
+          <template #sub>
+            <sub-menu-item :path="'control.management.announcements.index'">Duyurular</sub-menu-item>
+            <sub-menu-item >E-posta Yönetimi</sub-menu-item>
+            <sub-menu-item >Kurulum</sub-menu-item>
+            <sub-menu-item >Ödeme Yönetimi</sub-menu-item>
+            <sub-menu-item :path="'control.management.planItems.index'">Plan Yönetimi</sub-menu-item>
+            </template>
+        </MenuItem>
         <MenuItem title="Destek Merkezi" :icon="SupportCenterIcon"/>
       </div>
 

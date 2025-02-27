@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Control\AnnouncementController;
 use App\Http\Controllers\Control\DashboardController;
 use App\Http\Controllers\Control\ArtistController;
 use App\Http\Controllers\Control\ArtistBranchController;
@@ -17,6 +18,8 @@ use App\Http\Controllers\Control\SongController;
 use App\Http\Controllers\Control\PaymentController;
 use App\Http\Controllers\Control\StatisticController;
 use App\Http\Controllers\Control\FinanceAnalysisController;
+use App\Http\Controllers\Control\PlanController;
+use App\Http\Controllers\Control\PlanItemController;
 
 Route::group(
     [
@@ -137,6 +140,15 @@ Route::group(
         Route::group(['prefix' => 'bank', 'as' => 'bank.'], function () {
             Route::post('account', [BankController::class, 'store'])->name('account.store');
             Route::put('account/{bankAccount}', [BankController::class, 'update'])->name('account.update');
+        });
+
+        Route::group(['prefix' => 'management', 'as' => 'management.'], function () {
+            Route::group(['prefix' => 'announcement', 'as' => 'announcements.'], function () {
+                Route::get('/', [AnnouncementController::class, 'index'])->name('index');
+            });
+            Route::group(['prefix' => 'plan-items', 'as' => 'planItems.'], function () {
+                Route::get('/', [PlanItemController::class, 'index'])->name('index');
+            });
         });
 
         //Statistics Routes

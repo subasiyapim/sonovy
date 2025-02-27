@@ -39,7 +39,7 @@
 
                 </VueDatePicker>
             </div>
-          <DragUploadInput uploadType="file" ref="imageUploadFile"  @change="onChange" label="Choose a file or drag & drop it here."
+          <DragUploadInput uploadType="file" ref="imageUploadFile" :accept="'.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'"  @change="onChange" label="Choose a file or drag & drop it here."
                    note="csv, xlsx "></DragUploadInput>
 
     </div>
