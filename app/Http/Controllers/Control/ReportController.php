@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Report\ReportStoreRequest;
 use App\Http\Resources\Report\ReportResource;
 use App\Jobs\AutomaticIncomeReportJob;
+use App\Jobs\ProcessEarningReportJob;
 use App\Jobs\RequestedIncomeReportJob;
 use App\Models\Artist;
 use App\Models\Label;
@@ -14,10 +15,12 @@ use App\Models\Song;
 use App\Models\Product;
 use App\Models\Report;
 use App\Models\System\Country;
-use App\Models\User;
 use App\Services\CountryServices;
-use App\Services\EarningService;
 use App\Models\EarningReport;
+use App\Models\EarningReportFile;
+use App\Imports\EarningImport;
+use App\Enums\EarningReportFileStatusEnum;
+use App\Services\MediaServices;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,17 +30,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Inertia\ResponseFactory;
+use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipArchive;
 use App\Jobs\CreateDemoEarningsJob;
-use App\Models\EarningReportFile;
-use App\Jobs\ProcessEarningReportJob;
-use App\Imports\EarningImport;
-use App\Jobs\EarningJob;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Models\User;
+use App\Http\Resources\EarningReportResource;
 
 class ReportController extends Controller
 {
@@ -46,7 +48,7 @@ class ReportController extends Controller
      */
     public function index(Request $request): \Inertia\Response|ResponseFactory
     {
-        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $request->validate([
             'slug' => ['nullable', 'string', 'in:auto-reports,demanded-reports'],
@@ -124,7 +126,6 @@ class ReportController extends Controller
     }
 
 
-
     /**
      * Store a newly created resource in storage.
      */
@@ -169,7 +170,7 @@ class ReportController extends Controller
             return $this->handleMultipleReports($report);
         }
 
-        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
+        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
         if ($media) {
             return $this->streamMediaFile($media);
         }
@@ -198,16 +199,16 @@ class ReportController extends Controller
     private function getZipFilePath(Report $report): string
     {
         return storage_path(
-            'app/public/tenant_' . tenant('domain') . '_income_reports/multiple_reports/' .
-                $report->user_id . '/' . Str::slug($report->period) . '-' . Str::slug($report->name) . '.zip'
+            'app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.
+            $report->user_id.'/'.Str::slug($report->period).'-'.Str::slug($report->name).'.zip'
         );
     }
 
     private function getReportFiles(Report $report): array
     {
         return Storage::disk('public')->allFiles(
-            'tenant_' . tenant('domain') . '_income_reports/multiple_reports/' .
-                $report->user_id . '/' . Str::slug($report->period) . '/' . $report->id
+            'tenant_'.tenant('domain').'_income_reports/multiple_reports/'.
+            $report->user_id.'/'.Str::slug($report->period).'/'.$report->id
         );
     }
 
@@ -233,12 +234,12 @@ class ReportController extends Controller
             DB::beginTransaction();
 
             // Önce medya dosyalarını sil
-            $report->clearMediaCollection('tenant_' . tenant('domain') . '_income_reports');
+            $report->clearMediaCollection('tenant_'.tenant('domain').'_income_reports');
 
             // Child raporları bul ve medya dosyalarını sil
             $childReports = $report->child()->get();
             foreach ($childReports as $childReport) {
-                $childReport->clearMediaCollection('tenant_' . tenant('domain') . '_income_reports');
+                $childReport->clearMediaCollection('tenant_'.tenant('domain').'_income_reports');
                 $childReport->delete();
             }
 
@@ -250,7 +251,7 @@ class ReportController extends Controller
             return redirect()->back()->with('success', 'Rapor ve ilişkili tüm veriler başarıyla silindi.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Rapor silinirken bir hata oluştu: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Rapor silinirken bir hata oluştu: '.$e->getMessage());
         }
     }
 
@@ -265,41 +266,148 @@ class ReportController extends Controller
 
     public function uploadFile(Request $request)
     {
+        //abort_if(Gate::denies('report_upload'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-
-        ini_set('memory_limit', '512M');
-        ini_set('upload_max_filesize', '200M');
-        ini_set('post_max_size', '200M');
-        ini_set('max_execution_time', '300');
-        // abort_if(Gate::denies('report_upload'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $request->validate([
-            'file' => ['required', 'file'],
+            'file' => [
+                'required',
+                'file',
+                'max:51200', // 50MB limit
+                function ($attribute, $value, $fail) {
+                    $extension = strtolower($value->getClientOriginalExtension());
+                    $mimeType = $value->getMimeType();
+
+                    $validExtensions = ['xlsx', 'xls', 'csv'];
+                    $validMimeTypes = [
+                        'application/vnd.ms-excel',
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'text/csv',
+                        'text/plain',
+                        'application/csv',
+                        'text/comma-separated-values'
+                    ];
+
+                    if (!in_array($extension, $validExtensions) || !in_array($mimeType, $validMimeTypes)) {
+                        $fail('Dosya biçimi xlsx, xls veya csv olmalıdır.');
+                    }
+                }
+            ],
             'platform_id' => ['required', 'integer', 'exists:platforms,id'],
             'name' => ['required', 'string'],
             'report_date' => ['required', 'date'],
+            'report_language' => ['required', 'string', 'in:en,tr']
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Excel dosyasını import et ve raporları oluştur
-            // EarningImport sınıfı doğrudan EarningReport kayıtlarını oluşturacak
-            Excel::import(new EarningImport(), $request->file('file'));
-
-            // Kazanç hesaplama işini kuyruğa ekle
-            EarningJob::dispatch();
-
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Rapor başarıyla yüklendi ve işleme alındı.'
+            // Rapor dosyasını kaydet
+            $reportFile = EarningReportFile::create([
+                'user_id' => Auth::id(),
+                'name' => $request->name,
+                'is_processed' => false,
+                'report_language' => $request->report_language,
+                'status' => EarningReportFileStatusEnum::PENDING,
+                'total_rows' => 0,
+                'processed_rows' => 0,
+                'error_rows' => 0,
+                'errors' => []
             ]);
+
+            Log::info('Rapor dosyası oluşturuldu', [
+                'report_file_id' => $reportFile->id,
+                'user_id' => Auth::id(),
+                'name' => $request->name,
+                'language' => $request->report_language
+            ]);
+
+            // Excel import işlemini başlat
+            $isEnglishFormat = $request->report_language === 'en';
+
+            // Medya koleksiyonu için disk adını belirle ve disk mevcutsa işlemi gerçekleştir
+            $disk = 'earning_report_files';
+
+            $file = $request->file('file');
+
+            if (!$file || !$file->isValid()) {
+                return response()->json(['error' => 'Dosya yüklenirken hata oluştu'], 400);
+            }
+
+            // Dosyayı geçici bir konuma kaydet
+            $tempPath = $file->storeAs('temp', $file->getClientOriginalName(), 'local');
+            $fullPath = Storage::disk('local')->path($tempPath);
+
+            try {
+                // Excel import işlemini queue ile gerçekleştir
+                Excel::import(
+                    new EarningImport(
+                        $isEnglishFormat,
+                        $reportFile->id,
+                        $request->report_date,
+                        $fullPath
+                    ),
+                    Storage::disk('local')->path($tempPath)
+                );
+
+                // MediaServices ile dosyayı kaydet
+                MediaServices::upload($reportFile, $file, $disk, $disk);
+
+                // Geçici dosyayı temizle
+                Storage::disk('local')->delete($tempPath);
+
+                DB::commit();
+
+                return response()->json([
+                    'message' => 'Rapor başarıyla yüklendi ve işleme alındı. Büyük dosyalar için işlem biraz zaman alabilir.',
+                    'report_file' => $reportFile
+                ]);
+            } catch (\Exception $e) {
+                // Hata durumunda geçici dosyayı temizle
+                Storage::disk('local')->delete($tempPath);
+                throw $e;
+            }
+
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Rapor yükleme hatası: '.$e->getMessage(), [
+                'user_id' => Auth::id(),
+                'file_name' => $request->file('file')->getClientOriginalName(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return response()->json([
-                'message' => 'Rapor yüklenirken bir hata oluştu: ' . $e->getMessage()
+                'message' => 'Rapor yüklenirken bir hata oluştu: '.$e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Dosya formatını tespit et (İngilizce/Türkçe)
+     */
+    private function detectFileFormat($file)
+    {
+        // İlk satırı oku
+        $firstRow = Excel::toArray([], $file)[0][0] ?? [];
+
+        // İngilizce başlıkları kontrol et
+        $englishHeaders = [
+            'reporting_month',
+            'sales_month',
+            'platform',
+            'country_region',
+            'label_name',
+            'artist_name',
+            'release_title',
+            'track_title'
+        ];
+
+        // Başlıkları normalize et ve karşılaştır
+        $normalizedHeaders = array_map(fn($header) => Str::slug($header, '_'), array_keys($firstRow));
+
+        // En az 3 İngilizce başlık eşleşiyorsa İngilizce format olarak kabul et
+        $matchCount = count(array_intersect($englishHeaders, $normalizedHeaders));
+
+        return $matchCount >= 3;
     }
 
     /**
@@ -383,12 +491,12 @@ class ReportController extends Controller
             ->get();
 
         $zip = new ZipArchive;
-        $fileName = 'reports-' . now()->format('Y-m-d-H-i-s') . '.zip';
-        $zipPath = storage_path('app/temp/' . $fileName);
+        $fileName = 'reports-'.now()->format('Y-m-d-H-i-s').'.zip';
+        $zipPath = storage_path('app/temp/'.$fileName);
 
         if ($zip->open($zipPath, ZipArchive::CREATE) === true) {
             foreach ($reports as $report) {
-                $reportName = Str::slug($report->period) . '-' . Str::slug($report->name) . '.xlsx';
+                $reportName = Str::slug($report->period).'-'.Str::slug($report->name).'.xlsx';
                 // Excel dosyasını oluştur ve zip'e ekle
                 // Bu kısım Excel export işlemini içerecek
             }
@@ -429,7 +537,7 @@ class ReportController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'message' => 'Raporlar silinirken bir hata oluştu: ' . $e->getMessage()
+                'message' => 'Raporlar silinirken bir hata oluştu: '.$e->getMessage()
             ], 500);
         }
     }
@@ -473,14 +581,15 @@ class ReportController extends Controller
         // return Excel::download(new ReportsExport($reports), 'reports-summary.xlsx');
     }
 
-    public function reportFiles(Request $request)
+    public function reportFiles()
     {
-        $user = Auth::user();
-
-        $user->load('earningReports');
-
+        $earningReports = EarningReport::with('reportFile')->advancedFilter();
         $platforms = Platform::all();
-        return inertia('Control/Finance/Imports/index', compact('user', 'platforms'));
+
+        $earningReports = EarningReportResource::collection($earningReports)->response()->getData();
+        $statuses = enumToSelectInputFormat(EarningReportFileStatusEnum::getTitles());
+
+        return inertia('Control/Finance/Imports/index', compact('earningReports', 'platforms', 'statuses'));
     }
 
     public function participantReports(Request $request)

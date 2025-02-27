@@ -39,6 +39,7 @@ class Earning extends Model
         'upc_code',
         'isrc_code',
         'catalog_number',
+        'streaming_type',
         'streaming_subscription_type',
         'release_type',
         'sales_type',
@@ -49,7 +50,8 @@ class Earning extends Model
         'mechanical_fee',
         'gross_revenue',
         'client_share_rate',
-        'earning',
+        'client_share',
+        'earning'
     ];
 
     protected array $filterable = [

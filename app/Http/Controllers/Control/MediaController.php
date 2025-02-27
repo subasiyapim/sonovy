@@ -44,14 +44,14 @@ class MediaController extends Controller
     public function mediaUpload(Request $request, $model, $id): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'file' => 'required|file|mimes:jpeg,png,jpg|max:4086|dimensions:min_width=100,min_height=100|dimensions:max_width=3000,max_height=3000|dimensions:ratio=1/1',
+            'file' => 'required|file|mimes:jpeg|max:4086|dimensions:min_width=1440,min_height=1440|dimensions:max_width=3000,max_height=3000|dimensions:ratio=1/1',
         ]);
 
         //validation messages
         $validator->setAttributeNames(
             [
                 'file' => 'Resim',
-                
+
             ]
         );
         if ($validator->fails()) {

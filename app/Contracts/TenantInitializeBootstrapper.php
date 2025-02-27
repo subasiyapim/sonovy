@@ -17,6 +17,7 @@ class TenantInitializeBootstrapper implements TenancyBootstrapper
             'labels',
             'earning_reports',
             'income_reports',
+            'earning_report_files'
         ];
 
         foreach ($publicDisks as $publicDisk) {
@@ -33,7 +34,6 @@ class TenantInitializeBootstrapper implements TenancyBootstrapper
 
     public function revert()
     {
-        Log::info('TenantInitializeBootstrapper revert called');
-
+        //Log::info('TenantInitializeBootstrapper revert called');
     }
 }

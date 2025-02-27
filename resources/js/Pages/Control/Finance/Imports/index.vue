@@ -8,7 +8,7 @@ import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 import {FinanceImportReportModal} from '@/Components/Dialog';
 const props = defineProps({
-    user:{}
+    earningReports:{}
 });
 const isImportModalOn = ref(false);
 const data = ref([]);
@@ -27,7 +27,7 @@ const data = ref([]);
 
 
 
-        <AppTable  v-model="user.earning_reports"  :isClient="true" :hasSearch="false" :showAddButton="false">
+        <AppTable  v-model="earningReports"  :isClient="true" :hasSearch="false" :showAddButton="false">
                 <AppTableColumn label="Platform">
                     <template #default="scope">
                           <p class="paragraph-xs c-strong-950">
