@@ -22,8 +22,6 @@ use App\Models\System\Tenant;
 class MonthlyIncomeJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    use TenantAwareCommand;
-    use HasATenantsOption;
 
     private const MONTHS_IN_YEAR = 12;
 
