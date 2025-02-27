@@ -9,6 +9,7 @@ use App\Jobs\AutomaticIncomeReportJob;
 use App\Jobs\ProcessEarningReportJob;
 use App\Jobs\RequestedIncomeReportJob;
 use App\Models\Artist;
+use App\Models\Earning;
 use App\Models\Label;
 use App\Models\Platform;
 use App\Models\Song;
@@ -40,6 +41,7 @@ use ZipArchive;
 use App\Jobs\CreateDemoEarningsJob;
 use App\Models\User;
 use App\Http\Resources\EarningReportResource;
+use Illuminate\Support\Facades\Artisan;
 
 class ReportController extends Controller
 {
@@ -56,7 +58,7 @@ class ReportController extends Controller
         ]);
 
         if ($request->boolean('demo')) {
-            CreateDemoEarningsJob::dispatch();
+            Artisan::call('demo:create-earnings');
         }
 
         $isAutoReport = true;
@@ -594,6 +596,30 @@ class ReportController extends Controller
 
     public function participantReports(Request $request)
     {
-        return inertia('Control/Finance/Imports/participants');
+        $earnings = Earning::query()
+            ->select(
+                'platform_id',
+                'platform',
+                DB::raw('SUM(earning) as total_earning'),
+                DB::raw('SUM(earning * client_share_rate) as user_earning'),
+                DB::raw('SUM(earning * (1 - client_share_rate)) as service_provider_earning')
+            )
+            ->groupBy('platform_id', 'platform')
+            ->get()
+            ->map(function ($earning) {
+                return [
+                    'platform' => $earning->platform,
+                    'total_earning' => number_format($earning->total_earning, 2, ',', '.').' $',
+                    'earning' => number_format($earning->user_earning, 2, ',', '.').' $',
+                    'participant_earning' => number_format($earning->service_provider_earning, 2, ',', '.').' $',
+                    'participant_rate' => number_format((1 - $earning->client_share_rate) * 100, 0).'%'
+                ];
+            });
+
+        //dd($earnings);
+
+        return inertia('Control/Finance/Imports/participants', [
+            'earnings' => $earnings
+        ]);
     }
 }

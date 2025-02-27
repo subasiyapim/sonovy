@@ -98,7 +98,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
             }
 
             if (!file_exists($filePath)) {
-                throw new \Exception('Excel dosyası bulunamadı: ' . $filePath);
+                throw new \Exception('Excel dosyası bulunamadı: '.$filePath);
             }
 
             $this->reportLanguage = $reportLanguage;
@@ -147,7 +147,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                         $reader->setSheetIndex(0);
                         break;
                     default:
-                        throw new \Exception('Desteklenmeyen dosya formatı: ' . $extension);
+                        throw new \Exception('Desteklenmeyen dosya formatı: '.$extension);
                 }
 
                 $reader->setReadDataOnly(true);
@@ -192,7 +192,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                     'file_size' => filesize($this->filePath),
                     'file_extension' => $extension ?? 'unknown'
                 ]);
-                throw new \Exception('Excel dosyası okunamadı: ' . $e->getMessage());
+                throw new \Exception('Excel dosyası okunamadı: '.$e->getMessage());
             }
 
             // Mevcut dosya bilgilerini al
@@ -387,7 +387,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                     'period' => $this->reportDate->format('Y-m-d'),
                     'report_type' => 'earning',
                     'file_size' => $this->file?->getSize() ?? 0,
-                    'status' => EarningReportFileStatusEnum::PROCESSING->value,
+                    'status' => EarningReportFileStatusEnum::PENDING->value,
                     'processed_at' => now(),
                     'report_date' => $this->reportDate,
                     'reporting_month' => $this->reportDate->format('Y-m'),
@@ -488,7 +488,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                     'data' => $normalizedData,
                     'row_number' => $row->getIndex() + 2
                 ]);
-                $this->addError('İşlem hatası: ' . $e->getMessage(), $normalizedData);
+                $this->addError('İşlem hatası: '.$e->getMessage(), $normalizedData);
             }
 
             // Her satır işlendikten sonra normal progress güncelle
@@ -524,7 +524,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
         }
 
         if (!empty($missingFields)) {
-            $errorMessage = 'Eksik başlıklar: ' . implode(', ', $missingFields);
+            $errorMessage = 'Eksik başlıklar: '.implode(', ', $missingFields);
             Log::error('Excel başlık hatası', [
                 'missing_headers' => $missingFields,
                 'found_headers' => $availableHeaders,
@@ -557,7 +557,9 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
 
         foreach ($otherFields as $field) {
             if (isset($row[$field])) {
-                if (in_array($field, ['quantity', 'unit_price', 'gross_revenue', 'net_revenue', 'client_share_rate', 'mechanical_fee'])) {
+                if (in_array($field, [
+                    'quantity', 'unit_price', 'gross_revenue', 'net_revenue', 'client_share_rate', 'mechanical_fee'
+                ])) {
                     $value = $row[$field];
                     // Noktalı formatı kaldır ve sayıya çevir
 
@@ -679,7 +681,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
             AfterImport::class => function (AfterImport $event) {
                 $this->finalizeImport();
             },
-            ImportFailed::class => function(ImportFailed $event) {
+            ImportFailed::class => function (ImportFailed $event) {
                 $this->handleImportFailure($event);
             }
         ];
@@ -753,7 +755,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
         $this->errorRows++;
         $this->updateFileStatus(
             EarningReportFileStatusEnum::FAILED->value,
-            ['Import hatası: ' . $event->getException()->getMessage()]
+            ['Import hatası: '.$event->getException()->getMessage()]
         );
     }
 
