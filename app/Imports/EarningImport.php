@@ -30,6 +30,7 @@ use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use App\Models\Earning;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Bus;
 
 class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents
 {
@@ -729,6 +730,15 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                 'total_error_count' => count($allErrors),
                 'status' => $status
             ]);
+
+            // Import başarılı ise EarningJob'ı tetikle
+            if ($status === EarningReportFileStatusEnum::COMPLETED->value) {
+                Log::info('EarningJob tetikleniyor', [
+                    'file_id' => $this->fileId
+                ]);
+
+                dispatch(new \App\Jobs\EarningJob());
+            }
 
         } catch (\Exception $e) {
             Log::error('Import sonlandırma hatası', [
