@@ -383,237 +383,6 @@ class ReportController extends Controller
         }
     }
 
-    /**
-     * Dosya formatını tespit et (İngilizce/Türkçe)
-     */
-    private function detectFileFormat($file)
-    {
-        // İlk satırı oku
-        $firstRow = Excel::toArray([], $file)[0][0] ?? [];
-
-        // İngilizce başlıkları kontrol et
-        $englishHeaders = [
-            'reporting_month',
-            'sales_month',
-            'platform',
-            'country_region',
-            'label_name',
-            'artist_name',
-            'release_title',
-            'track_title'
-        ];
-
-        // Başlıkları normalize et ve karşılaştır
-        $normalizedHeaders = array_map(fn($header) => Str::slug($header, '_'), array_keys($firstRow));
-
-        // En az 3 İngilizce başlık eşleşiyorsa İngilizce format olarak kabul et
-        $matchCount = count(array_intersect($englishHeaders, $normalizedHeaders));
-
-        return $matchCount >= 3;
-    }
-
-    /**
-     * Filter reports by platform
-     */
-    public function filterByPlatform(Platform $platform)
-    {
-        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $reports = EarningReport::where('platform_id', $platform->id)
-            ->where('user_id', Auth::id())
-            ->advancedFilter();
-
-        return response()->json([
-            'reports' => ReportResource::collection($reports)
-        ]);
-    }
-
-    /**
-     * Filter reports by period
-     */
-    public function filterByPeriod(string $period)
-    {
-        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $reports = EarningReport::where('period', $period)
-            ->where('user_id', Auth::id())
-            ->advancedFilter();
-
-        return response()->json([
-            'reports' => ReportResource::collection($reports)
-        ]);
-    }
-
-    /**
-     * Filter reports by type
-     */
-    public function filterByType(string $type)
-    {
-        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $reports = EarningReport::where('report_type', $type)
-            ->where('user_id', Auth::id())
-            ->advancedFilter();
-
-        return response()->json([
-            'reports' => ReportResource::collection($reports)
-        ]);
-    }
-
-    /**
-     * Filter reports by status
-     */
-    public function filterByStatus(string $status)
-    {
-        abort_if(Gate::denies('report_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $reports = EarningReport::where('status', $status)
-            ->where('user_id', Auth::id())
-            ->advancedFilter();
-
-        return response()->json([
-            'reports' => ReportResource::collection($reports)
-        ]);
-    }
-
-    /**
-     * Download multiple reports as zip
-     */
-    public function bulkDownload(Request $request): BinaryFileResponse
-    {
-        abort_if(Gate::denies('report_download'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $request->validate([
-            'report_ids' => ['required', 'array'],
-            'report_ids.*' => ['exists:earning_reports,id']
-        ]);
-
-        $reports = EarningReport::whereIn('id', $request->report_ids)
-            ->where('user_id', Auth::id())
-            ->get();
-
-        $zip = new ZipArchive;
-        $fileName = 'reports-'.now()->format('Y-m-d-H-i-s').'.zip';
-        $zipPath = storage_path('app/temp/'.$fileName);
-
-        if ($zip->open($zipPath, ZipArchive::CREATE) === true) {
-            foreach ($reports as $report) {
-                $reportName = Str::slug($report->period).'-'.Str::slug($report->name).'.xlsx';
-                // Excel dosyasını oluştur ve zip'e ekle
-                // Bu kısım Excel export işlemini içerecek
-            }
-            $zip->close();
-        }
-
-        return response()->download($zipPath)->deleteFileAfterSend();
-    }
-
-    /**
-     * Delete multiple reports
-     */
-    public function bulkDelete(Request $request): JsonResponse
-    {
-        abort_if(Gate::denies('report_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $request->validate([
-            'report_ids' => ['required', 'array'],
-            'report_ids.*' => ['exists:earning_reports,id']
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            $reports = EarningReport::whereIn('id', $request->report_ids)
-                ->where('user_id', Auth::id())
-                ->get();
-
-            foreach ($reports as $report) {
-                $report->delete();
-            }
-
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Seçili raporlar başarıyla silindi.'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Raporlar silinirken bir hata oluştu: '.$e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Export reports summary
-     */
-    public function exportSummary(Request $request)
-    {
-        abort_if(Gate::denies('report_export'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $request->validate([
-            'start_date' => ['nullable', 'date'],
-            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-            'platform_id' => ['nullable', 'exists:platforms,id'],
-            'type' => ['nullable', 'string']
-        ]);
-
-        $query = EarningReport::query()
-            ->where('user_id', Auth::id());
-
-        if ($request->filled('start_date')) {
-            $query->where('report_date', '>=', $request->start_date);
-        }
-
-        if ($request->filled('end_date')) {
-            $query->where('report_date', '<=', $request->end_date);
-        }
-
-        if ($request->filled('platform_id')) {
-            $query->where('platform_id', $request->platform_id);
-        }
-
-        if ($request->filled('type')) {
-            $query->where('report_type', $request->type);
-        }
-
-        $reports = $query->get();
-
-        // Rapor verisi boş ise hata döndür
-        if ($reports->isEmpty()) {
-            return response()->json(['error' => 'Seçilen filtreler için rapor bulunamadı'], 404);
-        }
-
-        // Rapor için gerekli veriyi hazırla
-        $reportData = $reports->map(function ($report) {
-            return [
-                'id' => $report->id,
-                'name' => $report->name,
-                'platform' => $report->platform?->name ?? 'N/A',
-                'report_date' => $report->report_date->format('Y-m-d'),
-                'report_type' => $report->report_type,
-                'status' => $report->status,
-                'total_amount' => $report->amount ?? 0,
-                'created_at' => $report->created_at->format('Y-m-d H:i:s')
-            ];
-        });
-
-        // Yeni bir rapor oluştur
-        $report = Report::create([
-            'name' => 'Rapor Özeti - '.Carbon::now()->format('Y-m-d'),
-            'user_id' => Auth::id(),
-            'period' => Carbon::now()->format('Y-m'),
-            'status' => 0,
-            'report_type' => 'summary',
-            'is_auto_report' => true
-        ]);
-
-        $period = Carbon::now()->format('Y-m-d_H-i-s');
-        $reportExport = new ReportExport($reportData, $period, $report);
-
-        // Dosyayı indir
-        return Excel::download($reportExport, "rapor_ozeti_{$period}.xlsx");
-    }
 
     /**
      * Download file by EarningReportFile
@@ -624,9 +393,9 @@ class ReportController extends Controller
             $file = EarningReportFile::findOrFail($fileId);
 
             // Yetki kontrolü
-//            if (Gate::denies('report_download') || $file->user_id !== Auth::id()) {
-//                abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
-//            }
+            if (Gate::denies('report_download') || $file->user_id !== Auth::id()) {
+                abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+            }
 
 
             $media = $file->getMedia('earning_report_files')->last();
@@ -659,11 +428,10 @@ class ReportController extends Controller
 
     public function reportFiles()
     {
-        $earningReports = EarningReport::with('reportFile')->advancedFilter();
-
+        $earningReports = EarningReport::with('reportFile', 'platform')->advancedFilter();
+        
         $platforms = Platform::all();
         $earningReports = EarningReportResource::collection($earningReports)->resource;
-
         $statuses = enumToSelectInputFormat(EarningReportFileStatusEnum::getTitles());
         return inertia('Control/Finance/Imports/index', compact('earningReports', 'platforms', 'statuses'));
     }

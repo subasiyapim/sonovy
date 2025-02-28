@@ -1,6 +1,6 @@
 <script setup>
 
-import {ref, onMounted, onUnmounted,computed} from 'vue';
+import {ref, onMounted, onUnmounted, computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {PrimaryButton} from '@/Components/Buttons'
 import {UploadIcon,DownloadIcon,CheckFilledIcon} from '@/Components/Icons'
@@ -10,7 +10,10 @@ import {FinanceImportReportModal,ImportErrorsModal} from '@/Components/Dialog';
 import moment from 'moment';
 
 const props = defineProps({
-    earningReports:{}
+    earningReports:{},
+    platformData:{}, // Platform toplamları verisi
+    platforms:{}, // Tüm platformlar
+    statuses:{} // Durum seçenekleri
 });
 const emits = defineEmits(['updated']);
 const isImportModalOn = ref(false);
@@ -19,12 +22,15 @@ const data = computed({
     set:(vale) => emits('updated'),
 });
 
+// Platform verilerini al
+const getPlatformData = (platform) => {
+    return props.platformData && props.platformData[platform] ? props.platformData[platform] : { total_revenue: 0, report_count: 0 };
+};
+
 const choosenErrors = ref([]);
 const isErrorModalOn = ref(false)
 
 const openErrorModal = (list) => {
-
-
     choosenErrors.value = list;
     isErrorModalOn.value = true;
 }
@@ -52,9 +58,18 @@ const appTableConfig = computed(() => {
         <AppTable v-model="data" :showAddButton="false"  :config="appTableConfig">
                 <AppTableColumn label="Platform">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950">
-                            {{scope.row.platform}}
-                        </p>
+
+                        <div class="flex items-center gap-2">
+                            <span v-html="scope.row.platformIcon"></span>
+                            <div class="flex flex-col gap-1">
+                                <p class="paragraph-xs c-strong-950">
+                                    {{scope.row.platform_name || scope.row.platform}}
+                            </p>
+                            <p v-if="scope.row.platform_icon" class="text-xs">
+                                <img :src="scope.row.platform_icon" alt="Platform icon" class="w-4 h-4 inline-block" />
+                            </p>
+                            </div>
+                        </div>
                     </template>
                 </AppTableColumn>
 
@@ -70,7 +85,7 @@ const appTableConfig = computed(() => {
                 <AppTableColumn label="Rapor Adı" width="260">
                     <template #default="scope">
                          <p class="paragraph-xs c-strong-950">
-                                 {{scope.row.file?.file_name}}
+                                 {{scope.row.report_name}}
                          </p>
                     </template>
                 </AppTableColumn>
@@ -84,10 +99,9 @@ const appTableConfig = computed(() => {
                 </AppTableColumn>
                 <AppTableColumn label="Ücret">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950">
-                            {{scope.row.total}}
-
-                        </p>
+                            <p class="paragraph-xs c-strong-950">
+                               {{scope.row.total}} $
+                            </p>
                     </template>
                 </AppTableColumn>
                 <AppTableColumn label="Boyut">

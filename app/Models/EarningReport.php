@@ -155,7 +155,7 @@ class EarningReport extends Model
 
     public function platform(): BelongsTo
     {
-        return $this->belongsTo(Platform::class);
+        return $this->belongsTo(Platform::class, 'platform_id');
     }
 
     public function country(): BelongsTo
@@ -237,7 +237,7 @@ class EarningReport extends Model
                     'errors' => $validator->errors()->toArray(),
                     'attributes' => $this->getAttributes()
                 ]);
-                throw new \Exception('Validasyon hatası: ' . json_encode($validator->errors()->toArray()));
+                throw new \Exception('Validasyon hatası: '.json_encode($validator->errors()->toArray()));
             }
 
             DB::beginTransaction();
