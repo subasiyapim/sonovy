@@ -30,6 +30,7 @@ use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use App\Models\Earning;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Bus;
 
 class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents
 {
@@ -431,6 +432,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                     $earningReport = EarningReport::firstOrCreate(
                         [
                             'isrc_code' => $isrc,
+                            'upc_code' => $normalizedData['upc_code'] ?? null,
                             'report_date' => $this->reportDate,
                             'platform' => $normalizedData['platform'],
                             'net_revenue' => $normalizedData['net_revenue'],
@@ -549,36 +551,30 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
 
         // Diğer alanları ekle
         $otherFields = [
-            'quantity', 'unit_price', 'gross_revenue', 'net_revenue',
-            'client_share_rate', 'upc_code', 'catalog_number', 'streaming_type',
+            'quantity', 'catalog_number', 'streaming_type',
             'streaming_subscription_type', 'release_type', 'sales_type',
-            'currency', 'client_payment_currency', 'mechanical_fee'
+            'currency', 'client_payment_currency',
+            'client_share_rate'
         ];
 
         foreach ($otherFields as $field) {
             if (isset($row[$field])) {
-                if (in_array($field, [
-                    'quantity', 'unit_price', 'gross_revenue', 'net_revenue', 'client_share_rate', 'mechanical_fee'
-                ])) {
-                    $value = $row[$field];
-                    // Noktalı formatı kaldır ve sayıya çevir
-
-                    // Sayısal değerleri kontrol et ve dönüştür
-                    if (is_numeric($value)) {
-                        $normalized[$field] = $value;
-                    } else {
-                        $normalized[$field] = null;
-                    }
-                } else {
-                    $normalized[$field] = $row[$field];
-                }
+                $normalized[$field] = $row[$field];
             } else {
                 $normalized[$field] = null;
             }
         }
 
+        // Finansal değerleri doğrudan al
+        $normalized['net_revenue'] = $row['net_revenue'] ?? null;
+        $normalized['gross_revenue'] = $row['gross_revenue'] ?? null;
+        $normalized['unit_price'] = $row['unit_price'] ?? null;
+        $normalized['mechanical_fee'] = $row['mechanical_fee'] ?? null;
         // country_region'ı region olarak kaydet
         $normalized['region'] = $row['country_region'] ?? null;
+
+        // upc değerini doğru şekilde kaydet
+        $normalized['upc_code'] = $row['upc'] ?? null;
 
         return $normalized;
     }
@@ -734,6 +730,15 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                 'total_error_count' => count($allErrors),
                 'status' => $status
             ]);
+
+            // Import başarılı ise EarningJob'ı tetikle
+            if ($status === EarningReportFileStatusEnum::COMPLETED->value) {
+                Log::info('EarningJob tetikleniyor', [
+                    'file_id' => $this->fileId
+                ]);
+
+                dispatch(new \App\Jobs\EarningJob());
+            }
 
         } catch (\Exception $e) {
             Log::error('Import sonlandırma hatası', [

@@ -19,8 +19,6 @@ use Stancl\Tenancy\Concerns\TenantAwareCommand;
 class IsrcJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    use TenantAwareCommand;
-    use HasATenantsOption;
 
     /**
      * The number of times the job may be attempted.

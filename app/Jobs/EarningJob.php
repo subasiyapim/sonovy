@@ -18,16 +18,11 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Stancl\Tenancy\Concerns\HasATenantsOption;
-use Stancl\Tenancy\Concerns\TenantAwareCommand;
 
 class EarningJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     use HelperTrait;
-    use TenantAwareCommand;
-    use HasATenantsOption;
 
     public Collection $earningReports;
     public EarningReport $earningReport;
