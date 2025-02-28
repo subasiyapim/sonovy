@@ -28,6 +28,12 @@ const openErrorModal = (list) => {
     choosenErrors.value = list;
     isErrorModalOn.value = true;
 }
+
+const appTableConfig = computed(() => {
+  return {
+    filters: props.filters,
+  }
+})
 // const data = ref([]);
 </script>
 
@@ -43,20 +49,19 @@ const openErrorModal = (list) => {
         </template>
 
 
-        <AppTable  v-model="data.data" :isClient="true"  :hasSearch="false" :showAddButton="false">
+        <AppTable v-model="data" :showAddButton="false"  :config="appTableConfig">
                 <AppTableColumn label="Platform">
                     <template #default="scope">
-                          <p class="paragraph-xs c-strong-950">
+                        <p class="paragraph-xs c-strong-950">
                             {{scope.row.platform}}
-
-                          </p>
+                        </p>
                     </template>
                 </AppTableColumn>
 
                 <AppTableColumn label="Rapor Tarihi">
                     <template #default="scope">
                         <p class="paragraph-xs c-strong-950 whitespace-nowrap">
-                             {{moment(scope.row.report_date).format('Y-MMMM')}}
+                            {{moment(scope.row.report_date).format('Y-MMMM')}}
                         </p>
                     </template>
                 </AppTableColumn>

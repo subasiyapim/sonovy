@@ -3,49 +3,49 @@
   <div>
 
     <div class="flex items-center mb-4 ">
-    <slot v-if="hasSlot('tableHeader')" name="tableHeader" />
-      <div class="flex-1 flex items-center gap-7">
-        <div v-for="(filter,index) in config?.filters" class="flex items-end">
-          <span class="label-xs c-sub-600"> {{ filter.title }}:</span>
+        <slot v-if="hasSlot('tableHeader')" name="tableHeader" />
+        <div class="flex-1 flex items-center gap-7">
+            <div v-for="(filter,index) in config?.filters" class="flex items-end">
+            <span class="label-xs c-sub-600"> {{ filter.title }}:</span>
 
-          <select
-              @change="onFilterSelected($event,filter)"
+            <select
+                @change="onFilterSelected($event,filter)"
 
-              class="smallSelect pb-0 mt-1 inline !appearance-none  iconless paragraph-xs !font-semibold border-none focus:outline-none focus:ring-0 c-blue-500">
-            <option :selected="!query[filter.param]">Tümü</option>
-            <option v-for="option in filter.options" :selected="query[filter.param] == option.value"
-                    :value="option.value">{{ option.label }}
-            </option>
-          </select>
+                class="smallSelect pb-0 mt-1 inline !appearance-none  iconless paragraph-xs !font-semibold border-none focus:outline-none focus:ring-0 c-blue-500">
+                <option :selected="!query[filter.param]">Tümü</option>
+                <option v-for="option in filter.options" :selected="query[filter.param] == option.value"
+                        :value="option.value">{{ option.label }}
+                </option>
+            </select>
+            </div>
         </div>
-      </div>
 
-      <div v-if="(showAddButton || hasSearch)" class="flex items-center gap-2">
-        <div class="w-64">
-          <AppTextInput v-if="hasSearch" @change="onSearch" @input="onInput" v-model="term" placeholder="Ara...">
-            <template #icon>
-              <SearchIcon color="var(--sub-600)"/>
-            </template>
-          </AppTextInput>
+        <div v-if="(showAddButton || hasSearch)" class="flex items-center gap-2">
+            <div class="w-64">
+            <AppTextInput v-if="hasSearch" @change="onSearch" @input="onInput" v-model="term" placeholder="Ara...">
+                <template #icon>
+                <SearchIcon color="var(--sub-600)"/>
+                </template>
+            </AppTextInput>
+            </div>
+            <div>
+            <PrimaryButton class="w-auto" v-if="showAddButton" @click="$emit('addNewClicked',$event)">
+                <template #icon>
+                <AddIcon color="var(--dark-green-500)"/>
+                </template>
+                <p >{{ buttonLabel ?? 'Ekle' }}</p>
+            </PrimaryButton>
+            </div>
+            <slot name="toolbar" />
         </div>
-        <div>
-          <PrimaryButton class="w-auto" v-if="showAddButton" @click="$emit('addNewClicked',$event)">
-            <template #icon>
-              <AddIcon color="var(--dark-green-500)"/>
-            </template>
-            <p >{{ buttonLabel ?? 'Ekle' }}</p>
-          </PrimaryButton>
         </div>
-        <slot name="toolbar" />
-      </div>
     </div>
-  </div>
 
  <div class="relative"  @dragenter="emits('dragenter',$e)" @dragleave="emits('dragleave',e)">
   <div class="relative" >
      <div ref="currentAppTable" class="overflow-x-scroll overflow-y-hidden w-full border border-soft-200 rounded-lg tableWrapper ">
-        <table  class="w-full appTable">
-            <thead>
+        <table class="w-full appTable">
+            <thead >
                 <tr class="border-b border-white-600">
 
                 <th v-if="hasSelect" class="bg-white-500 w-6">
@@ -68,8 +68,8 @@
                     </div>
                 </th>
                 </tr>
-                </thead>
-                <tbody>
+            </thead>
+            <tbody >
                 <template v-for="(row, rowIndex) in data" :key="rowIndex">
                     <tr class="tableRow"
                         :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf != null && showNoteIf(row) ? '' : ( renderSubWhen != null && renderSubWhen(row) ? (data.isSelected ? '' : 'hasBorder') :'hasBorder')) ">
@@ -110,7 +110,7 @@
                 </td>
 
                 </tr>
-                </tbody>
+            </tbody>
         </table>
         <div @click="scrollTable('left')" class="side-indicator left-indicator">
             <div class="w-5 h-5 rounded flex items-center justify-center border border-soft-200 bg-white"><ChevronLeftIcon color="var(--sub-600)" /> </div>
@@ -120,7 +120,6 @@
         </div>
     </div>
   </div>
-
   <div v-if="searching" class="h-[300px] flex flex-col items-center justify-center">
     <div class="w-12 h-12">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
@@ -148,7 +147,7 @@
         <p class="w-28 paragraph-sm c-sub-600">
           Sayfa {{ query.page }} of {{ Math.ceil((tableData.total / tableData.per_page)) }}
         </p>
-        <div class="flex flex-1 justify-center  gap-3" >
+        <div  class="flex flex-1 justify-center  gap-3" >
 
           <a :disabled="!tableData.first_page_url" :href="tableData.first_page_url"
              class="p-2 radius-8 w-10 h-10 flex items-center justify-center">
@@ -183,7 +182,7 @@
 
 
         </div>
-        <div class="w-28 max-w-xs mx-auto" >
+        <div  class="w-28 max-w-xs mx-auto" >
           <select id="options" name="options"
                 @change="onSelectChange"
                   class="mt-1 block w-full pl-3 pr-10 py-2 paragraph-sm border border-soft-200 focus:outline-none  radius-8">
