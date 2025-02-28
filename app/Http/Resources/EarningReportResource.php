@@ -16,6 +16,7 @@ class EarningReportResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'reportFileId' => $this->reportFile->id,
             'platform' => $this->platform,
             'report_date' => $this->report_date,
             'report_name' => $this->reportFile->name,

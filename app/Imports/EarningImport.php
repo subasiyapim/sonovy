@@ -106,6 +106,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
             $this->fileId = $fileId;
             $this->reportDate = Carbon::parse($reportDate);
             $this->filePath = $filePath;
+            $this->fileSize = filesize($filePath);
 
             $this->initializeImport();
 
@@ -387,7 +388,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                     'name' => $this->reportDate->format('Y-m-d'),
                     'period' => $this->reportDate->format('Y-m-d'),
                     'report_type' => 'earning',
-                    'file_size' => $this->file?->getSize() ?? 0,
+                    'file_size' => $this->fileSize,
                     'status' => EarningReportFileStatusEnum::PENDING->value,
                     'processed_at' => now(),
                     'report_date' => $this->reportDate,

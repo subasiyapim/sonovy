@@ -118,9 +118,14 @@ const openErrorModal = (list) => {
                 </AppTableColumn>
                 <AppTableColumn label="Aksiyon" align="right">
                     <template #default="scope">
-                        <a :href="route('control.finance.reports.download',scope.row.file.id)" target="_blank">
-                            <DownloadIcon color="var(--sub-600)" />
-                        </a>
+                        <div v-if="scope.row.file && scope.row.file.id">
+                            <a :href="route('control.finance.reports.download-file', scope.row.reportFileId)" target="_blank">
+                                <DownloadIcon color="var(--sub-600)" />
+                            </a>
+                        </div>
+                        <div v-else class="text-xs text-gray-400">
+                            Dosya mevcut değil
+                        </div>
                     </template>
                 </AppTableColumn>
 

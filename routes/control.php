@@ -106,28 +106,23 @@ Route::group(
                 Route::post('/', [ReportController::class, 'store'])->name('store');
 
                 Route::get('report-files', [ReportController::class, 'reportFiles'])->name('report-files');
-                Route::get('participant-reports', [ReportController::class, 'participantReports'])->name('participant-reports');
+                Route::get('participant-reports',
+                    [ReportController::class, 'participantReports'])->name('participant-reports');
                 Route::post('/upload-file', [ReportController::class, 'uploadFile'])->name('uploadFile');
                 Route::get('/download/{report}', [ReportController::class, 'download'])->name('download');
                 Route::delete('/{report}', [ReportController::class, 'destroy'])->name('destroy');
                 Route::get('/{report}', [ReportController::class, 'show'])->name('show');
-                Route::get('/export/participant-reports', [ReportController::class, 'exportParticipantReports'])->name('export.participant-reports');
+                Route::get('/export/participant-reports',
+                    [ReportController::class, 'exportParticipantReports'])->name('export.participant-reports');
 
-                // Yeni rotalar
-                Route::get('/filter/by-platform/{platform}', [ReportController::class, 'filterByPlatform'])
-                    ->name('filter.platform');
-                Route::get('/filter/by-period/{period}', [ReportController::class, 'filterByPeriod'])
-                    ->name('filter.period');
-                Route::get('/filter/by-type/{type}', [ReportController::class, 'filterByType'])
-                    ->name('filter.type');
-                Route::get('/filter/by-status/{status}', [ReportController::class, 'filterByStatus'])
-                    ->name('filter.status');
-                Route::post('/bulk-download', [ReportController::class, 'bulkDownload'])
-                    ->name('bulk.download');
-                Route::post('/bulk-delete', [ReportController::class, 'bulkDelete'])
-                    ->name('bulk.delete');
-                Route::get('/export/summary', [ReportController::class, 'exportSummary'])
-                    ->name('export.summary');
+                // Dosya indirme rotaları
+                Route::get('/download-file/{file}', [ReportController::class, 'downloadFile'])
+                    ->name('download-file');
+                Route::get('/download/{report}', [ReportController::class, 'download'])->name('download');
+
+                // En sonda parametre gerektiren rotalar
+                Route::delete('/{report}', [ReportController::class, 'destroy'])->name('destroy');
+                Route::get('/{report}', [ReportController::class, 'show'])->name('show');
             });
 
             Route::get('analysis', [FinanceAnalysisController::class, 'index'])
@@ -220,8 +215,8 @@ Route::group(
         Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
 
-        require __DIR__ . '/control/modules/search.php';
-        require __DIR__ . '/control/modules/last.php';
-        require __DIR__ . '/control/modules/find.php';
+        require __DIR__.'/control/modules/search.php';
+        require __DIR__.'/control/modules/last.php';
+        require __DIR__.'/control/modules/find.php';
     }
 );
