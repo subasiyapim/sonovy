@@ -61,14 +61,17 @@ const appTableConfig = computed(() => {
                     <template #default="scope">
 
                         <div class="flex items-center gap-2">
-                            <span v-html="scope.row.platformIcon"></span>
+                            <div class="flex items-center justify-center w-8 h-8 rounded-full border border-soft-200 p-1">
+                                <span v-if="scope.row.platformIcon" v-html="scope.row.platformIcon"></span>
+                                <div v-else class="bg-weak-50 w-full h-full rounded-full flex items-center justify-center">
+                                   <p class="paragraph-xs c-strong-950"> {{(scope.row.platform_name || scope.row.platform).substring(0,1)}}</p>
+                                </div>
+                            </div>
                             <div class="flex flex-col gap-1">
                                 <p class="paragraph-xs c-strong-950">
                                     {{scope.row.platform_name || scope.row.platform}}
                             </p>
-                            <p v-if="scope.row.platform_icon" class="text-xs">
-                                <img :src="scope.row.platform_icon" alt="Platform icon" class="w-4 h-4 inline-block" />
-                            </p>
+
                             </div>
                         </div>
                     </template>
