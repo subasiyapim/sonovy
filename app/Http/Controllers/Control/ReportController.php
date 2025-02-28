@@ -174,7 +174,7 @@ class ReportController extends Controller
             return $this->handleMultipleReports($report);
         }
 
-        $media = $report->getMedia('tenant_'.tenant('domain').'_income_reports')->last();
+        $media = $report->getMedia('tenant_' . tenant('domain') . '_income_reports')->last();
         if ($media) {
             return $this->streamMediaFile($media);
         }
@@ -203,16 +203,16 @@ class ReportController extends Controller
     private function getZipFilePath(Report $report): string
     {
         return storage_path(
-            'app/public/tenant_'.tenant('domain').'_income_reports/multiple_reports/'.
-            $report->user_id.'/'.Str::slug($report->period).'-'.Str::slug($report->name).'.zip'
+            'app/public/tenant_' . tenant('domain') . '_income_reports/multiple_reports/' .
+                $report->user_id . '/' . Str::slug($report->period) . '-' . Str::slug($report->name) . '.zip'
         );
     }
 
     private function getReportFiles(Report $report): array
     {
         return Storage::disk('public')->allFiles(
-            'tenant_'.tenant('domain').'_income_reports/multiple_reports/'.
-            $report->user_id.'/'.Str::slug($report->period).'/'.$report->id
+            'tenant_' . tenant('domain') . '_income_reports/multiple_reports/' .
+                $report->user_id . '/' . Str::slug($report->period) . '/' . $report->id
         );
     }
 
@@ -238,12 +238,12 @@ class ReportController extends Controller
             DB::beginTransaction();
 
             // Önce medya dosyalarını sil
-            $report->clearMediaCollection('tenant_'.tenant('domain').'_income_reports');
+            $report->clearMediaCollection('tenant_' . tenant('domain') . '_income_reports');
 
             // Child raporları bul ve medya dosyalarını sil
             $childReports = $report->child()->get();
             foreach ($childReports as $childReport) {
-                $childReport->clearMediaCollection('tenant_'.tenant('domain').'_income_reports');
+                $childReport->clearMediaCollection('tenant_' . tenant('domain') . '_income_reports');
                 $childReport->delete();
             }
 
@@ -255,7 +255,7 @@ class ReportController extends Controller
             return redirect()->back()->with('success', 'Rapor ve ilişkili tüm veriler başarıyla silindi.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Rapor silinirken bir hata oluştu: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Rapor silinirken bir hata oluştu: ' . $e->getMessage());
         }
     }
 
@@ -372,14 +372,14 @@ class ReportController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Rapor yükleme hatası: '.$e->getMessage(), [
+            Log::error('Rapor yükleme hatası: ' . $e->getMessage(), [
                 'user_id' => Auth::id(),
                 'file_name' => $request->file('file')->getClientOriginalName(),
                 'trace' => $e->getTraceAsString()
             ]);
 
             return response()->json([
-                'message' => 'Rapor yüklenirken bir hata oluştu: '.$e->getMessage()
+                'message' => 'Rapor yüklenirken bir hata oluştu: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -414,16 +414,15 @@ class ReportController extends Controller
             return response()->streamDownload(function () use ($filePath) {
                 readfile($filePath);
             }, $media->file_name ?? 'rapor.xlsx');
-
         } catch (\Exception $e) {
-            Log::error('Dosya indirme hatası: '.$e->getMessage(), [
+            Log::error('Dosya indirme hatası: ' . $e->getMessage(), [
                 'file_id' => $fileId,
                 'user_id' => Auth::id(),
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return response()->json(['error' => 'Dosya indirilirken bir hata oluştu: '.$e->getMessage()], 500);
+            return response()->json(['error' => 'Dosya indirilirken bir hata oluştu: ' . $e->getMessage()], 500);
         }
     }
 
@@ -465,23 +464,35 @@ class ReportController extends Controller
     public function participantReports(Request $request)
     {
         $earnings = Earning::query()
+            ->join('users', 'users.id', '=', 'earnings.user_id') // Ensure correct user join
             ->select(
-                'platform_id',
-                'platform',
-                DB::raw('SUM(earning) as total_earning'),
-                DB::raw('SUM(earning * client_share_rate) as user_earning'),
-                DB::raw('SUM(earning * (1 - client_share_rate)) as service_provider_earning')
+                'earnings.platform',
+                'earnings.platform_id',
+                'earnings.created_at',
+                'users.id as user_id',
+                'users.name as user_name', // Get specific user fields instead of users.*
+                DB::raw('SUM(earnings.earning) as user_total_earning'),
+                DB::raw('SUM((earnings.earning * users.commission_rate)) as service_provider_earning'),
+
             )
-            ->groupBy('platform_id', 'platform')
+            ->groupBy('earnings.platform_id', 'earnings.platform', 'earnings.created_at', 'users.id', 'users.name')
             ->get()
             ->map(function ($earning) {
                 return [
+                    'id' => $earning->id,
+                    'user' => [
+                        'id' => $earning->user_id,
+                        'name' => $earning->user_name,
+                        'email' => $earning->user->email,
+                        'commission_rate' => $earning->user->commission_rate,
+                    ],
                     'platform' => $earning->platform,
-                    'total_earning' => number_format($earning->total_earning, 2, ',', '.').' $',
-                    'earning' => number_format($earning->user_earning, 2, ',', '.').' $',
-                    'participant_earning' => number_format($earning->service_provider_earning, 2, ',', '.').' $',
-                    'participant_rate' => number_format((1 - $earning->client_share_rate) * 100, 0).'%',
-                    'platform_id' => $earning->platform_id
+                    'participant_earning' => $earning->user_total_earning,
+                    'total_earning' => $earning->user_total_earning * $earning->user->commission_rate,
+                    'provider_earning' => ($earning->user_total_earning * $earning->user->commission_rate) - $earning->user_total_earning,
+                    'participant_rate' => (1 - $earning->client_share_rate) * 100,
+                    'platform_id' => $earning->platform_id,
+                    'created_at' => $earning->created_at,
                 ];
             });
 
@@ -536,7 +547,7 @@ class ReportController extends Controller
 
         // Yeni bir rapor oluştur
         $report = Report::create([
-            'name' => $user->name.' - '.$platform->name.' Kazanç Raporu',
+            'name' => $user->name . ' - ' . $platform->name . ' Kazanç Raporu',
             'user_id' => $request->user_id,
             'period' => Carbon::now()->format('Y-m'),
             'status' => 0,
