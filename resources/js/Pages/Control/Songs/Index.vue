@@ -77,7 +77,7 @@
             <img :alt="scope.row.name"
                  class="w-10 h-10 rounded-full overflow-hidden"
                  :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
-            <span>{{ artist.name }} </span>
+            <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
           </div>
         </template>
       </AppTableColumn>

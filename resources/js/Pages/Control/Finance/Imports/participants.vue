@@ -7,19 +7,19 @@ import {UploadIcon,DownloadIcon} from '@/Components/Icons'
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
 const props = defineProps({
-
+    earnings:{}
 });
 const isImportModalOn = ref(false);
 const data = ref([]);
 </script>
 
 <template>
+
     <AdminLayout :showGoBack="false" :showDatePicker="false" :title="'Katılımcı Raporları'" parentTitle="Finans">
         <AppTable  v-model="data"  :isClient="true" :hasSearch="false" :showAddButton="false">
                 <AppTableColumn label="Kullanıcı Adı">
                     <template #default="scope">
                           <p class="paragraph-xs c-strong-950">
-
 
                           </p>
                     </template>

@@ -34,6 +34,7 @@ import AnnouncementModal from './Management/Announcements/announcements.vue'
 
 import FinanceImportReportModal from './Finance/import.vue'
 import PlanItems from './Management/PlanItems/index.vue';
+import ImportErrorsModal from './Finance/import_error.vue';
 export {
     ArtistDialog,
     LabelDialog,
@@ -53,6 +54,7 @@ export {
     ChangePackageDialog,
     WithdrawModal,
     NewReportModal,
+    ImportErrorsModal,
     BankAccountModal,
     FinanceIncomePlatforms,
     FinanceIncomeCountries,

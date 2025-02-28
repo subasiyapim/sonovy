@@ -3,10 +3,12 @@
 import {ref, onMounted, onUnmounted,computed} from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import {PrimaryButton} from '@/Components/Buttons'
-import {UploadIcon,DownloadIcon} from '@/Components/Icons'
+import {UploadIcon,DownloadIcon,CheckFilledIcon} from '@/Components/Icons'
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {FinanceImportReportModal} from '@/Components/Dialog';
+import {FinanceImportReportModal,ImportErrorsModal} from '@/Components/Dialog';
+import moment from 'moment';
+
 const props = defineProps({
     earningReports:{}
 });
@@ -17,6 +19,15 @@ const data = computed({
     set:(vale) => emits('updated'),
 });
 
+const choosenErrors = ref([]);
+const isErrorModalOn = ref(false)
+
+const openErrorModal = (list) => {
+
+
+    choosenErrors.value = list;
+    isErrorModalOn.value = true;
+}
 // const data = ref([]);
 </script>
 
@@ -44,33 +55,33 @@ const data = computed({
 
                 <AppTableColumn label="Rapor Tarihi">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950">
-                             {{scope.row.report_date}}
+                        <p class="paragraph-xs c-strong-950 whitespace-nowrap">
+                             {{moment(scope.row.report_date).format('Y-MMMM')}}
                         </p>
                     </template>
                 </AppTableColumn>
 
 
-                <AppTableColumn label="Rapor Adı">
+                <AppTableColumn label="Rapor Adı" width="260">
                     <template #default="scope">
                          <p class="paragraph-xs c-strong-950">
-                              {{scope.row.name}}
+                                 {{scope.row.file?.file_name}}
                          </p>
                     </template>
                 </AppTableColumn>
 
                 <AppTableColumn label="Hatalar">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950">
-                            {{scope.row.errors}}
+                        <p @click="openErrorModal(scope.row.errors)" class="border border-soft-200 rounded px-2 py-0.5 cursor-pointer paragraph-xs c-strong-950">
+                            {{scope.row.errors.length}} adet Hata
                         </p>
                     </template>
                 </AppTableColumn>
                 <AppTableColumn label="Ücret">
                     <template #default="scope">
                         <p class="paragraph-xs c-strong-950">
-                            {{scope.row.net_revenue}}
-                            {{scope.row.currency}}
+                            {{scope.row.total}}
+
                         </p>
                     </template>
                 </AppTableColumn>
@@ -84,25 +95,30 @@ const data = computed({
                 <AppTableColumn label="İşlem Tarihi">
                     <template #default="scope">
                         <div class="flex flex-col items-start">
-                            <p class="paragraph-xs c-strong-950">
-                                {{scope.row.created_at.split(" ")[0]}}
+                            <p class="paragraph-xs c-strong-950 whitespace-nowrap">
+                                {{moment(scope.row.created_at).format('D MMMM Y')}}
                             </p>
                             <p class="paragraph-xs c-strong-950">
-                                {{scope.row.created_at.split(" ")[1]}}
+                                {{moment(scope.row.created_at).format('hh:ss')}}
                             </p>
+
                         </div>
                     </template>
                 </AppTableColumn>
-                <AppTableColumn label="Durum">
+                <AppTableColumn label="Durum" width="50">
                     <template #default="scope">
-                        <p class="paragraph-xs c-strong-950">
-                               {{scope.row.status}}
-                        </p>
+                        <span class="paragraph-xs flex items-center gap-2 c-strong-950 border border-soft-200 rounded px-2 py-0.5">
+                        <template v-if="scope.row.status == 3">
+                            <CheckFilledIcon color="#49A668" />
+                            Başarılı
+                        </template>
+
+                        </span>
                     </template>
                 </AppTableColumn>
                 <AppTableColumn label="Aksiyon" align="right">
                     <template #default="scope">
-                        <a :href="route('control.finance.reports.download',scope.row.id)" target="_blank">
+                        <a :href="route('control.finance.reports.download',scope.row.file.id)" target="_blank">
                             <DownloadIcon color="var(--sub-600)" />
                         </a>
                     </template>
@@ -115,7 +131,7 @@ const data = computed({
     </AdminLayout>
 
     <FinanceImportReportModal v-if="isImportModalOn" v-model="isImportModalOn" ></FinanceImportReportModal>
-
+    <ImportErrorsModal :errors="choosenErrors" v-if="isErrorModalOn" v-model="isErrorModalOn" />
 
 </template>
 

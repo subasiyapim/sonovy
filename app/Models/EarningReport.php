@@ -141,11 +141,6 @@ class EarningReport extends Model
         'report_date' => 'date',
         'sales_date' => 'date',
         'quantity' => 'integer',
-        'unit_price' => 'decimal:15',
-        'mechanical_fee' => 'decimal:15',
-        'gross_revenue' => 'decimal:15',
-        'client_share_rate' => 'decimal:2',
-        'net_revenue' => 'decimal:15',
     ];
 
     public function reportFile(): BelongsTo
@@ -242,7 +237,7 @@ class EarningReport extends Model
                     'errors' => $validator->errors()->toArray(),
                     'attributes' => $this->getAttributes()
                 ]);
-                throw new \Exception('Validasyon hatası: '.json_encode($validator->errors()->toArray()));
+                throw new \Exception('Validasyon hatası: ' . json_encode($validator->errors()->toArray()));
             }
 
             DB::beginTransaction();

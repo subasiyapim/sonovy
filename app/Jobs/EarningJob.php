@@ -60,7 +60,7 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
                 $this->earningReports = EarningReport::where('status', EarningReportStatusEnum::PENDING->value)
                     ->orWhereNull('status')->get();
 
-                Log::info('earningReports count: '.$this->earningReports->count());
+                Log::info('earningReports count: ' . $this->earningReports->count());
 
                 $setting = Setting::where('key', 'general_system_commission_rate')->first();
                 $this->general_system_commission_rate = $setting ? $setting->value : 0;
@@ -76,9 +76,10 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
                         DB::commit();
                     } catch (\Exception $e) {
                         DB::rollBack();
-                        Log::error('Error processing earning report: '.$e->getMessage(), [
+                        Log::error('Error processing earning report: ' . $e->getMessage(), [
                             'report_id' => $earningReport->id,
-                            'tenant' => $tenant->domain
+                            'tenant' => $tenant->domain,
+                            'stack_trace' => $e->getTraceAsString()
                         ]);
                         $earningReport->status = EarningReportStatusEnum::FAILED->value;
                         $earningReport->save();
@@ -87,7 +88,7 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
 
                 Log::info('EarningJob completed.');
             } catch (\Exception $e) {
-                Log::error('Error processing tenant: '.$e->getMessage(), [
+                Log::error('Error processing tenant: ' . $e->getMessage(), [
                     'tenant' => $tenant->domain
                 ]);
             }
@@ -131,7 +132,9 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
         $participantEarnings = $this->calculateParticipantEarnings($labelShare);
 
         $totalParticipantEarnings = array_sum(array_column($participantEarnings, 'earning'));
-        $labelFinalEarning = bcsub($labelShare, $totalParticipantEarnings);
+
+        $num2 = sprintf('%.15f', (float) $totalParticipantEarnings);
+        $labelFinalEarning = bcsub($labelShare, $num2, 15);
 
         $this->distributeEarnings($labelFinalEarning, $participantEarnings);
 
@@ -184,7 +187,7 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
         $labelUser = $this->song->products()->first()->label?->user;
         $labelCommissionRate = $labelUser->commission_rate ?? 0;
         $labelShare = bcmul($this->balance, bcdiv($labelCommissionRate, '100'));
-        Log::info('Label commission rate: '.$labelCommissionRate.' Label share: '.$labelShare);
+        Log::info('Label commission rate: ' . $labelCommissionRate . ' Label share: ' . $labelShare);
         $this->balance = bcsub($this->balance, $labelShare);
         return $labelShare;
     }
@@ -203,7 +206,7 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
                         'earning' => $this->roundEarning($participantEarning)
                     ];
 
-                    Log::info('Participant earning: '.$participantEarning.' for user ID: '.$user->id);
+                    Log::info('Participant earning: ' . $participantEarning . ' for user ID: ' . $user->id);
 
                     // Üst kullanıcıya pay ekle
                     $this->distributeToUpperUsers($participantEarnings, $user, $participantEarning);
@@ -225,13 +228,13 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
                     'user_id' => $upperUser->id,
                     'earning' => $this->roundEarning($upperEarning)
                 ];
-                Log::info('Upper user earning: '.$upperEarning.' for upper user ID: '.$upperUser->id);
+                Log::info('Upper user earning: ' . $upperEarning . ' for upper user ID: ' . $upperUser->id);
                 $user = $upperUser;
                 $upperUser = $upperUser->parent_user;
                 $earning = $upperEarning;
             }
         } catch (\Exception $e) {
-            Log::error('Failed to distribute earnings to upper users: '.$e->getMessage());
+            Log::error('Failed to distribute earnings to upper users: ' . $e->getMessage());
         }
     }
 
@@ -246,7 +249,7 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
             'country' => $earningReport->country,
             'platform' => $earningReport->platform,
             'user_id' => $userId,
-            'uploaded_user_id' => $earningReport->file->user_id,
+            'uploaded_user_id' => $earningReport->file?->user_id,
             'earning' => $this->roundEarning($amount),
             'country_id' => $earningReport->country_id,
             'platform_id' => $earningReport->platform_id,
@@ -272,14 +275,14 @@ class EarningJob implements ShouldQueue, ShouldBeUnique
     {
         // Eğer kazanç 15 ondalık haneden büyükse aşağı yönde yuvarla
         if (strlen(substr(strrchr($earning, "."), 1)) > 15) {
-            Log::info('Earning amount before rounding: '.$earning);
+            Log::info('Earning amount before rounding: ' . $earning);
             $roundedEarning = bcadd($earning, '0', 15);
-            Log::info('Earning amount after rounding: '.$roundedEarning);
+            Log::info('Earning amount after rounding: ' . $roundedEarning);
             return $roundedEarning;
         }
         // Eğer kazanç 15 ondalık haneden küçükse, 15 ondalık haneye tamamla
         $completedEarning = bcadd($earning, '0', 15);
-        Log::info('Earning amount completed to 15 decimal places: '.$completedEarning);
+        Log::info('Earning amount completed to 15 decimal places: ' . $completedEarning);
         return $completedEarning;
     }
 }
