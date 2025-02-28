@@ -660,8 +660,10 @@ class ReportController extends Controller
     public function reportFiles()
     {
         $earningReports = EarningReport::with('reportFile')->advancedFilter();
+
         $platforms = Platform::all();
-        $earningReports = EarningReportResource::collection($earningReports)->response()->getData();
+        $earningReports = EarningReportResource::collection($earningReports)->resource;
+
         $statuses = enumToSelectInputFormat(EarningReportFileStatusEnum::getTitles());
         return inertia('Control/Finance/Imports/index', compact('earningReports', 'platforms', 'statuses'));
     }
