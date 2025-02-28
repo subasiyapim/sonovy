@@ -13,7 +13,8 @@ const props = defineProps({
     earningReports:{},
     platformData:{}, // Platform toplamları verisi
     platforms:{}, // Tüm platformlar
-    statuses:{} // Durum seçenekleri
+    statuses:{}, // Durum seçenekleri
+    filters:{}
 });
 const emits = defineEmits(['updated']);
 const isImportModalOn = ref(false);

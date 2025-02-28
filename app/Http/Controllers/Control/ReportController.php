@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Control;
 
+use App\Enums\EarningReportStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Report\ReportStoreRequest;
 use App\Http\Resources\Report\ReportResource;
@@ -426,14 +427,39 @@ class ReportController extends Controller
         }
     }
 
-    public function reportFiles()
+    public function reportFiles(Request $request)
     {
-        $earningReports = EarningReport::with('reportFile', 'platform')->advancedFilter();
-        
+        $request->validate([
+            'platform' => ['nullable', 'integer', 'exists:platforms,id'],
+            'status' => ['nullable']
+        ]);
+
         $platforms = Platform::all();
-        $earningReports = EarningReportResource::collection($earningReports)->resource;
         $statuses = enumToSelectInputFormat(EarningReportFileStatusEnum::getTitles());
-        return inertia('Control/Finance/Imports/index', compact('earningReports', 'platforms', 'statuses'));
+        $filters = [
+            [
+                "title" => "Platformlar",
+                "param" => "platform",
+                "options" => getDataFromInputFormat($platforms, 'id', 'name', null)
+            ],
+            [
+                'title' => 'Durum',
+                'param' => 'status',
+                'options' => $statuses,
+            ]
+        ];
+
+        $earningReports = EarningReport::with('reportFile', 'platform')
+            ->when(request('platform'), function ($query) {
+                $query->where('platform_id', request('platform'));
+            })
+            ->when(request('status'), function ($query) {
+                $query->where('status', request('status'));
+            })
+            ->advancedFilter();
+
+        $earningReports = EarningReportResource::collection($earningReports)->resource;
+        return inertia('Control/Finance/Imports/index', compact('earningReports', 'platforms', 'statuses', 'filters'));
     }
 
     public function participantReports(Request $request)
