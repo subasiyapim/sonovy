@@ -468,21 +468,20 @@ class ReportController extends Controller
             ->select(
                 'earnings.platform',
                 'earnings.platform_id',
-                'earnings.created_at',
                 'users.id as user_id',
-                'users.name as user_name', // Get specific user fields instead of users.*
+                'earnings.report_date',
                 DB::raw('SUM(earnings.earning) as user_total_earning'),
                 DB::raw('SUM((earnings.earning * users.commission_rate)) as service_provider_earning'),
 
             )
-            ->groupBy('earnings.platform_id', 'earnings.platform', 'earnings.created_at', 'users.id', 'users.name')
+            ->groupBy('earnings.platform_id', 'earnings.platform', 'earnings.report_date', 'users.id')
             ->get()
             ->map(function ($earning) {
                 return [
                     'id' => $earning->id,
                     'user' => [
-                        'id' => $earning->user_id,
-                        'name' => $earning->user_name,
+                        'id' => $earning->user->id,
+                        'name' => $earning->user->name,
                         'email' => $earning->user->email,
                         'commission_rate' => $earning->user->commission_rate,
                     ],
@@ -492,7 +491,7 @@ class ReportController extends Controller
                     'provider_earning' => ($earning->user_total_earning * $earning->user->commission_rate) - $earning->user_total_earning,
                     'participant_rate' => (1 - $earning->client_share_rate) * 100,
                     'platform_id' => $earning->platform_id,
-                    'created_at' => $earning->created_at,
+                    'report_date' => $earning->report_date,
                 ];
             });
 

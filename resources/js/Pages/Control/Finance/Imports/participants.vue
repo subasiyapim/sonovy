@@ -46,7 +46,8 @@ const defaultStore = useDefaultStore();
                 <AppTableColumn label="Tarih">
                     <template #default="scope">
                         <p class="paragraph-xs c-strong-950">
-                            {{moment(scope.row.created_at).format('YYYY - DD')}}
+                            {{moment(scope.row.report_date).format('YYYY - DD')}}
+                            <!-- {{scope.row}} -->
                         </p>
                     </template>
                 </AppTableColumn>
