@@ -42,13 +42,14 @@ class EarningReportResource extends JsonResource
     {
         $platform = strtolower($platform);
         $platformModel = Platform::where('name', $platform)->first();
-        return $platformModel ? $platformModel?->icon : 'default_icon.png';
+        return $platformModel ? $platformModel?->icon : null;
     }
 
     /**
      * Belirli bir platforma ait toplam geliri hesaplar
      *
      * @param  string  $platform
+     *
      * @return string
      */
     private function getPlatformTotal(string $platform): string
