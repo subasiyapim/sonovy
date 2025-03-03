@@ -142,7 +142,7 @@ import {useDefaultStore} from "@/Stores/default";
 const defaultStore = useDefaultStore();
 const isProductDialogOn = ref(false);
 
-const isSidebarOpen = ref(false);
+const isSidebarOpen = ref(true);
 </script>
 
 
