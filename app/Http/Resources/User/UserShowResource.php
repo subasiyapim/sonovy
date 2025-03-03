@@ -163,8 +163,11 @@ class UserShowResource extends JsonResource
             $product->songs->each(function ($song) use (&$participants) {
                 $song->participants->load('user');
                 $participants = array_merge($participants, $song->participants->map(function ($participant) {
+                    $s = $participant->song;
+                    $s->loadMissing('mainArtists', 'products');
                     return [
                         'id' => $participant->user->id,
+                        'song' => $s,
                         'roles' => $participant->user->roles,
                         'name' => $participant->user->name,
                         'email' => $participant->user->email,
@@ -186,9 +189,21 @@ class UserShowResource extends JsonResource
     {
         return $this->labels->map(function ($label) {
             $label->load('country', 'user');
+
+            // Correcting the product count
+            $products_count = $label->products()->count();
+
+            // Correcting the song count within products
+            $song_count = $label->products()
+                ->join('product_song', 'products.id', '=', 'product_song.product_id')
+                ->join('songs', 'product_song.song_id', '=', 'songs.id')
+                ->count();
+
             return [
                 'id' => $label->id,
                 'name' => $label->name,
+                'products_count' => $products_count,
+                'song_count' => $song_count,
                 'country' => $label->country->name,
                 'country_emoji' => $label->country->emoji,
                 'phone' => $label->phone,
@@ -199,6 +214,7 @@ class UserShowResource extends JsonResource
             ];
         })->toArray();
     }
+
 
     private function getProducts()
     {

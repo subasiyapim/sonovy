@@ -12,6 +12,7 @@
         <div v-for="error in errors" class="border-b border-soft-200">
           <p class="paragraph-xs c-strong-950">Satır:  {{error.row_number}}</p>
           <p class="paragraph-xs c-strong-950">  {{error.message}}</p>
+          <p class="paragraph-xs c-strong-950"> Net: {{error.row_data.net_revenue}}</p>
 
         </div>
     </div>

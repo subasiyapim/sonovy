@@ -4,10 +4,10 @@
     <a :href="path" class="flex items-center gap-2 menuItem" :class="checkIsActive ? 'active' : ''"
        @click="onClick">
       <component :is="icon"/>
-      <div class="flex-1">
+      <div v-if="isSidebarOpen" class="flex-1">
         <p class="label-sm">{{ title }}</p>
       </div>
-      <div v-if="hasSlot('sub')">
+      <div v-if="hasSlot('sub') && isSidebarOpen">
         <ChevronRightIcon
             :class="{
                     'transform rotate-90 transition-transform duration-300': isSubMenuOpen || checkIsActive,
@@ -16,9 +16,9 @@
         />
       </div>
     </a>
-    <div v-if="hasSlot('sub')" class=" border-l border-[#C8C7C6]  ms-4 ">
+    <div v-if="hasSlot('sub')" class="  " :class="isSidebarOpen ? 'ms-4 border-l border-[#C8C7C6]' :''">
       <transition name="dropdown">
-        <div v-show="isSubMenuOpen || checkIsActive" class="ps-3 my-3 flex flex-col">
+        <div v-show="isSubMenuOpen || checkIsActive" :class="isSidebarOpen ? 'ps-3' : ''" class=" my-3 flex flex-col">
           <slot name="sub"/>
         </div>
       </transition>
@@ -39,7 +39,9 @@ const props = defineProps({
   icon: {},
   active: {
     default: false,
-  }
+  },
+  isSidebarOpen: { type: Boolean, default: true }
+
 
 })
 

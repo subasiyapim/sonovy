@@ -5,70 +5,65 @@
          :hasSearch="false"
             :buttonLabel="'Plak Şirketi Ata'" ref="pageTable"  :isClient="true"
               v-model="tableData" @addNewClicked="openDialog">
-      <AppTableColumn :label="__('control.label.title_singular')" align="left" sortable="name">
-        <template #default="scope">
+        <AppTableColumn :label="__('control.label.title_singular')" align="left" sortable="name">
+            <template #default="scope">
 
-          <div class="flex items-center gap-2 ">
-            <div class="w-12 h-12 rounded-full overflow-hidden">
-              <img :alt="scope.row.name"
-                   :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.name)"
-              >
+            <div class="flex items-center gap-2 ">
+                <div class="w-12 h-12 rounded-full overflow-hidden">
+                <img :alt="scope.row.name"
+                    :src="scope.row.image ? scope.row.image.thumb : defaultStore.profileImage(scope.row.name)"
+                >
+                </div>
+                <a :href="route('control.catalog.labels.show',scope.row.id)"
+                class="c-blue-500 paragraph-xs">{{ scope.row.name }}</a>
+
+
             </div>
-            <a :href="route('control.catalog.labels.show',scope.row.id)"
-               class="c-sub-600 table-name-text">{{ scope.row.name }}</a>
+            </template>
+        </AppTableColumn>
 
+        <AppTableColumn :label="__('control.label.fields.product_count')" sortable="name" >
+            <template #default="scope">
+            <span class="paragraph-xs c-strong-950">
+                    {{ scope.row.products_count }} yayın
 
-          </div>
-        </template>
-      </AppTableColumn>
+            </span>
+            </template>
+        </AppTableColumn>
+        <AppTableColumn :label="__('control.label.fields.song_count')" sortable="name" >
+            <template #default="scope">
+                <span class="paragraph-xs c-strong-950">
+                    {{ scope.row.song_count }} parça
+                </span>
+            </template>
+        </AppTableColumn>
+
         <AppTableColumn :label="__('control.label.fields.added_by')" sortable="name" width="140">
-        <template #default="scope">
-          <div class="flex items-center gap-4">
+            <template #default="scope">
+                <div class="flex items-center gap-4">
 
-             <a v-if="scope.row.user" :href="route('control.user-management.users.show',scope.row.user?.id)" class="paragraph-xs c-strong-950 hover:underline">
-                {{ scope.row.user?.name }}
-             </a>
-          </div>
+                    <a v-if="scope.row.user" :href="route('control.user-management.users.show',scope.row.user?.id)" class="paragraph-xs c-blue-500 hover:underline">
+                        {{ scope.row.user?.name }}
+                    </a>
+                </div>
+            </template>
+        </AppTableColumn>
+
+        <AppTableColumn :label="__('control.general.actions')" align="right">
+            <template #default="scope">
+            <div class="flex gap-3">
+                    <ActionButton :label="scope.row" @onDetached="onDetached(scope)" />
+            </div>
+            </template>
+        </AppTableColumn>
+        <template #empty>
+            <div class="flex flex-col items-center justify-center gap-8">
+            <div>
+                <h2 class="label-medium c-strong-950">{{ __('control.user.no_label_company') }}</h2>
+            </div>
+
+            </div>
         </template>
-      </AppTableColumn>
-
-      <AppTableColumn :label="__('control.label.fields.phone')" sortable="name">
-        <template #default="scope">
-          <div class="flex gap-4">
-            <PhoneIcon color="var(--neutral-500)"/>
-            <p class="paragraph-xs c-sub-600 w-max">
-              {{ scope.row.phone }}
-            </p>
-          </div>
-        </template>
-      </AppTableColumn>
-
-      <AppTableColumn :label="__('control.label.fields.email')" sortable="name">
-        <template #default="scope">
-          <div class="flex gap-4">
-            <LabelEmailIcon color="var(--neutral-500)"/>
-            <p class="paragraph-xs c-sub-600">
-              {{ scope.row.email }}
-            </p>
-          </div>
-        </template>
-      </AppTableColumn>
-
-      <AppTableColumn :label="__('control.general.actions')" align="right">
-        <template #default="scope">
-          <div class="flex gap-3">
-                <ActionButton :label="scope.row" @onDetached="onDetached(scope)" />
-          </div>
-        </template>
-      </AppTableColumn>
-      <template #empty>
-        <div class="flex flex-col items-center justify-center gap-8">
-          <div>
-            <h2 class="label-medium c-strong-950">{{ __('control.user.no_label_company') }}</h2>
-          </div>
-
-        </div>
-      </template>
     </AppTable>
     <AssignUserLabelModal :assignedLabels="tableData.map((e) => e.id)" @done="onDone" v-if="isAssignModalOn" v-model="isAssignModalOn" :user_id="usePage().props.user.id" ></AssignUserLabelModal>
 
