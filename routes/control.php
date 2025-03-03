@@ -144,6 +144,11 @@ Route::group(
             Route::group(['prefix' => 'plan-items', 'as' => 'planItems.'], function () {
                 Route::get('/', [PlanItemController::class, 'index'])->name('index');
             });
+
+            Route::resource('features', FeatureController::class)->names('features');
+            Route::resource('plans', PlanController::class)->names('plans');
+            Route::post('preferred-plan/{plan}', [PlanController::class, 'preferredPlan'])->name('preferred-plan');
+
         });
 
         //Statistics Routes

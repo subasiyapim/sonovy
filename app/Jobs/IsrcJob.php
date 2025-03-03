@@ -55,7 +55,7 @@ class IsrcJob implements ShouldQueue, ShouldBeUnique
      */
     public function __construct()
     {
-        $this->tenants = Cache::rememberForever('tenants', function () {
+        $this->tenants = Cache::remember('tenants', 3600, function () {
             return \App\Models\System\Tenant::all();
         });
     }
@@ -156,5 +156,12 @@ class IsrcJob implements ShouldQueue, ShouldBeUnique
         } finally {
             Cache::forget('tenants');
         }
+    }
+
+    public function tags()
+    {
+        return [
+            'tenant:'.tenant('id'),
+        ];
     }
 }
