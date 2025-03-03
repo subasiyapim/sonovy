@@ -73,19 +73,24 @@
     </AppTableColumn>
       <AppTableColumn :label="'Sanatçı'" sortable="name">
         <template #default="scope">
-          <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
-            <img :alt="scope.row.name"
-                 class="w-10 h-10 rounded-full overflow-hidden"
-                 :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
-            <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
-          </div>
+            <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
+                <img :alt="scope.row.name"
+                    class="w-10 h-10 rounded-full overflow-hidden"
+                    :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
+                <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
+            </div>
+            <p class="paragraph-xs c-strong-950" v-if="scope.row.main_artists.length <= 0">
+                Sanatçı bulunmuyor
+            </p>
         </template>
       </AppTableColumn>
       <AppTableColumn :label="'Katılımcı'" sortable="name">
         <template #default="scope">
-          <div class="border border-soft-200 rounded paragraph-xs c-strong-950 px-3 py-1">
-            {{ scope.row.participants.length }} {{ __('control.song.participant') }}
-          </div>
+            <button @click="openParticipantModal(scope.row)">
+                <div class="flex items-center gap-2 label-xs c-sub-600 border border-soft-200 px-2 py-1 rounded-lg">
+                    <p class="w-max"> {{ scope.row.participants?.length ?? 0 }} Katılımcı</p>
+                </div>
+            </button>
         </template>
       </AppTableColumn>
       <template #empty>
@@ -99,6 +104,8 @@
     </AppTable>
 
     <LabelDialog :label="choosenLabel" @done="onDone" v-if="isModalOn" v-model="isModalOn"/>
+    <SongParticipantModal v-if="isSongParticipantModalOn" v-model="isSongParticipantModalOn"
+                        :song="choosenSong"></SongParticipantModal>
   </AdminLayout>
 </template>
 
@@ -118,7 +125,7 @@ import {
   RingtoneIcon,
   AudioIcon
 } from '@/Components/Icons'
-import {LabelDialog} from '@/Components/Dialog';
+import {LabelDialog,SongParticipantModal} from '@/Components/Dialog';
 import {useDefaultStore} from "@/Stores/default";
 
 const pageTable = ref();
@@ -140,7 +147,15 @@ const props = defineProps({
     required: false
   }
 })
+const isSongParticipantModalOn = ref(false);
+const choosenSong = ref(null);
 
+const openParticipantModal = (song) => {
+    console.log("SONG",song);
+
+  isSongParticipantModalOn.value = true;
+  choosenSong.value = song;
+};
 
 const currentSound = ref(null);
 const currentSong = ref(null);

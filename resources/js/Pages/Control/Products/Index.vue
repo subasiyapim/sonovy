@@ -85,8 +85,10 @@
       </AppCard>
     </div>
 
-    <AppTable ref="productTable" :showAddButton="false" :renderRowNoteText="renderRowNoteText"
+    <AppTable ref="productTable" :showAddButton="false"
+        :renderRowNoteText="renderRowNoteText"
               :showNoteIf="showNoteIfFn"
+              :addClass="addClassToTable"
             :config="appTableConfig"
               v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
       <AppTableColumn label="Tür" sortable="type">
@@ -191,8 +193,9 @@
       <AppTableColumn label="UPC/Katalog" width="180">
         <template #default="scope">
           <div class="flex flex-col justify-start ">
-            <span class="paragraph-xs c-strong-950">UPC:{{ scope.row.upc_code ?? 'Boş' }}</span>
-            <span class="paragraph-xs c-strong-950">Katalog Numarası: {{ scope.row.catalog_number ?? 'Boş' }}</span>
+            <span class="paragraph-xs c-sub-600">UPC:</span><span class="label-sm c-strong-950 ">{{ scope.row.upc_code ?? 'Boş' }}</span>
+            <span class="paragraph-xs c-sub-600">Katalog No: </span>
+            <span class="label-sm c-strong-950 "> {{ scope.row.catalog_number ?? 'Boş' }}</span>
 
           </div>
         </template>
@@ -301,6 +304,13 @@ const showNoteIfFn = (row) => {
   } else {
     return false;
   }
+}
+
+const addClassToTable = (row) => {
+    if(row.status == 2){
+        return 'bg-amber-50 hover:bg-amber-100'
+
+    }
 }
 const renderRowNoteText = (row) => {
   return row.note

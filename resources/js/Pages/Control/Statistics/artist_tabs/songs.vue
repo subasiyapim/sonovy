@@ -76,7 +76,7 @@ const pauseMusic = (song) => {
        <p class="paragraph-xs c-strong-950"> #{{ Object.keys(songs).findIndex((e) => e == scope.index)+1 }}</p>
       </template>
     </AppTableColumn>
-    <AppTableColumn label="tür">
+    <AppTableColumn label="Tür">
       <template #default="scope">
         <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 

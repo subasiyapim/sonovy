@@ -27,6 +27,7 @@
 
         <div class="flex items-center gap-2 mb-2">
           <h1 class="label-xl c-strong-950" v-text="product.album_name"/>
+
           <template v-if="product.metadata"><p class="paragraph-xs"> ({{product.metadata.version ?? '-'}})</p></template>
           <div class="border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2 w-min">
             <component :is="statusData.find((e) => e.value == usePage().props.product.status)?.icon"

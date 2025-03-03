@@ -228,7 +228,10 @@
                     <div class="flex flex-col flex-1 items-start justisy-start">
                     <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
                         {{ scope.row.album_name }}
+
                     </a>
+
+                    <p class="paragraph-xs c-strong-950">{{scope.row.upc_code}}</p>
 
                     <div class=" paragraph-xs c-strong-950 ">
                         <p>
@@ -269,7 +272,7 @@
     </div>
     <div v-else-if="activeTab == 'songs'" class="px-6">
         <AppTable v-model="tab.songs"  :isClient="true" :hasSearch="false" :showAddButton="false">
-            <AppTableColumn label="Tür" sortable="type">
+            <AppTableColumn label="Tür" sortable="type" width="70">
                 <template #default="scope">
                 <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 
@@ -299,9 +302,13 @@
                 </div>
                 </template>
             </AppTableColumn>
-            <AppTableColumn label="Şarkı Bilgisi" width="180">
+            <AppTableColumn label="Şarkı Bilgisi" >
                 <template #default="scope">
-                   <a :href="route('control.catalog.songs.show',scope.row.id)" class="paragraph-xs c-blue-500"> {{scope.row.name}}</a>
+                    <div class="flex flex-col items-start">
+                        <a :href="route('control.catalog.songs.show',scope.row.id)" class="paragraph-xs c-blue-500"> {{scope.row.name}}</a>
+                        <p class="paragraph-xs c-sub-600">{{ scope.row.isrc }}</p>
+                    </div>
+
                 </template>
             </AppTableColumn>
             <AppTableColumn :label="'Sanatçı'" sortable="name">
@@ -343,11 +350,7 @@
                     </div>
                 </template>
             </AppTableColumn>
-            <AppTableColumn label="ISRC Kodu" >
-                <template #default="scope">
-                    <p class="paragraph-xs c-sub-600">{{ scope.row.isrc }}</p>
-                </template>
-            </AppTableColumn>
+
             <AppTableColumn label="Rol" >
                 <template #default="scope">
                     <p class="paragraph-xs c-sub-600" v-for="role in scope.row.artist_role">{{role}}</p>

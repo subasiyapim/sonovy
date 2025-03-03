@@ -32,7 +32,7 @@
     <transition name="dropdown">
       <teleport to="body">
         <div v-if="isOpen"
-            class="absolute dropdownWrapper left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-10"
+            class="absolute dropdownWrapper left-0 right-0 border border-soft-200 radius-8 p-2 bg-white z-[100000]"
             :style="dropdownStyle">
           <AppTextInput @click.stop v-if="config.hasSearch" v-model="searchTerm" @change="onSearchChange" class="w-full mb-2"
                         :placeholder="config?.searchPlaceholder">
@@ -42,7 +42,7 @@
           </AppTextInput>
           <template v-if="config.data != null && config.data.length > 0">
             <div v-if="hasSlot('first_child')" class="mb-2">
-              <slot name="first_child"/>
+              <slot @click="onClickFirst" name="first_child"/>
             </div>
           </template>
 
@@ -109,6 +109,9 @@ const getShowLabel = computed(() => {
   return findedElement == null ? '' : findedElement[props.config.label ?? 'label'];
 });
 
+const onClickFirst = () => {
+    isOpen.value = false;
+}
 const dropdownWrapper = ref(null);
 
 const open = async () => {
@@ -133,23 +136,7 @@ const handleScroll = () => {
 };
 
 const remoteDatas = ref(null)
-// const getFilteredData = computed(() => {
-//     console.log("FİLTER DATA ÇAIŞTI",props.config?.data);
 
-//   //console.log("BURAYAA GELDİK");
-//   if (searchTerm.value) {
-//     if (remoteDatas.value) {
-//       return remoteDatas.value;
-//     } else {
-//       if (props.config?.remote == null) {
-//         return props.config?.data?.filter((el) => el[props.config.label ?? 'label'].toLocaleLowerCase('tr-TR').includes(searchTerm.value.toLocaleLowerCase('tr-TR')))
-//       }
-//     }
-
-//   } else {
-//     return props.config?.data
-//   }
-// })
 const localData = ref(props.config?.data || []);
 const getFilteredData = computed(() => {
 
@@ -290,9 +277,14 @@ onBeforeUnmount(() => {
   window.removeEventListener("scroll", handleScroll, true);
 });
 
+
+const closeDropdown = () => {
+     isOpen.value = false;
+}
 defineExpose({
   insertData,
-  appendOptions
+  appendOptions,
+  closeDropdown
 });
 
 </script>

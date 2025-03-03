@@ -72,7 +72,7 @@
             <tbody >
                 <template v-for="(row, rowIndex) in data" :key="rowIndex">
                     <tr class="tableRow"
-                        :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf != null && showNoteIf(row) ? '' : ( renderSubWhen != null && renderSubWhen(row) ? (data.isSelected ? '' : 'hasBorder') :'hasBorder')) ">
+                        :class="(selectedRowIndexes.includes(row) ? 'bg-white-600 border border-white-700' : ''),(showNoteIf != null && showNoteIf(row) ? '' : ( renderSubWhen != null && renderSubWhen(row) ? (data.isSelected ? '' : 'hasBorder') :'hasBorder')),(addClass != null ? addClass(row) : '') ">
                         <td v-if="hasSelect" class="tableCell">
 
                         <button class="appCheckBox" :class="selectedRowIndexes.includes(row) ? 'checked' : ''"
@@ -281,6 +281,7 @@ const props = defineProps({
   showEmptyOnDrag:{
     default:false
   },
+  addClass:{},
   renderSubWhen:{},
   scrollable:{
     default:true,

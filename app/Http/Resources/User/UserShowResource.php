@@ -209,6 +209,7 @@ class UserShowResource extends JsonResource
                     'id' => $product->id,
                     'type' => $product->type->value,
                     'status' => $product->status->value,
+                    'version' => $product->version,
                     'status_name' => $product->status->title(),
                     'image' => $product->image ? $product->image->getUrl('thumb') : null,
                     'album_name' => $product->album_name,

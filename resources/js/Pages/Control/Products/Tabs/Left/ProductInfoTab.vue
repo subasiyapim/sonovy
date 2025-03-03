@@ -280,6 +280,8 @@ const defaultStore = useDefaultStore();
 
 const whichSelectToAdd = ref(null);
 const openArtistCreateDialog = (artistSelectName) => {
+
+
   whichSelectToAdd.value = artistSelectName;
   createArtistDialog.value = true;
 }

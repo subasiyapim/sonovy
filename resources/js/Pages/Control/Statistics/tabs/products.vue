@@ -42,7 +42,7 @@ const data = computed({
          <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
       </template>
     </AppTableColumn>
-    <AppTableColumn label="tür" >
+    <AppTableColumn label="Tür" >
       <template #default="scope">
         <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 

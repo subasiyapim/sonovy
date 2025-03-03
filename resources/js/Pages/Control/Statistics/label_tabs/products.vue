@@ -44,7 +44,7 @@ const data = computed({
 
       </template>
     </AppTableColumn>
-    <AppTableColumn label="tür">
+    <AppTableColumn label="Tür">
       <template #default="scope">
         <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 

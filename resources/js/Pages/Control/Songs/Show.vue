@@ -75,7 +75,11 @@
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.album_name')"/>
-                  <span class="song-sm c-strong-950" v-text="song.album_name"/>
+                  <span class="label-sm c-strong-950">
+                    {{song.album_name}}
+                    <template v-if="song.version">({{song.version}})</template>
+                  </span>
+
                 </div>
               </div>
               <div class="flex gap-3.5 items-center">
@@ -84,7 +88,7 @@
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.artist')"/>
-                  <span class="song-sm c-strong-950" v-text="song?.main_artist?.name"/>
+                  <span class="label-sm c-strong-950" v-text="song?.main_artist?.name"/>
                 </div>
               </div>
               <div class="flex gap-3.5 items-center">
@@ -93,7 +97,7 @@
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.label')"/>
-                  <span class="song-sm c-strong-950" v-text="song.label_name"/>
+                  <span class="label-sm c-strong-950" v-text="song.label_name"/>
                 </div>
               </div>
 
@@ -104,7 +108,7 @@
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.isrc')"/>
-                  <span class="song-sm c-strong-950" v-text="song.isrc"/>
+                  <span class="label-sm c-strong-950" v-text="song.isrc"/>
                 </div>
               </div>
               <div class="flex gap-3.5 items-center">
@@ -113,7 +117,7 @@
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.upc_code')"/>
-                  <span class="song-sm c-strong-950" v-text="song.upc_code"/>
+                  <span class="label-sm c-strong-950" v-text="song.upc_code"/>
                 </div>
               </div>
 
@@ -127,7 +131,7 @@
                 </div>
                 <div v-for="platform in song.platforms" :key="platform.id">
                   <p class="paragraph-xs c-sub-600" v-text="platform.name"/>
-                  <span class="song-sm c-strong-950" v-text="platform.pivot.url"/>
+                  <span class="label-sm c-strong-950" v-text="platform.pivot.url"/>
                 </div>
               </div>
             </div>

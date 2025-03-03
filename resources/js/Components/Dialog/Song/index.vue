@@ -637,6 +637,8 @@ onMounted(() => {
   }
 });
 const openArtistCreateDialog = (whichArtistConfigToAdString) => {
+
+    mainArtistSelect.value.appSelect?.closeDropdown();
   whichArtistConfigToAdd.value = whichArtistConfigToAdString;
   createArtistDialog.value = true;
 }

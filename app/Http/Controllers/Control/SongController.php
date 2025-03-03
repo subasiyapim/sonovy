@@ -65,7 +65,7 @@ class SongController extends Controller
     {
         $lyrics_writers = $request->input('lyrics_writers');
 
-//        dd($lyrics_writers);
+        //        dd($lyrics_writers);
         if (!empty($lyrics_writers)) {
 
             SongWriter::where('song_id', $song->id)->get()->each(fn($writer) => $writer->delete());
@@ -141,7 +141,7 @@ class SongController extends Controller
         $songs = Song::with(
             'genre',
             'subGenre',
-            'participants',
+            'participants.user',
             'remixer',
             'mainArtists',
             'featuringArtists',
@@ -158,12 +158,14 @@ class SongController extends Controller
 
         $types = array_merge([['label' => 'Tümü', 'value' => null]], SongTypeEnum::getTitlesFromInputFormat());
 
-        return inertia('Control/Songs/Index',
+        return inertia(
+            'Control/Songs/Index',
             [
                 'songs' => $songs,
                 'types' => $types,
                 'statuses' => ProductStatusEnum::getTitles(),
-            ]);
+            ]
+        );
     }
 
     public function show(Song $song): \Inertia\Response|\Inertia\ResponseFactory
@@ -244,11 +246,11 @@ class SongController extends Controller
             return redirect()->back()->with(
                 [
                     'notification' =>
-                        [
-                            'type' => 'error',
-                            'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
-                            'model' => __('control.song.title_singular')
-                        ]
+                    [
+                        'type' => 'error',
+                        'message' => 'Parçaya ait yayınlar olduğu için silinemez.',
+                        'model' => __('control.song.title_singular')
+                    ]
                 ]
             );
         }
@@ -463,7 +465,7 @@ class SongController extends Controller
     {
         $request->validate(
             [
-                'ids' => ['array', 'in:'.Song::pluck('id')->implode(',')],
+                'ids' => ['array', 'in:' . Song::pluck('id')->implode(',')],
                 'product_id' => ['required', 'exists:products,id']
             ]
         );

@@ -1,6 +1,6 @@
 <template>
     <teleport to="body">
-       <div v-if="isDialogOn" @click="closeDialog" class="appDialogBg " >
+       <div v-if="isDialogOn" @click="closeDialog" class="appDialogBg z-10" >
 
        </div>
 

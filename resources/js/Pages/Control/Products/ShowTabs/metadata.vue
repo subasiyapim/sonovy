@@ -39,7 +39,10 @@ const defaultStore = useDefaultStore();
               </div>
               <div>
                 <p class="paragraph-xs c-sub-600" v-text="__('control.product.show.album_name')"/>
-                <span class="label-sm c-strong-950" v-text="product.metadata.album_name"/>
+                <span class="label-sm c-strong-950">
+                    {{product.metadata.album_name}}
+                    <template v-if="product.metadata">({{product.metadata.version ?? '-'}})</template>
+                </span>
               </div>
             </div>
             <div class="flex gap-3.5 items-center">
