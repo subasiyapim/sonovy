@@ -488,7 +488,7 @@ class ReportController extends Controller
                     ],
                     'platform' => $earning->platform,
                     'participant_earning' => Number::currency($earning->user_total_earning, 'USD', app()->getLocale()),
-                    'total_earning' => Number::currency($earning->user_total_earning * $earning->user->commission_rate,
+                    'total_earning' => Number::currency($earning->user_total_earning * $earning->user->commission_rate ?? 0,
                         'USD', app()->getLocale()),
                     'provider_earning' => Number::currency(($earning->user_total_earning * $earning->user->commission_rate) - $earning->user_total_earning,
                         'USD', app()->getLocale()),
