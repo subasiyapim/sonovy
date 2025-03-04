@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup >
 import { onMounted, ref } from 'vue';
 
 const model = defineModel<string>({ required: true });

@@ -445,6 +445,12 @@ const onMouseLeave = (spotifySlug) => {
     }
 };
 
+const mounted = ref(false);
+
+onMounted(() => {
+  mounted.value = true;
+});
+
 </script>
 
 <template>
@@ -521,6 +527,8 @@ const onMouseLeave = (spotifySlug) => {
             <div class="flex h-72 flex-col justify-between gap-5">
                 <span v-for="val in props.data.monthly_net_earnings?.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
             </div>
+
+
 
           <template v-if="Object.keys(monthlyData).length > 0">
             <div v-for="key in Object.keys(monthlyData)"
@@ -605,13 +613,15 @@ const onMouseLeave = (spotifySlug) => {
 
         <div @mouseenter="onMouseEnter('spotify')" @click="onClickBar('spotify')" @mouseleave="onMouseLeave('spotify')" class="cursor-pointer flex items-center gap-2">
           <div :class="clickedbars.find((e) =>  e == 'spotify' ) ? 'bg-others' : 'bg-spotify'" class="w-3 h-3 rounded-full "></div>
-          <span class="paragraph-xs c-strong-950">{{
-              __('control.finance.analysis.estimated_earnings_md_spotify_discovery_mode_with_catalog_optimization')
-            }}</span>
+        <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.regular_spotify_revenue') }}</span>
         </div>
         <div @mouseenter="onMouseEnter('regular')" @click="onClickBar('regular')" @mouseleave="onMouseLeave('regular')" class="cursor-pointer flex items-center gap-2">
           <div :class="clickedbars.find((e) =>  e == 'regular' ) ? 'bg-others' : 'bg-[#BDECCD]'" class="w-3 h-3 rounded-full "></div>
-          <span class="paragraph-xs c-strong-950">{{ __('control.finance.analysis.regular_spotify_revenue') }}</span>
+
+
+                 <span class="paragraph-xs c-strong-950">{{
+              __('control.finance.analysis.estimated_earnings_md_spotify_discovery_mode_with_catalog_optimization')
+            }}</span>
         </div>
       </div>
       <hr>
@@ -636,7 +646,8 @@ const onMouseLeave = (spotifySlug) => {
                             </template>
                             <template v-else>
                                 <template v-if="(clickedbars.find((e) =>  e == 'regular' ))">
-                                       {{spotifyDiscoveryData[key].promotion}}
+                                    {{spotifyDiscoveryData[key].promotion}}
+
                                 </template>
                                 <template v-if="(clickedbars.find((e) =>  e == 'spotify' ))">
                                     {{spotifyDiscoveryData[key].earning}}
@@ -943,4 +954,34 @@ const onMouseLeave = (spotifySlug) => {
         display:flex !important;
         justify-content:center !important;
     }
+
+    .column-fade-enter-active {
+  animation: fade-in 0.8s ease-in-out;
+}
+
+.animated-bar {
+  transform-origin: bottom;
+  animation: grow 0.8s ease-in-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes grow {
+  from {
+    height: 0;
+  }
+  to {
+    height: 100%;
+  }
+}
+
 </style>

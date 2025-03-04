@@ -56,7 +56,7 @@ const appTableConfig = computed(() => {
         </template>
 
 
-        <AppTable v-model="data" :showAddButton="false"  :config="appTableConfig">
+        <AppTable  v-model="data" :showAddButton="false"  :config="appTableConfig">
                 <AppTableColumn label="Platform">
                     <template #default="scope">
 
@@ -97,7 +97,7 @@ const appTableConfig = computed(() => {
                 <AppTableColumn label="Hatalar">
                     <template #default="scope">
                         <p @click="openErrorModal(scope.row.errors)" class="border border-soft-200 rounded px-2 py-0.5 cursor-pointer paragraph-xs c-strong-950">
-                            {{scope.row.errors.length}} adet Hata
+                            {{scope.row.errors?.length ?? 0}} adet Hata
                         </p>
                     </template>
                 </AppTableColumn>
