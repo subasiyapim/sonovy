@@ -10,8 +10,9 @@ const MIN_SQUARES = 5;
 const MAX_SQUARES = 12;
 const SQUARE_SIZE = 30; // Each square is 30px in height
 
+const state = ref()
 // Store the bars (columns with squares)
-const bars = ref<number[][]>([]);
+const bars = ref([]);
 
 // Function to get a random number of squares
 function randomNumberOfSquares() {
