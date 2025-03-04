@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Song;
 
 class EarningService
 {
@@ -540,151 +541,95 @@ class EarningService
     private const SALES_TYPES = ['Stream', 'PLATFORM PROMOTION', 'Creation', 'Download'];
     private const RELEASE_TYPES = ['Music Release', 'Ringtone', 'Video', 'User Generated Content'];
 
-    public static function createDemoEarnings($userId)
+    public static function createDemoEarnings()
     {
-        $faker = \Faker\Factory::create();
-        $data = [];
-        $totalProcessed = 0;
-        $errors = 0;
+        $platform = Platform::inRandomOrder()->first();
+        $country = Country::inRandomOrder()->first();
+        $song = Song::with('products.artists', 'products.label')->inRandomOrder()->first();
+        $product = $song->products()->first();
+        $user = User::inRandomOrder()->first();
 
-        DB::beginTransaction();
-        try {
-            // Mevcut ürünleri ve şarkıları al
-            $products = Product::with(['songs', 'artists', 'label', 'downloadPlatforms'])
-                ->whereHas('songs')
-                ->whereHas('artists')
-                ->whereHas('label')
-                ->whereHas('downloadPlatforms')
-                ->get();
+        $reportFile = EarningReportFile::create([
+            'user_id' => $user->id,
+            'name' => 'Demo Rapor ' . now()->format('Y-m-d H:i:s'),
+            'is_processed' => true,
+            'processed_at' => now(),
+        ]);
 
-            $songs = collect();
-            foreach ($products as $product) {
-                $songs = $songs->merge($product->songs);
-            }
+        $report = EarningReport::create([
+            'user_id' => $user->id,
+            'name' => 'Demo Rapor ' . now()->format('Y-m-d H:i:s'),
+            'period' => now()->format('Y-m'),
+            'report_type' => 'earning',
+            'file_size' => 0,
+            'status' => 1,
+            'processed_at' => now(),
+            'report_date' => now(),
+            'reporting_month' => now()->format('Y-m'),
+            'sales_date' => now(),
+            'sales_month' => now()->format('Y-m'),
+            'platform' => $platform->name,
+            'platform_id' => $platform->id,
+            'country' => $country->name,
+            'region' => $country->region,
+            'country_id' => $country->id,
+            'label_name' => $product->label->name ?? 'N/A',
+            'label_id' => $product->label->id ?? null,
+            'artist_name' => $product->artists->first()->name ?? 'N/A',
+            'artist_id' => $product->artists->first()->id ?? null,
+            'release_name' => $product->name ?? 'N/A',
+            'song_name' => $song->name ?? 'N/A',
+            'song_id' => $song->id,
+            'upc_code' => $product->upc_code ?? 'N/A',
+            'isrc_code' => $song->isrc,
+            'catalog_number' => $product->catalog_number ?? 'N/A',
+            'release_type' => 'Yayın',
+            'sales_type' => 'STREAM',
+            'quantity' => 1,
+            'currency' => 'EUR',
+            'unit_price' => 0.00,
+            'mechanical_fee' => 0.00,
+            'gross_revenue' => 10.00,
+            'client_share_rate' => 70.00,
+            'net_revenue' => 7.00,
+            'earning_report_file_id' => $reportFile->id
+        ]);
 
-            if ($products->isEmpty()) {
-                throw new \Exception('Demo kazanç oluşturmak için uygun ürün bulunamadı.');
-            }
-
-            // Son 48 ay için tarih aralığı oluştur
-            $endDate = now();
-            $startDate = now()->subMonths(48);
-
-            // Her ay için kayıt oluştur
-            for ($date = $startDate->copy(); $date->lte($endDate); $date->addMonth()) {
-                // Her ay için rastgele 1-300 arası kayıt sayısı belirle
-                $recordsForMonth = rand(1, 300);
-
-                for ($i = 0; $i < $recordsForMonth; $i++) {
-                    try {
-                        $randomProduct = $products->random();
-                        $randomSong = $songs->random();
-
-                        // O ay içinde rastgele bir gün seç
-                        $sales_date = Carbon::create(
-                            $date->year,
-                            $date->month,
-                            rand(1, $date->daysInMonth)
-                        );
-
-                        // Rastgele platform seç
-                        $platform = $faker->randomElement(self::PLATFORMS);
-                        $platformModel = Platform::where('name', $platform)->first();
-
-                        // Rastgele ülke seç
-                        $country = (new Country())->newQuery()->inRandomOrder()->first();
-
-                        $data[] = [
-                            'user_id' => 1, // Sabit olarak 1 numaralı kullanıcı
-                            'report_date' => Carbon::parse($faker->dateTimeBetween($sales_date, now()))->format('Y-m-d'),
-                            'reporting_month' => $sales_date->format('Y/m/01'),
-                            'sales_date' => $sales_date->format('Y-m-d'),
-                            'sales_month' => $sales_date->format('Y/m/01'),
-                            'platform' => $platform,
-                            'platform_id' => $platformModel?->id,
-                            'country' => $country?->name,
-                            'region' => $country?->region,
-                            'country_id' => $country?->id,
-                            'label_name' => $randomProduct->label->name,
-                            'label_id' => $randomProduct->label->id,
-                            'artist_name' => $randomProduct->artists->random()->name,
-                            'artist_id' => $randomProduct->artists->random()->id,
-                            'release_name' => $randomProduct->album_name,
-                            'song_name' => $randomSong->name,
-                            'song_id' => $randomSong->id,
-                            'upc_code' => $randomProduct->upc_code,
-                            'isrc_code' => $randomSong->isrc,
-                            'catalog_number' => $faker->bothify('CAT-####-???'),
-                            'streaming_type' => $faker->randomElement(self::STREAMING_TYPES),
-                            'streaming_subscription_type' => $faker->randomElement(self::STREAMING_TYPES),
-                            'release_type' => $faker->randomElement(self::RELEASE_TYPES),
-                            'sales_type' => $faker->randomElement(self::SALES_TYPES),
-                            'quantity' => $faker->numberBetween(1, 10000),
-                            'currency' => 'EUR',
-                            'client_payment_currency' => 'EUR',
-                            'unit_price' => $faker->randomFloat(4, 0.0001, 0.01),
-                            'mechanical_fee' => $faker->randomFloat(4, 0, 0.001),
-                            'gross_revenue' => $faker->randomFloat(4, 0.01, 1),
-                            'client_share_rate' => $faker->randomFloat(2, 0.5, 0.8),
-                            'earning' => $faker->randomFloat(4, 0.001, 0.5),
-                        ];
-
-                        $totalProcessed++;
-                    } catch (\Exception $e) {
-                        $errors++;
-                        Log::warning('Demo kazanç kaydı oluşturma hatası', [
-                            'error' => $e->getMessage(),
-                            'month' => $date->format('Y-m')
-                        ]);
-                        continue;
-                    }
-                }
-            }
-
-            if (empty($data)) {
-                throw new \Exception('Demo kazanç verileri oluşturulamadı.');
-            }
-
-            $file = EarningReportFile::create([
-                'user_id' => 1,
-                'name' => 'Demo Earning Report '.Carbon::now()->format('Y-m-d'),
-            ]);
-
-            // Chunk'lar halinde kaydet
-            foreach (array_chunk($data, 100) as $chunk) {
-                self::createEarning($chunk, $file->id);
-            }
-
-            DB::commit();
-
-            // Excel dosyası oluştur
-            $exportResult = Excel::store(
-                new FakerEarningReport($data),
-                'earnings-'.time().'.csv',
-                'tenant_'.tenant('domain').'_earning_reports'
-            );
-
-            Log::info('Demo kazanç verileri oluşturuldu', [
-                'total_records' => count($data),
-                'total_processed' => $totalProcessed,
-                'errors' => $errors,
-                'export_status' => $exportResult,
-                'date_range' => [
-                    'start' => $startDate->format('Y-m-d'),
-                    'end' => $endDate->format('Y-m-d')
-                ]
-            ]);
-
-            return $exportResult;
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Demo kazanç oluşturma hatası', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw $e;
-        }
+        Earning::create([
+            'earning_report_id' => $report->id,
+            'user_id' => $user->id,
+            'report_date' => now(),
+            'reporting_month' => now()->format('Y-m'),
+            'sales_date' => now(),
+            'sales_month' => now()->format('Y-m'),
+            'platform' => $platform->name,
+            'platform_id' => $platform->id,
+            'country' => $country->name,
+            'region' => $country->region,
+            'country_id' => $country->id,
+            'label_name' => $product->label->name ?? 'N/A',
+            'label_id' => $product->label->id ?? null,
+            'artist_name' => $product->artists->first()->name ?? 'N/A',
+            'artist_id' => $product->artists->first()->id ?? null,
+            'release_name' => $product->name ?? 'N/A',
+            'song_name' => $song->name ?? 'N/A',
+            'song_id' => $song->id,
+            'upc_code' => $product->upc_code ?? 'N/A',
+            'isrc_code' => $song->isrc,
+            'catalog_number' => $product->catalog_number ?? 'N/A',
+            'streaming_type' => null,
+            'streaming_subscription_type' => null,
+            'release_type' => 'Yayın',
+            'sales_type' => 'STREAM',
+            'quantity' => 1,
+            'currency' => 'EUR',
+            'client_payment_currency' => 'EUR',
+            'unit_price' => 0.00,
+            'mechanical_fee' => 0.00,
+            'gross_revenue' => 10.00,
+            'client_share_rate' => 70.00,
+            'earning' => 7.00
+        ]);
     }
 
     protected static function createEarning($data, $file_id)

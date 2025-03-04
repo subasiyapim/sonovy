@@ -11,6 +11,6 @@ use App\Models\EarningReportFile;
 use App\Enums\EarningReportFileStatusEnum;
 
 Schedule::job(new QuartersIncomeJob())->dailyAt('00:01');
-Schedule::job(new EarningJob())->everySixHours()->withoutOverlapping();
+Schedule::job(new EarningJob())->everyMinute()->withoutOverlapping();
 Schedule::job(new IsrcJob())->everyMinute()->withoutOverlapping();
 Schedule::job(new MonthlyIncomeJob())->dailyAt('00:01');
