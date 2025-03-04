@@ -141,6 +141,6 @@ if (!function_exists('totalDuration')) {
 if (!function_exists('priceFormat')) {
     function priceFormat($price, $currency = 'USD', $locale = 'tr'): string
     {
-        return priceFormat($price, $currency, $locale);
+        return Number::currency($price, $currency, $locale);
     }
 }
