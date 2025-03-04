@@ -5,6 +5,7 @@
       İlk adım, yayın bilgilerinizi dolduralım.✍🏻
     </p>
   </div>
+
   <div class="flex gap-10">
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
       <FormElement :required="true" label-width="190px" :error="form.errors.album_name" v-model="form.album_name"
@@ -176,7 +177,7 @@
                    placeholder="Seçiniz" type="select" :config="genreConfig">
       </FormElement>
 
-      <FormElement v-if="form.type == 1" label-width="190px" :error="form.errors.format_id" v-model="form.format_id"
+      <FormElement v-if="form.type == 1" :required="true" label-width="190px" :error="form.errors.format_id" v-model="form.format_id"
                    label="Biçim"
                    placeholder="Seçiniz" type="select" :config="formatConfig">
 
@@ -194,7 +195,7 @@
       <FormElement :required="true" type="select" :error="form.errors.label_id" v-model="form.label_id"
                    label-width="190px"
                    label="Plak şirketi" placeholder="Şirket Seçiniz" :config="labelConfig"></FormElement>
-      <FormElement :required="true" label-width="190px" :error="form.errors.p_line" v-model="form.p_line"
+      <FormElement  label-width="190px" :error="form.errors.p_line" v-model="form.p_line"
                    label="p Satırı"
                    placeholder="Lütfen giriniz">
         <template #tooltip>
@@ -202,7 +203,7 @@
           düzenleme ve ticari olarak değerlendirme yetkisi verir.
         </template>
       </FormElement>
-        <FormElement :required="true" label-width="190px" :error="form.errors.c_line" v-model="form.c_line"
+        <FormElement label-width="190px" :error="form.errors.c_line" v-model="form.c_line"
                    label="C Satırı"
                    placeholder="Lütfen giriniz">
                   <template #tooltip>
@@ -255,7 +256,7 @@
         </template>
       </FormElement>
 
-      <FormElement :required="true" type="select" label-width="190px" :error="form.errors.main_price"
+      <FormElement  type="select" label-width="190px" :error="form.errors.main_price"
                    v-model="form.main_price"
                    label="Ana Fiyat" placeholder="Lütfen giriniz" :config="mainPriceConfig">
 

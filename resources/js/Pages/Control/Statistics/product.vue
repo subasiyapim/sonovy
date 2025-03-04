@@ -574,6 +574,19 @@ onMounted(() => {
                 year: momentDate.year(),
             };
         });
+    }else {
+        const momentDate = moment();
+
+        choosenDate.value = [
+            {
+                month: momentDate.subtract(1,'months').month(),
+                year: momentDate.subtract(1,'months').year(),
+            },
+            {
+                month: momentDate.month(),
+                year: momentDate.year(),
+            }
+        ]
     }
 
 });

@@ -306,18 +306,21 @@
                 <template #default="scope">
                     <div class="flex flex-col items-start">
                         <a :href="route('control.catalog.songs.show',scope.row.id)" class="paragraph-xs c-blue-500"> {{scope.row.name}}</a>
-                        <p class="paragraph-xs c-sub-600">{{ scope.row.isrc }}</p>
+                         <span class="paragraph-xs c-strong-950">{{ props.artist.name }} &nbsp; </span>
+                        <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
+
+                            <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
+                        </div>
                     </div>
 
                 </template>
             </AppTableColumn>
-            <AppTableColumn :label="'Sanatçı'" sortable="name">
+            <AppTableColumn :label="'ISRC'" sortable="name">
                 <template #default="scope">
-                  <span class="paragraph-xs c-strong-950">{{ props.artist.name }} &nbsp; </span>
-                    <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
 
-                        <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
-                    </div>
+
+                        <p class="paragraph-xs c-sub-600">{{ scope.row.isrc }}</p>
+
                 </template>
             </AppTableColumn>
             <AppTableColumn :label="'Süre'" sortable="name" width="150">

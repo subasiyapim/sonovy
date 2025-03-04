@@ -24,7 +24,9 @@ class StatisticController extends Controller
     {
 
         //gelen tarih formatı m-Y den Y-m-d ye çevir
-        [$startDate, $endDate] = $this->getDateRange($request);
+        [$startDate, $endDate] = $this->getDateRange($request, 1);
+
+
         //dd($startDate, $endDate);
         $user = Auth::user();
         $earnings = Earning::query()->where('user_id', $user->id)->whereBetween(
@@ -249,8 +251,8 @@ class StatisticController extends Controller
         }
 
         // Debug için veri kontrolü
-        Log::info('Platform ID: '.$platform);
-        Log::info('Filtered Earnings Count: '.$filteredEarnings->count());
+        Log::info('Platform ID: ' . $platform);
+        Log::info('Filtered Earnings Count: ' . $filteredEarnings->count());
         Log::info('Sample Data:', $filteredEarnings->take(3)->toArray());
 
         $groupedData = $filteredEarnings

@@ -233,7 +233,8 @@ class ProductController extends Controller
         });
 
         $users = getDataFromInputFormat(\App\Models\User::all(), 'id', 'name');
-        $languages = getDataFromInputFormat(Country::whereNotNull('language')->get(), 'id', 'language', 'emoji');
+
+        $languages = getDataFromInputFormat(Country::get(), 'id', 'name', 'emoji');
         $progress = ProductServices::progress($product);
         $platforms = getDataFromInputFormat(Platform::get(), 'id', 'name', 'icon');
         $product_publish_country_types = enumToSelectInputFormat(ProductPublishedCountryTypeEnum::getTitles());
@@ -680,7 +681,7 @@ class ProductController extends Controller
                     'pre_order_date' => isset($platform['pre_order_date']) ? Carbon::parse($platform['pre_order_date'])->format('Y-m-d') : null,
                     'publish_date' => isset($platform['publish_date']) ? Carbon::parse($platform['publish_date'])->format('Y-m-d') : null,
                     'date' => isset($platform['date']) ? Carbon::parse($platform['date'])->format('Y-m-d') : null,
-                    'time' => isset($platform['time']) ? $platform['time']['hours'].':'.$platform['time']['minutes'] : null,
+                    'time' => isset($platform['time']) ? $platform['time']['hours'] . ':' . $platform['time']['minutes'] : null,
                     'hashtags' => isset($platform['hashtags']) ? json_encode($platform['hashtags']) : null,
                     // Ensure it's a valid JSON
                     'description' => isset($platform['description']) ? $platform['description'] : null,
@@ -807,7 +808,7 @@ class ProductController extends Controller
 
                 $label = match ($period) {
                     'day' => ucfirst($carbonDate->translatedFormat('D')),
-                    'week' => $carbonDate->weekOfYear.'. Hafta',
+                    'week' => $carbonDate->weekOfYear . '. Hafta',
                     'year' => $carbonDate->format('Y'),
                     'month' => ucfirst($carbonDate->translatedFormat('F Y')),
                     default => ucfirst($carbonDate->translatedFormat('F Y')),
