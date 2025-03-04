@@ -481,10 +481,10 @@ class ReportController extends Controller
                 return [
                     'id' => $earning->id,
                     'user' => [
-                        'id' => $earning->user->id,
-                        'name' => $earning->user->name,
-                        'email' => $earning->user->email,
-                        'commission_rate' => $earning->user->commission_rate,
+                        'id' => $earning?->user?->id,
+                        'name' => $earning?->user?->name,
+                        'email' => $earning?->user?->email,
+                        'commission_rate' => $earning?->user?->commission_rate,
                     ],
                     'platform' => $earning->platform,
                     'participant_earning' => Number::currency($earning->user_total_earning, 'USD', app()->getLocale()),
