@@ -33,7 +33,7 @@ class AnalyseResource extends JsonResource
         $this->analyseService = new AnalyseService($this->data);
 
     }
-
+    
     /**
      * Transform the resource into an array.
      *
@@ -50,9 +50,9 @@ class AnalyseResource extends JsonResource
     private function metadata(): array
     {
         return [
-            'all_time_earning' => priceFormat($this->data->sum('earning')),
+            'all_time_earning' => Number::currency($this->data->sum('earning'), 'USD', app()->getLocale()),
             'current_month' => Carbon::now()->locale(app()->getLocale())->translatedFormat('F Y'),
-            'current_month_earning' => priceFormat(
+            'current_month_earning' => Number::currency(
                 $this->data->whereBetween(
                     'sales_date',
                     [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]

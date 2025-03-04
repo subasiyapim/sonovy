@@ -35,7 +35,7 @@ class ReportResource extends JsonResource
             'created_at' => $this->created_at,
             'period' => $this->getPeriodName($this->period),
             'name' => $this->name,
-            'amount' => priceFormat(
+            'amount' => Number::currency(
                 $this->batch_id
                     ? $this->total_amount
                     : $this->amount,

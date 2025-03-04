@@ -41,12 +41,11 @@ if (!function_exists('getLocalizationList')) {
 
 if (!function_exists('getDataFromInputFormat')) {
     /**
-     * @param           $data
+     * @param $data
      * @param  [string, integer]  $key
-     * @param  string   $label
-     * @param           $iconKey
+     * @param  string  $label
+     * @param $iconKey
      * @param  boolean  $isEnum
-     *
      * @return array
      */
     function getDataFromInputFormat(
@@ -135,12 +134,5 @@ if (!function_exists('totalDuration')) {
         }
 
         return $totalSeconds;
-    }
-}
-
-if (!function_exists('priceFormat')) {
-    function priceFormat($price, $currency = 'USD', $locale = 'tr'): string
-    {
-        return priceFormat($price, $currency, $locale);
     }
 }

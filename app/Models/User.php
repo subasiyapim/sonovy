@@ -197,7 +197,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getBalanceAttribute()
     {
-        return priceFormat(EarningService::balance());
+        return Number::currency(EarningService::balance(), 'USD', app()->getLocale());
     }
 
     public function roles(): BelongsToMany
