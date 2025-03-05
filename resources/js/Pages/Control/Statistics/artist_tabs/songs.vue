@@ -107,11 +107,11 @@ const pauseMusic = (song) => {
     </AppTableColumn>
 
 
-    <AppTableColumn label="Parça Adı">
+    <AppTableColumn label="Parça Adı" width="300">
       <template #default="scope">
         <div class="flex items-center gap-3">
           <div>
-            <p class="paragraph-xs c-solid-950"> {{ scope.row.song_name }} <template v-if="scope.row.version">({{scope.row.version}})</template></p>
+            <a :href="route('control.statistics.song',scope.row.song_id)" class="paragraph-xs c-blue-500"> {{ scope.row.song_name }} <template v-if="scope.row.version">({{scope.row.version}})</template></a>
             <p class="paragraph-xs c-sub-600"> ISRC:{{ scope.row.isrc_code }} </p>
           </div>
         </div>

@@ -40,6 +40,9 @@
                 <a v-if="scope.row.user" :href="route('control.user-management.users.show',scope.row.user?.id)" class="paragraph-xs c-blue-500 hover:underline">
                     {{ scope.row.user?.name }}
                 </a>
+                <p v-else class="paragraph-xs c-strong-950">
+                   Ekleyen Bulunmuyor
+                </p>
             </div>
             </template>
         </AppTableColumn>

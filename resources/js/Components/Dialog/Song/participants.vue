@@ -9,8 +9,10 @@
         <div v-for="participant in song.participants" class="flex items-center justify-between">
 
             <div class="flex items-center gap-2 flex-1">
-                <div class="w-6 h-6 rounded-full bg-blue-300 flex items-center justify-center">
-
+                <div class="w-10 h-10 rounded-full overflow-hidden">
+                    <img :alt="participant.user?.name"
+                        :src="defaultStore.profileImage(participant.user?.name)"
+                    >
                 </div>
                 <div class="flex flex-col">
                     <p class="label-sm c-strong-950">
@@ -47,8 +49,13 @@ import {RegularButton, PrimaryButton} from '@/Components/Buttons'
 import {computed, ref, onMounted} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {toast} from 'vue3-toastify';
+import {useDefaultStore} from "@/Stores/default";
 
 import {FormElement, AppFancyRadio} from '@/Components/Form'
+
+
+
+const defaultStore = useDefaultStore();
 
 const props = defineProps({
   modelValue: {

@@ -145,7 +145,7 @@ class SongController extends Controller
             'remixer',
             'mainArtists',
             'featuringArtists',
-            'products'
+            'products.artists'
         )
             ->when($request->type, function ($query) use ($request) {
                 $query->where('type', $request->type);
