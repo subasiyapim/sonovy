@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Platform;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Number;
 
 class EarningReportResource extends JsonResource
 {
@@ -23,7 +24,7 @@ class EarningReportResource extends JsonResource
             'report_date' => $this->report_date,
             'report_name' => $this->reportFile->name,
             'errors' => $this->reportFile->errors,
-            'total' => $this->getPlatformTotal($this->platform),
+            'total' => Number::format($this->getPlatformTotal($this->platform), 4),
             'file_size' => $this->file_size,
             'created_at' => $this->created_at,
             'status' => $this->reportFile->status,

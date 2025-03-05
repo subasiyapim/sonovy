@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Inertia\ResponseFactory;
@@ -480,15 +481,22 @@ class ReportController extends Controller
                 return [
                     'id' => $earning->id,
                     'user' => [
-                        'id' => $earning->user->id,
-                        'name' => $earning->user->name,
-                        'email' => $earning->user->email,
-                        'commission_rate' => $earning->user->commission_rate,
+                        'id' => $earning?->user?->id,
+                        'name' => $earning?->user?->name,
+                        'email' => $earning?->user?->email,
+                        'commission_rate' => $earning?->user?->commission_rate,
                     ],
                     'platform' => $earning->platform,
-                    'participant_earning' => $earning->user_total_earning,
-                    'total_earning' => $earning->user_total_earning * $earning->user->commission_rate,
-                    'provider_earning' => ($earning->user_total_earning * $earning->user->commission_rate) - $earning->user_total_earning,
+                    'participant_earning' => Number::currency($earning->user_total_earning, 'USD', app()->getLocale()),
+                    'total_earning' => Number::currency(
+                        $earning->user_total_earning * $earning->user->commission_rate ?? 0,
+                        'USD',
+                        app()->getLocale()
+                    ),
+                    'provider_earning' => Number::currency(($earning->user_total_earning * $earning->user->commission_rate) - $earning->user_total_earning,
+                        'USD',
+                        app()->getLocale()
+                    ),
                     'participant_rate' => (1 - $earning->client_share_rate) * 100,
                     'platform_id' => $earning->platform_id,
                     'report_date' => $earning->report_date,
