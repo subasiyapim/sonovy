@@ -226,21 +226,21 @@
 
                     </div>
                     <div class="flex flex-col flex-1 items-start justisy-start">
-                    <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
-                        {{ scope.row.album_name }} <template v-if="scope.row.version">({{scope.row.version}})</template>
+                        <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
+                            {{ scope.row.album_name }} <template v-if="scope.row.version">({{scope.row.version}})</template>
 
-                    </a>
+                        </a>
 
 
-                    <div class=" paragraph-xs c-strong-950 ">
-                        <p>
-                        <template v-for="(artist,artistIndex) in scope.row.artists">
-                            {{ artist.name }}
-                            <template v-if="artistIndex != scope.row.artists.length-1">,&nbsp;</template>
-                        </template>
-                        </p>
+                        <div class=" paragraph-xs c-strong-950 ">
+                            <p>
+                            <template v-for="(artist,artistIndex) in scope.row.artists">
+                                {{ artist.name }}
+                                <template v-if="artistIndex != scope.row.artists.length-1">,&nbsp;</template>
+                            </template>
+                            </p>
 
-                    </div>
+                        </div>
                     </div>
                 </div>
                 </template>

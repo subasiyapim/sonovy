@@ -96,7 +96,7 @@ const appTableConfig = computed(() => {
 
                 <AppTableColumn label="Hatalar">
                     <template #default="scope">
-                        <p @click="openErrorModal(scope.row.errors)" class="border border-soft-200 rounded px-2 py-0.5 cursor-pointer paragraph-xs c-strong-950">
+                        <p @click="openErrorModal(scope.row.errors)" class="border border-soft-200 rounded px-2 py-0.5 cursor-pointer paragraph-xs c-strong-950 whitespace-nowrap">
                             {{scope.row.errors?.length ?? 0}} adet Hata
                         </p>
                     </template>

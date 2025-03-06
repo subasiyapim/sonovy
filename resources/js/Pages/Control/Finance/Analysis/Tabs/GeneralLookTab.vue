@@ -30,7 +30,7 @@ import moment from 'moment';
 import 'moment/dist/locale/tr';
 
 moment.locale('tr');
-
+const showData = ref(false)
 const props = defineProps({
   data: {
     type: Object,
@@ -449,6 +449,7 @@ const mounted = ref(false);
 
 onMounted(() => {
   mounted.value = true;
+  showData.value = true;
 });
 
 </script>
@@ -523,77 +524,81 @@ onMounted(() => {
       <hr>
       <div class="flex gap-3">
 
-        <div class="flex  flex-1" :class="Object.keys(monthlyData).length > 16 ? 'gap-0.5' : ' gap-5'">
+        <div class="flex items-end flex-1" :class="Object.keys(monthlyData).length > 16 ? 'gap-0.5' : ' gap-5'">
             <div class="flex h-72 flex-col justify-between gap-5">
                 <span v-for="val in props.data.monthly_net_earnings?.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
             </div>
 
-
-
-          <template v-if="Object.keys(monthlyData).length > 0">
-            <div v-for="key in Object.keys(monthlyData)"
-                 :key="key"
-                 class="h-80 flex-1 flex flex-col items-center justify-between">
-              <tippy :allowHtml="true" :class="Object.keys(monthlyData).length < 6 ? 'w-1/2' : Object.keys(monthlyData).length == 6 ? 'w-3/4' : 'w-full'" :interactiveBorder="30" theme="light" followCursor :sticky="true"
-                     :interactive="false">
-                <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
-                  <div class="bg-weak-50 flex items-end justify-center flex-1" :class="Object.keys(monthlyData).length > 16 ? '' : 'min-w-10'">
-                    <span class="c-sub-600 label-sm !text-[10px] " v-if="Object.keys(monthlyData).length < 16">
-                      {{ monthlyData[key]?.total ?? 0 }}
-                    </span>
-                  </div>
-
-
-                   <div class="flex flex-col justify-end bg-weak-50" :style="{height:`${(monthlyData[key].total_num * 100) / props.data.monthly_net_earnings?.yAxis?.max }%`}">
-
-                      <template v-if="monthlyData[key] && monthlyData[key] != 'total' && monthlyData[key] != 'total_num'">
-
-                            <template v-for="p in Object.keys(monthlyData[key])">
-
-                                 <div
-                                    v-if="p != 'total' && p != 'total_num' && p != 'month_percentage' "
-                                    :key="p"
-                                    class="w-full"
-                                    :style="{height: (monthlyData[key][p]?.percentage ?? 0) + '%'}"
-                                    :class="'bg-'+p.toLowerCase()">
-                                    <!-- {{monthlyData[key][p].earning_num}} -->
-                                    <!-- {{monthlyData[key].total_num}} -->
-                                </div>
-                            </template>
-
-                        </template>
-                   </div>
-
-                </div>
-                <template #content>
-                  <div class="flex flex-col gap-2 w-64 p-1">
-                    <p class="label-sm c-strong-950">{{ key }}</p>
-                    <template v-if="monthlyData[key]">
-                      <div v-for="platform in Object.keys(monthlyData[key])"
-                           :key="platform"
-                           class="flex items-center gap-2">
-                           <template v-if="platform != 'month_percentage' && platform != 'total_num' && platform != 'total'">
-
-                            <SpotifyIcon v-if="platform=='Spotify'"/>
-                            <YoutubeIcon v-else-if="platform == 'Youtube'"/>
-                            <AppleMusicIcon v-else-if="platform == 'Apple'"/>
-                            <span v-else-if="platform == 'other'" class="bg-[#717784] w-4 h-4 rounded-full"></span>
-                            <p class="paragraph-sm c-strong-950 flex-1">{{ platform }}</p>
-                            <div class="border border-soft-200 rounded px-2 py-1">
-                            <p class="paragraph-xs c-sub-600" style="min-width: 40px;">{{ monthlyData[key][platform]?.earning ?? 0 }}</p>
+            <transition name="expand">
+                 <div v-if="showData" class="w-full">
+                    <template v-if="Object.keys(monthlyData).length > 0">
+                        <div v-for="key in Object.keys(monthlyData)"
+                            :key="key"
+                            class="h-80 flex-1 flex flex-col items-center justify-between">
+                        <tippy :allowHtml="true" :class="Object.keys(monthlyData).length < 6 ? 'w-1/2' : Object.keys(monthlyData).length == 6 ? 'w-3/4' : 'w-full'" :interactiveBorder="30" theme="light" followCursor :sticky="true"
+                                :interactive="false">
+                            <div class="h-72 flex flex-col justify-end w-full gap-0.5 w-full">
+                            <div class="bg-weak-50 flex items-end justify-center flex-1" :class="Object.keys(monthlyData).length > 16 ? '' : 'min-w-10'">
+                                <span class="c-sub-600 label-sm !text-[10px] " v-if="Object.keys(monthlyData).length < 16">
+                                {{ monthlyData[key]?.total ?? 0 }}
+                                </span>
                             </div>
-                        </template>
-                      </div>
+
+
+                            <div class="flex flex-col justify-end bg-weak-50" :style="{height:`${(monthlyData[key].total_num * 100) / props.data.monthly_net_earnings?.yAxis?.max }%`}">
+
+                                <template v-if="monthlyData[key] && monthlyData[key] != 'total' && monthlyData[key] != 'total_num'">
+
+                                        <template v-for="p in Object.keys(monthlyData[key])">
+
+                                            <div
+                                                v-if="p != 'total' && p != 'total_num' && p != 'month_percentage' "
+                                                :key="p"
+                                                class="w-full"
+                                                :style="{height: (monthlyData[key][p]?.percentage ?? 0) + '%'}"
+                                                :class="'bg-'+p.toLowerCase()">
+                                                <!-- {{monthlyData[key][p].earning_num}} -->
+                                                <!-- {{monthlyData[key].total_num}} -->
+                                            </div>
+                                        </template>
+
+                                    </template>
+                            </div>
+
+                            </div>
+                            <template #content>
+                            <div class="flex flex-col gap-2 w-64 p-1">
+                                <p class="label-sm c-strong-950">{{ key }}</p>
+                                <template v-if="monthlyData[key]">
+                                <div v-for="platform in Object.keys(monthlyData[key])"
+                                    :key="platform"
+                                    class="flex items-center gap-2">
+                                    <template v-if="platform != 'month_percentage' && platform != 'total_num' && platform != 'total'">
+
+                                        <SpotifyIcon v-if="platform=='Spotify'"/>
+                                        <YoutubeIcon v-else-if="platform == 'Youtube'"/>
+                                        <AppleMusicIcon v-else-if="platform == 'Apple'"/>
+                                        <span v-else-if="platform == 'other'" class="bg-[#717784] w-4 h-4 rounded-full"></span>
+                                        <p class="paragraph-sm c-strong-950 flex-1">{{ platform }}</p>
+                                        <div class="border border-soft-200 rounded px-2 py-1">
+                                        <p class="paragraph-xs c-sub-600" style="min-width: 40px;">{{ monthlyData[key][platform]?.earning ?? 0 }}</p>
+                                        </div>
+                                    </template>
+                                </div>
+                                </template>
+                            </div>
+                            </template>
+                        </tippy>
+                        <span class="paragraph-xs c-sub-600 !text-center">{{  Object.keys(monthlyData).length > 16 ? key.substring(0,1) : key  }}</span>
+                        </div>
                     </template>
-                  </div>
-                </template>
-              </tippy>
-              <span class="paragraph-xs c-sub-600 !text-center">{{  Object.keys(monthlyData).length > 16 ? key.substring(0,1) : key  }}</span>
-            </div>
-          </template>
-          <div v-else class="w-full flex justify-center items-center">
-            <p class="text-gray-500">Veri bulunamadı</p>
-          </div>
+                    <div v-else class="w-full flex justify-center items-center">
+                        <p class="text-gray-500">Veri bulunamadı</p>
+                    </div>
+                </div>
+            </transition>
+
+
         </div>
       </div>
     </div>
@@ -629,6 +634,7 @@ onMounted(() => {
         <div class="flex flex-col gap-5 " >
                 <span v-for="val in props.data.spotify_discovery_mode_earnings?.yAxis?.values" class="paragraph-xs c-sub-600">{{ val }}</span>
         </div>
+
         <div class="flex flex-1" :class="Object.keys(spotifyDiscoveryData).length > 16 ? 'gap-0.5' : 'gap-5'">
           <template v-if="Object.keys(spotifyDiscoveryData).length > 0">
             <div v-for="key in Object.keys(spotifyDiscoveryData)"
@@ -956,33 +962,19 @@ onMounted(() => {
         justify-content:center !important;
     }
 
-    .column-fade-enter-active {
-  animation: fade-in 0.8s ease-in-out;
+.expand-enter-active, .expand-leave-active {
+  transition: height 0.3s ease-out, opacity 0.3s ease-out;
+  overflow: hidden;
 }
 
-.animated-bar {
-  transform-origin: bottom;
-  animation: grow 0.8s ease-in-out;
+.expand-enter-from, .expand-leave-to {
+  height: 0;
+
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+.expand-enter-to, .expand-leave-from {
+  height: 266px;
 
-@keyframes grow {
-  from {
-    height: 0;
-  }
-  to {
-    height: 100%;
-  }
 }
 
 </style>
