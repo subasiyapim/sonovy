@@ -36,6 +36,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
 {
     use Importable;
 
+
     public $timeout = 600;
     public $tries = 3;
     private $headersValidated = false;
