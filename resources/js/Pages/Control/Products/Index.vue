@@ -150,8 +150,10 @@
             </div>
             <div class="flex flex-col flex-1 items-start justisy-start">
               <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs flex items-center gap-0.5">
-                <p class="c-blue-500">{{ scope.row.album_name }} </p>
+                <span class="c-blue-500">{{ scope.row.album_name }}
                 <template v-if="scope.row.version"><span class="c-strong-950">({{scope.row.version}})</span></template>
+
+                </span>
               </a>
 
               <div class=" paragraph-xs c-strong-950 ">
@@ -191,7 +193,7 @@
           <span class="paragraph-xs c-strong-950">{{ scope.row.songs?.length }} Parça</span>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="UPC/Katalog" width="180">
+      <AppTableColumn label="UPC/Katalog" :shring-to-width="true">
         <template #default="scope">
           <div class="flex flex-col justify-start ">
             <div class="flex items-center gap-0.5">
@@ -206,7 +208,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Mağazalar">
+      <AppTableColumn label="Mağazalar" :shring-to-width="true">
         <template #default="scope">
           <div class="flex flex-col items-start paragraph-xs c-strong-950">
             <p>
@@ -219,7 +221,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Aksiyonlar" align="end">
+      <AppTableColumn label="Aksiyonlar" align="end" :shring-to-width="true">
         <template #default="scope">
           <IconButton :confirmDelete="true" @confirm="deleteProduct(scope.row)"
                       title="Ürünü Silmek İstediğine Emin misin?" description="">
