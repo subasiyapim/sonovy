@@ -91,7 +91,7 @@
               :addClass="addClassToTable"
             :config="appTableConfig"
               v-model="usePage().props.products" :slug="route('control.catalog.products.index')">
-      <AppTableColumn label="Tür" sortable="type">
+      <AppTableColumn label="Tür" sortable="type" :shrink-to-width="true">
         <template #default="scope">
 
           <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
@@ -123,7 +123,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Durum" sortable="status">
+      <AppTableColumn label="Durum" sortable="status" :shrink-to-width="true" >
         <template #default="scope">
 
           <div class="whitespace-nowrap border border-soft-200 rounded-lg px-2 py-1 flex items-center gap-2">
@@ -149,8 +149,9 @@
 
             </div>
             <div class="flex flex-col flex-1 items-start justisy-start">
-              <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
-                {{ scope.row.album_name }} <template v-if="scope.row.version">({{scope.row.version}})</template>
+              <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs ">
+                <p class="c-blue-500">{{ scope.row.album_name }} </p>
+                <template v-if="scope.row.version"><span class="c-strong-950">({{scope.row.version}})</span></template>
               </a>
 
               <div class=" paragraph-xs c-strong-950 ">
@@ -176,7 +177,7 @@
         </template>
       </AppTableColumn>
 
-      <AppTableColumn label="Yayın Tarih">
+      <AppTableColumn label="Yayın Tarih"  :shring-to-width="true">
         <template #default="scope">
           <div v-if="scope.row.physical_release_date" class="flex items-center gap-3">
             <p class="paragraph-xs c-strong-950 whitespace-nowrap">
@@ -185,7 +186,7 @@
           </div>
         </template>
       </AppTableColumn>
-      <AppTableColumn label="Parçalar">
+      <AppTableColumn label="Parçalar"  :shring-to-width="true">
         <template #default="scope">
           <span class="paragraph-xs c-strong-950">{{ scope.row.songs?.length }} Parça</span>
         </template>
@@ -199,7 +200,7 @@
 
             <div class="flex items-center gap-0.5">
                 <span class="paragraph-xs c-sub-600">Katalog No: </span>
-                <span class="label-sm c-strong-950 "> {{ scope.row.catalog_number ?? 'Boş' }}</span>
+                <span class="paragraph-xs c-strong-950 "> {{ scope.row.catalog_number ?? 'Boş' }}</span>
             </div>
 
           </div>
