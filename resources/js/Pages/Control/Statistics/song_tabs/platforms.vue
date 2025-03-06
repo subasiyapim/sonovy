@@ -36,7 +36,10 @@ const data = computed({
     <AppTableColumn label="Platform" >
       <template #default="scope">
         <div class="flex items-center gap-3">
-           <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200"> <Icon :icon="scope.row.icon" /></div>
+            <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200 overflow-hidden">
+                <Icon v-if="scope.row.icon" :icon="scope.row.icon" />
+                <img v-else :src="defaultStore.profileImage(scope.row.platform_name)" >
+           </div>
             <p class="paragraph-xs c-strong-950"> {{scope.row.platform_name}}</p>
 
         </div>

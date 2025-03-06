@@ -50,7 +50,7 @@ function updateBars() {
   });
 
   // Schedule the next update
-  setTimeout(() => requestAnimationFrame(updateBars), 100); // Slower, 1.5s cycle
+  setTimeout(() => requestAnimationFrame(updateBars), 500); // Slower, 1.5s cycle
 }
 
 // Initialize on mount

@@ -25,14 +25,14 @@ const data = computed({
   <AppTable :hasSelect="false" v-model="data" :isClient="true" :hasSearch="false" :showAddButton="false">
 
 
-    <AppTableColumn label="No" width="40">
+    <AppTableColumn label="No" :shrink-to-width="true">
       <template #default="scope">
             <p class="paragraph-xs c-strong-950"> #{{ Object.keys(data).findIndex((e) => e == scope.index)+1 }}</p>
 
       </template>
     </AppTableColumn>
 
-      <AppTableColumn :label="__('control.artist.fields.name')" align="left">
+      <AppTableColumn :label="__('control.artist.fields.name')" align="left" width="400">
         <template #default="scope">
           <div class="flex justify-start items-center gap-2 w-full">
             <div class="w-12 h-12 rounded-full overflow-hidden">
@@ -75,7 +75,7 @@ const data = computed({
       </AppTableColumn>
     <AppTableColumn label="Toplam Parça Sayısı">
       <template #default="scope">
-        <span class="paragraph-xs c-strong-950">{{scope.row.song_count}} Parça</span>
+        <span class="paragraph-xs c-strong-950">{{scope.row.song_count ?? 0}} Parça</span>
 
 
       </template>

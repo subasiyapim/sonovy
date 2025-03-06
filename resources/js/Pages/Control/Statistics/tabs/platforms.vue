@@ -26,7 +26,7 @@ const data = computed({
 
 
 
-    <AppTableColumn label="No" >
+    <AppTableColumn label="No" :shrink-to-width="true">
         <template #default="scope">
             <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
         </template>
@@ -34,7 +34,10 @@ const data = computed({
     <AppTableColumn label="Platform" width="400">
         <template #default="scope">
             <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200"> <Icon :icon="scope.row.platform_image" /></div>
+                 <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200 overflow-hidden">
+                    <Icon v-if="scope.row.icon" :icon="scope.row.icon" />
+                    <img v-else :src="defaultStore.profileImage(scope.row.platform_name)" >
+                </div>
                 <p class="paragraph-xs c-strong-950"> {{scope.row.platform_name}}</p>
             </div>
         </template>
@@ -43,7 +46,7 @@ const data = computed({
     <AppTableColumn label="Toplam Parça Sayısı">
       <template #default="scope">
          <span class="paragraph-xs c-sub-600">
-         {{scope.row.song_count}} Parça
+         {{scope.row.song_count ?? 0}} Parça
          </span>
 
 

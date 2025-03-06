@@ -80,7 +80,9 @@
                                 <CheckIcon color="#fff" />
                         </button>
                         </td>
-                        <td colspan="1" v-for="(column, colIndex) in columns" :key="colIndex" class="tableCell" :style="column.props.width ? {width:`${column.props.width}px`,display:'inline-block'} :{}">
+                        <td colspan="1" v-for="(column, colIndex) in columns" :key="colIndex" class="tableCell" :style="column.props['shrink-to-width'] ? {width:'0px'} : column.props.width ? {width:`${column.props.width}px`,display:'inline-block'} :{}">
+
+
                             <render :rowIndex="rowIndex" :colIndex="colIndex" :row="row"></render>
                         </td>
 

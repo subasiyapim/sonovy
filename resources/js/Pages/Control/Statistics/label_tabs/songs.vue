@@ -70,14 +70,14 @@ const pauseMusic = (song) => {
 </script>
 <template>
   <AppTable v-model="songs" :isClient="true" :hasSearch="false" :showAddButton="false">
-    <AppTableColumn label="No" width="40">
+    <AppTableColumn label="No" :shrink-to-width="true">
       <template #default="scope">
                     <p class="paragraph-xs c-strong-950"> #{{ Object.keys(songs).findIndex((e) => e == scope.index)+1 }}</p>
 
 
       </template>
     </AppTableColumn>
-    <AppTableColumn label="Tür" >
+    <AppTableColumn label="Tür" :shrink-to-width="true">
       <template #default="scope">
 
         <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
@@ -113,7 +113,9 @@ const pauseMusic = (song) => {
       <template #default="scope">
         <div class="flex items-center gap-3">
           <div>
-            <p class="paragraph-xs c-strong-950"> {{ scope.row.song_name }} <template v-if="scope.row.version">({{scope.row.version}})</template></p>
+            <a :href="route('control.statistics.song',scope.row.song_id)" class="paragraph-xs c-blue-500"> {{ scope.row.song_name }} <template v-if="scope.row.version">({{scope.row.version}})</template></a>
+
+            <!-- <p class="paragraph-xs c-strong-950"> {{ scope.row.song_name }} <template v-if="scope.row.version">({{scope.row.version}})</template></p> -->
             <p class="paragraph-xs c-sub-600"> ISRC:{{ scope.row.isrc_code }} </p>
           </div>
         </div>

@@ -663,16 +663,17 @@ onMounted(() => {
                     </span>
                   </div>
                   <template v-if="spotifyDiscoveryData[key]">
-                    <div  v-if="!(clickedbars.find((e) =>  e == 'spotify' ))" class=" w-full bg-spotify"
-                      :style="{height:`${100 - spotifyDiscoveryData[key].earning_percentage}%`}"
-                        :class="hoverLabel ?  (hoverLabel == 'regular' ? 'opacity-20' : 'opacity-1') :''" >
-                        <!-- {{spotifyDiscoveryData[key]}} -->
-                    </div>
                     <div v-if="!(clickedbars.find((e) =>  e == 'regular' ))"  class=" w-full bg-[#BDECCD]"
                         :style="{height:`${spotifyDiscoveryData[key].earning_percentage}%`}"
                         :class="hoverLabel ?  (hoverLabel == 'spotify' ? 'opacity-20' : 'opacity-1') :''" >
 
                     </div>
+                    <div  v-if="!(clickedbars.find((e) =>  e == 'spotify' ))" class=" w-full bg-spotify"
+                      :style="{height:`${100 - spotifyDiscoveryData[key].earning_percentage}%`}"
+                        :class="hoverLabel ?  (hoverLabel == 'regular' ? 'opacity-20' : 'opacity-1') :''" >
+                        <!-- {{spotifyDiscoveryData[key]}} -->
+                    </div>
+
                   </template>
                 </div>
                 <template #content>

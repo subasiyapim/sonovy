@@ -33,7 +33,7 @@
         <AppTableColumn :label="__('control.label.fields.song_count')" sortable="name" >
             <template #default="scope">
                 <span class="paragraph-xs c-strong-950">
-                    {{ scope.row.song_count }} parça
+                    {{ scope.row.song_count ?? 0 }} parça
                 </span>
             </template>
         </AppTableColumn>

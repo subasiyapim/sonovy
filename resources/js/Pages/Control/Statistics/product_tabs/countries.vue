@@ -26,14 +26,14 @@ const data = computed({
 
 
 
-    <AppTableColumn label="No" width="40">
+    <AppTableColumn label="No" :shrink-to-width="true">
       <template #default="scope">
 
        <p class="paragraph-xs c-strong-950"> #{{ Object.keys(data).findIndex((e) => e == scope.index)+1 }}</p>
 
       </template>
     </AppTableColumn>
-    <AppTableColumn label="Ülke" >
+    <AppTableColumn label="Ülke" width="400">
       <template #default="scope">
         <div class="flex items-center gap-3">
 

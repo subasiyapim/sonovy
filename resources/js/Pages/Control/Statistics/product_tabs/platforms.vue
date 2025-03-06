@@ -26,17 +26,20 @@ const data = computed({
 
 
 
-    <AppTableColumn label="No" width="40">
+    <AppTableColumn label="No" :shrink-to-width="true">
       <template #default="scope">
              <p class="paragraph-xs c-strong-950"> #{{ Object.keys(data).findIndex((e) => e == scope.index)+1 }}</p>
 
 
       </template>
     </AppTableColumn>
-    <AppTableColumn label="Platform" >
+    <AppTableColumn label="Platform" width="400">
       <template #default="scope">
         <div class="flex items-center gap-3">
-           <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200"> <Icon :icon="scope.row.icon" /></div>
+           <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200 overflow-hidden">
+                <Icon v-if="scope.row.icon" :icon="scope.row.icon" />
+                <img v-else :src="defaultStore.profileImage(scope.row.platform_name)" >
+           </div>
             <p class="paragraph-xs c-strong-950"> {{scope.row.platform_name}}</p>
 
         </div>

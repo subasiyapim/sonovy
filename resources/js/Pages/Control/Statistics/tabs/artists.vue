@@ -26,7 +26,7 @@ const data = computed({
 
 
 
-     <AppTableColumn label="No" >
+     <AppTableColumn label="No" :shrink-to-width="true">
       <template #default="scope">
           <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
       </template>
@@ -74,7 +74,7 @@ const data = computed({
       </AppTableColumn>
     <AppTableColumn label="Toplam Parça Sayısı">
       <template #default="scope">
-        <span class="paragraph-xs c-strong-950">{{scope.row.song_count}} Parça</span>
+        <span class="paragraph-xs c-strong-950">{{scope.row.song_count ?? 0}} Parça</span>
 
 
       </template>
