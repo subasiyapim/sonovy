@@ -280,11 +280,11 @@ const chartOptions = computed(() => ({
 
 
       return `
-        <div style="padding: 8px; background: white; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.2); font-size: 13px; color: #333;">
-          <b>Platform adı:</b> ${platform}<br>
-          <b>Yüzdelik oranı:</b> ${percentage}%<br>
-          <b>Gelir Tutarı:</b> ${revenue}<br>
-          <b>Stream Sayısı:</b> ${streamCount}
+        <div style="display:flex;flex-direction:column; align-items:center; justify-content:center; text-align:center; padding: 8px; background: white; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.2); font-size: 13px; color: #333;">
+          ${platform}<br>
+           ${percentage}%<br>
+          ${revenue.toFixed(2)}$<br>
+           ${streamCount}
         </div>
       `;
     }
@@ -354,10 +354,10 @@ const countriesChartOptions = computed(() => ({
 
 
       return `
-        <div style="padding: 8px; background: white; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.2); font-size: 13px; color: #333;">
-          <b>Ülke:</b> ${platform}<br>
-          <b>Yüzdelik oranı:</b> ${percentage}%<br>
-          <b>Gelir Tutarı:</b> ${revenue}<br>
+        <div style="display:flex;flex-direction:column; align-items:center; justify-content:center; text-align:center; padding: 8px; background: white; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.2); font-size: 13px; color: #333;">
+        ${platform}<br>
+        ${percentage}%<br>
+        ${revenue.toFixed(2)}$<br>
         </div>
       `;
     }

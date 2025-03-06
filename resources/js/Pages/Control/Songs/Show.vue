@@ -75,10 +75,12 @@
                 </div>
                 <div>
                   <p class="paragraph-xs c-sub-600" v-text="__('control.song.show.album_name')"/>
-                  <span class="label-sm c-strong-950">
+                  <a :href="route('control.catalog.products.show',song.product_id)" class="label-sm c-blue-500">
                     {{song.album_name}}
+
+
                     <template v-if="song.version">({{song.version}})</template>
-                  </span>
+                  </a>
 
                 </div>
               </div>
@@ -159,7 +161,7 @@
       </div>
       <div class="w-96 pr-8">
         <h1 class="mb-6 subheading-regular">
-          {{ __('control.song.show.song_albums') }} (12)
+          {{ __('control.song.show.song_albums') }} ({{song.other_songs.length}})
         </h1>
 
         <template v-if="song.other_songs">
