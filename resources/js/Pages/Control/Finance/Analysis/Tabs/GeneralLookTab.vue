@@ -530,7 +530,7 @@ onMounted(() => {
             </div>
 
             <transition name="expand">
-                 <div v-if="showData" class="w-full">
+                 <div v-if="showData" class="w-full flex" :class="Object.keys(monthlyData).length > 16 ? 'gap-0.5' : ' gap-5'">
                     <template v-if="Object.keys(monthlyData).length > 0">
                         <div v-for="key in Object.keys(monthlyData)"
                             :key="key"
