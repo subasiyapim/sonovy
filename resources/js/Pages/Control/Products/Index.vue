@@ -149,7 +149,7 @@
 
             </div>
             <div class="flex flex-col flex-1 items-start justisy-start">
-              <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs ">
+              <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs flex items-center gap-0.5">
                 <p class="c-blue-500">{{ scope.row.album_name }} </p>
                 <template v-if="scope.row.version"><span class="c-strong-950">({{scope.row.version}})</span></template>
               </a>
