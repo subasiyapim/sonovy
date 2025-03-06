@@ -738,8 +738,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                 Log::info('EarningJob tetikleniyor', [
                     'file_id' => $this->fileId
                 ]);
-
-                dispatch(new \App\Jobs\EarningJob());
+                
             }
 
         } catch (\Exception $e) {
