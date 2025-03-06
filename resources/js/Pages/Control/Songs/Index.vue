@@ -40,59 +40,94 @@
 
         </template>
       </AppTableColumn> -->
-      <AppTableColumn :label="'Parça Adı'" sortable="name">
-        <template #default="scope">
-          <div class="flex flex-col items-start">
-            <a :href="route('control.catalog.songs.show',scope.row.id)" class="paragraph-xs c-blue-500">
-              {{ scope.row.name }} <template v-if="scope.row.version">({{scope.row.version}})</template>
-            </a>
-            <p class="paragraph-xs c-sub-600">ISRC: {{ scope.row.isrc }}</p>
-          </div>
-        </template>
-      </AppTableColumn>
-    <AppTableColumn :label="'Süre'" sortable="name" width="150">
-        <template #default="scope">
-          <div v-if="currentSong !== scope.row" @click="playSound(scope.row)"
-               class="flex items-center gap-2 cursor-pointer">
-            <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
-              <PlayCircleFillIcon color="var(--dark-green-500)"/>
+        <AppTableColumn :label="'Parça Adı'" sortable="name">
+            <template #default="scope">
+            <div class="flex flex-col items-start">
+                <a :href="route('control.catalog.songs.show',scope.row.id)" class="paragraph-xs c-blue-500">
+                {{ scope.row.name }} <template v-if="scope.row.version">({{scope.row.version}})</template>
+                </a>
+                <p class="paragraph-xs c-sub-600">ISRC: {{ scope.row.isrc }}</p>
             </div>
-            <p class="paragraph-xs c-strong-950">
-              {{ scope.row.duration ?? '2.35' }}
-            </p>
-          </div>
-          <div v-else @click="pauseMusic(scope.row)" class="flex items-center gap-2 cursor-pointer">
-            <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
-              <PlayCircleFillIcon color="var(--dark-green-500)"/>
-            </div>
-            <p class="paragraph-xs c-strong-950">
-                {{ __('control.song.pause') }}
-            </p>
-          </div>
-        </template>
-    </AppTableColumn>
-      <AppTableColumn :label="'Sanatçı'" sortable="name">
-        <template #default="scope">
-            <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
-                <img :alt="scope.row.name"
-                    class="w-10 h-10 rounded-full overflow-hidden"
-                    :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
-                <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
-            </div>
-            <p class="paragraph-xs c-strong-950" v-if="scope.row.main_artists.length <= 0">
-                Sanatçı bulunmuyor
-            </p>
-        </template>
-      </AppTableColumn>
-      <AppTableColumn :label="'Katılımcı'" sortable="name">
-        <template #default="scope">
-            <button @click="openParticipantModal(scope.row)">
-                <div class="flex items-center gap-2 label-xs c-sub-600 border border-soft-200 px-2 py-1 rounded-lg">
-                    <p class="w-max"> {{ scope.row.participants?.length ?? 0 }} Katılımcı</p>
+            </template>
+        </AppTableColumn>
+
+        <AppTableColumn label="Yayın Bilgisi" width="400">
+            <template #default="scope">
+
+                <div v-if="scope.row.products.length > 0" class="flex gap-x-2 items-start">
+                    <div class="w-8 h-8 rounded overflow-hidden">
+                    <img class="w-10 h-10" alt=""
+                        :src="scope.row.products[0].image ? scope.row.products[0].image.thumb : 'https://loremflickr.com/400/400'">
+
+                    <img :alt="scope.row.products[0].album_name"
+                        :src="scope.row.products[0].image ? scope.row.products[0].image.thumb : defaultStore.profileImage(scope.row.products[0].album_name)"
+                    >
+
+                    </div>
+                    <div class="flex flex-col flex-1 items-start justisy-start">
+                    <a :href="route('control.catalog.products.show',scope.row.products[0].id)" class="paragraph-xs c-blue-500">
+                        {{ scope.row.products[0].album_name }} <template v-if="scope.row.products[0].version">({{scope.row.products[0].version}})</template>
+
+                    </a>
+
+
+                    <div class=" paragraph-xs c-strong-950 ">
+                        <p>
+                        <template v-for="(artist,artistIndex) in scope.row.products[0].artists">
+                            {{ artist.name }}
+                            <template v-if="artistIndex != scope.row.products[0].artists.length-1">,&nbsp;</template>
+                        </template>
+                        </p>
+
+                    </div>
+                    </div>
                 </div>
-            </button>
-        </template>
-      </AppTableColumn>
+            </template>
+        </AppTableColumn>
+
+        <AppTableColumn :label="'Süre'" sortable="name">
+            <template #default="scope">
+            <div v-if="currentSong !== scope.row" @click="playSound(scope.row)"
+                class="flex items-center gap-2 cursor-pointer">
+                <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+                <PlayCircleFillIcon color="var(--dark-green-500)"/>
+                </div>
+                <p class="paragraph-xs c-strong-950">
+                {{ scope.row.duration ?? '2.35' }}
+                </p>
+            </div>
+            <div v-else @click="pauseMusic(scope.row)" class="flex items-center gap-2 cursor-pointer">
+                <div class="w-8 h-8 rounded-full border border-soft-200 flex items-center justify-center">
+                <PlayCircleFillIcon color="var(--dark-green-500)"/>
+                </div>
+                <p class="paragraph-xs c-strong-950">
+                    {{ __('control.song.pause') }}
+                </p>
+            </div>
+            </template>
+        </AppTableColumn>
+        <AppTableColumn :label="'Sanatçı'" sortable="name">
+            <template #default="scope">
+                <div class="flex gap-3 items-center" v-for="artist in scope.row.main_artists">
+                    <img :alt="scope.row.name"
+                        class="w-10 h-10 rounded-full overflow-hidden"
+                        :src="artist.image ? artist.image.thumb : defaultStore.profileImage(artist.name)">
+                    <span class="paragraph-xs c-strong-950">{{ artist.name }} </span>
+                </div>
+                <p class="paragraph-xs c-strong-950" v-if="scope.row.main_artists.length <= 0">
+                    Sanatçı bulunmuyor
+                </p>
+            </template>
+        </AppTableColumn>
+        <AppTableColumn :label="'Katılımcı'" sortable="name">
+            <template #default="scope">
+                <button @click="openParticipantModal(scope.row)">
+                    <div class="flex items-center gap-2 label-xs c-sub-600 border border-soft-200 px-2 py-1 rounded-lg">
+                        <p class="w-max"> {{ scope.row.participants?.length ?? 0 }} Katılımcı</p>
+                    </div>
+                </button>
+            </template>
+        </AppTableColumn>
       <template #empty>
         <div class="flex flex-col items-center justify-center gap-8">
           <div>

@@ -43,7 +43,7 @@ class AnalyseService
                     return [
                         'release_name' => $firstItem->release_name,
                         'total_quantity' => $releaseData->sum('quantity'),
-                        'total_earning' => priceFormat($releaseEarnings),
+                        'total_earning' => Number::currency($releaseEarnings, 'USD', app()->getLocale()),
                         'percentage' => round($percentage, 2),
                         'quantity' => $releaseData->sum('quantity'),
                         'product' => $product ? [
@@ -79,16 +79,13 @@ class AnalyseService
                 return !in_array($data['country'], $countries);
             });
 
-            if ($otherCountries->isNotEmpty()) {
-                $topCountries['Others'] = [
-                    'country' => 'Others',
-                    'start_date' => Cache::get('start_date'),
-                    'end_date' => Cache::get('end_date'),
-                    'total_earning' => $otherCountries->sum('total_earning'),
-                    'total_quantity' => $otherCountries->sum('total_quantity'),
-                    'releases' => [],
-                ];
-            }
+            $topCountries['Others'] = [
+                'start_date' => Cache::get('start_date'),
+                'end_date' => Cache::get('end_date'),
+                'total_earning' => $otherCountries->sum('total_earning'),
+                'total_quantity' => $otherCountries->sum('total_quantity'),
+                'releases' => [],
+            ];
 
             $releases = $this->data->groupBy('release_name')
                 ->map(function ($releaseData) use ($countries) {
@@ -106,7 +103,7 @@ class AnalyseService
 
                         if (in_array($country, $countries)) {
                             $countryData[strtolower($country)] = [
-                                'earning' => priceFormat($countryEarnings),
+                                'earning' => Number::currency($countryEarnings, 'USD', app()->getLocale()),
                                 'percentage' => round($percentage, 2),
                                 'quantity' => $quantity,
                             ];
@@ -117,7 +114,7 @@ class AnalyseService
                     }
 
                     $countryData['others'] = [
-                        'earning' => priceFormat($otherEarnings),
+                        'earning' => Number::currency($otherEarnings, 'USD', app()->getLocale()),
                         'percentage' => $totalEarnings > 0 ? round(($otherEarnings / $totalEarnings) * 100, 2) : 0,
                         'quantity' => $otherQuantity,
                     ];
@@ -128,7 +125,7 @@ class AnalyseService
                         'release_name' => $firstItem->release_name,
                         'upc_code' => $firstItem->upc_code,
                         'total_quantity' => $releaseData->sum('quantity'),
-                        'total_earning' => priceFormat($releaseData->sum('earning')),
+                        'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
                         'countries' => $countryData,
                         'product' => $product ? [
                             'id' => $product->id,
@@ -141,7 +138,7 @@ class AnalyseService
                 ->toArray();
 
             return [
-                'countries' => array_values($topCountries->keys()->toArray()),
+                'countries' => array_merge($topCountries->keys()->toArray(), ['Others']),
                 'releases' => $releases,
             ];
         });
@@ -166,7 +163,7 @@ class AnalyseService
                             return [
                                 'release_name' => $releaseData->first()->release_name,
                                 'total_quantity' => $releaseData->sum('quantity'),
-                                'total_earning' => priceFormat($releaseEarnings),
+                                'total_earning' => Number::currency($releaseEarnings, 'USD', app()->getLocale()),
                                 'percentage' => round($percentage, 2),
                                 'quantity' => $releaseData->sum('quantity'),
                             ];
@@ -231,7 +228,7 @@ class AnalyseService
 
                         if (in_array($platform, $platforms)) {
                             $platformData[strtolower($platform)] = [
-                                'earning' => priceFormat($platformEarnings),
+                                'earning' => Number::currency($platformEarnings, 'USD', app()->getLocale()),
                                 'percentage' => round($percentage, 2),
                                 'quantity' => $quantity,
                             ];
@@ -243,7 +240,7 @@ class AnalyseService
 
                     // Others'ı ekle
                     $platformData['others'] = [
-                        'earning' => priceFormat($otherEarnings),
+                        'earning' => Number::currency($otherEarnings, 'USD', app()->getLocale()),
                         'percentage' => $totalEarnings > 0 ? round(($otherEarnings / $totalEarnings) * 100, 2) : 0,
                         'quantity' => $otherQuantity,
                     ];
@@ -253,7 +250,7 @@ class AnalyseService
                         'end_date' => Cache::get('end_date'),
                         'release_name' => $firstItem->release_name,
                         'total_quantity' => $releaseData->sum('quantity'),
-                        'total_earning' => priceFormat($releaseData->sum('earning')),
+                        'total_earning' => Number::currency($releaseData->sum('earning'), 'USD', app()->getLocale()),
                         'platforms' => $platformData,
                         'product' => $product ? [
                             'id' => $product->id,
@@ -286,7 +283,7 @@ class AnalyseService
                     'end_date' => Cache::get('end_date'),
                     'artist_id' => $artistData->first()->artist->id,
                     'artist_name' => $artistData->first()->artist->name,
-                    'earning' => priceFormat($artistEarnings),
+                    'earning' => Number::currency($artistEarnings, 'USD', app()->getLocale()),
                     'streams' => $artistData->sum('quantity'),
                     'percentage' => round($percentage, 2),
                 ];
@@ -320,7 +317,7 @@ class AnalyseService
                     'artist_name' => $firstItem->artist_name,
                     'upc_code' => $firstItem->upc_code,
                     'streams' => $albumData->sum('quantity'),
-                    'earning' => priceFormat($albumEarnings),
+                    'earning' => Number::currency($albumEarnings, 'USD', app()->getLocale()),
                     'raw_earning' => $albumEarnings,
                     'percentage' => round($percentage, 2)
                 ];
@@ -368,7 +365,7 @@ class AnalyseService
                     'isrc_code' => $firstItem->isrc_code,
                     'artist_id' => $firstItem->artist_id,
                     'artist_name' => $firstItem->artist_name,
-                    'earning' => priceFormat($songEarnings),
+                    'earning' => Number::currency($songEarnings, 'USD', app()->getLocale()),
                     'streams' => $songData->sum('quantity'),
                     'percentage' => round($percentage, 2),
                 ];
@@ -393,7 +390,7 @@ class AnalyseService
                     'end_date' => Cache::get('end_date'),
                     'label_id' => $firstItem->label->id ?? $firstItem->label_id,
                     'label_name' => $firstItem->label->name ?? $firstItem->label_name,
-                    'earning' => priceFormat($labelEarnings),
+                    'earning' => Number::currency($labelEarnings, 'USD', app()->getLocale()),
                     'percentage' => round($percentage, 2),
                 ];
             })->sortByDesc('percentage')
@@ -423,7 +420,7 @@ class AnalyseService
                         'platform' => $firstItem->platform,
                         'quantity' => $firstItem->quantity,
                         'release_name' => $firstItem->release_name,
-                        'earning' => priceFormat($earningSum),
+                        'earning' => Number::currency($earningSum, 'USD', app()->getLocale()),
                         'percentage' => $percentage,
                     ];
                 })
@@ -542,7 +539,7 @@ class AnalyseService
                 $percentage = $totalEarnings > 0 ? ($earning / $totalEarnings) * 100 : 0;
                 return [
                     $platform => [
-                        'earning' => priceFormat($earning),
+                        'earning' => Number::currency($earning, 'USD', app()->getLocale()),
                         'percentage' => round($percentage, 2),
                     ]
                 ];
@@ -667,7 +664,7 @@ class AnalyseService
                     $platformEarnings->push([
                         'platform' => $platformName,
                         'earning_num' => $sum,
-                        'earning' => priceFormat($sum),
+                        'earning' => Number::currency($sum, 'USD', app()->getLocale()),
                         'percentage' => round($percentage, 2)
                     ]);
                 }
@@ -688,7 +685,7 @@ class AnalyseService
                 $platformEarnings->push([
                     'platform' => 'other',
                     'earning_num' => $otherSum,
-                    'earning' => priceFormat($otherSum),
+                    'earning' => Number::currency($otherSum, 'USD', app()->getLocale()),
                     'percentage' => round($otherPercentage, 2)
                 ]);
 
@@ -709,7 +706,7 @@ class AnalyseService
                 $monthPercentage = $totalAllEarnings > 0 ? round(($totalEarnings / $totalAllEarnings) * 100, 2) : 0;
 
                 return array_merge($sortedEarnings->toArray(), [
-                    'total' => priceFormat($totalEarnings),
+                    'total' => Number::currency($totalEarnings, 'USD', app()->getLocale()),
                     'total_num' => $totalEarnings,
                     'month_percentage' => $monthPercentage
                 ]);
@@ -810,9 +807,9 @@ class AnalyseService
 
                 return [
                     $month => [
-                        'promotion' => priceFormat($promotion),
-                        'earning' => priceFormat($earning),
-                        'total' => priceFormat($net),
+                        'promotion' => Number::currency($promotion, 'USD', app()->getLocale()),
+                        'earning' => Number::currency($earning, 'USD', app()->getLocale()),
+                        'total' => Number::currency($net, 'USD', app()->getLocale()),
                         'earning_percentage' => $net > 0 ? round((abs($promotion) / $net) * 100, 2) : 0,
                     ]
                 ];
@@ -828,9 +825,9 @@ class AnalyseService
                     $total = $earning + abs($promotion);
 
                     return collect([
-                        'promotion' => priceFormat($promotion),
-                        'earning' => priceFormat($earning),
-                        'total' => priceFormat($total),
+                        'promotion' => Number::currency($promotion, 'USD', app()->getLocale()),
+                        'earning' => Number::currency($earning, 'USD', app()->getLocale()),
+                        'total' => Number::currency($total, 'USD', app()->getLocale()),
                         'percentage' => $total > 0 ? round((abs($promotion) / $total) * 100, 2) : 0,
                     ]);
                 });

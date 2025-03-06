@@ -193,9 +193,14 @@
       <AppTableColumn label="UPC/Katalog" width="180">
         <template #default="scope">
           <div class="flex flex-col justify-start ">
-            <span class="paragraph-xs c-sub-600">UPC:</span><span class="label-sm c-strong-950 ">{{ scope.row.upc_code ?? 'Boş' }}</span>
-            <span class="paragraph-xs c-sub-600">Katalog No: </span>
-            <span class="label-sm c-strong-950 "> {{ scope.row.catalog_number ?? 'Boş' }}</span>
+            <div class="flex items-center gap-0.5">
+                <span class="paragraph-xs c-sub-600">UPC:</span><span class="label-sm c-strong-950 ">{{ scope.row.upc_code ?? 'Boş' }}</span>
+            </div>
+
+            <div class="flex items-center gap-0.5">
+                <span class="paragraph-xs c-sub-600">Katalog No: </span>
+                <span class="label-sm c-strong-950 "> {{ scope.row.catalog_number ?? 'Boş' }}</span>
+            </div>
 
           </div>
         </template>

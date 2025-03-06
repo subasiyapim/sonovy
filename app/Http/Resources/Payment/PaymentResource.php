@@ -22,7 +22,7 @@ class PaymentResource extends JsonResource
             'date' => $this->created_at ?? null,
             'process_type' => $this->process_type ?? null,
             'description' => $this->getDescription() ?? null,
-            'amount' => isset($this->amount) ? priceFormat($this->amount) : null,
+            'amount' => isset($this->amount) ? Number::currency($this->amount, 'USD', app()->getLocale()) : null,
             'balance' => $this->user->balance ?? null,
             'status_text' => isset($this->status) ? PaymentStatusEnum::from($this->status->value)->title() : null,
             'status' => $this->status ?? null,

@@ -183,7 +183,7 @@
     </div>
     <div v-else-if="activeTab == 'products'" class="px-6">
         <AppTable v-model="tab.products"  :isClient="true" :hasSearch="false" :showAddButton="false">
-            <AppTableColumn label="Tür" sortable="type" width="80">
+            <AppTableColumn label="Tür" sortable="type" width="70">
                 <template #default="scope">
                 <div class="border border-soft-200 w-10 h-10 rounded-full flex items-center justify-center">
 
@@ -227,17 +227,16 @@
                     </div>
                     <div class="flex flex-col flex-1 items-start justisy-start">
                     <a :href="route('control.catalog.products.show',scope.row.id)" class="paragraph-xs c-blue-500">
-                        {{ scope.row.album_name }}
+                        {{ scope.row.album_name }} <template v-if="scope.row.version">({{scope.row.version}})</template>
 
                     </a>
 
-                    <p class="paragraph-xs c-strong-950">{{scope.row.upc_code}}</p>
 
                     <div class=" paragraph-xs c-strong-950 ">
                         <p>
-                        <template v-for="(artist,artistIndex) in scope.row.main_artists">
+                        <template v-for="(artist,artistIndex) in scope.row.artists">
                             {{ artist.name }}
-                            <template v-if="artistIndex != scope.row.main_artists.length-1">,&nbsp;</template>
+                            <template v-if="artistIndex != scope.row.artists.length-1">,&nbsp;</template>
                         </template>
                         </p>
 

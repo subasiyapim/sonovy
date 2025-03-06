@@ -91,7 +91,7 @@ const pauseMusic = (song) => {
 };
 </script>
 <template>
-  <AppTable :hasSelect="true" v-model="product.songs" :isClient="true" :hasSearch="false" :showAddButton="false">
+  <AppTable :hasSelect="false" v-model="product.songs" :isClient="true" :hasSearch="false" :showAddButton="false">
     <AppTableColumn label="No" sortable="id">
       <template #default="scope">
         <p class="table-name-text">
@@ -181,11 +181,11 @@ const pauseMusic = (song) => {
         </div>
       </template>
     </AppTableColumn>
-    <AppTableColumn label="Linkler">
+    <!-- <AppTableColumn label="Linkler">
       <template #default="scope">
 
       </template>
-    </AppTableColumn>
+    </AppTableColumn> -->
     <AppTableColumn label="Katılımcılar">
       <template #default="scope">
         <button @click="openParticipantModal(scope.row)">
@@ -200,7 +200,7 @@ const pauseMusic = (song) => {
       <template #default="scope">
         <button @click="openMusicansModal(scope.row)">
           <div class="flex items-center gap-2 label-xs c-sub-600 border border-soft-200 px-2 py-1 rounded-lg">
-            <p class="w-max"> {{ scope.row.musicians?.length ?? 0 }} Katılımcı</p>
+            <p class="w-max"> {{ scope.row.musicians?.length ?? 0 }} Katkı</p>
           </div>
         </button>
 

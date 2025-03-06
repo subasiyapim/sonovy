@@ -1,5 +1,4 @@
 <template>
-
   <AppTable ref="productTable"
             v-model="tableData"
             @addNewClicked="openDialog"
@@ -62,7 +61,7 @@
     <AppTableColumn label="Plak Şirketi">
       <template #default="scope">
 
-        <span class="paragraph-xs c-sub-600">{{ scope.row.label?.name }}</span>
+        <span class="paragraph-xs c-sub-600">{{ scope.row.label }}</span>
 
       </template>
     </AppTableColumn>
@@ -84,7 +83,7 @@
     <AppTableColumn label="UPC/Katalog">
       <template #default="scope">
         <div class="flex flex-col justify-start ">
-          <span class="paragraph-xs c-sub-600">{{ scope.row.upc_code }}</span>
+          <span class="paragraph-xs c-sub-600">{{ scope.row.upc }}</span>
           <span class="paragraph-xs c-sub-600">{{ scope.row.catalog_number }}</span>
 
         </div>
@@ -211,6 +210,8 @@ const openDialog =  () => {
 };
 
 const onDone = (e) => {
+    console.log("EEE",e);
+
     e.forEach(element => {
         tableData.value.push(element);
     });

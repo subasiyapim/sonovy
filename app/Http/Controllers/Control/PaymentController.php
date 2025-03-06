@@ -34,8 +34,8 @@ class  PaymentController extends Controller
         abort_if(Gate::denies('payment_list'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $payments = PaymentResource::collection(Payment::where('user_id', Auth::id())->advancedFilter());
-        $balance = priceFormat(EarningService::balance());
-        $total_pending_payment = priceFormat(PaymentService::getTotalPendingPayment());
+        $balance = Number::currency(EarningService::balance(), 'USD', app()->getLocale());
+        $total_pending_payment = Number::currency(PaymentService::getTotalPendingPayment(), 'USD', app()->getLocale());
         $pending_payment = PaymentService::getPendingPayment();
         $account = BankAccount::where('user_id', Auth::id())->first();
         $minPaymentRequest = Number::format(Setting::where('key', 'min_payment_request')

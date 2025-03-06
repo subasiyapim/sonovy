@@ -225,6 +225,7 @@ class UserShowResource extends JsonResource
                     'id' => $product->id,
                     'type' => $product->type->value,
                     'status' => $product->status->value,
+
                     'version' => $product->version,
                     'status_name' => $product->status->title(),
                     'image' => $product->image ? $product->image->getUrl('thumb') : null,
@@ -236,6 +237,7 @@ class UserShowResource extends JsonResource
                     'physical_release_date' => Carbon::parse($product->physical_release_date)->format('d.m.Y'),
                     'song_count' => $product->songs->count(),
                     'upc' => $product->upc_code,
+                    'catalog_number' => $product->catalog_number,
                     'isrc' => $product->isrc_code,
                 ];
             })->toArray();

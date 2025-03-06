@@ -26,19 +26,18 @@ const data = computed({
 
 
 
-    <AppTableColumn label="No" width="40">
-      <template #default="scope">
-           <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
-      </template>
+    <AppTableColumn label="No" >
+        <template #default="scope">
+            <span class="paragraph-xs c-strong-950"> #{{scope.index+1}}</span>
+        </template>
     </AppTableColumn>
-    <AppTableColumn label="Platform" >
-      <template #default="scope">
-        <div class="flex items-center gap-3">
-           <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200"> <Icon :icon="scope.row.platform_image" /></div>
-            <p class="paragraph-xs c-strong-950"> {{scope.row.platform_name}}</p>
-        </div>
-
-      </template>
+    <AppTableColumn label="Platform" width="400">
+        <template #default="scope">
+            <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center border border-soft-200"> <Icon :icon="scope.row.platform_image" /></div>
+                <p class="paragraph-xs c-strong-950"> {{scope.row.platform_name}}</p>
+            </div>
+        </template>
     </AppTableColumn>
 
     <AppTableColumn label="Toplam Parça Sayısı">
