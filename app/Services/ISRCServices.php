@@ -42,12 +42,17 @@ class ISRCServices
             $min_code = 50000;
             $max_code = 99999;
         } else {
-            return false;
+            Log::error('Geçersiz ürün tipi', [
+                'type' => $type,
+                'tenant' => $tenant->domain ?? null
+            ]);
+            return null;
         }
 
         // Mevcut ISRC kodlarını al
         $existing_isrcs = Song::where('isrc', 'like', "$country_code-$registration_code-$year_code-%")
             ->whereNotNull('isrc')
+            ->where('isrc', '!=', '0')
             ->whereRaw('CAST(SUBSTRING_INDEX(isrc, "-", -1) AS UNSIGNED) BETWEEN ? AND ?', [$min_code, $max_code])
             ->orderByRaw('CAST(SUBSTRING_INDEX(isrc, "-", -1) AS UNSIGNED) ASC')
             ->pluck('isrc')
@@ -72,12 +77,12 @@ class ISRCServices
                         'type' => $type,
                         'tenant' => $tenant->domain ?? null
                     ]);
-                    return false;
+                    return null;
                 }
             }
         }
 
-        // Kod sınırlarının dışında kalması durumunda false döndür
+        // Kod sınırlarının dışında kalması durumunda null döndür
         if ($definition_code < $min_code || $definition_code > $max_code) {
             Log::error('Geçersiz ISRC tanımlama kodu', [
                 'definition_code' => $definition_code,
@@ -86,7 +91,7 @@ class ISRCServices
                 'type' => $type,
                 'tenant' => $tenant->domain ?? null
             ]);
-            return false;
+            return null;
         }
 
         // Kodun sıfır olmamasını sağla
@@ -95,7 +100,7 @@ class ISRCServices
                 'type' => $type,
                 'tenant' => $tenant->domain ?? null
             ]);
-            return false;
+            return null;
         }
 
         // ISRC kodunu oluştur

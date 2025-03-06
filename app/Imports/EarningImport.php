@@ -36,6 +36,7 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
 {
     use Importable;
 
+
     public $timeout = 600;
     public $tries = 3;
     private $headersValidated = false;
@@ -47,11 +48,11 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
     private const HEADER_MAPPINGS = [
         'isrc' => ['isrc'],
         'platform' => ['platform'],
-        'country' => ['country', 'country_region'],
-        'label_name' => ['label_name'],
-        'artist_name' => ['artist_name'],
-        'release_name' => ['release_name', 'release_title'],
-        'song_name' => ['song_name', 'track_title']
+        'country' => ['country', 'country_region', 'ulke'],
+        'label_name' => ['label_name', 'label_adi'],
+        'artist_name' => ['artist_name', 'sanatci_adi'],
+        'release_name' => ['release_name', 'release_title', 'album_adi'],
+        'song_name' => ['song_name', 'track_title', 'parca_adi']
     ];
 
     // Zorunlu alanlar

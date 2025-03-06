@@ -98,7 +98,6 @@ class IsrcJob implements ShouldQueue, ShouldBeUnique
                     $totalErrors = 0;
 
                     $songs = Song::whereNull('isrc')
-                        ->orWhere('isrc', 0)
                         ->chunk(100, function ($songs) use ($tenant, &$totalProcessed, &$totalErrors) {
                             foreach ($songs as $song) {
                                 try {
@@ -110,7 +109,18 @@ class IsrcJob implements ShouldQueue, ShouldBeUnique
                                         continue;
                                     }
 
-                                    $song->isrc = ISRCServices::make($song->type, $tenant);
+                                    $isrc = ISRCServices::make($song->type, $tenant);
+
+                                    if ($isrc === null) {
+                                        Log::error('ISRC oluşturulamadı', [
+                                            'song_id' => $song->id,
+                                            'tenant' => $tenant->domain,
+                                            'type' => $song->type
+                                        ]);
+                                        continue;
+                                    }
+
+                                    $song->isrc = $isrc;
                                     $song->save();
                                     $totalProcessed++;
 
