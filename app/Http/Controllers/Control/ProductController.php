@@ -193,12 +193,18 @@ class ProductController extends Controller
             'hashtags:id,name,code',
             'downloadPlatforms' => function ($query) {
                 $query->select('platforms.id', 'platforms.name', 'product_download_platform.product_id', 'product_download_platform.platform_id', 'product_download_platform.status')
-                    ->with('histories:id,download_platform_id,status,created_at');
+                    ->with('histories' => function ($query) {
+                        $query->select('id', 'product_id', 'platform_id', 'status', 'created_at')
+                            ->where('product_id', $product->id);
+                    });
             },
             'promotions:id,product_id,status,start_date,end_date',
             'mainArtists:id,name',
             'featuredArtists:id,name',
-            'histories:id,product_id,status,created_at'
+            'histories' => function ($query) {
+                $query->select('id', 'product_id', 'platform_id', 'status', 'created_at')
+                    ->where('product_id', $product->id);
+            }
         ]);
 
         $tab = request()->input('slug', 'metadata');
