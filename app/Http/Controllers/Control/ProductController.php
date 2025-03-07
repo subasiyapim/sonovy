@@ -192,7 +192,7 @@ class ProductController extends Controller
             'subGenre:id,name',
             'hashtags:id,name,code',
             'downloadPlatforms' => function ($query) {
-                $query->select('id', 'product_id', 'platform_id', 'status')
+                $query->select('platforms.id', 'platforms.name', 'product_download_platform.product_id', 'product_download_platform.platform_id', 'product_download_platform.status')
                     ->with('histories:id,download_platform_id,status,created_at');
             },
             'promotions:id,product_id,status,start_date,end_date',
