@@ -196,7 +196,7 @@ class ProductController extends Controller
                     ->with('histories');
 
             },
-            'promotions:id,product_id,status,start_date,end_date',
+            'promotions:id,product_id,start_date,end_date',
             'mainArtists:id,name',
             'featuredArtists:id,name',
             'histories'
