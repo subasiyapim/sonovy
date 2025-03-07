@@ -191,17 +191,18 @@ class ProductController extends Controller
             'genre:id,name',
             'subGenre:id,name',
             'hashtags:id,name,code',
-            'downloadPlatforms' => function ($query) {
+            'downloadPlatforms' => function ($query) use ($product) {
                 $query->select('platforms.id', 'platforms.name', 'product_download_platform.product_id', 'product_download_platform.platform_id', 'product_download_platform.status')
-                    ->with('histories' => function ($query) {
+                    ->with(['histories' => function ($query) use ($product) {
                         $query->select('id', 'product_id', 'platform_id', 'status', 'created_at')
                             ->where('product_id', $product->id);
-                    });
+                    }]);
+
             },
             'promotions:id,product_id,status,start_date,end_date',
             'mainArtists:id,name',
             'featuredArtists:id,name',
-            'histories' => function ($query) {
+            'histories' => function ($query) use ($product) {
                 $query->select('id', 'product_id', 'platform_id', 'status', 'created_at')
                     ->where('product_id', $product->id);
             }
