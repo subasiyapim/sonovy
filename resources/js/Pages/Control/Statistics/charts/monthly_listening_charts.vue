@@ -34,13 +34,19 @@
 
     </template>
     <template #body>
-      <VueApexCharts
-          v-if="!loading && series?.[0]?.data?.length > 0"
+    <div v-if="!loading" class="h-full">
+        <VueApexCharts
+          v-if="series?.[0]?.data?.length > 0"
           type="area"
           height="200"
           :options="chartOptions"
           :series="series"
       ></VueApexCharts>
+      <div class="flex items-center justify-center h-full">
+        <p class="label-sm c-strong-950">Henüz Veri Yok</p>
+      </div>
+    </div>
+
       <div v-else class="flex flex-col gap-2 items-center justify-center min-h-32">
 
         <svg aria-hidden="true" class="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
