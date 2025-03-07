@@ -176,18 +176,18 @@ class ProductController extends Controller
             'songs' => function ($query) {
                 $query->select('id', 'product_id', 'name', 'duration', 'isrc', 'status')
                     ->with([
-                        'mainArtists:id,name,image',
-                        'featuringArtists:id,name,image',
-                        'musicians:id,name,image',
+                        'mainArtists:id,name',
+                        'featuringArtists:id,name',
+                        'musicians:id,name',
                         'participants' => function ($query) {
                             $query->select('id', 'participantable_id', 'participantable_type', 'user_id')
                                 ->with('user:id,name');
                         },
-                        'writers:id,name,image',
-                        'composers:id,name,image'
+                        'writers:id,name',
+                        'composers:id,name'
                     ]);
             },
-            'label:id,name,image',
+            'label:id,name',
             'genre:id,name',
             'subGenre:id,name',
             'hashtags:id,name,code',
@@ -196,8 +196,8 @@ class ProductController extends Controller
                     ->with('histories:id,download_platform_id,status,created_at');
             },
             'promotions:id,product_id,status,start_date,end_date',
-            'mainArtists:id,name,image',
-            'featuredArtists:id,name,image',
+            'mainArtists:id,name',
+            'featuredArtists:id,name',
             'histories:id,product_id,status,created_at'
         ]);
 
@@ -209,8 +209,8 @@ class ProductController extends Controller
         $artistBranches = ArtistBranch::select('id', 'name')->get()
             ->map(fn($branch) => ['id' => $branch->id, 'name' => $branch->name]);
 
-        $artists = Artist::select('id', 'name', 'image')->get()
-            ->map(fn($artist) => ['id' => $artist->id, 'name' => $artist->name, 'image' => $artist->image]);
+        $artists = Artist::select('id', 'name')->get()
+            ->map(fn($artist) => ['id' => $artist->id, 'name' => $artist->name]);
 
         $users = \App\Models\User::select('id', 'name')->get()
             ->map(fn($user) => ['id' => $user->id, 'name' => $user->name]);
