@@ -172,40 +172,55 @@ class ProductController extends Controller
     {
         abort_if(Gate::denies('product_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $product->loadMissing(
-            'songs.mainArtists',
-            'songs.featuringArtists',
-            'songs.musicians',
-            'songs.participants.user',
-            'songs.writers',
-            'songs.composers',
-            'label',
-            'genre',
-            'subGenre',
-            'label',
-            'hashtags',
-            'downloadPlatforms.histories',
-            'promotions',
-            'mainArtists',
-            'featuredArtists',
-            'histories',
+        $product->load([
+            'songs' => function ($query) {
+                $query->select('id', 'product_id', 'title', 'duration', 'isrc', 'status')
+                    ->with([
+                        'mainArtists:id,name,image',
+                        'featuringArtists:id,name,image',
+                        'musicians:id,name,image',
+                        'participants' => function ($query) {
+                            $query->select('id', 'participantable_id', 'participantable_type', 'user_id')
+                                ->with('user:id,name');
+                        },
+                        'writers:id,name,image',
+                        'composers:id,name,image'
+                    ]);
+            },
+            'label:id,name,image',
+            'genre:id,name',
+            'subGenre:id,name',
+            'hashtags:id,name,code',
+            'downloadPlatforms' => function ($query) {
+                $query->select('id', 'product_id', 'platform_id', 'status')
+                    ->with('histories:id,download_platform_id,status,created_at');
+            },
+            'promotions:id,product_id,status,start_date,end_date',
+            'mainArtists:id,name,image',
+            'featuredArtists:id,name,image',
+            'histories:id,product_id,status,created_at'
+        ]);
 
-        );
+        $tab = request()->input('slug', 'metadata');
 
-        $tab = 'metadata';
-        $tab = request()->input('slug') ?? $tab;
+        $genres = Genre::select('id', 'name')->get()
+            ->map(fn($genre) => ['id' => $genre->id, 'name' => $genre->name]);
 
-        $response = new ProductShowResource($product, $tab);
-        $genres = getDataFromInputFormat(Genre::pluck('name', 'id'), null, '', null, true);
-        $artistBranches = getDataFromInputFormat(ArtistBranch::all(), 'id', 'name');
-        $artists = getDataFromInputFormat(Artist::all(), 'id', 'name', 'image');
-        $users = getDataFromInputFormat(\App\Models\User::all(), 'id', 'name');
+        $artistBranches = ArtistBranch::select('id', 'name')->get()
+            ->map(fn($branch) => ['id' => $branch->id, 'name' => $branch->name]);
+
+        $artists = Artist::select('id', 'name', 'image')->get()
+            ->map(fn($artist) => ['id' => $artist->id, 'name' => $artist->name, 'image' => $artist->image]);
+
+        $users = \App\Models\User::select('id', 'name')->get()
+            ->map(fn($user) => ['id' => $user->id, 'name' => $user->name]);
+
         $statuses = enumToSelectInputFormat(ProductStatusEnum::getTitles());
 
         return inertia(
             'Control/Products/Show',
             [
-                'product' => $response->resolve(),
+                'product' => (new ProductShowResource($product, $tab))->resolve(),
                 'genres' => $genres,
                 'artists' => $artists,
                 'users' => $users,
