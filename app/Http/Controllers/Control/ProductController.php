@@ -207,8 +207,9 @@ class ProductController extends Controller
         $genres = Genre::select('id', 'name')->get()
             ->map(fn($genre) => ['id' => $genre->id, 'name' => $genre->name]);
 
-        $artistBranches = ArtistBranch::select('id', 'name')->get()
-            ->map(fn($branch) => ['id' => $branch->id, 'name' => $branch->name]);
+        $artistBranches = ArtistBranch::withTranslation()
+            ->get()
+            ->map(fn($branch) => ['id' => $branch->id, 'name' => $branch->getTranslation('name', app()->getLocale())]);
 
         $artists = Artist::select('id', 'name')->get()
             ->map(fn($artist) => ['id' => $artist->id, 'name' => $artist->name]);
