@@ -602,8 +602,6 @@ onMounted(() => {
     form.featuring_artists = (props.song.featuring_artists ?? []).map((e) => e.id);
 
 
-
-
     form.main_artists = props.song.main_artists?.length > 0 ? props.song.main_artists[0].id : null;
 
 

@@ -52,7 +52,7 @@ class PubController extends Controller
         ];
 
 
-        $song = Song::where($queryParams)->orderBy('id', 'desc')->first();
+        $song = Song::with('mainArtists')->where($queryParams)->orderBy('id', 'desc')->first();
 
         return response()->json($song, Response::HTTP_OK);
     }

@@ -204,7 +204,7 @@ const statusData = ref([
     color: "#FF8447",
   }
 ]);
-
+const productTable = ref();
 const openDialog =  () => {
     isAssignModalOn.value = true;
 };
@@ -213,12 +213,13 @@ const onDone = (e) => {
     console.log("EEE",e);
 
     e.forEach(element => {
-        tableData.value.push(element);
+        productTable.value.addRow(element);
     });
 }
 
 const onDetached = (scopeRow) => {
-    tableData.value.splice(scopeRow.index,1);
+
+    productTable.value.removeRowByIndex(scopeRow.index);
     toast.success("İşlem başarılı")
 };
 

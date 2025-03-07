@@ -22,6 +22,7 @@ use App\Services\PermissionService;
 use App\Services\RoleService;
 use App\Services\TimezoneService;
 use App\Services\UserServices;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -141,7 +142,7 @@ class UserController extends Controller
 
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
         $user->refresh();
@@ -231,7 +232,7 @@ class UserController extends Controller
 
         if ($user->phone) {
             $country = Country::find($user->country_id ?? 228);
-            $user->phone = "+".$country->phone_code.$user->phone;
+            $user->phone = "+" . $country->phone_code . $user->phone;
         }
 
         return inertia(
@@ -347,7 +348,7 @@ class UserController extends Controller
             echo $e->getMessage();
             return back()
                 ->withErrors([
-                    'notification' => __('control.notification_error'.': '.$e->getMessage())
+                    'notification' => __('control.notification_error' . ': ' . $e->getMessage())
                 ]);
         }
 
@@ -424,7 +425,31 @@ class UserController extends Controller
             ->get()
             ?->each(function ($product) use ($user) {
                 $product->update(['created_by' => $user->id]);
-            });
+            })->map(function ($product) {
+                $product->load('label', 'songs.participants', 'artists');
+                return [
+                    'id' => $product->id,
+                    'type' => $product->type->value,
+                    'status' => $product->status->value,
+
+                    'version' => $product->version,
+                    'status_name' => $product->status->title(),
+                    'image' => $product->image ? $product->image->getUrl('thumb') : null,
+                    'album_name' => $product->album_name,
+                    'artists' => $product->artists->map(function ($artist) {
+                        return $artist->name;
+                    })->implode(', '),
+                    'label' => $product?->label?->name,
+                    'physical_release_date' => Carbon::parse($product->physical_release_date)->format('d.m.Y'),
+                    'song_count' => $product->songs->count(),
+                    'upc' => $product->upc_code,
+                    'catalog_number' => $product->catalog_number,
+                    'isrc' => $product->isrc_code,
+                ];
+            })->toArray();
+        //TOOD FİX
+
+
         return response()->json([
             "success" => true,
             "products" => $assignedProducts,

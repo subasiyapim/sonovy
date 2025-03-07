@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\SongTypeEnum;
+use App\Models\Product;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Services\FFMpegServices;
@@ -110,12 +111,20 @@ class TusServiceProvider extends ServiceProvider
             "size" => $fileMeta['metadata']['size'],
             "duration" => self::formatDuration($details['details']['duration']),
             "details" => $details,
-            "created_by" => auth()->id()
+            "created_by" => auth()->id(),
+
         ];
 
         try {
             $file = Song::create($data);
             $file->products()->attach([$fileMeta['metadata']['product_id']]);
+
+            $product = Product::find($fileMeta['metadata']['product_id']);
+            if ($product) {
+                $mainArtists = $product->mainArtists()->pluck('artists.id')->toArray();
+                $file->mainArtists()->attach($mainArtists);
+            }
+
             $event->getResponse()->setHeaders(['upload_info' => $file->id]);
         } catch (Error $e) {
             Log::info("HATA: " . $e);
