@@ -17,7 +17,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-ini_set('memory_limit', '256M');
+ini_set('memory_limit', '512M');
 
 class ProductShowResource extends JsonResource
 {
@@ -130,18 +130,20 @@ class ProductShowResource extends JsonResource
                 'version' => $song->version,
                 'genre_id' => $song->genre_id,
                 'sub_genre_id' => $song->sub_genre_id,
-                'artists' => $song->artists,
+                'artists' => $song->artists->map(fn($artist) => ['id' => $artist->id, 'name' => $artist->name]),
                 'is_instrumental' => $song->is_instrumental,
                 'path' => $song->path,
-                'participants' => $song->participants
-                    ->map(function ($participant) {
-                        return $participant->load('user');
-                    }),
-                'musicians' => $song->musicians,
-                'writers' => $song->writers,
-                'composers' => $song->composers,
-                'main_artists' => $song->mainArtists,
-                'featuring_artists' => $song->featuringArtists,
+                'participants' => $song->participants->map(fn($participant) => [
+                    'id' => $participant->id,
+                    'user' => $participant->user ? ['id' => $participant->user->id, 'name' => $participant->user->name] : null,
+                    'tasks' => $participant->tasks,
+                    'rate' => $participant->rate
+                ]),
+                'musicians' => $song->musicians->map(fn($musician) => ['id' => $musician->id, 'name' => $musician->name]),
+                'writers' => $song->writers->map(fn($writer) => ['id' => $writer->id, 'name' => $writer->name]),
+                'composers' => $song->composers->map(fn($composer) => ['id' => $composer->id, 'name' => $composer->name]),
+                'main_artists' => $song->mainArtists->map(fn($artist) => ['id' => $artist->id, 'name' => $artist->name]),
+                'featuring_artists' => $song->featuringArtists->map(fn($artist) => ['id' => $artist->id, 'name' => $artist->name]),
                 'analysis' => $song->acr_response,
                 'details' => $song->details,
                 'activities' => $song->activities,
@@ -222,11 +224,16 @@ class ProductShowResource extends JsonResource
 
     private function participants()
     {
-        return $this->songs->map(function ($song) {
+        return $this->songs->flatMap(function ($song) {
             return $song->participants->map(function ($participant) {
-                return $participant->load('user');
+                return [
+                    'id' => $participant->id,
+                    'user' => $participant->user ? ['id' => $participant->user->id, 'name' => $participant->user->name] : null,
+                    'tasks' => $participant->tasks,
+                    'rate' => $participant->rate
+                ];
             });
-        })->flatten()->unique()->values();
+        })->unique('id')->values();
     }
 
     private function type()
