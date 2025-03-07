@@ -174,7 +174,7 @@ class ProductController extends Controller
 
         $product->load([
             'songs' => function ($query) {
-                $query->select('id', 'product_id', 'title', 'duration', 'isrc', 'status')
+                $query->select('id', 'product_id', 'name', 'duration', 'isrc', 'status')
                     ->with([
                         'mainArtists:id,name,image',
                         'featuringArtists:id,name,image',
