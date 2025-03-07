@@ -276,7 +276,8 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
             if (!empty($missingFields)) {
                 Log::warning('Eksik zorunlu alanlar bulundu', [
                     'missing_fields' => $missingFields,
-                    'row_data' => $normalizedData
+                    'row_data' => $normalizedData,
+                    'row_number' => $row->getIndex() + 2
                 ]);
                 $this->addError(
                     sprintf('Eksik zorunlu alanlar: %s', implode(', ', $missingFields)),
@@ -480,7 +481,8 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                     Log::error('Kayıt işlemi sırasında hata', [
                         'error' => $e->getMessage(),
                         'trace' => $e->getTraceAsString(),
-                        'data' => $earningReportData
+                        'data' => $earningReportData,
+                        'row_number' => $row->getIndex() + 2
                     ]);
                     throw $e;
                 }
@@ -502,7 +504,8 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
             Log::error('Satır işleme hatası', [
                 'row_number' => $row->getIndex() + 2,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'row_data' => $rowArray ?? []
             ]);
             $this->addError($e->getMessage(), $rowArray ?? []);
             $this->updateProgressIfNeeded();
@@ -704,9 +707,11 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                 'total_rows' => $currentFile->total_rows,
                 'processed_rows' => $this->processedRows,
                 'error_rows' => $this->errorRows,
-                'last_chunk_update' => $this->lastChunkUpdate
+                'last_chunk_update' => $this->lastChunkUpdate,
+                'total_errors' => count($this->errors)
             ]);
 
+            // Hata durumunu belirle
             $status = $this->errorRows > 0
                 ? EarningReportFileStatusEnum::COMPLETED_WITH_ERRORS->value
                 : EarningReportFileStatusEnum::COMPLETED->value;
@@ -730,7 +735,8 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                 'final_processed' => $this->processedRows,
                 'final_errors' => $this->errorRows,
                 'total_error_count' => count($allErrors),
-                'status' => $status
+                'status' => $status,
+                'error_details' => array_slice($allErrors, 0, 5) // İlk 5 hatayı göster
             ]);
 
             // Import başarılı ise EarningJob'ı tetikle
@@ -738,7 +744,6 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
                 Log::info('EarningJob tetikleniyor', [
                     'file_id' => $this->fileId
                 ]);
-                
             }
 
         } catch (\Exception $e) {

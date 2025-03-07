@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Enums\EarningReportFileStatusEnum;
+use Illuminate\Support\Facades\Log;
 
 class EarningReportFile extends Model implements HasMedia
 {
@@ -109,12 +110,33 @@ class EarningReportFile extends Model implements HasMedia
 
     public function addError(array $error): void
     {
-        $currentErrors = $this->errors ?? [];
-        $currentErrors[] = $error;
+        try {
+            $currentErrors = $this->errors ?? [];
 
-        $this->update([
-            'errors' => $currentErrors,
-            'error_rows' => count($currentErrors)
-        ]);
+            // Hata sayısını sınırla (son 1000 hata)
+            if (count($currentErrors) >= 1000) {
+                array_shift($currentErrors); // En eski hatayı kaldır
+            }
+
+            $currentErrors[] = $error;
+
+            $this->update([
+                'errors' => $currentErrors,
+                'error_rows' => count($currentErrors),
+                'status' => EarningReportFileStatusEnum::COMPLETED_WITH_ERRORS->value
+            ]);
+
+            Log::info('Hata eklendi', [
+                'file_id' => $this->id,
+                'error_count' => count($currentErrors),
+                'error' => $error
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Hata eklenirken bir sorun oluştu', [
+                'file_id' => $this->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
     }
 }
