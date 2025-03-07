@@ -180,7 +180,7 @@ class ProductController extends Controller
                         'featuringArtists:id,name',
                         'musicians:id,name',
                         'participants' => function ($query) {
-                            $query->select('id', 'participantable_id', 'participantable_type', 'user_id')
+                            $query->select('id', 'product_id', 'song_id', 'user_id', 'tasks', 'rate')
                                 ->with('user:id,name');
                         },
                         'writers:id,name',
