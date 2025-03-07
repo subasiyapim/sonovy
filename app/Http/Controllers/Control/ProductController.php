@@ -192,7 +192,7 @@ class ProductController extends Controller
             'subGenre:id,name',
             'hashtags:id,name,code',
             'downloadPlatforms' => function ($query) use ($product) {
-                $query->select('platforms.id', 'platforms.name', 'product_download_platform.product_id', 'product_download_platform.platform_id', 'product_download_platform.status')
+                $query->select('platforms.id', 'platforms.name', 'product_download_platform.product_id', 'product_download_platform.platform_id')
                     ->with('histories');
 
             },
