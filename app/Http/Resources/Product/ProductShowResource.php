@@ -119,7 +119,7 @@ class ProductShowResource extends JsonResource
         return $this->songs->map(function ($song) {
             return [
                 'id' => $song->id,
-                'type_text' => SongTypeEnum::from($song->type->value)->title(),
+                'type_text' => $song->type ? SongTypeEnum::from($song->type->value)->title() : null,
                 'type' => $song->type,
                 'status' => $song->status,
                 'name' => $song->name,
