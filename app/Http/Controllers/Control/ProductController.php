@@ -194,7 +194,7 @@ class ProductController extends Controller
             'downloadPlatforms' => function ($query) use ($product) {
                 $query->select('platforms.id', 'platforms.name', 'product_download_platform.product_id', 'product_download_platform.platform_id', 'product_download_platform.status')
                     ->with(['histories' => function ($query) use ($product) {
-                        $query->select('id', 'product_id', 'platform_id', 'status', 'created_at')
+                        $query->select('history_product_download_platform.id', 'history_product_download_platform.product_id', 'history_product_download_platform.platform_id', 'history_product_download_platform.status', 'history_product_download_platform.created_at')
                             ->where('product_id', $product->id);
                     }]);
 
@@ -203,7 +203,7 @@ class ProductController extends Controller
             'mainArtists:id,name',
             'featuredArtists:id,name',
             'histories' => function ($query) use ($product) {
-                $query->select('id', 'product_id', 'platform_id', 'status', 'created_at')
+                $query->select('history_product_download_platform.id', 'history_product_download_platform.product_id', 'history_product_download_platform.platform_id', 'history_product_download_platform.status', 'history_product_download_platform.created_at')
                     ->where('product_id', $product->id);
             }
         ]);
