@@ -457,7 +457,7 @@ class ReportController extends Controller
                 $query->where('status', request('status'));
             })
             ->advancedFilter();
-        Log::info($earningReports);
+        // Log::info($earningReports);
         $earningReports = EarningReportResource::collection($earningReports)->resource;
         return inertia('Control/Finance/Imports/index', compact('earningReports', 'platforms', 'statuses', 'filters'));
     }
