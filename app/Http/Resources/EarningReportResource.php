@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Platform;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Number;
@@ -16,53 +17,26 @@ class EarningReportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Platform bilgisini doğrudan ilişkiden al
+        $platform = $this->platform;
+
+        // Toplam net geliri hesapla
+        $totalNetRevenue = $this->earningReports()->sum('net_revenue');
+
         return [
             'id' => $this->id,
-            'reportFileId' => $this->reportFile->id,
-            'platform' => $this->whenLoaded('platform'),
-            'platformIcon' => $this->getPlatformIcon($this->platform),
-            'report_date' => $this->report_date,
-            'report_name' => $this->reportFile->name,
-            'errors' => $this->reportFile->errors,
-            'total' => Number::format($this->getPlatformTotal($this->platform), 4),
-            'file_size' => $this->file_size,
+            'reportFileId' => $this->id,
+            'platform' => $platform,
+            'platform_name' => $platform?->name,
+            'platformIcon' => $platform?->icon,
+            'report_date' => $this->report_date ? Carbon::parse($this->report_date)->format('m Y') : null,
+            'report_name' => $this->name,
+            'errors' => $this->errors,
+            'total' => Number::format($totalNetRevenue ?? 0, 4),
+            'file_size' => $this->file?->size,
             'created_at' => $this->created_at,
-            'status' => $this->reportFile->status,
-            'file' => $this->reportFile->file,
+            'status' => $this->status,
+            'file' => $this->file,
         ];
-    }
-
-    /**
-     * Get platform icon
-     *
-     * @param  string  $platform
-     *
-     * @return string
-     */
-    private function getPlatformIcon(string $platform)
-    {
-        $platform = strtolower($platform);
-        $platformModel = Platform::where('name', $platform)->first();
-        return $platformModel ? $platformModel?->icon : null;
-    }
-
-    /**
-     * Belirli bir platforma ait toplam geliri hesaplar
-     *
-     * @param  string  $platform
-     *
-     * @return string
-     */
-    private function getPlatformTotal(string $platform): string
-    {
-        // Platform adını küçük harfe çeviriyoruz (tutarlılık için)
-        $platformName = strtolower($platform);
-
-        // Aynı platforma ait tüm raporların toplamını hesapla
-        $total = \App\Models\EarningReport::where('platform', $platformName)
-            ->where('earning_report_file_id', $this->reportFile->id)
-            ->sum('net_revenue');
-
-        return (string) $total;
     }
 }

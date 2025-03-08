@@ -9,9 +9,15 @@ return new class extends Migration
     public function up()
     {
         Schema::table('earning_report_files', function (Blueprint $table) {
-            $table->unsignedInteger('total_rows')->default(0)->after('status');
-            $table->unsignedInteger('processed_rows')->default(0)->after('total_rows');
-            $table->unsignedInteger('error_rows')->default(0)->after('processed_rows');
+            if (!Schema::hasColumn('earning_report_files', 'total_rows')) {
+                $table->unsignedInteger('total_rows')->default(0)->after('status');
+            }
+            if (!Schema::hasColumn('earning_report_files', 'processed_rows')) {
+                $table->unsignedInteger('processed_rows')->default(0)->after('total_rows');
+            }
+            if (!Schema::hasColumn('earning_report_files', 'error_rows')) {
+                $table->unsignedInteger('error_rows')->default(0)->after('processed_rows');
+            }
         });
     }
 

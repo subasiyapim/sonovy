@@ -316,7 +316,9 @@ class ReportController extends Controller
                 'total_rows' => 0,
                 'processed_rows' => 0,
                 'error_rows' => 0,
-                'errors' => []
+                'errors' => [],
+                'platform_id' => $request->platform_id,
+                'report_date' => Carbon::parse($request->report_date)->format('Y-m-d')
             ]);
 
             Log::info('Rapor dosyası oluşturuldu', [
@@ -389,16 +391,15 @@ class ReportController extends Controller
     /**
      * Download file by EarningReportFile
      */
-    public function downloadFile($fileId)
+    public function downloadFile($file)
     {
         try {
-            $file = EarningReportFile::findOrFail($fileId);
+            $file = EarningReportFile::findOrFail($file);
 
             // Yetki kontrolü
             if (Gate::denies('report_download') || $file->user_id !== Auth::id()) {
                 abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
             }
-
 
             $media = $file->getMedia('earning_report_files')->last();
 
@@ -417,7 +418,7 @@ class ReportController extends Controller
             }, $media->file_name ?? 'rapor.xlsx');
         } catch (\Exception $e) {
             Log::error('Dosya indirme hatası: '.$e->getMessage(), [
-                'file_id' => $fileId,
+                'file_id' => $file,
                 'user_id' => Auth::id(),
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -449,17 +450,20 @@ class ReportController extends Controller
             ]
         ];
 
-        $earningReports = EarningReport::with('reportFile', 'platform')
+        $reportFiles = EarningReportFile::with(['platform', 'earningReports.platform'])
             ->when(request('platform'), function ($query) {
-                $query->where('platform_id', request('platform'));
+                $query->whereHas('earningReports', function ($q) {
+                    $q->where('platform_id', request('platform'));
+                });
             })
             ->when(request('status'), function ($query) {
                 $query->where('status', request('status'));
             })
             ->advancedFilter();
-         Log::info($earningReports);
-        $earningReports = EarningReportResource::collection($earningReports)->resource;
-        return inertia('Control/Finance/Imports/index', compact('earningReports', 'platforms', 'statuses', 'filters'));
+
+        $reportFiles = EarningReportResource::collection($reportFiles)->resource;
+
+        return inertia('Control/Finance/Imports/index', compact('reportFiles', 'platforms', 'statuses', 'filters'));
     }
 
     public function participantReports(Request $request)

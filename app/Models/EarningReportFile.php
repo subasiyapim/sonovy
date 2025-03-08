@@ -12,7 +12,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Enums\EarningReportFileStatusEnum;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\Platform;
 class EarningReportFile extends Model implements HasMedia
 {
     use HasFactory;
@@ -31,7 +31,9 @@ class EarningReportFile extends Model implements HasMedia
         'status',
         'total_rows',
         'processed_rows',
-        'error_rows'
+        'error_rows',
+        'platform_id',
+        'report_date'
     ];
 
     protected array $filterable = [
@@ -42,7 +44,9 @@ class EarningReportFile extends Model implements HasMedia
         'errors',
         'total_rows',
         'processed_rows',
-        'error_rows'
+        'error_rows',
+        'platform_id',
+        'report_date'
     ];
 
     protected array $orderable = [
@@ -52,7 +56,9 @@ class EarningReportFile extends Model implements HasMedia
         'processed_at',
         'total_rows',
         'processed_rows',
-        'error_rows'
+        'error_rows',
+        'platform_id',
+        'report_date'
     ];
 
     protected $casts = [
@@ -62,7 +68,8 @@ class EarningReportFile extends Model implements HasMedia
         'status' => EarningReportFileStatusEnum::class,
         'total_rows' => 'integer',
         'processed_rows' => 'integer',
-        'error_rows' => 'integer'
+        'error_rows' => 'integer',
+        'report_date' => 'date'
     ];
 
     protected $appends = ['file'];
@@ -95,6 +102,12 @@ class EarningReportFile extends Model implements HasMedia
 
     public function serializeDate(DateTimeInterface $date): string
     {
+        // report_date için özel format
+        if ($date->format('Y-m-d') === $this->report_date?->format('Y-m-d')) {
+            return $date->format('m Y');
+        }
+
+        // Diğer tarihler için varsayılan format
         return $date->format('Y-m-d H:i');
     }
 
@@ -106,6 +119,11 @@ class EarningReportFile extends Model implements HasMedia
     public function incrementErrorRows(): void
     {
         $this->increment('error_rows');
+    }
+
+    public function platform(): BelongsTo
+    {
+        return $this->belongsTo(Platform::class);
     }
 
     public function addError(array $error): void
