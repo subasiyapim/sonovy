@@ -15,6 +15,21 @@ class EarningReportResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    private function formatFileSize($bytes)
+    {
+        if ($bytes === null) {
+            return null;
+        }
+
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= pow(1024, $pow);
+
+        return round($bytes, 2) . ' ' . $units[$pow];
+    }
+
     public function toArray(Request $request): array
     {
         // Platform bilgisini doğrudan ilişkiden al
@@ -33,7 +48,7 @@ class EarningReportResource extends JsonResource
             'report_name' => $this->name,
             'errors' => $this->errors,
             'total' => Number::format($totalNetRevenue ?? 0, 4),
-            'file_size' => $this->file?->size,
+            'file_size' => $this->formatFileSize($this->file?->size),
             'created_at' => $this->created_at,
             'status' => $this->status,
             'file' => $this->file,
