@@ -42,6 +42,7 @@ class RegisteredUserController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'phone' => $data['phone'],
+            'parent_id' => 1,
         ]);
 
         $userRole = Role::where('code', 'user')->firstOrFail();

@@ -89,6 +89,8 @@ class SongUpdateRequest extends FormRequest
     {
         return [
             'lyrics_writers.required_if' => 'Söz yazarı eğer enstrümantal değilse zorunludur.',
+            'musicians.*.name.required' => 'Müzisyen adı zorunludur.',
+            'musicians.*.role_id.required' => 'Müzisyen rolü zorunludur.',
         ];
     }
 }

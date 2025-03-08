@@ -166,7 +166,7 @@ class ProductShowResource extends JsonResource
                 'price' => $platform->pivot->price,
                 'pre_order_date' => $platform->pivot->pre_order_date,
                 'publish_date' => $platform->pivot->publish_date,
-                'status_text' => PlatformStatusEnum::from($platform->status)->title(),
+                'status_text' => $platform->status ? PlatformStatusEnum::from($platform->status)->title() : PlatformStatusEnum::DRAFT->title(),
                 'histories' => $this->getHistoriesFromPlatformId($platform->id),
                 'created_at' => Carbon::parse($platform->created_at)->format('d-m-Y H:i'),
             ];
