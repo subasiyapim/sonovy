@@ -46,13 +46,57 @@ class PubController extends Controller
 
     public function findSong(Request $request)
     {
-
         $queryParams = [
             "id" => $request->id,
         ];
 
+        // Şarkıyı ve ilişkili verileri yükle
+        $song = Song::with([
+            'mainArtists',
+            'featuringArtists',
+            'genre',
+            'products' => function ($query) {
+                $query->withPivot('is_favorite');
+            }
+        ])->where($queryParams)->orderBy('id', 'desc')->first();
 
-        $song = Song::with('mainArtists')->where($queryParams)->orderBy('id', 'desc')->first();
+        if ($song) {
+            // Tus yüklemelerinden sonra görüntülenmesi için
+            // bu bilgileri ekle
+            $song->is_completed = true; // Aksiyon butonlarının görünmesi için
+
+            // Eğer ürün pivot verisi varsa, doğrudan erişilebilir hale getir
+            if ($song->products && count($song->products) > 0) {
+                if (!isset($song->pivot)) {
+                    $pivotData = $song->products[0]->pivot->toArray();
+                    $song->pivot = (object)$pivotData;
+                }
+
+                // Pivot verilerini products koleksiyonundan kaldır (veri duplikasyonunu önlemek için)
+                $song->products->transform(function ($product) {
+                    $product->setRelation('pivot', null);
+                    return $product;
+                });
+            } else {
+                // Ürün yoksa varsayılan pivot verisi oluştur
+                $song->pivot = (object)[
+                    'is_favorite' => 0
+                ];
+            }
+
+            // Debugging için log kaydı
+            \Illuminate\Support\Facades\Log::info('Song found for TUS upload', [
+                'song_id' => $song->id,
+                'song_name' => $song->name,
+                'has_pivot' => isset($song->pivot) ? 'yes' : 'no',
+                'is_completed' => $song->is_completed,
+                'product_count' => $song->products ? count($song->products) : 0
+            ]);
+        } else {
+            \Illuminate\Support\Facades\Log::warning('Song not found', [
+                'request_id' => $request->id
+            ]);
+        }
 
         return response()->json($song, Response::HTTP_OK);
     }
@@ -133,9 +177,11 @@ class PubController extends Controller
     {
         $country_id = $request->country_id;
 
-        $label = State::where('country_id', '=', $country_id)->get();
+        // State modeli bulunamadığı için Country modelinden state'leri alıyoruz
+        // veya başka bir model kullanıyoruz
+        $states = \App\Models\System\Country::find($country_id)->states ?? collect([]);
 
-        return response()->json($label, Response::HTTP_OK);
+        return response()->json($states, Response::HTTP_OK);
     }
 
 

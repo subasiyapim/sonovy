@@ -19,4 +19,14 @@ Broadcast::channel('tenant.{tenant_id}.reportProcessed.{user_id}', function ($us
     return (tenant()->id == $tenant_id) && $user->id == $user_id;
 });
 
+// Song Processing kanalları için broadcast izni
+Broadcast::channel('song.processing.{product_id}', function ($user, $product_id) {
+    return true; // Kimlik doğrulamasından geçmiş tüm kullanıcılara izin ver
+});
+
+// Tenant specific song processing channel
+Broadcast::channel('tenant.{tenant_id}.song.processing.{product_id}', function ($user, $tenant_id, $product_id) {
+    return tenant()->id == $tenant_id; // Sadece doğru tenant'taki kullanıcılara izin ver
+});
+
 

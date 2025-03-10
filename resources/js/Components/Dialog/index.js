@@ -17,6 +17,7 @@ import ChangePackageDialog from './User/change_package.vue';
 import WithdrawModal from './Finance/withdraw.vue';
 import NewReportModal from './Finance/new_report.vue';
 import BankAccountModal from './Finance/bank.vue';
+import AudioQualityModal from './AudioQualityModal.vue';
 
 import FinanceIncomePlatforms from './Finance/Income/platforms.vue';
 import FinanceIncomeCountries from './Finance/Income/countries.vue';
@@ -56,6 +57,7 @@ export {
     NewReportModal,
     ImportErrorsModal,
     BankAccountModal,
+    AudioQualityModal,
     FinanceIncomePlatforms,
     FinanceIncomeCountries,
     FinanceIncomeSales,

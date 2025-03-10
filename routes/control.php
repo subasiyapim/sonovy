@@ -20,6 +20,8 @@ use App\Http\Controllers\Control\StatisticController;
 use App\Http\Controllers\Control\FinanceAnalysisController;
 use App\Http\Controllers\Control\PlanController;
 use App\Http\Controllers\Control\PlanItemController;
+use App\Http\Controllers\Control\AudioQualityController;
+use App\Http\Controllers\Control\FeatureController;
 
 Route::group(
     [
@@ -49,11 +51,11 @@ Route::group(
             Route::post('song/change-status', [SongController::class, 'changeStatus'])->name('song-change-status');
             Route::get('songs/{song}/search-track', [SongController::class, 'searchTrack'])->name('songs.search-track');
             Route::get('songs/{song}/get-lyrics', [SongController::class, 'getLyrics'])->name('songs.get-lyrics');
-            Route::post(
-                'songs/{song}/store-lyrics',
-                [SongController::class, 'storeLyrics']
-            )->name('songs.store-lyrics');
+            Route::post('songs/{song}/store-lyrics', [SongController::class, 'storeLyrics'])->name('songs.store-lyrics');
             Route::post('songs-delete', [SongController::class, 'songsDelete'])->name('songs.songsDelete');
+
+            // Kalite analizi rotası
+            Route::post('songs/quality-analysis', [AudioQualityController::class, 'storeQualityData'])->name('songs.quality-analysis');
 
             Route::group(
                 ['prefix' => 'products', 'as' => 'products.'],

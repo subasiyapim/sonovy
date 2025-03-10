@@ -3,13 +3,14 @@
 namespace App\Providers;
 
 use App\Enums\SongTypeEnum;
+use App\Jobs\ProcessSongUpload;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Services\FFMpegServices;
-use App\Services\SongServices;
 use Error;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -22,27 +23,118 @@ class TusServiceProvider extends ServiceProvider
     {
         $this->app->singleton('tus-server', function ($app) {
             $server = new TusServer();
-            $storagePath = storage_path('app/public/tenant_' . tenant('domain') . '_songs');
 
-            if (!File::exists($storagePath)) {
-                File::makeDirectory($storagePath, 0775, true, true);
-            }
+            // Tenant'a özgü depolama yolunu önbellekle
+            $storagePath = Cache::remember('tus_storage_path_'.tenant('domain'), 60*24, function() {
+                $path = storage_path('app/public/tenant_' . tenant('domain') . '_songs');
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, 0775, true, true);
+                }
+                return $path;
+            });
 
-            $server->setApiPath('/control/tus');
+            // API yolunu da önbellekle
+            $apiPath = Cache::remember('tus_api_path_'.tenant('domain'), 60*24, function() {
+                return '/control/tus';
+            });
+
+            $server->setApiPath($apiPath);
             $server->setUploadDir($storagePath);
 
+            // Upload tamamlandı olayını dinle
             $server->event()->addListener(
                 'tus-server.upload.complete',
                 function (\TusPhp\Events\TusEvent $event) use ($storagePath) {
+                    try {
+                        $fileMeta = $event->getFile()->details();
+                        $metaType = $fileMeta['metadata']['type'] ?? null;
 
-                    $this->handleFileUploadComplete($event, $storagePath);
+                        if (!$metaType) {
+                            Log::error("Dosya tipi belirtilmemiş");
+                            $event->getResponse()->setHeaders(['error_message' => 'Dosya tipi belirtilmemiş']);
+                            return;
+                        }
+
+                        $filePath = $storagePath . '/' . $fileMeta['name'];
+
+                        // Dosya uzantısını kontrol et
+                        $fileExtension = strtolower(File::extension($filePath));
+
+                        // Hızlı bir doğrulama yap
+                        $settings = Cache::remember('allowed_file_extensions', 60 * 60 * 24, function () {
+                            return Setting::whereIn(
+                                'key',
+                                ['allowed_song_formats', 'allowed_ringtone_formats', 'allowed_video_formats']
+                            )->get(['key', 'value'])->keyBy('key')->toArray();
+                        });
+
+                        $allowedExtensions = [
+                            'sound' => explode(',', $settings['allowed_song_formats']['value'] ?? 'wav,flac'),
+                            'ringtone' => explode(',', $settings['allowed_ringtone_formats']['value'] ?? 'wav'),
+                            'video' => explode(',', $settings['allowed_video_formats']['value'] ?? 'mp4,avi,flv'),
+                        ];
+
+                        $allowedExtension = [];
+
+                        switch ($metaType) {
+                            case SongTypeEnum::SOUND->value:
+                                $allowedExtension = $allowedExtensions['sound'];
+                                break;
+                            case SongTypeEnum::VIDEO->value:
+                                $allowedExtension = $allowedExtensions['video'];
+                                break;
+                            case SongTypeEnum::RINGTONE->value:
+                                $allowedExtension = $allowedExtensions['ringtone'];
+                                break;
+                            default:
+                                Log::error("Geçersiz medya tipi: " . $metaType);
+                                $event->getResponse()->setHeaders(['error_message' => 'Geçersiz medya tipi']);
+                                return;
+                        }
+
+                        if (!in_array($fileExtension, $allowedExtension)) {
+                            Log::error("Dosya türü desteklenmiyor: " . $fileExtension, $allowedExtension);
+                            $event->getResponse()->setHeaders(['error_message' => 'Gecersiz dosya tipi: ' . $fileExtension]);
+                            return;
+                        }
+
+                        // Tenant ID'yi al ve metadata'ya ekle
+                        $tenantId = function_exists('tenant') && tenant() ? tenant()->id : null;
+                        if ($tenantId) {
+                            $fileMeta['metadata']['tenant_id'] = $tenantId;
+                        }
+
+                        // Ağır işlemleri kuyrukta işle
+                        ProcessSongUpload::dispatch($fileMeta, $filePath, $storagePath, Auth::user()?->id);
+
+                        // İşlenmeye başlandığı bilgisini hemen döndür
+                        $event->getResponse()->setHeaders([
+                            'message' => 'Dosya yüklendi, işleniyor...',
+                            'status' => 'processing',
+                            'file_name' => $fileMeta['name']
+                        ]);
+
+                    } catch (\Throwable $e) {
+                        Log::error("Dosya yükleme işlemi sırasında hata: " . $e->getMessage(), [
+                            'file' => $e->getFile(),
+                            'line' => $e->getLine(),
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                        $event->getResponse()->setHeaders(['error_message' => 'Dosya yükleme işlemi sırasında hata: ' . $e->getMessage()]);
+                    }
                 }
             );
+
+            // Patch olayını debug modunda ise loglamak için dinle
             $server->event()->addListener(
                 'tus-server.upload.patch',
                 function (\TusPhp\Events\TusEvent $event) {
                     $offset = $event->getRequest()->header('Upload-Offset');
-                    Log::info("PATCH Request: Offset received - {$offset}");
+
+                    // Sadece debug modunda loglama yap
+                    if (config('app.debug')) {
+                        Log::info("PATCH Request: Offset received - {$offset}");
+                    }
                 }
             );
 
@@ -50,87 +142,17 @@ class TusServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Bu metod artık ProcessSongUpload iş sınıfında yönetiliyor.
+     * Geriye dönük uyumluluk için burada tutuluyor.
+     * @deprecated
+     */
     protected function handleFileUploadComplete($event, $storagePath): void
     {
-        //izin verilen dosya uzantıları
-
-        $settings = Cache::remember('settings', 60 * 60 * 24, function () {
-            return Setting::whereIn(
-                'key',
-                ['allowed_song_formats', 'allowed_ringtone_formats', 'allowed_video_formats']
-            )->get(
-                ['key', 'value']
-            )->toArray();
-        });
-        Log::info("burayaa geldi 1");
-        $allowedExtensions = [
-            'sound' => explode(',', $settings[0]['value'] ?? 'wav,flac'),
-            'ringtone' => explode(',', $settings[1]['value'] ?? 'wav'),
-            'video' => explode(',', $settings[2]['value'] ?? 'mp4,avi,flv'),
-        ];
-
-        $fileMeta = $event->getFile()->details();
-        $metaType = $fileMeta['metadata']['type'];
-        $filePath = $storagePath . '/' . $fileMeta['name'];
-        Log::info("burayada geldi 2");
-        //Dosya uzantısı kontrolü
-        $fileExtension = strtolower(File::extension($filePath));
-
-        $allowedExtension = [];
-        Log::info("burayada geldi 3");
-        switch ($metaType) {
-            case SongTypeEnum::SOUND->value:
-                $allowedExtension = $allowedExtensions['sound'];
-                break;
-            case SongTypeEnum::VIDEO->value:
-                $allowedExtension = $allowedExtensions['video'];
-                break;
-            case SongTypeEnum::RINGTONE->value:
-                $allowedExtension = $allowedExtensions['ringtone'];
-                break;
-        }
-        if (!in_array($fileExtension, $allowedExtension)) {
-            Log::error("Dosya türü desteklenmiyor: " . $fileExtension, $allowedExtension);
-            $event->getResponse()->setHeaders(['error_message' => 'Gecersiz dosya tipi: ' . $fileExtension]);
-
-            return;
-        }
-
-        $details = FFMpegServices::getMediaDetails(file: $filePath);
-
-        if (!$details['status']) {
-            Log::error("Bir hata oluştu: " . json_encode($details));
-            return;
-        }
-
-        $data = [
-            "type" => $fileMeta['metadata']['type'],
-            "name" => $fileMeta['metadata']['originalName'],
-            "path" => $fileMeta['name'],
-            "mime_type" => $fileMeta['metadata']['mime_type'],
-            "size" => $fileMeta['metadata']['size'],
-            "duration" => self::formatDuration($details['details']['duration']),
-            "details" => $details,
-            "created_by" => auth()->id(),
-
-        ];
-
-        try {
-            $file = Song::create($data);
-            $file->products()->attach([$fileMeta['metadata']['product_id']]);
-
-            $product = Product::find($fileMeta['metadata']['product_id']);
-            if ($product) {
-                $mainArtists = $product->mainArtists()->pluck('artists.id')->toArray();
-                $file->mainArtists()->attach($mainArtists);
-            }
-
-            $event->getResponse()->setHeaders(['upload_info' => $file->id]);
-        } catch (Error $e) {
-            Log::info("HATA: " . $e);
-        }
+        // Bu metod artık ProcessSongUpload job sınıfına taşındı
+        // Geriye dönük uyumluluk için korundu
+        Log::warning('handleFileUploadComplete metodu kullanım dışıdır. ProcessSongUpload kullanın.');
     }
-
 
     private static function formatDuration($seconds): string
     {

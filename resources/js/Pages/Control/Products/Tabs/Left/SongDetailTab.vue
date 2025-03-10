@@ -35,7 +35,8 @@
 
     <div class="flex-1 flex flex-col overflow-scroll gap-6">
 
-      <AppTable @dragenter="onDragEnter"  :showEmptyOnDrag="isDraggingOn" ref="songsTable" :hasSelect="true" v-model="form.songs" :showEmptyImage="false"
+      <AppTable @dragenter="onDragEnter" :showEmptyOnDrag="isDraggingOn" ref="songsTable" :hasSelect="true"
+                v-model="form.songs" :showEmptyImage="false"
                 @selectionChange="onSelectChange" :isClient="true" :hasSearch="false" :showAddButton="false">
         <AppTableColumn label="#">
           <template #default="scope">
@@ -50,7 +51,7 @@
                 <img src="@/assets/images/mp3_active.png">
               </div>
               <div>
-                <p class="label-sm c-solid-950"> {{ scope.row.name }} ({{scope.row.version}})</p>
+                <p class="label-sm c-solid-950"> {{ scope.row.name }} ({{ scope.row.version }})</p>
                 <p class="paragraph-xs c-sub-600"> {{ (scope.row.size / (1024 * 1024)).toFixed(2) }} MB</p>
               </div>
             </div>
@@ -77,8 +78,50 @@
             </StatusBadge>
             <StatusBadge v-else type="pending">
               <p class="c-orange-700"> Bilgiler Eksik</p>
-
             </StatusBadge>
+          </template>
+        </AppTableColumn>
+
+        <AppTableColumn label="Kalite Kontrolü">
+          <template #default="scope">
+            <div class="flex items-center gap-2">
+              <!-- Analiz sonucu varsa -->
+              <template v-if="hasQualityData(scope.row)">
+                <!-- Kalite kontrolünü geçtiyse -->
+                <div v-if="scope.row.details.quality_analysis.is_valid"
+                     class="flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5">
+                  <CheckIcon class="text-green-600" size="14"/>
+                  <span class="text-[10px] text-green-600">Kontrolü Geçti</span>
+                </div>
+
+                <!-- Kalite sorunları varsa -->
+                <div v-else
+                     class="flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-0.5">
+                  <WarningIcon class="text-yellow-600" size="14"/>
+                  <span class="text-[10px] text-yellow-600">Sorunlar Var</span>
+                </div>
+
+                <!-- Her durumda Sonuçları Gör butonu göster -->
+                <button
+                    @click="openQualityModal(scope.row)"
+                    class="label-xs flex items-center gap-1 text-dark-green-600 hover:text-dark-green-800 ml-1"
+                >
+                  <AnalyzeIcon color="currentColor" size="16"/>
+                  Sonuçları Gör
+                </button>
+              </template>
+
+              <!-- Analiz sonucu yoksa (bu durumla karşılaşılmamalı ama yine de gösterelim) -->
+              <template v-else>
+                <button
+                    @click="runQualityAnalysis(scope.row)"
+                    class="label-xs flex items-center gap-1 text-dark-green-600 hover:text-dark-green-800"
+                >
+                  <AnalyzeIcon color="currentColor" size="16"/>
+                  Analiz Et
+                </button>
+              </template>
+            </div>
           </template>
         </AppTableColumn>
 
@@ -105,7 +148,9 @@
           </div>
         </template>
         <template #empty>
-          <TusUploadInput @dragleave="onDragLeave" @drop="onDropElement" @error="onErrorOccured" :type="product.type" :product_id="product.id" ref="tusUploadElement"
+          <TusUploadInput @dragleave="onDragLeave" @drop="onDropElement" @error="onErrorOccured" :type="product.type"
+                          :product_id="product.id" ref="tusUploadElement"
+                          :acceptedAudioExtensions="acceptedFormats"
                           @start="onTusStart"
                           @progress="onTusProgress"
                           @complete="onTusComplete"></TusUploadInput>
@@ -116,12 +161,13 @@
   </div>
   <SongDialog v-if="isSongDialogOn" :product_id="product.id" @done="onComplete" v-model="isSongDialogOn"
               :genres="genres" :song="choosenSong"></SongDialog>
+  <AudioQualityModal v-if="isQualityModalOpen && selectedSong" v-model="isQualityModalOpen" :song="selectedSong"/>
 </template>
 
 <script setup>
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {computed, ref, useSlots, nextTick, onBeforeMount} from 'vue';
+import {computed, ref, useSlots, nextTick, onBeforeMount, watch} from 'vue';
 import {FormElement} from '@/Components/Form';
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {AddIcon} from '@/Components/Icons'
@@ -129,8 +175,9 @@ import {TusUploadInput} from '@/Components/Form'
 import {SongLoadingCard} from '@/Components/Cards';
 import {StatusBadge} from '@/Components/Badges';
 import DeleteAction from './Components/DeleteAction.vue';
-import {SongDialog, ConfirmDeleteDialog} from '@/Components/Dialog';
+import {SongDialog, ConfirmDeleteDialog, AudioQualityModal} from '@/Components/Dialog';
 import {RegularButton, PrimaryButton, IconButton} from '@/Components/Buttons'
+import {usePage} from '@inertiajs/vue3';
 import {
   StarIcon,
   StarFilledIcon,
@@ -138,7 +185,10 @@ import {
   EditIcon,
   DraggableIcon,
   MusicVideoIcon,
-  PlayCircleFillIcon
+  PlayCircleFillIcon,
+  AnalyzeIcon,
+  CheckIcon,
+  WarningIcon
 } from '@/Components/Icons';
 import {toast} from 'vue3-toastify';
 
@@ -149,57 +199,110 @@ const props = defineProps({
   modelValue: {},
 })
 
+const emits = defineEmits(['update:modelValue']);
+
 const onDragEnter = (e) => {
-    isDraggingOn.value = true;
+  isDraggingOn.value = true;
 
 
 }
 
 const onDragLeave = (e) => {
-    console.log("ÇIKI");
+  console.log("ÇIKI");
 
-    isDraggingOn.value = false;
+  isDraggingOn.value = false;
 
 }
 
 const onDropElement = () => {
-    isDraggingOn.value = false;
+  isDraggingOn.value = false;
 }
 const crudStore = useCrudStore();
 const choosenSongs = ref([]);
 const songsTable = ref();
-const form = computed({
-  get: () => props.modelValue,
-  set: (value) => emits('update:modelValue', value)
-})
+const form = ref({
+  songs: []
+});
+
+// Props değişikliklerini izle
+watch(() => props.modelValue, (newValue) => {
+  if (newValue && newValue.songs) {
+    form.value = {
+      ...newValue,
+      songs: Array.isArray(newValue.songs) ? [...newValue.songs] : []
+    };
+  }
+}, {immediate: true, deep: true});
+
+// Props değişikliklerini izle - product
+watch(() => props.product, (newValue) => {
+  if (newValue && newValue.songs) {
+    form.value = {
+      ...form.value,
+      songs: Array.isArray(newValue.songs) ? [...newValue.songs] : []
+    };
+  }
+}, {immediate: true, deep: true});
+
+// Sayfa yüklendiğinde şarkıları yükle
+onBeforeMount(() => {
+  if (props.product && props.product.songs) {
+    form.value = {
+      ...form.value,
+      songs: Array.isArray(props.product.songs) ? [...props.product.songs] : []
+    };
+  }
+});
+
 const isUploadShown = ref(true);
 const myTippy = ref();
 const tusUploadElement = ref();
 const showAttempt = ref(false);
 const isSongDialogOn = ref(false);
+const isQualityModalOpen = ref(false);
+const selectedSong = ref(null);
 const onTusStart = (e) => {
   showAttempt.value = true;
   attemps.value.push(e);
 }
 
 const deleteSong = async (songs) => {
+  try {
+    await crudStore.post(route('control.catalog.songs.songsDelete'), {
+      ids: songs,
+      product_id: props.product.id
+    });
 
-  const response = await crudStore.post(route('control.catalog.songs.songsDelete'), {
-    ids: songs,
-    product_id: props.product.id
-  })
+    // Mevcut şarkıları al ve silinenleri çıkar
+    const currentSongs = Array.isArray(form.value.songs)
+        ? form.value.songs.filter(song => !songs.includes(song.id))
+        : [];
 
-  songs.forEach(element => {
-    const findedIndex = form.value.songs.findIndex((e) => e.id == element);
-    if (findedIndex >= 0) {
-      form.value.songs.splice(findedIndex, 1);
-    }
-  });
+    // Form değerini güncelle
+    form.value = {
+      ...form.value,
+      songs: currentSongs
+    };
 
-  toast.success("İşlem başarılı");
+    // Üst bileşene değişikliği bildir
+    emits('update:modelValue', form.value);
 
-//   console.log("RESPONSEE", response);
+    // Seçili şarkıları temizle
+    choosenSongs.value = [];
 
+    // Tabloyu yeniden render et
+    nextTick(() => {
+      if (songsTable.value) {
+        songsTable.value.deSelect();
+        songsTable.value.$forceUpdate();
+      }
+    });
+
+    toast.success("Şarkı(lar) başarıyla silindi");
+  } catch (error) {
+    console.error("Şarkı silme hatası:", error);
+    toast.error("Şarkı(lar) silinirken bir hata oluştu");
+  }
 }
 
 const choosenSong = ref();
@@ -217,47 +320,127 @@ const onTusProgress = (e) => {
     showAttempt.value = true;
   })
 }
-const onTusComplete = (e) => {
+const onTusComplete = async (e) => {
+  console.log("TUS Upload complete:", e);
 
-  const findedIndex = attemps.value.findIndex((el) => el.originalName == e.name);
-  // console.log("EEE", e);
-//  console.log("ATTEMPTS", attemps.value);
-
-  //console.log("FINDED INDEX", findedIndex);
-
-  if (findedIndex >= 0) {
-    attemps.value.splice(findedIndex, 1);
-    form.value.songs.push(e);
+  // Şarkı verilerini kontrol et
+  if (!e || !e.name) {
+    console.error("Geçersiz şarkı verisi:", e);
+    return;
   }
 
+  try {
+    // Şarkı bilgilerini tekrar al
+    const songResponse = await crudStore.post(route('control.find.songs'), {
+      id: e.id
+    });
 
+    console.log("Fetched song data:", songResponse);
+
+    if (!songResponse) {
+      console.error("Şarkı bilgileri alınamadı");
+      return;
+    }
+
+    // Kalite analizi yap
+    try {
+      const qualityAnalysis = await crudStore.post(route('control.catalog.songs.quality-analysis'), {
+        song_id: e.id
+      });
+
+      console.log("Kalite analizi tamamlandı:", qualityAnalysis);
+
+      // Kalite analizi bilgilerini songResponse'a ekle
+      if (qualityAnalysis && qualityAnalysis.data) {
+        songResponse.details = songResponse.details || {};
+        songResponse.details.quality_analysis = qualityAnalysis.data;
+      }
+    } catch (qualityError) {
+      console.error("Kalite analizi yapılırken hata oluştu:", qualityError);
+      // Kalite analizi hata verse bile işleme devam et
+    }
+
+    // Yükleme bilgilerini kaldır
+    const findedIndex = attemps.value.findIndex((el) => el.originalName == e.name);
+    if (findedIndex >= 0) {
+      attemps.value.splice(findedIndex, 1);
+    }
+
+    // Şarkı nesnesini hazırla
+    const songData = {
+      ...songResponse,
+      is_completed: true,
+      pivot: {
+        is_favorite: 0,
+        product_id: props.product.id,
+        ...(songResponse.pivot || {})
+      }
+    };
+
+    // Mevcut şarkıları al ve yeni şarkıyı ekle
+    const currentSongs = Array.isArray(form.value.songs) ? [...form.value.songs] : [];
+    currentSongs.push(songData);
+
+    // Form değerini güncelle
+    form.value = {
+      ...form.value,
+      songs: currentSongs
+    };
+
+    // Üst bileşene değişikliği bildir
+    emits('update:modelValue', form.value);
+
+    // Tabloyu yeniden render et
+    nextTick(() => {
+      if (songsTable.value) {
+        songsTable.value.$forceUpdate();
+      }
+    });
+
+    console.log("Updated form value:", form.value);
+
+    // Kalite analizi tamamlandıysa bilgilendirme mesajı göster
+    if (songResponse.details?.quality_analysis) {
+      const isValid = songResponse.details.quality_analysis.is_valid;
+      const message = isValid
+          ? 'Parça başarıyla yüklendi ve kalite kontrolünden geçti.'
+          : 'Parça yüklendi fakat kalite kontrolünde sorunlar tespit edildi. Detaylar için "Sonuçları Gör" butonuna tıklayın.';
+
+      toast.success(message);
+    } else {
+      toast.success("Parça başarıyla yüklendi.");
+    }
+
+  } catch (error) {
+    console.error("Şarkı ekleme hatası:", error);
+    toast.error("Şarkı eklenirken bir hata oluştu");
+  }
 }
 const isDraggingOn = ref(false);
 const openEditDialog = (song) => {
 
 
-
   choosenSong.value = song
 
 
-    if(song.main_artists?.length == 0){
-        if(props.product.main_artists.length > 0){
+  if (song.main_artists?.length == 0) {
+    if (props.product.main_artists.length > 0) {
 
 
-            choosenSong.value.main_artists = props.product.main_artists;
+      choosenSong.value.main_artists = props.product.main_artists;
 
-        }
     }
+  }
 
 
-   isSongDialogOn.value = true
+  isSongDialogOn.value = true
 }
 
 const onComplete = (e) => {
   choosenSong.value = JSON.parse(JSON.stringify(e));
   const findedIndex = form.value.songs.findIndex((el) => el.id == e.id);
   isSongDialogOn.value = false;
-    console.log("EEE",e);
+  console.log("EEE", e);
 
   if (findedIndex >= 0)
     form.value.songs[findedIndex] = e;
@@ -273,9 +456,7 @@ const onCancel = () => {
   myTippy.value?.hide();
 }
 const onDeleteSong = (row) => {
-  deleteSong([row.id])
-
-
+  deleteSong([row.id]);
 }
 const onErrorOccured = (e) => {
 
@@ -294,46 +475,134 @@ const onSelectChange = (e) => {
 }
 const deleteChoosenSongs = () => {
   const tempIds = choosenSongs.value.map((e) => e.id);
-
-  deleteSong(tempIds)
+  deleteSong(tempIds);
   onCancel();
 }
 const favoriteSong = async (song) => {
-  const response = await crudStore.post(route('control.catalog.song.toggleFavorite', song.id), {
-    product_id: props.product.id
-  })
+  try {
+    const response = await crudStore.post(route('control.catalog.song.toggleFavorite', song.id), {
+      product_id: props.product.id
+    });
 
-  console.log("SONG", response);
+    // Mevcut şarkıları al ve güncelle
+    const currentSongs = Array.isArray(form.value.songs)
+        ? form.value.songs.map(element => {
+          if (song.id === element.id) {
+            return {
+              ...element,
+              pivot: {
+                ...element.pivot,
+                is_favorite: response.pivot.is_favorite
+              }
+            };
+          }
+          return {
+            ...element,
+            pivot: {
+              ...element.pivot,
+              is_favorite: 0
+            }
+          };
+        })
+        : [];
 
+    // Form değerini güncelle
+    form.value = {
+      ...form.value,
+      songs: currentSongs
+    };
 
-  form.value.songs.forEach(element => {
-    console.log("ELEMENT",element);
-    if (song.id == element.id) {
-        if(!element.pivot){
-            element.pivot = {is_favorite:0};
-        }
-      element.pivot.is_favorite = response.pivot.is_favorite;
-    } else {
-      if (element.pivot) {
-        element.pivot.is_favorite = 0
+    // Üst bileşene değişikliği bildir
+    emits('update:modelValue', form.value);
+
+    // Tabloyu yeniden render et
+    nextTick(() => {
+      if (songsTable.value) {
+        songsTable.value.$forceUpdate();
       }
-    }
+    });
 
-  });
-  toast.success("Şarkının favori durumu başarıyla değiştirildi");
-//   song.pivot?.is_favorite = !song.pivot.is_favorite;
-
-
+    toast.success("Şarkının favori durumu başarıyla değiştirildi");
+  } catch (error) {
+    console.error("Favori durumu değiştirme hatası:", error);
+    toast.error("Favori durumu değiştirilirken bir hata oluştu");
+  }
 }
 const deSelectAll = () => {
   choosenSongs.value = [];
   songsTable.value.deSelect();
 }
-onBeforeMount(() => {
-  form.value.songs = props.product.songs;
 
+const openQualityModal = (song) => {
+  selectedSong.value = song;
+  isQualityModalOpen.value = true;
+}
 
+// Bir şarkının manuel olarak kalite analizini yapmak için kullanılır
+const runQualityAnalysis = async (song) => {
+  try {
+    toast.info(`"${song.name}" için kalite analizi başlatılıyor...`);
 
+    const qualityAnalysis = await crudStore.post(route('control.catalog.songs.quality-analysis'), {
+      song_id: song.id
+    });
+
+    if (qualityAnalysis && qualityAnalysis.data) {
+      // Analiz verilerini şarkı nesnesine ekle
+      const songIndex = form.value.songs.findIndex(s => s.id === song.id);
+      if (songIndex !== -1) {
+        // details nesnesini oluştur veya mevcut olanı kullan
+        form.value.songs[songIndex].details = form.value.songs[songIndex].details || {};
+        // kalite analizi sonuçlarını ekle
+        form.value.songs[songIndex].details.quality_analysis = qualityAnalysis.data;
+
+        // Tabloyu yeniden render et
+        nextTick(() => {
+          if (songsTable.value) {
+            songsTable.value.$forceUpdate();
+          }
+        });
+
+        // Sonuç hakkında bilgilendirme mesajı göster
+        const isValid = qualityAnalysis.data.is_valid;
+        const message = isValid
+            ? `"${song.name}" kalite kontrolünden geçti.`
+            : `"${song.name}" kalite kontrolünden sorunlar tespit edildi. Detaylar için "Sonuçları Gör" butonuna tıklayın.`;
+
+        toast.success(message);
+
+        // Analiz sonuçlarını hemen göster
+        selectedSong.value = form.value.songs[songIndex];
+        isQualityModalOpen.value = true;
+      }
+    }
+  } catch (error) {
+    console.error("Kalite analizi yapılırken hata oluştu:", error);
+    toast.error(`"${song.name}" için kalite analizi yapılırken bir hata oluştu.`);
+  }
+}
+
+const hasQualityData = (song) => {
+  return song &&
+      song.details &&
+      song.details.quality_analysis;
+}
+
+// Kabul edilen dosya formatlarını site ayarlarından al
+const acceptedFormats = computed(() => {
+  const settings = usePage().props.site_settings;
+  const productType = props.product?.type;
+
+  switch (productType) {
+    case 1: // Ses dosyası
+      return settings.allowed_song_formats?.split(',') || [];
+    case 2: // Video
+      return settings.allowed_video_formats?.split(',') || [];
+    case 3: // Ringtone
+      return settings.allowed_ringtone_formats?.split(',') || [];
+    default:
+      return [];
+  }
 });
 </script>
 
