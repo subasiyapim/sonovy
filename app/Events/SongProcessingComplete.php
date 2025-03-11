@@ -50,6 +50,13 @@ class SongProcessingComplete implements ShouldBroadcast
     public $tenantId;
 
     /**
+     * Şarkı detayları (kalite analizi sonuçları dahil)
+     *
+     * @var array|null
+     */
+    public $details;
+
+    /**
      * Create a new event instance.
      *
      * @param int $productId
@@ -57,15 +64,17 @@ class SongProcessingComplete implements ShouldBroadcast
      * @param bool $success
      * @param mixed $result
      * @param int|null $tenantId
+     * @param array|null $details
      * @return void
      */
-    public function __construct(int $productId, string $fileName, bool $success, $result = null, ?int $tenantId = null)
+    public function __construct(int $productId, string $fileName, bool $success, $result = null, ?int $tenantId = null, ?array $details = null)
     {
         $this->productId = $productId;
         $this->fileName = $fileName;
         $this->success = $success;
         $this->result = $result;
         $this->tenantId = $tenantId ?? (tenant() ? tenant()->id : null);
+        $this->details = $details;
     }
 
     /**
@@ -99,6 +108,7 @@ class SongProcessingComplete implements ShouldBroadcast
             'result' => $this->result,
             'message' => $this->success ? 'Dosya işleme tamamlandı' : 'Dosya işleme başarısız oldu',
             'timestamp' => now()->toIso8601String(),
+            'details' => $this->details,
         ];
     }
 }

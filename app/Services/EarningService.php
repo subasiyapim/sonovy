@@ -541,95 +541,316 @@ class EarningService
     private const SALES_TYPES = ['Stream', 'PLATFORM PROMOTION', 'Creation', 'Download'];
     private const RELEASE_TYPES = ['Music Release', 'Ringtone', 'Video', 'User Generated Content'];
 
-    public static function createDemoEarnings()
+    public static function createDemoEarnings($userId = null, $platformId = null)
     {
-        $platform = Platform::inRandomOrder()->first();
-        $country = Country::inRandomOrder()->first();
-        $song = Song::with('products.artists', 'products.label')->inRandomOrder()->first();
-        $product = $song->products()->first();
-        $user = User::inRandomOrder()->first();
+        try {
+            // Platform belirleme
+            if ($platformId) {
+                $platform = Platform::find($platformId);
+                if (!$platform) {
+                    throw new \Exception("Platform ID: {$platformId} bulunamadı!");
+                }
+            } else {
+                $platform = Platform::inRandomOrder()->first();
+                if (!$platform) {
+                    // Platform yoksa örnek bir platform oluştur
+                    Log::warning('Sistemde platform bulunamadı. Varsayılan platform oluşturuluyor.');
+                    $platform = new \stdClass();
+                    $platform->name = 'Demo Platform';
+                    $platform->id = 1;
+                }
+            }
 
-        $reportFile = EarningReportFile::create([
-            'user_id' => $user->id,
-            'name' => 'Demo Rapor ' . now()->format('Y-m-d H:i:s'),
-            'is_processed' => true,
-            'processed_at' => now(),
-        ]);
+            $country = Country::inRandomOrder()->first();
+            if (!$country) {
+                // Ülke yoksa örnek bir ülke oluştur
+                Log::warning('Sistemde ülke bulunamadı. Varsayılan ülke oluşturuluyor.');
+                $country = new \stdClass();
+                $country->name = 'Demo Ülke';
+                $country->region = 'Demo Bölge';
+                $country->id = 1;
+            }
 
-        $report = EarningReport::create([
-            'user_id' => $user->id,
-            'name' => 'Demo Rapor ' . now()->format('Y-m-d H:i:s'),
-            'period' => now()->format('Y-m'),
-            'report_type' => 'earning',
-            'file_size' => 0,
-            'status' => 1,
-            'processed_at' => now(),
-            'report_date' => now(),
-            'reporting_month' => now()->format('Y-m'),
-            'sales_date' => now(),
-            'sales_month' => now()->format('Y-m'),
-            'platform' => $platform->name,
-            'platform_id' => $platform->id,
-            'country' => $country->name,
-            'region' => $country->region,
-            'country_id' => $country->id,
-            'label_name' => $product->label->name ?? 'N/A',
-            'label_id' => $product->label->id ?? null,
-            'artist_name' => $product->artists->first()->name ?? 'N/A',
-            'artist_id' => $product->artists->first()->id ?? null,
-            'release_name' => $product->name ?? 'N/A',
-            'song_name' => $song->name ?? 'N/A',
-            'song_id' => $song->id,
-            'upc_code' => $product->upc_code ?? 'N/A',
-            'isrc_code' => $song->isrc,
-            'catalog_number' => $product->catalog_number ?? 'N/A',
-            'release_type' => 'Yayın',
-            'sales_type' => 'STREAM',
-            'quantity' => 1,
-            'currency' => 'EUR',
-            'unit_price' => 0.00,
-            'mechanical_fee' => 0.00,
-            'gross_revenue' => 10.00,
-            'client_share_rate' => 70.00,
-            'net_revenue' => 7.00,
-            'earning_report_file_id' => $reportFile->id
-        ]);
+            // Şarkı ve ilişkili verileri güvenli şekilde al
+            $song = Song::with('products.artists', 'products.label')->inRandomOrder()->first();
+            $product = null;
+            $artistName = 'Demo Sanatçı';
+            $labelName = 'Demo Label';
+            $labelId = null;
+            $artistId = null;
 
-        Earning::create([
-            'earning_report_id' => $report->id,
-            'user_id' => $user->id,
-            'report_date' => now(),
-            'reporting_month' => now()->format('Y-m'),
-            'sales_date' => now(),
-            'sales_month' => now()->format('Y-m'),
-            'platform' => $platform->name,
-            'platform_id' => $platform->id,
-            'country' => $country->name,
-            'region' => $country->region,
-            'country_id' => $country->id,
-            'label_name' => $product->label->name ?? 'N/A',
-            'label_id' => $product->label->id ?? null,
-            'artist_name' => $product->artists->first()->name ?? 'N/A',
-            'artist_id' => $product->artists->first()->id ?? null,
-            'release_name' => $product->name ?? 'N/A',
-            'song_name' => $song->name ?? 'N/A',
-            'song_id' => $song->id,
-            'upc_code' => $product->upc_code ?? 'N/A',
-            'isrc_code' => $song->isrc,
-            'catalog_number' => $product->catalog_number ?? 'N/A',
-            'streaming_type' => null,
-            'streaming_subscription_type' => null,
-            'release_type' => 'Yayın',
-            'sales_type' => 'STREAM',
-            'quantity' => 1,
-            'currency' => 'EUR',
-            'client_payment_currency' => 'EUR',
-            'unit_price' => 0.00,
-            'mechanical_fee' => 0.00,
-            'gross_revenue' => 10.00,
-            'client_share_rate' => 70.00,
-            'earning' => 7.00
-        ]);
+            if ($song) {
+                $product = $song->products()->first();
+                $artistName = $product && $product->artists && $product->artists->isNotEmpty()
+                    ? $product->artists->first()->name
+                    : 'Demo Sanatçı';
+
+                $labelName = $product && $product->label
+                    ? $product->label->name
+                    : 'Demo Label';
+
+                $labelId = $product && $product->label ? $product->label->id : null;
+                $artistId = $product && $product->artists && $product->artists->isNotEmpty()
+                    ? $product->artists->first()->id
+                    : null;
+            } else {
+                // Şarkı yoksa örnek bir şarkı oluştur
+                Log::warning('Sistemde şarkı bulunamadı. Varsayılan veriler oluşturuluyor.');
+                $song = new \stdClass();
+                $song->name = 'Demo Şarkı';
+                $song->isrc = 'XYZABCDEFG';
+                $song->id = 1;
+            }
+
+            // User belirleme
+            if ($userId) {
+                $user = User::find($userId);
+                if (!$user) {
+                    throw new \Exception("User ID: {$userId} bulunamadı!");
+                }
+            } else {
+                $user = User::inRandomOrder()->first();
+                if (!$user) {
+                    Log::warning('Sistemde kullanıcı bulunamadı. Varsayılan kullanıcı oluşturuluyor.');
+                    $user = new \stdClass();
+                    $user->id = 1;
+                }
+            }
+
+            $reportFile = EarningReportFile::create([
+                'user_id' => $user->id,
+                'name' => 'Demo Rapor ' . now()->format('Y-m-d H:i:s'),
+                'is_processed' => true,
+                'processed_at' => now(),
+            ]);
+
+            $report = EarningReport::create([
+                'user_id' => $user->id,
+                'name' => 'Demo Rapor ' . now()->format('Y-m-d H:i:s'),
+                'period' => now()->format('Y-m'),
+                'report_type' => 'earning',
+                'file_size' => 0,
+                'status' => 1,
+                'processed_at' => now(),
+                'report_date' => now(),
+                'reporting_month' => now()->format('Y-m'),
+                'sales_date' => now(),
+                'sales_month' => now()->format('Y-m'),
+                'platform' => $platform->name,
+                'platform_id' => $platform->id,
+                'country' => $country->name,
+                'region' => $country->region,
+                'country_id' => $country->id,
+                'label_name' => $labelName,
+                'label_id' => $labelId,
+                'artist_name' => $artistName,
+                'artist_id' => $artistId,
+                'release_name' => $product ? ($product->name ?? 'Demo Ürün') : 'Demo Ürün',
+                'song_name' => $song->name ?? 'Demo Şarkı',
+                'song_id' => $song->id,
+                'upc_code' => $product ? ($product->upc_code ?? 'DEMO12345') : 'DEMO12345',
+                'isrc_code' => $song->isrc ?? 'DEMO67890',
+                'catalog_number' => $product ? ($product->catalog_number ?? 'DEMO-CAT-001') : 'DEMO-CAT-001',
+                'release_type' => 'Yayın',
+                'sales_type' => 'STREAM',
+                'quantity' => 1,
+                'currency' => 'EUR',
+                'unit_price' => 0.00,
+                'mechanical_fee' => 0.00,
+                'gross_revenue' => 10.00,
+                'client_share_rate' => 70.00,
+                'net_revenue' => 7.00,
+                'earning_report_file_id' => $reportFile->id
+            ]);
+
+            Earning::create([
+                'earning_report_id' => $report->id,
+                'user_id' => $user->id,
+                'report_date' => now(),
+                'reporting_month' => now()->format('Y-m'),
+                'sales_date' => now(),
+                'sales_month' => now()->format('Y-m'),
+                'platform' => $platform->name,
+                'platform_id' => $platform->id,
+                'country' => $country->name,
+                'region' => $country->region,
+                'country_id' => $country->id,
+                'label_name' => $labelName,
+                'label_id' => $labelId,
+                'artist_name' => $artistName,
+                'artist_id' => $artistId,
+                'release_name' => $product ? ($product->name ?? 'Demo Ürün') : 'Demo Ürün',
+                'song_name' => $song->name ?? 'Demo Şarkı',
+                'song_id' => $song->id,
+                'upc_code' => $product ? ($product->upc_code ?? 'DEMO12345') : 'DEMO12345',
+                'isrc_code' => $song->isrc ?? 'DEMO67890',
+                'catalog_number' => $product ? ($product->catalog_number ?? 'DEMO-CAT-001') : 'DEMO-CAT-001',
+                'streaming_type' => null,
+                'streaming_subscription_type' => null,
+                'release_type' => 'Yayın',
+                'sales_type' => 'STREAM',
+                'quantity' => 1,
+                'currency' => 'EUR',
+                'client_payment_currency' => 'EUR',
+                'unit_price' => 0.00,
+                'mechanical_fee' => 0.00,
+                'gross_revenue' => 10.00,
+                'client_share_rate' => 70.00,
+                'earning' => 7.00
+            ]);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Demo kazanç kaydı oluşturulurken hata: ' . $e->getMessage(), [
+                'user_id' => $userId,
+                'platform_id' => $platformId,
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Demo kazanç verilerini oluşturur fakat veritabanına kaydetmez
+     * İndirilebilir rapor oluşturmak için kullanılır
+     */
+    public static function createDemoEarningsData($userId = null, $platformId = null)
+    {
+        try {
+            // Platform belirleme
+            if ($platformId) {
+                $platform = Platform::find($platformId);
+                if (!$platform) {
+                    throw new \Exception("Platform ID: {$platformId} bulunamadı!");
+                }
+            } else {
+                $platform = Platform::inRandomOrder()->first();
+                if (!$platform) {
+                    // Platform yoksa örnek bir platform oluştur
+                    Log::warning('Sistemde platform bulunamadı. Varsayılan platform oluşturuluyor.');
+                    $platform = new \stdClass();
+                    $platform->name = 'Demo Platform';
+                    $platform->id = 1;
+                }
+            }
+
+            $country = Country::inRandomOrder()->first();
+            if (!$country) {
+                // Ülke yoksa örnek bir ülke oluştur
+                Log::warning('Sistemde ülke bulunamadı. Varsayılan ülke oluşturuluyor.');
+                $country = new \stdClass();
+                $country->name = 'Demo Ülke';
+                $country->region = 'Demo Bölge';
+                $country->id = 1;
+            }
+
+            // Şarkı ve ilişkili verileri güvenli şekilde al
+            $song = Song::with('products.artists', 'products.label')->inRandomOrder()->first();
+            $product = null;
+            $artistName = 'Demo Sanatçı';
+            $labelName = 'Demo Label';
+
+            if ($song) {
+                $product = $song->products()->first();
+                $artistName = $product && $product->artists && $product->artists->isNotEmpty()
+                    ? $product->artists->first()->name
+                    : 'Demo Sanatçı';
+
+                $labelName = $product && $product->label
+                    ? $product->label->name
+                    : 'Demo Label';
+            } else {
+                // Şarkı yoksa örnek bir şarkı oluştur
+                Log::warning('Sistemde şarkı bulunamadı. Varsayılan veriler oluşturuluyor.');
+                $song = new \stdClass();
+                $song->name = 'Demo Şarkı';
+                $song->isrc = 'XYZABCDEFG';
+                $song->id = 1;
+            }
+
+            // User belirleme
+            if ($userId) {
+                $user = User::find($userId);
+                if (!$user) {
+                    throw new \Exception("User ID: {$userId} bulunamadı!");
+                }
+            } else {
+                $user = User::inRandomOrder()->first();
+                if (!$user) {
+                    Log::warning('Sistemde kullanıcı bulunamadı. Varsayılan kullanıcı oluşturuluyor.');
+                    $user = new \stdClass();
+                    $user->id = 1;
+                }
+            }
+
+            // Son 6 ay için demo veriler oluştur
+            $demoData = [];
+            for ($i = 0; $i < 6; $i++) {
+                $date = now()->subMonths($i);
+
+                $demoData[] = [
+                    'report_date' => $date->format('Y-m-d'),
+                    'sales_date' => $date->format('Y-m-d'),
+                    'platform' => $platform->name,
+                    'country' => $country->name,
+                    'label_name' => $labelName,
+                    'artist_name' => $artistName,
+                    'release_name' => $product ? ($product->name ?? 'Demo Ürün') : 'Demo Ürün',
+                    'song_name' => $song->name ?? 'Demo Şarkı',
+                    'upc_code' => $product ? ($product->upc_code ?? 'DEMO12345') : 'DEMO12345',
+                    'isrc_code' => $song->isrc ?? 'DEMO67890',
+                    'catalog_number' => $product ? ($product->catalog_number ?? 'DEMO-CAT-001') : 'DEMO-CAT-001',
+                    'release_type' => 'Yayın',
+                    'sales_type' => 'STREAM',
+                    'quantity' => rand(100, 1000),
+                    'currency' => 'EUR',
+                    'earning' => rand(5, 20) . '.' . rand(0, 99),
+                ];
+            }
+
+            return $demoData;
+        } catch (\Exception $e) {
+            Log::error('Demo kazanç verisi oluşturulurken hata: ' . $e->getMessage(), [
+                'user_id' => $userId,
+                'platform_id' => $platformId,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Hata durumunda varsayılan veri seti döndür
+            return self::generateFallbackDemoData();
+        }
+    }
+
+    /**
+     * Hata durumunda kullanılacak varsayılan demo veri seti
+     */
+    private static function generateFallbackDemoData()
+    {
+        $demoData = [];
+        for ($i = 0; $i < 6; $i++) {
+            $date = now()->subMonths($i);
+
+            $demoData[] = [
+                'report_date' => $date->format('Y-m-d'),
+                'sales_date' => $date->format('Y-m-d'),
+                'platform' => 'Demo Platform',
+                'country' => 'Demo Ülke',
+                'label_name' => 'Demo Label',
+                'artist_name' => 'Demo Sanatçı',
+                'release_name' => 'Demo Albüm',
+                'song_name' => 'Demo Şarkı ' . ($i + 1),
+                'upc_code' => 'DEMO12345' . $i,
+                'isrc_code' => 'DEMO67890' . $i,
+                'catalog_number' => 'DEMO-CAT-' . str_pad($i + 1, 3, '0', STR_PAD_LEFT),
+                'release_type' => 'Yayın',
+                'sales_type' => 'STREAM',
+                'quantity' => rand(100, 1000),
+                'currency' => 'EUR',
+                'earning' => rand(5, 20) . '.' . rand(0, 99),
+            ];
+        }
+
+        return $demoData;
     }
 
     protected static function createEarning($data, $file_id)

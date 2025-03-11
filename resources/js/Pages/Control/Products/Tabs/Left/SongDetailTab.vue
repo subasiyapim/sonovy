@@ -590,17 +590,124 @@ const acceptedFormats = computed(() => {
 });
 
 onMounted(() => {
+  const currentProductId = props.product?.id;
+  console.log("Ürün ID:", currentProductId);
+  console.log("Tenant ID:", usePage().props.tenant_id);
 
-const currentProductId = usePage().props.product?.id; // Eğer sayfada bir ürün objesi varsa
-  console.log("casc",currentProductId);
+  if (currentProductId) {
+    const channel = 'tenant.' + usePage().props.tenant_id + '.song.processing.' + currentProductId;
+    console.log("Dinlenen kanal:", channel);
 
-    if (currentProductId) {
-        window.Echo.private('tenant.' + usePage().props.tenant_id + '.song.processing.' + currentProductId)
-            .listen('.SongProcessingComplete', (e) => {
-                console.log("Şarkı İşleme Tamamlandı Event Alındı:", e);
-                songs
-        });
-    }
+    window.Echo.private(channel)
+      .listen('.App\\Events\\SongProcessingComplete', (e) => {
+        console.log("Şarkı İşleme Tamamlandı Event Alındı:", e);
+
+        if (e.success) {
+          // Şarkı işleme başarılı oldu
+          toast.success(e.message || "Şarkı işleme tamamlandı");
+
+          // Eğer bu şarkı zaten listemizde varsa, güncelle
+          const songIndex = form.value.songs.findIndex(song => song.id === e.product_id);
+
+          if (songIndex !== -1) {
+            // Şarkı zaten listemizde varsa, güncelle
+            crudStore.post(route('control.find.songs'), {
+              id: e.product_id
+            }).then(response => {
+              if (response) {
+                // Event'ten gelen details bilgisini response'a ekle
+                if (e.details) {
+                  response.details = e.details;
+                }
+
+                // Şarkıyı güncelle
+                form.value.songs[songIndex] = {
+                  ...response,
+                  is_completed: true,
+                  details: response.details || e.details, // Event veya API'den gelen details bilgisini kullan
+                  pivot: {
+                    is_favorite: form.value.songs[songIndex].pivot?.is_favorite || 0,
+                    product_id: currentProductId,
+                    ...(response.pivot || {})
+                  }
+                };
+
+                // Kalite analizi sonuçları varsa bildirim göster
+                if (e.details?.quality_analysis) {
+                  const isValid = e.details.quality_analysis.is_valid;
+                  const message = isValid
+                    ? `"${response.name}" kalite kontrolünden geçti.`
+                    : `"${response.name}" kalite kontrolünde sorunlar tespit edildi. Detaylar için "Sonuçları Gör" butonuna tıklayın.`;
+
+                  toast.success(message);
+                }
+
+                // Üst bileşene değişikliği bildir
+                emits('update:modelValue', form.value);
+
+                // Tabloyu yeniden render et
+                nextTick(() => {
+                  if (songsTable.value) {
+                    songsTable.value.$forceUpdate();
+                  }
+                });
+              }
+            });
+          } else {
+            // Bu yeni işlenmiş bir şarkı olabilir, yeniden şarkı listesini yükleyelim
+            crudStore.get(route('control.catalog.products.show', currentProductId))
+              .then(response => {
+                if (response && response.songs) {
+                  // Event'ten gelen details bilgisini ilgili şarkıya ekle
+                  if (e.details) {
+                    const songToUpdate = response.songs.find(song => song.id === e.product_id);
+                    if (songToUpdate) {
+                      songToUpdate.details = e.details;
+                    }
+                  }
+
+                  form.value = {
+                    ...form.value,
+                    songs: Array.isArray(response.songs) ? [...response.songs] : []
+                  };
+
+                  // Kalite analizi sonuçları varsa bildirim göster
+                  if (e.details?.quality_analysis) {
+                    const song = response.songs.find(s => s.id === e.product_id);
+                    if (song) {
+                      const isValid = e.details.quality_analysis.is_valid;
+                      const message = isValid
+                        ? `"${song.name}" kalite kontrolünden geçti.`
+                        : `"${song.name}" kalite kontrolünde sorunlar tespit edildi. Detaylar için "Sonuçları Gör" butonuna tıklayın.`;
+
+                      toast.success(message);
+                    }
+                  }
+
+                  // Üst bileşene değişikliği bildir
+                  emits('update:modelValue', form.value);
+
+                  // Tabloyu yeniden render et
+                  nextTick(() => {
+                    if (songsTable.value) {
+                      songsTable.value.$forceUpdate();
+                    }
+                  });
+                }
+              });
+          }
+        } else {
+          // Şarkı işleme başarısız oldu
+          toast.error(e.message || "Şarkı işleme başarısız oldu");
+        }
+      })
+      .subscribed(() => {
+        console.log('Kanala başarıyla abone olundu:', channel);
+      })
+      .error((error) => {
+        console.error('Kanal bağlantı hatası:', error);
+      });
+  }
 });
 </script>
 

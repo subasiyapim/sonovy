@@ -82,7 +82,7 @@
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
-  position:absolute !important;
+  position: absolute !important;
   opacity: 0; /* Initially hidden */
   transition: opacity 0.3s ease-in-out;
 }
@@ -106,7 +106,7 @@
 <script setup>
 
 
-import {computed, onMounted, onUnmounted,ref, nextTick, useSlots, onBeforeMount, onBeforeUnmount} from 'vue'
+import {computed, onMounted, onUnmounted, ref, nextTick, useSlots, onBeforeMount, onBeforeUnmount} from 'vue'
 import Sidebar from '@/Layouts/Partials/Sidebar.vue';
 import {SecondaryButton, IconButton, RegularButton} from '@/Components/Buttons'
 import {ArrowLeftIcon, SearchIcon, NotificationIcon, CalendarIcon, ExitIcon} from '@/Components/Icons';
@@ -178,6 +178,40 @@ onMounted(() => {
       .listen('.reportProcessed', (e) => {
         console.log("REPORT PROCESSED Event Alındı:", e);
       })
+
+  // SongProcessingComplete eventi için dinleyici eklemek için ürün ID'sine ihtiyacımız var
+  // Eğer sayfada aktif bir ürün varsa veya ürün ID'si biliyorsak:
+
+  // Örnek 1: Belirli bir ürüne ait dinleyici (aktif ürün ID'si varsa)
+  const currentProductId = usePage().props.product?.id; // Eğer sayfada bir ürün objesi varsa
+  if (currentProductId) {
+    window.Echo.private('tenant.' + usePage().props.tenant_id + '.song.processing.' + currentProductId)
+      .listen('.SongProcessingComplete', (e) => {
+        console.log("Şarkı İşleme Tamamlandı Event Alındı:", e);
+        // Burada eventın verilerine göre UI güncellemesi yapabilirsiniz
+        // örn: e.success, e.file_name, e.message değerlerini kullanarak
+      });
+  }
+
+  // Örnek 2: Birden fazla ürünü izlemek için (ürün listesi sayfasında)
+  // const productIds = usePage().props.products?.map(product => product.id) || [];
+  // productIds.forEach(productId => {
+  //   window.Echo.private('tenant.' + usePage().props.tenant_id + '.song.processing.' + productId)
+  //     .listen('.SongProcessingComplete', (e) => {
+  //       console.log(`Ürün ${productId} için şarkı işleme tamamlandı:`, e);
+  //       // Her ürün için ayrı işlemler yapabilirsiniz
+  //     });
+  // });
+
+  // Örnek 3: Belirli, sabit ürün ID'lerini izlemek
+  // Ürün detay sayfalarına özel bileşenler oluşturmak yerine, bu yaklaşımı kullanabilirsiniz
+  // const specificProductIds = [1, 2, 3]; // İzlenmesi gereken ürün ID'leri
+  // specificProductIds.forEach(productId => {
+  //   window.Echo.private('tenant.' + usePage().props.tenant_id + '.song.processing.' + productId)
+  //     .listen('.SongProcessingComplete', (e) => {
+  //       console.log(`Ürün ${productId} için şarkı işleme tamamlandı:`, e);
+  //     });
+  // });
 });
 
 
