@@ -204,9 +204,13 @@
 .Toastify__toast--error {
     background: var(--error-500) !important;
 }
+
+.Toastify__toast--success .Toastify__toast-body, .Toastify__toast--error .Toastify__toast-body{
+    color: #fff
+}
 .Toastify__toast-body{
     @extend .paragraph-sm;
-    color: white;
+    // color: white;
 }
 
 .Toastify__toast{

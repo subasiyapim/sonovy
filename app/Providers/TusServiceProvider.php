@@ -25,7 +25,7 @@ class TusServiceProvider extends ServiceProvider
             $server = new TusServer();
 
             // Tenant'a özgü depolama yolunu önbellekle
-            $storagePath = Cache::remember('tus_storage_path_'.tenant('domain'), 60*24, function() {
+            $storagePath = Cache::remember('tus_storage_path_' . tenant('domain'), 60 * 24, function () {
                 $path = storage_path('app/public/tenant_' . tenant('domain') . '_songs');
                 if (!File::exists($path)) {
                     File::makeDirectory($path, 0775, true, true);
@@ -34,7 +34,7 @@ class TusServiceProvider extends ServiceProvider
             });
 
             // API yolunu da önbellekle
-            $apiPath = Cache::remember('tus_api_path_'.tenant('domain'), 60*24, function() {
+            $apiPath = Cache::remember('tus_api_path_' . tenant('domain'), 60 * 24, function () {
                 return '/control/tus';
             });
 
@@ -103,7 +103,7 @@ class TusServiceProvider extends ServiceProvider
                         if ($tenantId) {
                             $fileMeta['metadata']['tenant_id'] = $tenantId;
                         }
-
+                        Log::info("FİLEEE META", $fileMeta);
                         // Ağır işlemleri kuyrukta işle
                         ProcessSongUpload::dispatch($fileMeta, $filePath, $storagePath, Auth::user()?->id);
 
@@ -111,9 +111,9 @@ class TusServiceProvider extends ServiceProvider
                         $event->getResponse()->setHeaders([
                             'message' => 'Dosya yüklendi, işleniyor...',
                             'status' => 'processing',
-                            'file_name' => $fileMeta['name']
-                        ]);
+                            'file_name' => $fileMeta['name'],
 
+                        ]);
                     } catch (\Throwable $e) {
                         Log::error("Dosya yükleme işlemi sırasında hata: " . $e->getMessage(), [
                             'file' => $e->getFile(),

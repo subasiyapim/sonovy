@@ -30,7 +30,7 @@ import { TrashIcon} from '@/Components/Icons';
     }
     const onDeleteSong = () => {
         onCancel()
-        emits('onDeleteSong')
+        emits('onDeleteSong');
     }
 </script>
 
