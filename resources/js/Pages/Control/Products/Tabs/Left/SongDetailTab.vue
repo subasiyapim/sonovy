@@ -327,13 +327,13 @@ const onTusProgress = (e) => {
   })
 }
 const onTusComplete = async (e) => {
-  console.log("TUS Upload complete:", e);
+//   console.log("TUS Upload complete:", e);
 
-  // Şarkı verilerini kontrol et
-  if (!e || !e.name) {
-    console.error("Geçersiz şarkı verisi:", e);
-    return;
-  }
+//   // Şarkı verilerini kontrol et
+//   if (!e || !e.name) {
+//     console.error("Geçersiz şarkı verisi:", e);
+//     return;
+//   }
 
   try {
     // Şarkı bilgilerini tekrar al
@@ -596,10 +596,9 @@ onMounted(() => {
 
   if (currentProductId) {
     const channel = 'tenant.' + usePage().props.tenant_id + '.song.processing.' + currentProductId;
-    console.log("Dinlenen kanal:", channel);
 
     window.Echo.private(channel)
-      .listen('.App\\Events\\SongProcessingComplete', (e) => {
+      .listen('.App\\Events\\SongProcessingComplete', async (e) => {
         console.log("Şarkı İşleme Tamamlandı Event Alındı:", e);
 
         if (e.success) {
@@ -607,12 +606,13 @@ onMounted(() => {
           toast.success(e.message || "Şarkı işleme tamamlandı");
 
           // Eğer bu şarkı zaten listemizde varsa, güncelle
-          const songIndex = form.value.songs.findIndex(song => song.id === e.product_id);
+          const songIndex = form.value.songs.findIndex(song => song.id === e.result);
+            console.log("ŞARKIII",songIndex);
 
           if (songIndex !== -1) {
             // Şarkı zaten listemizde varsa, güncelle
             crudStore.post(route('control.find.songs'), {
-              id: e.product_id
+              id: e.result
             }).then(response => {
               if (response) {
                 // Event'ten gelen details bilgisini response'a ekle
@@ -654,47 +654,18 @@ onMounted(() => {
               }
             });
           } else {
-            // Bu yeni işlenmiş bir şarkı olabilir, yeniden şarkı listesini yükleyelim
-            crudStore.get(route('control.catalog.products.show', currentProductId))
-              .then(response => {
-                if (response && response.songs) {
-                  // Event'ten gelen details bilgisini ilgili şarkıya ekle
-                  if (e.details) {
-                    const songToUpdate = response.songs.find(song => song.id === e.product_id);
-                    if (songToUpdate) {
-                      songToUpdate.details = e.details;
-                    }
-                  }
 
-                  form.value = {
-                    ...form.value,
-                    songs: Array.isArray(response.songs) ? [...response.songs] : []
-                  };
+            let response = await crudStore.post(route('control.find.songs'), {
+                id: e.result
+            });
+            response.is_completed = false;
 
-                  // Kalite analizi sonuçları varsa bildirim göster
-                  if (e.details?.quality_analysis) {
-                    const song = response.songs.find(s => s.id === e.product_id);
-                    if (song) {
-                      const isValid = e.details.quality_analysis.is_valid;
-                      const message = isValid
-                        ? `"${song.name}" kalite kontrolünden geçti.`
-                        : `"${song.name}" kalite kontrolünde sorunlar tespit edildi. Detaylar için "Sonuçları Gör" butonuna tıklayın.`;
+            songsTable.value.addRow(response);
+            const findedAttempIndex  = attemps.value.findIndex((e) => e.name == response.name);
+            attemps.value.splice(findedAttempIndex,1);
 
-                      toast.success(message);
-                    }
-                  }
 
-                  // Üst bileşene değişikliği bildir
-                  emits('update:modelValue', form.value);
 
-                  // Tabloyu yeniden render et
-                  nextTick(() => {
-                    if (songsTable.value) {
-                      songsTable.value.$forceUpdate();
-                    }
-                  });
-                }
-              });
           }
         } else {
           // Şarkı işleme başarısız oldu
