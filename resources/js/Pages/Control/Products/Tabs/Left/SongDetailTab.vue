@@ -51,7 +51,7 @@
                 <img src="@/assets/images/mp3_active.png">
               </div>
               <div>
-                <p class="label-sm c-solid-950"> {{ scope.row.name }} ({{ scope.row.version }})</p>
+                <p class="label-sm c-solid-950"> {{ scope.row.name }} <template v-if="scope.row.version">({{ scope.row.version }})</template></p>
                 <p class="paragraph-xs c-sub-600"> {{ (scope.row.size / (1024 * 1024)).toFixed(2) }} MB</p>
               </div>
             </div>
@@ -167,7 +167,7 @@
 <script setup>
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {computed, ref, useSlots, nextTick, onBeforeMount, watch} from 'vue';
+import {computed, ref, useSlots, nextTick, onBeforeMount, watch,onMounted} from 'vue';
 import {FormElement} from '@/Components/Form';
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {AddIcon} from '@/Components/Icons'
@@ -287,6 +287,7 @@ const deleteSong = async (songs) => {
     // Üst bileşene değişikliği bildir
     emits('update:modelValue', form.value);
 
+
     // Seçili şarkıları temizle
     choosenSongs.value = [];
 
@@ -294,6 +295,11 @@ const deleteSong = async (songs) => {
     nextTick(() => {
       if (songsTable.value) {
         songsTable.value.deSelect();
+
+        songs.forEach(s => {
+            songsTable.value.removeRowByIndex(form.value.songs.findIndex((e) => e == s));
+        });
+
         songsTable.value.$forceUpdate();
       }
     });
@@ -479,48 +485,26 @@ const deleteChoosenSongs = () => {
   onCancel();
 }
 const favoriteSong = async (song) => {
+
   try {
     const response = await crudStore.post(route('control.catalog.song.toggleFavorite', song.id), {
       product_id: props.product.id
     });
 
     // Mevcut şarkıları al ve güncelle
-    const currentSongs = Array.isArray(form.value.songs)
-        ? form.value.songs.map(element => {
-          if (song.id === element.id) {
-            return {
-              ...element,
-              pivot: {
-                ...element.pivot,
-                is_favorite: response.pivot.is_favorite
-              }
-            };
-          }
-          return {
-            ...element,
-            pivot: {
-              ...element.pivot,
-              is_favorite: 0
-            }
-          };
-        })
-        : [];
+    const findedIndex = form.value.songs.findIndex((e) => e.id == song.id);
+    form.value.songs.forEach(element => {
+        element.pivot.is_favorite = 0;
+    });
+    if(findedIndex >= 0){
+        form.value.songs[findedIndex].pivot.is_favorite = response.pivot.is_favorite;
+    }
 
-    // Form değerini güncelle
-    form.value = {
-      ...form.value,
-      songs: currentSongs
-    };
 
-    // Üst bileşene değişikliği bildir
+
     emits('update:modelValue', form.value);
 
-    // Tabloyu yeniden render et
-    nextTick(() => {
-      if (songsTable.value) {
-        songsTable.value.$forceUpdate();
-      }
-    });
+
 
     toast.success("Şarkının favori durumu başarıyla değiştirildi");
   } catch (error) {
@@ -603,6 +587,20 @@ const acceptedFormats = computed(() => {
     default:
       return [];
   }
+});
+
+onMounted(() => {
+
+const currentProductId = usePage().props.product?.id; // Eğer sayfada bir ürün objesi varsa
+  console.log("casc",currentProductId);
+
+    if (currentProductId) {
+        window.Echo.private('tenant.' + usePage().props.tenant_id + '.song.processing.' + currentProductId)
+            .listen('.SongProcessingComplete', (e) => {
+                console.log("Şarkı İşleme Tamamlandı Event Alındı:", e);
+                songs
+        });
+    }
 });
 </script>
 

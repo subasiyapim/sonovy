@@ -178,7 +178,9 @@ onMounted(() => {
                 toast.success('Dosya başarıyla işlendi!');
               } catch (fetchError) {
                 console.error('Song fetch error:', fetchError);
-                toast.warning('Dosya işlendi, ancak bilgileri alınamadı. Sayfayı yenileyebilirsiniz.');
+                toast('Dosya işlendi, ancak bilgileri alınamadı. Sayfayı yenileyebilirsiniz.',{
+                    type:"warning",
+                });
               }
             } else {
               // Hata durumunda
@@ -527,6 +529,8 @@ const createUploadTask = (file, metaData, onSuccess, onProgress, onError) => {
               toast.error('Şarkı bilgileri alınamadı');
             }
           } else if (status === 'processing') {
+            console.log("STATUS PROCESSİNG ",status);
+
             // İşlem arka planda devam ediyor
             toast.info(createProcessingMessage(fileName));
 
@@ -574,11 +578,14 @@ const createUploadTask = (file, metaData, onSuccess, onProgress, onError) => {
                     emits('complete', response);
                     toast.success(createSuccessMessage(response.name || fileName));
                   } else if (checkCount >= MAX_CHECK_COUNT) {
+                    console.log("BURAYAA DÜŞTÜkk");
+
                     // Maksimum kontrol sayısına ulaşıldı
                     clearInterval(pollInterval);
                     toast.info('Dosya yüklendi, ancak işleme durumu belirlenemedi. Sayfayı yenileyip kontrol edebilirsiniz.');
                   }
                 } catch (err) {
+
                   console.warn('Polling fetch error:', err);
                   // Hatayı görmezden gel ve polling'e devam et
 
@@ -591,6 +598,9 @@ const createUploadTask = (file, metaData, onSuccess, onProgress, onError) => {
               }, 5000); // 5 saniyede bir kontrol et
             }
           } else {
+            console.log("STATUS MTATÜS YOK");
+            console.log("STATUS",status);
+
             // Durum bilinmiyor
             toast.warning(`Dosya yüklendi, ancak durum belirlenemedi. Sayfayı yenileyip kontrol edebilirsiniz.`);
           }
