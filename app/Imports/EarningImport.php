@@ -31,14 +31,25 @@ use Maatwebsite\Excel\Concerns\OnEachRow;
 use App\Models\Earning;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
 class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents
 {
-    use Importable;
+    use Importable, InteractsWithQueue, Queueable, SerializesModels;
 
 
-    public $timeout = 600;
-    public $tries = 3;
+    public $timeout = 3600; // 1 saat
+    public $tries = 5;
+    public $maxExceptions = 3;
+    public $failOnTimeout = false; // Timeout olunca başarısız sayma, tekrar denesin
+
+    // Bekleyen süreyi artır
+    public $backoff = [60, 300, 600, 1200, 1800]; // İlk başarısızlıkta 1 dk, ikincide 5 dk, üçüncüde 10 dk, dördüncüde 20 dk, beşincide 30 dk beklesin
+
     private $headersValidated = false;
     private $currentChunkRows = 0;
     private $lastChunkUpdate = 0;
@@ -853,6 +864,29 @@ class EarningImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithCh
 
     public function chunkSize(): int
     {
-        return 50; // Chunk boyutunu küçült
+        return 25; // Chunk boyutunu daha da küçült, daha sık işleme için
+    }
+
+    protected function middleware()
+    {
+        return [new WithoutOverlapping($this->fileId)];
+    }
+
+    /**
+     * Her batch işlemi arasında yapılacak işlemler
+     * @return array
+     */
+    public function batchSize(): int
+    {
+        return 500; // Batch boyutunu sınırla
+    }
+
+    /**
+     * Her batch işlemi arasında bir gecikme belirt
+     * @return int
+     */
+    public function sleep(): int
+    {
+        return 3; // Her batch arasında 3 saniye bekle
     }
 }
