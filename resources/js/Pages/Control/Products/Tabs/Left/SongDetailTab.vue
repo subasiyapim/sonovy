@@ -167,7 +167,7 @@
 <script setup>
 import AppTable from '@/Components/Table/AppTable.vue';
 import AppTableColumn from '@/Components/Table/AppTableColumn.vue';
-import {computed, ref, useSlots, nextTick, onBeforeMount, watch} from 'vue';
+import {computed, ref, useSlots, nextTick, onBeforeMount, watch,onMounted} from 'vue';
 import {FormElement} from '@/Components/Form';
 import {useCrudStore} from '@/Stores/useCrudStore';
 import {AddIcon} from '@/Components/Icons'
@@ -501,50 +501,10 @@ const favoriteSong = async (song) => {
     }
 
 
-    // const currentSongs = Array.isArray(form.value.songs)
-    //     ? form.value.songs.map(element => {
-    //       if (song.id === element.id) {
-    //         console.log("BULDUKKK",response.pivot.is_favorite);
 
-    //         return {
-    //           ...element,
-    //           pivot: {
-    //             ...element.pivot,
-    //             is_favorite: response.pivot.is_favorite ? 1 :0
-    //           }
-    //         };
-
-
-    //         console.log("ELL",element);
-
-    //       }
-    //       return {
-    //         ...element,
-    //         pivot: {
-    //           ...element.pivot,
-    //           is_favorite: 0
-    //         }
-    //       };
-    //     })
-    //     : [];
-
-    // // Form değerini güncelle
-    // form.value = {
-    //   ...form.value,
-    //   songs: currentSongs
-    // };
-
-    // console.log("DENEMEE",form.value.songs);
-
-    // Üst bileşene değişikliği bildir
     emits('update:modelValue', form.value);
 
-    // Tabloyu yeniden render et
-    // nextTick(() => {
-    //   if (songsTable.value) {
-    //     songsTable.value.$forceUpdate();
-    //   }
-    // });
+
 
     toast.success("Şarkının favori durumu başarıyla değiştirildi");
   } catch (error) {
@@ -627,6 +587,20 @@ const acceptedFormats = computed(() => {
     default:
       return [];
   }
+});
+
+onMounted(() => {
+
+const currentProductId = usePage().props.product?.id; // Eğer sayfada bir ürün objesi varsa
+  console.log("casc",currentProductId);
+
+    if (currentProductId) {
+        window.Echo.private('tenant.' + usePage().props.tenant_id + '.song.processing.' + currentProductId)
+            .listen('.SongProcessingComplete', (e) => {
+                console.log("Şarkı İşleme Tamamlandı Event Alındı:", e);
+                songs
+        });
+    }
 });
 </script>
 
